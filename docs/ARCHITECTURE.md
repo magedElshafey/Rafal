@@ -296,7 +296,16 @@ Implementation must consume the approved Rafal design system rather than create 
 
 See `docs/DESIGN_SYSTEM.md`.
 
-No new styling framework/component library is authorized here. Use the repository's established styling approach.
+Tailwind CSS v4 remains the styling engine. shadcn/ui is authorized as an
+implementation foundation for reusable primitives, not as the visual source of
+truth or a replacement styling system. Generated components must be adapted to
+the Rafal tokens and approved Figma design.
+
+Use the centralized `cn()` helper for class composition. CVA is authorized only
+for reusable components with meaningful variants. Phosphor Icons is the sole
+general-purpose icon system; do not introduce Lucide. Shared design-system
+primitives belong in `src/components/ui/` and remain Server Components unless a
+concrete browser-side requirement needs a client boundary.
 
 ## 16. Testing Strategy
 
@@ -340,7 +349,7 @@ Unless already present in the repository, the following remain explicit decision
 - client data caching library;
 - form library;
 - schema validation library;
-- component library;
+- component libraries other than the approved shadcn/ui implementation foundation;
 - CSS/styling framework changes;
 - BFF/API gateway inside Next.js;
 - universal Server Actions strategy;

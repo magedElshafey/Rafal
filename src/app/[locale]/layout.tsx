@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Tajawal } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -9,6 +10,12 @@ import { env } from "@/config/env";
 import { routing } from "@/i18n/routing";
 
 import "../globals.css";
+
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  variable: "--font-tajawal",
+  weight: ["400", "500", "700"],
+});
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -59,7 +66,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={direction}>
-      <body>
+      <body className={tajawal.variable}>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

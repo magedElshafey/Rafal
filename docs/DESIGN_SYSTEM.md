@@ -4,11 +4,10 @@
 
 This document tells engineers and coding agents **how to consume the approved Rafal Figma design system** without inventing visual rules during feature implementation.
 
-The approved Figma design/prototype is the visual source of truth.
-
-Important: exact Figma token values/components were not available in the project files used to generate this document. Therefore this file intentionally defines governance and implementation rules without fabricating colors, font sizes, spacing values, radii, shadows, or component variants.
-
-When exact Figma tokens are exported/confirmed, record them in the token sections below and keep this file synchronized with code.
+The approved Figma design/prototype is the visual source of truth. The DS-01
+foundation values recorded below are approved and implemented in
+`src/app/globals.css`. Keep this document synchronized with code as additional
+Figma tokens are confirmed.
 
 ## 2. Design-System Principle
 
@@ -32,8 +31,11 @@ Priority for visual decisions:
 3. existing matching production component;
 4. task-specific approved UI note.
 
-Do not guess missing values from screenshots.
-If Figma and code disagree, report the mismatch before propagating a new token.
+Do not guess missing values from screenshots. When direct Figma inspection exposes
+an exact value that contradicts an earlier implementation approximation, correct
+the approximation and record the correction here. Stop when Figma sources
+conflict with each other or when the missing decision affects behavior or
+architecture.
 
 ## 4. Token Policy
 
@@ -79,32 +81,103 @@ Fill this section only from approved Figma/code values.
 ### Colors
 
 ```text
-TODO: sync exact approved Figma color tokens.
+Gray:
+gray-0 #FFFFFF    gray-50 #FAFAFA    gray-100 #F2F2F2
+gray-200 #E5E5E5 gray-300 #D4D4D4   gray-400 #A3A3A3
+gray-500 #737373 gray-600 #525252   gray-700 #404040
+gray-800 #262626 gray-900 #171717   gray-1000 #000000
+
+Gold:
+gold-50 #FBF3E7  gold-100 #F3E0C2  gold-200 #E8C99A
+gold-300 #DCB073 gold-400 #CC9A5C  gold-500 #B8834A
+gold-600 #9C6B39 gold-700 #7D5330  gold-800 #5E3E26
+gold-900 #402A1A
+
+Semantic:
+background gray-0             foreground gray-900
+muted gray-100                muted-foreground gray-600
+border gray-200               primary gold-500
+primary-foreground gray-0     accent gold-50
+accent-foreground gold-900    ring gold-500
+```
+
+The Badge and Input component sets directly confirm these semantic feedback
+colors:
+
+```text
+destructive #C62828
+success     #2E7D32
+```
+
+The following feedback colors remain temporary infrastructure defaults pending
+exact Figma confirmation. Do not treat them as approved foundation palette
+values or derive additional shades from them:
+
+```text
+warning     #B54708
+info        #175CD3
 ```
 
 ### Typography
 
 ```text
-TODO: sync exact approved font family, weight, size, line-height and letter-spacing tokens.
+Font family: Tajawal
+
+Display    32px / 40px / 700
+H1         28px / 36px / 700
+H2         24px / 32px / 700
+H3         20px / 28px / 500
+H4         18px / 24px / 500
+Body Large 16px / 24px / 400
+Body       14px / 20px / 400
+Body Small 12px / 16px / 400
+Caption    11px / 14px / 400
+Price      18px / 24px / 700
+UI Small   13px / 16px / 500
+Label      12px / 14px / 500
+Badge      10px / 12px / 500
+Card Price 15px / 20px / 700
 ```
+
+Tajawal is loaded through `next/font` with the approved 400, 500, and 700
+weights. Foundation Tailwind utilities are exposed as `text-display`,
+`text-h1` through `text-h4`, `text-body-lg`, `text-body`, `text-body-sm`,
+`text-caption`, and `text-price`. DS-02 components use the equivalent
+`type-body*`, `type-caption`, `type-ui-sm`, `type-label`, `type-badge`, and
+`type-card-price` utilities so `cn()`/`tailwind-merge` cannot mistake a
+font-size utility for a text-color utility and discard either style.
 
 ### Spacing
 
 ```text
-TODO: sync exact approved spacing scale.
+Base grid: 4px
+Preferred values: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96px
+Tailwind utilities: 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24
 ```
+
+Prefer these standard utilities. Use arbitrary spacing only when an exact
+approved design requires a value outside the scale.
 
 ### Radius
 
 ```text
-TODO: sync exact approved radius scale.
+sm 4px    md 8px    lg 8px
+xl 12px   2xl 16px  full 9999px
 ```
+
+The DS-02 Figma component sets explicitly name `radius-md` as 8px. The earlier
+6px DS-01 approximation was corrected. No other radius value was changed;
+`md` and `lg` intentionally remain equal until Figma explicitly distinguishes
+them.
 
 ### Shadows / Elevation
 
 ```text
-TODO: sync exact approved elevation tokens.
+floating-action 0 1px 4px rgb(0 0 0 / 15%)
 ```
+
+`floating-action` is used by the Product Card wishlist control and comes from
+the approved Product Card component.
 
 ### Breakpoints
 
@@ -113,6 +186,127 @@ TODO: sync exact project/Figma breakpoints from the implemented responsive syste
 ```
 
 Do not let an agent fill these TODOs by approximation.
+
+## 5.1 Implementation Conventions
+
+### shadcn/ui
+
+shadcn/ui is an approved implementation foundation, not a visual source of
+truth or a separately adopted visual system. Its generated structure and
+accessibility patterns may be used, but every component must consume Rafal
+tokens and match approved Figma. Do not retain shadcn defaults that conflict
+with Rafal. The minimal generator configuration lives in `components.json`.
+
+### Class composition
+
+Use the canonical `cn()` helper from `src/lib/utils.ts` for conditional class
+composition and Tailwind conflict resolution. Do not introduce competing class
+helpers.
+
+### Variants
+
+Use Class Variance Authority (CVA) only for reusable components that have
+meaningful, intent-based variants. Plain components and one-off class lists do
+not need CVA.
+
+### Icons
+
+Phosphor Icons (`@phosphor-icons/react`) is the project icon system. Do not add
+Lucide or a second general-purpose icon library. Review directional icons for
+correct RTL behavior.
+
+## 5.2 Layout Primitives
+
+`Container` owns horizontal page layout: centering, responsive inline gutters,
+and max width. Its DS-01 sizes are implementation defaults pending final Figma
+desktop-frame verification:
+
+```text
+narrow  48rem / 768px
+default 64rem / 1024px
+wide    80rem / 1280px
+full    no max width
+
+gutters 16px base, 24px from sm, 32px from lg
+```
+
+`Section` owns vertical section rhythm only. Its spacing variants are `none`
+(0), `sm` (16px), `md` (32px), `lg` (48px), and `xl` (64px). It must not add
+horizontal gutters or max-width behavior; compose it with `Container` when both
+responsibilities are needed.
+
+## 5.3 DS-02 Component Registry
+
+### Button
+
+`Button` is the semantic text/action primitive. Its Figma-backed API is:
+
+```tsx
+<Button variant="primary | secondary | outline | ghost" size="sm | md | lg" />
+```
+
+The sizes are 36px, 44px, and 52px tall, with inline padding of 14px, 20px,
+and 24px respectively. Figma defines Default and Disabled states. Hover,
+pressed, focus-visible, and loading are conservative engineering/accessibility
+fallbacks: opacity is adjusted without introducing colors, focus uses the
+existing `ring` token, and loading overlays a spinner while preserving the
+button's measured content and dimensions. Loading also sets `aria-busy` and
+prevents repeated activation.
+
+`IconButton` supports `filled`, `outline`, and `ghost` visual variants. Its
+visual control sizes are 32px, 40px, and 48px. The corresponding Figma artwork
+sizes are 12.8px, 16px, and 19.2px; SVG proportions are preserved and the art
+is centered rather than stretched. An invisible 44px minimum activation area
+extends around controls whose visual size is smaller than the accessibility
+target. Every IconButton requires an accessible `aria-label`.
+
+### Input
+
+`Input` is the generic native text-input primitive. `InputField` composes it
+with a required label and optional helper/error message. The Figma-backed field
+height is 44px with 14px inline padding, an 8px radius, a 1px default border,
+and a 1.5px gold focused border. Default, filled, focused, error, and disabled
+states are supported. `InputField` owns `htmlFor`, `aria-invalid`, and
+`aria-describedby` wiring; callers provide a stable `id` and localized copy.
+Phone-specific business structure is intentionally not part of this generic API.
+
+### Badge
+
+`Badge` variants are semantic: `discount`, `new`, `personalization`, and
+`unavailable`. They use the Figma-confirmed destructive, success, gold, and
+gray tokens, with localized children and no fixed text width. The approved
+geometry is a 20px minimum height, 9px inline padding, 4px block padding, and a
+full radius.
+
+### Icon architecture
+
+The Rafal icon catalog lives in `src/components/ui/icons`. Standard interface
+icons are thin wrappers around individually imported Phosphor SSR entrypoints,
+matching the Phosphor components referenced by Figma without importing the
+package barrel. They share a `size`, `className`, optional `label`, regular
+weight, and `currentColor` API. Decorative icons are `aria-hidden` by default;
+a supplied label exposes the icon as an image.
+
+Fixed-color brand and payment assets are separate SVG components. They retain
+their Figma/official brand colors and therefore do not use `currentColor`, with
+the exception of single-color marks whose color is intentionally inherited.
+Figma-provided/custom vectors take priority for brand and payment fidelity;
+Phosphor remains the fallback for general-purpose interface glyphs only.
+
+### DS-02 sizing and detail tokens
+
+```text
+product-card-size       170px
+rating-width             58px
+badge-padding-inline      9px
+border-width-emphasis   1.5px
+icon-button-art-sm      12.8px
+icon-button-art-md        16px
+icon-button-art-lg      19.2px
+```
+
+These values are component geometry verified directly in the Button, Icon
+Button, Input, Badge, and Product Card Figma component sets.
 
 ## 6. RTL and Arabic
 
@@ -222,7 +416,11 @@ Where relevant, support:
 - empty;
 - unavailable/out-of-stock.
 
-States should follow approved designs when available. If a required functional state is missing from Figma, use existing system conventions and flag the gap rather than inventing a new visual language.
+States should follow approved designs when available. For DS-02 Button states
+that are absent from Figma, token-based opacity, the existing focus ring, and a
+dimension-preserving loading overlay are documented engineering/accessibility
+fallbacks rather than approved Figma visual states. Other missing states remain
+design gaps and must not be invented silently.
 
 ## 11. Forms
 
@@ -242,7 +440,18 @@ Do not hide essential validation behind toast-only feedback.
 
 The BRD expects product cards to support product imagery, name, price/discount context and rating where applicable.
 
-The reusable card must be capable of the approved catalogue contexts without embedding page-specific fetching/business rules.
+The reusable `ProductCard` accepts typed display data and action-button props;
+it performs no fetching, formatting, inventory lookup, or state management. It
+composes `Badge`, `IconButton`, `Rating`, and `PriceDisplay`, uses a reserved
+170px square `next/image` area, and supports the approved default,
+personalization, discount, new, quick-add, and unavailable badge treatments.
+Prices and all labels are passed in already localized/formatted so this
+component does not create currency or localization architecture.
+
+Card links and action buttons are siblings, preventing nested interactive
+elements. Badges/actions use logical `start`/`end` positioning for RTL/LTR.
+Unavailable state disables quick add when supplied and requires callers to
+provide the localized unavailable label.
 
 Product availability and location/warehouse behavior should be provided to the card as data/state, not computed from browser storage inside the card.
 
@@ -299,10 +508,13 @@ Engineering rules:
 
 ## 16. Icons
 
-Use the project's approved icon source/library if one is already installed.
+Use the Rafal wrappers around individually imported Phosphor icons for standard
+interface glyphs. Use the fixed SVG components in the same catalog for brand,
+social, country, and payment marks.
 
 Do not add a second icon library for a handful of icons.
-Do not recreate brand/provider logos as arbitrary text/icons.
+Do not recreate brand/provider logos as arbitrary text/icons and do not recolor
+fixed-color provider assets with `currentColor`.
 
 Directional icons must be reviewed for RTL semantics.
 
