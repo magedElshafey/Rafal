@@ -1,30 +1,36 @@
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { notFound } from "next/navigation";
-import "../globals.css";
-import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+
 import { env } from "@/config/env";
+import { routing } from "@/i18n/routing";
+
+import "../globals.css";
 
 type LocaleLayoutProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   params: Promise<{
     locale: string;
   }>;
 };
 
-// metadata
 export async function generateMetadata({
   params,
 }: Pick<LocaleLayoutProps, "params">): Promise<Metadata> {
   const { locale } = await params;
+
   if (!hasLocale(routing.locales, locale)) {
     return {};
   }
+
   const t = await getTranslations({
     locale,
     namespace: "Metadata",
   });
+
   return {
     metadataBase: env.siteUrl,
     title: {
@@ -34,10 +40,11 @@ export async function generateMetadata({
     description: t("siteDescription"),
   };
 }
-// static params
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
 export default async function LocaleLayout({
   children,
   params,
