@@ -2,19 +2,20 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import {
+  isNavigationItemActive,
+  type ShellNavigationItem,
+} from "@/components/shell/storefront/navigation-config";
 
 type AppLinkProps = {
-  href: string;
+  href: ShellNavigationItem["href"];
   label: string;
+  match: ShellNavigationItem["match"];
 };
 
-const NavigationLink = ({ href, label }: AppLinkProps) => {
+const NavigationLink = ({ href, label, match }: AppLinkProps) => {
   const pathname = usePathname();
-
-  const isActive =
-    href === "/"
-      ? pathname === "/"
-      : pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = isNavigationItemActive(pathname, { href, match });
 
   return (
     <Link

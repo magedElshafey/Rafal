@@ -1,5 +1,100 @@
 {
   "LocaleSwitcher": {
     "label": "language"
+  },
+  "nav": {
+    "home": "Home",
+    "categories": "Categories",
+    "offers": "Offers",
+    "about_us": "About us",
+    "blogs": "Blog",
+    "login": "Sign in",
+    "main_navigation": "Main navigation",
+    "user_navigation": "User actions",
+    "notifications": "Notifications",
+    "wishlist": "Wishlist",
+    "cart": "Shopping cart",
+    "profile": "Profile",
+    "mobile_cart": "Cart",
+    "mobile_navigation": "Store navigation",
+    "more": "More",
+    "more_title": "More",
+    "more_navigation": "Additional links",
+    "close_more": "Close More menu"
+  },
+  "headerUtility": {
+    "deliveryLabel": "Deliver to:",
+    "selectCity": "Select city",
+    "changeLocation": "Change delivery location",
+    "searchLabel": "Search products and gifts",
+    "searchPlaceholder": "Search for a gift or product...",
+    "locationDialog": {
+      "title": "Choose a delivery city",
+      "description": "Select your city to see products available for delivery.",
+      "loading": "Loading cities...",
+      "empty": "No cities are currently available.",
+      "unavailable": "Unavailable",
+      "close": "Close city selection",
+      "searchLabel": "Search cities",
+      "searchPlaceholder": "Search for your city...",
+      "searchNoResults": "No city matches your search.",
+      "useCurrentLocation": "Use my current location",
+      "geolocationLoading": "Finding your location...",
+      "geolocationError": "We could not find an available city for your location. Choose one from the list."
+    },
+    "search": {
+      "clear": "Clear search",
+      "loading": "Searching...",
+      "noResults": "No matching results found.",
+      "suggestions": "Product suggestions"
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "Rafal gifts, jewelry, and accessories — offering products personalized with name engraving.",
+      "homeLabel": "Rafal — home page"
+    },
+    "stores": {
+      "app-store": {
+        "eyebrow": "Download on the",
+        "name": "App Store"
+      },
+      "google-play": {
+        "eyebrow": "GET IT ON",
+        "name": "Google Play"
+      }
+    },
+    "quickLinks": {
+      "title": "Quick links",
+      "items": {
+        "about": "About us",
+        "returns": "Returns and exchanges",
+        "shipping": "Shipping and delivery",
+        "terms": "Terms and conditions",
+        "privacy": "Privacy policy",
+        "complaints": "Complaints and suggestions"
+      }
+    },
+    "shopping": {
+      "title": "Shop",
+      "items": {
+        "womensJewelry": "Women's jewelry",
+        "mensGifts": "Men's gifts",
+        "carAccessories": "Car accessories",
+        "perfumes": "Perfumes",
+        "personalized": "Personalized gifts"
+      }
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Subscribe for the latest offers and products.",
+      "emailLabel": "Email address",
+      "placeholder": "example@email.com",
+      "submit": "Subscribe"
+    },
+    "bottom": {
+      "paymentMethods": "Secure and flexible payment methods",
+      "copyright": "All rights reserved to Rafal Store"
+    }
   }
 }

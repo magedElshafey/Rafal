@@ -34,6 +34,22 @@
   --phone-input-divider-height: 1.5rem;
   --phone-input-flag-width: 1.375rem;
   --phone-input-flag-height: 1rem;
+  --header-search-width: 35rem;
+  --header-search-height: 2.875rem;
+  --header-search-gap: 0.625rem;
+  --header-utility-padding-inline: 3.75rem;
+  --footer-columns-min-height: 18rem;
+  --footer-desktop-padding-inline: 3.75rem;
+  --footer-desktop-columns: 18.75rem 11.875rem 9.375rem 23.125rem;
+  --footer-newsletter-form-gap: 2.125rem;
+  --footer-store-eyebrow-size: 0.5625rem;
+  --footer-store-eyebrow-line-height: 0.6875rem;
+  --mobile-bottom-navigation-height: 4rem;
+  --mobile-bottom-navigation-item-width: 3.8125rem;
+  --mobile-bottom-navigation-item-height: 2.875rem;
+  --mobile-bottom-navigation-icon-size: 1.125rem;
+  --mobile-bottom-navigation-label-size: 0.625rem;
+  --mobile-bottom-navigation-label-line-height: 0.75rem;
 }
 
 @theme inline {
@@ -195,6 +211,18 @@
   font-size: var(--text-card-original-price);
   line-height: var(--text-card-original-price--line-height);
   font-weight: var(--text-card-original-price--font-weight);
+}
+
+@utility type-footer-store-eyebrow {
+  font-size: var(--footer-store-eyebrow-size);
+  line-height: var(--footer-store-eyebrow-line-height);
+  font-weight: 400;
+}
+
+@utility type-mobile-navigation-label {
+  font-size: var(--mobile-bottom-navigation-label-size);
+  line-height: var(--mobile-bottom-navigation-label-line-height);
+  font-weight: 400;
 }
 
 @layer base {

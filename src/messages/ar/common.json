@@ -9,6 +9,92 @@
     "about_us": "من نحن",
     "blogs": "المدونة",
     "login": "تسجيل الدخول",
-    "main_navigation": "التنقل الرئيسي"
+    "main_navigation": "التنقل الرئيسي",
+    "user_navigation": "إجراءات المستخدم",
+    "notifications": "الإشعارات",
+    "wishlist": "المفضلة",
+    "cart": "سلة التسوق",
+    "profile": "الملف الشخصي",
+    "mobile_cart": "السلة",
+    "mobile_navigation": "التنقل عبر المتجر",
+    "more": "المزيد",
+    "more_title": "المزيد",
+    "more_navigation": "روابط إضافية",
+    "close_more": "إغلاق قائمة المزيد"
+  },
+  "headerUtility": {
+    "deliveryLabel": "التوصيل إلى:",
+    "selectCity": "اختر المدينة",
+    "changeLocation": "تغيير موقع التوصيل",
+    "searchLabel": "البحث عن المنتجات والهدايا",
+    "searchPlaceholder": "ابحث عن هدية أو منتج...",
+    "locationDialog": {
+      "title": "اختر مدينة التوصيل",
+      "description": "حدد مدينتك لعرض المنتجات المتاحة للتوصيل إليك.",
+      "loading": "جارٍ تحميل المدن...",
+      "empty": "لا توجد مدن متاحة حالياً.",
+      "unavailable": "غير متاحة",
+      "close": "إغلاق اختيار المدينة",
+      "searchLabel": "البحث عن مدينة",
+      "searchPlaceholder": "ابحث عن مدينتك...",
+      "searchNoResults": "لا توجد مدينة مطابقة لبحثك.",
+      "useCurrentLocation": "استخدام موقعي الحالي",
+      "geolocationLoading": "جارٍ تحديد موقعك...",
+      "geolocationError": "تعذر تحديد مدينة متاحة من موقعك. اختر مدينة من القائمة."
+    },
+    "search": {
+      "clear": "مسح البحث",
+      "loading": "جارٍ البحث...",
+      "noResults": "لم نعثر على نتائج مطابقة.",
+      "suggestions": "اقتراحات المنتجات"
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "متجر رافال للهدايا والمجوهرات والإكسسوارات — نقدّم منتجات قابلة للتخصيص بالنقش بالاسم.",
+      "homeLabel": "رافال — الصفحة الرئيسية"
+    },
+    "stores": {
+      "app-store": {
+        "eyebrow": "Download on the",
+        "name": "App Store"
+      },
+      "google-play": {
+        "eyebrow": "GET IT ON",
+        "name": "Google Play"
+      }
+    },
+    "quickLinks": {
+      "title": "روابط سريعة",
+      "items": {
+        "about": "من نحن",
+        "returns": "سياسة الاسترجاع والاستبدال",
+        "shipping": "سياسة الشحن والتوصيل",
+        "terms": "الشروط والأحكام",
+        "privacy": "سياسة الخصوصية",
+        "complaints": "الشكاوى والاقتراحات"
+      }
+    },
+    "shopping": {
+      "title": "تسوق",
+      "items": {
+        "womensJewelry": "مجوهرات نسائية",
+        "mensGifts": "هدايا رجالية",
+        "carAccessories": "إكسسوارات سيارات",
+        "perfumes": "عطور",
+        "personalized": "هدايا بالاسم"
+      }
+    },
+    "newsletter": {
+      "title": "النشرة البريدية",
+      "description": "اشترك ليصلك كل جديد من العروض والمنتجات.",
+      "emailLabel": "البريد الإلكتروني",
+      "placeholder": "example@email.com",
+      "submit": "اشترك"
+    },
+    "bottom": {
+      "paymentMethods": "طرق دفع آمنة ومتعددة",
+      "copyright": "جميع الحقوق محفوظة لمتجر رافال"
+    }
   }
 }

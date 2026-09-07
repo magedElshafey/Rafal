@@ -308,10 +308,12 @@ icon-button-art-lg      19.2px
 product-card-wishlist     28px control / 14px art
 phone-input-prefix        78px
 phone-input-flag          22px x 16px
+header-search             560px desktop width / 46px height / 10px gap
+header-utility-inset      60px desktop inline padding
 ```
 
 These values are component geometry verified directly in the Button, Icon
-Button, Input, Badge, and Product Card Figma component sets.
+Button, Input, Badge, Product Card, and storefront header Figma components.
 
 ## 6. RTL and Arabic
 
@@ -474,6 +476,55 @@ fractional star as an explicitly documented engineering representation; Figma
 does not currently define a half/partial-star variant.
 
 Product availability and location/warehouse behavior should be provided to the card as data/state, not computed from browser storage inside the card.
+
+### Storefront header utility
+
+The approved desktop utility row is 70px tall (`46px` control height plus
+`12px` block padding), uses `60px` inline padding, and places a `560px` search
+control opposite the delivery-location trigger. The search control has a 46px
+height, full radius, 16px inline padding, and a 10px icon/content gap.
+
+On the approved 390px mobile frame, location and search are separate rows. The
+location row is 48px tall with 24px inline padding. The search row uses 20px
+inline padding, 8px top padding, and 12px bottom padding; the search control
+fills the remaining 350px width. The location selector component is 32px tall
+with 12px inline padding, 8px block padding, an 8px gap, a 16px map pin, and a
+14px chevron.
+
+Figma currently defines only the location trigger and does not define a city
+list, popover, sheet, or dialog. The trigger therefore accepts externally
+provided city data and native button interaction props; selection UI and
+persistence remain outside this visual component until an approved design and
+data contract exist.
+
+### Mobile bottom navigation
+
+The approved mobile bottom navigation is a fixed 64px row with five equally
+distributed destinations. Each item centers an 18px icon and 10px label inside
+a 61px by 46px interaction treatment. Active items use the gold-50 surface and
+gold-500 foreground; inactive items use gray-400. The shell reserves the same
+64px plus the device safe-area inset so fixed navigation never covers content.
+
+Mobile navigation is visible below the existing `md` desktop-navigation
+breakpoint. Its logical item order is Home, Categories, Cart, Wishlist, More,
+which naturally mirrors under the document direction for Arabic and English.
+More uses a native modal dialog as a bottom sheet because no shared Sheet or
+Drawer primitive is installed; this preserves modal focus, Escape handling,
+and focus restoration without adding a dependency.
+
+### Storefront footer
+
+The approved desktop footer-columns frame is a 288px-tall black surface with a
+60px inline inset. Its RTL reading order is brand and store links, quick links,
+shopping links, then newsletter. Store download links are 44px tall and use a
+9px eyebrow label above the store name. These reference-specific measurements
+are exposed through the `--footer-*` tokens in `globals.css`.
+
+At medium widths the content uses two columns, and at small widths it stacks in
+one column. Footer columns and the newsletter form must remain intrinsically
+sized so the layout cannot overflow a 320px viewport. Internal navigation uses
+the localized application `Link`; external store destinations use direct
+anchors, and newsletter submission remains a native server-compatible form.
 
 ## 13. Product Detail Page Patterns
 
