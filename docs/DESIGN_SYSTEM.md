@@ -57,6 +57,7 @@ Token categories to maintain:
 Avoid one-off literals when an approved token exists.
 
 ### Token naming
+
 Prefer meaning over raw visual description for semantic tokens.
 
 Examples of concepts (not literal required names):
@@ -101,22 +102,18 @@ primary-foreground gray-0     accent gold-50
 accent-foreground gold-900    ring gold-500
 ```
 
-The Badge and Input component sets directly confirm these semantic feedback
-colors:
+The Figma base/state variables and the Badge, Input, and Toast component sets
+confirm these semantic feedback colors:
 
 ```text
 destructive #C62828
 success     #2E7D32
+warning     #C77700
+info        #1565C0
 ```
 
-The following feedback colors remain temporary infrastructure defaults pending
-exact Figma confirmation. Do not treat them as approved foundation palette
-values or derive additional shades from them:
-
-```text
-warning     #B54708
-info        #175CD3
-```
+Warning is defined by Figma variables even though no DS-02 component variant
+currently demonstrates it. It is not an engineering fallback.
 
 ### Typography
 
@@ -136,7 +133,9 @@ Price      18px / 24px / 700
 UI Small   13px / 16px / 500
 Label      12px / 14px / 500
 Badge      10px / 12px / 500
-Card Price 15px / 20px / 700
+Card Price 15px / 18px / 700
+Card Discount Price 16px / 19px / 700
+Card Original Price 12px / 14px / 400
 ```
 
 Tajawal is loaded through `next/font` with the approved 400, 500, and 700
@@ -161,23 +160,21 @@ approved design requires a value outside the scale.
 ### Radius
 
 ```text
-sm 4px    md 8px    lg 8px
-xl 12px   2xl 16px  full 9999px
+none 0    sm 4px    md 8px
+lg 16px   xl 24px   full 999px
 ```
 
-The DS-02 Figma component sets explicitly name `radius-md` as 8px. The earlier
-6px DS-01 approximation was corrected. No other radius value was changed;
-`md` and `lg` intentionally remain equal until Figma explicitly distinguishes
-them.
+These values come from Figma's `radius/*` variables. The earlier duplicate
+8px `md`/`lg` aliases and undocumented 12px/16px additions were removed.
 
 ### Shadows / Elevation
 
 ```text
-floating-action 0 1px 4px rgb(0 0 0 / 15%)
+product-card-wishlist  0 1px 4px rgb(0 0 0 / 15%)
+product-card-quick-add 0 2px 4px rgb(0 0 0 / 15%)
 ```
 
-`floating-action` is used by the Product Card wishlist control and comes from
-the approved Product Card component.
+Both values are taken from the corresponding Product Card controls in Figma.
 
 ### Breakpoints
 
@@ -246,12 +243,11 @@ responsibilities are needed.
 ```
 
 The sizes are 36px, 44px, and 52px tall, with inline padding of 14px, 20px,
-and 24px respectively. Figma defines Default and Disabled states. Hover,
-pressed, focus-visible, and loading are conservative engineering/accessibility
-fallbacks: opacity is adjusted without introducing colors, focus uses the
-existing `ring` token, and loading overlays a spinner while preserving the
-button's measured content and dimensions. Loading also sets `aria-busy` and
-prevents repeated activation.
+and 24px respectively. Figma defines only Default and Disabled states. Hover
+and pressed opacity, the token-based focus-visible ring, and the
+dimension-preserving loading overlay are engineering/accessibility fallbacks,
+not Figma-approved visual states. Loading sets `aria-busy`, exposes the supplied
+loading label as the accessible name, and prevents repeated activation.
 
 `IconButton` supports `filled`, `outline`, and `ghost` visual variants. Its
 visual control sizes are 32px, 40px, and 48px. The corresponding Figma artwork
@@ -270,6 +266,11 @@ states are supported. `InputField` owns `htmlFor`, `aria-invalid`, and
 `aria-describedby` wiring; callers provide a stable `id` and localized copy.
 Phone-specific business structure is intentionally not part of this generic API.
 
+`PhoneInputField` is the separate DS-02 compound control shown under Figma Auth
+Components. It composes a 44px field, 78px country-prefix region, 22x16px flag,
+24px divider, country code, and native `tel` input. Its country data is supplied
+by the caller; it contains no authentication, validation, or formatting logic.
+
 ### Badge
 
 `Badge` variants are semantic: `discount`, `new`, `personalization`, and
@@ -281,28 +282,32 @@ full radius.
 ### Icon architecture
 
 The Rafal icon catalog lives in `src/components/ui/icons`. Standard interface
-icons are thin wrappers around individually imported Phosphor SSR entrypoints,
-matching the Phosphor components referenced by Figma without importing the
-package barrel. They share a `size`, `className`, optional `label`, regular
-weight, and `currentColor` API. Decorative icons are `aria-hidden` by default;
-a supplied label exposes the icon as an image.
+icons are local SVG React components using the regular Phosphor vector paths
+named by Figma's `Icons (Phosphor)` section. They share a 256px viewBox,
+`currentColor`, `size`, `className`, and optional `label` API. Decorative icons
+are `aria-hidden` by default; a supplied label exposes the icon as an image.
 
 Fixed-color brand and payment assets are separate SVG components. They retain
 their Figma/official brand colors and therefore do not use `currentColor`, with
 the exception of single-color marks whose color is intentionally inherited.
 Figma-provided/custom vectors take priority for brand and payment fidelity;
-Phosphor remains the fallback for general-purpose interface glyphs only.
+Phosphor package components remain allowed only for general-purpose glyphs not
+defined by the approved catalog, such as the Button loading spinner.
 
 ### DS-02 sizing and detail tokens
 
 ```text
-product-card-size       170px
+product-card-reference-width 170px
 rating-width             58px
+rating-star-size          10px
 badge-padding-inline      9px
 border-width-emphasis   1.5px
 icon-button-art-sm      12.8px
 icon-button-art-md        16px
 icon-button-art-lg      19.2px
+product-card-wishlist     28px control / 14px art
+phone-input-prefix        78px
+phone-input-flag          22px x 16px
 ```
 
 These values are component geometry verified directly in the Button, Icon
@@ -338,6 +343,7 @@ Examples from approved product requirements include different mobile/desktop beh
 ## 8. Component Layers
 
 ### 8.1 Primitives
+
 Examples:
 
 - Button
@@ -354,6 +360,7 @@ Examples:
 Primitives own visual variants and accessibility behavior, not ecommerce business rules.
 
 ### 8.2 Composite reusable components
+
 Examples:
 
 - ProductCard
@@ -367,6 +374,7 @@ Examples:
 These may understand a reusable ecommerce concept but should avoid page-specific orchestration.
 
 ### 8.3 Feature components
+
 Examples:
 
 - ProductPurchasePanel
@@ -442,16 +450,28 @@ The BRD expects product cards to support product imagery, name, price/discount c
 
 The reusable `ProductCard` accepts typed display data and action-button props;
 it performs no fetching, formatting, inventory lookup, or state management. It
-composes `Badge`, `IconButton`, `Rating`, and `PriceDisplay`, uses a reserved
-170px square `next/image` area, and supports the approved default,
+composes a relative `ProductMedia` layer and a `ProductInfo` layer from `Badge`,
+`IconButton`, `Rating`, and `PriceDisplay`. The Figma component reference is
+170px wide, but width is owned by the parent/grid in code (`w-full`); the media
+keeps a square aspect ratio and callers must provide an accurate responsive
+`imageSizes` value. It supports the approved default,
 personalization, discount, new, quick-add, and unavailable badge treatments.
 Prices and all labels are passed in already localized/formatted so this
 component does not create currency or localization architecture.
 
-Card links and action buttons are siblings, preventing nested interactive
-elements. Badges/actions use logical `start`/`end` positioning for RTL/LTR.
+The single product link uses a stretched hit area while media actions remain
+sibling buttons above it, preventing nested interactive elements. Badge and
+quick-add sit at logical `end`; wishlist sits at logical `start`, matching the
+approved RTL frame. All overlays are positioned relative to ProductMedia, not
+to the full card.
 Unavailable state disables quick add when supplied and requires callers to
 provide the localized unavailable label.
+
+Figma's standalone Rating Stars set defines only integer 1-5 variants. The
+Product Card uses 10px versions of the same five-point star with 2px gaps.
+`Rating` preserves the numeric average and uses proportional fill for a
+fractional star as an explicitly documented engineering representation; Figma
+does not currently define a half/partial-star variant.
 
 Product availability and location/warehouse behavior should be provided to the card as data/state, not computed from browser storage inside the card.
 
@@ -508,9 +528,9 @@ Engineering rules:
 
 ## 16. Icons
 
-Use the Rafal wrappers around individually imported Phosphor icons for standard
-interface glyphs. Use the fixed SVG components in the same catalog for brand,
-social, country, and payment marks.
+Use the local Rafal SVG components for standard interface glyphs. Use the fixed
+SVG components in the same catalog for brand, social, country, and payment
+marks.
 
 Do not add a second icon library for a handful of icons.
 Do not recreate brand/provider logos as arbitrary text/icons and do not recolor

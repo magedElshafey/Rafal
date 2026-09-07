@@ -1,50 +1,27 @@
-import { forwardRef } from "react";
-import type { Icon, IconProps, IconWeight } from "@phosphor-icons/react/dist/lib/types";
-import { ArrowLeftIcon as ArrowLeftSource } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
-import { ArrowRightIcon as ArrowRightSource } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { BellIcon as BellSource } from "@phosphor-icons/react/dist/ssr/Bell";
-import { CheckIcon as CheckSource } from "@phosphor-icons/react/dist/ssr/Check";
-import { CaretDownIcon as ChevronDownSource } from "@phosphor-icons/react/dist/ssr/CaretDown";
-import { CaretLeftIcon as ChevronLeftSource } from "@phosphor-icons/react/dist/ssr/CaretLeft";
-import { CaretRightIcon as ChevronRightSource } from "@phosphor-icons/react/dist/ssr/CaretRight";
-import { CrownIcon as CrownSource } from "@phosphor-icons/react/dist/ssr/Crown";
-import { EyeIcon as EyeSource } from "@phosphor-icons/react/dist/ssr/Eye";
-import { GridFourIcon as GridSource } from "@phosphor-icons/react/dist/ssr/GridFour";
-import { HeadsetIcon as HeadsetSource } from "@phosphor-icons/react/dist/ssr/Headset";
-import { HeartIcon as HeartSource } from "@phosphor-icons/react/dist/ssr/Heart";
-import { HouseIcon as HomeSource } from "@phosphor-icons/react/dist/ssr/House";
-import { InfoIcon as InfoSource } from "@phosphor-icons/react/dist/ssr/Info";
-import { MapPinIcon as MapPinSource } from "@phosphor-icons/react/dist/ssr/MapPin";
-import { DotsThreeIcon as MoreHorizontalSource } from "@phosphor-icons/react/dist/ssr/DotsThree";
-import { PlusIcon as PlusSource } from "@phosphor-icons/react/dist/ssr/Plus";
-import { MagnifyingGlassIcon as SearchSource } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
-import { ShieldCheckIcon as ShieldCheckSource } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
-import { ShoppingBagIcon as ShoppingBagSource } from "@phosphor-icons/react/dist/ssr/ShoppingBag";
-import { SlidersHorizontalIcon as SlidersSource } from "@phosphor-icons/react/dist/ssr/SlidersHorizontal";
-import { TruckIcon as TruckSource } from "@phosphor-icons/react/dist/ssr/Truck";
-import { UserIcon as UserSource } from "@phosphor-icons/react/dist/ssr/User";
-import { XIcon as XSource } from "@phosphor-icons/react/dist/ssr/X";
+import { forwardRef, type SVGProps } from "react";
 
-export interface RafalIconProps
-  extends Omit<IconProps, "alt" | "color" | "weight"> {
+export interface RafalIconProps extends Omit<SVGProps<SVGSVGElement>, "color"> {
   label?: string;
-  weight?: IconWeight;
+  size?: number | string;
 }
 
-function createRafalIcon(Source: Icon, displayName: string) {
+function createRafalIcon(path: string, displayName: string) {
   const Component = forwardRef<SVGSVGElement, RafalIconProps>(
-    ({ label, size = 24, weight = "regular", ...props }, ref) => (
-      <Source
+    ({ label, size = 24, ...props }, ref) => (
+      <svg
         ref={ref}
-        {...props}
-        size={size}
-        weight={weight}
-        color="currentColor"
+        viewBox="0 0 256 256"
+        width={size}
+        height={size}
+        fill="currentColor"
         focusable="false"
         aria-hidden={label ? undefined : true}
         aria-label={label}
         role={label ? "img" : undefined}
-      />
+        {...props}
+      >
+        <path d={path} />
+      </svg>
     ),
   );
 
@@ -52,33 +29,103 @@ function createRafalIcon(Source: Icon, displayName: string) {
   return Component;
 }
 
-export const ArrowLeftIcon = createRafalIcon(ArrowLeftSource, "ArrowLeftIcon");
-export const ArrowRightIcon = createRafalIcon(ArrowRightSource, "ArrowRightIcon");
-export const ChevronLeftIcon = createRafalIcon(ChevronLeftSource, "ChevronLeftIcon");
-export const ChevronRightIcon = createRafalIcon(ChevronRightSource, "ChevronRightIcon");
-export const ChevronDownIcon = createRafalIcon(ChevronDownSource, "ChevronDownIcon");
-export const SearchIcon = createRafalIcon(SearchSource, "SearchIcon");
-export const ShoppingBagIcon = createRafalIcon(ShoppingBagSource, "ShoppingBagIcon");
-export const HeartIcon = createRafalIcon(HeartSource, "HeartIcon");
-export const UserIcon = createRafalIcon(UserSource, "UserIcon");
-export const HomeIcon = createRafalIcon(HomeSource, "HomeIcon");
-export const GridIcon = createRafalIcon(GridSource, "GridIcon");
-export const CheckIcon = createRafalIcon(CheckSource, "CheckIcon");
-export const XIcon = createRafalIcon(XSource, "XIcon");
-export const InfoIcon = createRafalIcon(InfoSource, "InfoIcon");
+export const ArrowLeftIcon = createRafalIcon(
+  "M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z",
+  "ArrowLeftIcon",
+);
+export const ArrowRightIcon = createRafalIcon(
+  "M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z",
+  "ArrowRightIcon",
+);
+export const ChevronLeftIcon = createRafalIcon(
+  "M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z",
+  "ChevronLeftIcon",
+);
+export const ChevronRightIcon = createRafalIcon(
+  "M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z",
+  "ChevronRightIcon",
+);
+export const ChevronDownIcon = createRafalIcon(
+  "M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z",
+  "ChevronDownIcon",
+);
+export const SearchIcon = createRafalIcon(
+  "M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z",
+  "SearchIcon",
+);
+export const ShoppingBagIcon = createRafalIcon(
+  "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z",
+  "ShoppingBagIcon",
+);
+export const HeartIcon = createRafalIcon(
+  "M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z",
+  "HeartIcon",
+);
+export const UserIcon = createRafalIcon(
+  "M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z",
+  "UserIcon",
+);
+export const HomeIcon = createRafalIcon(
+  "M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z",
+  "HomeIcon",
+);
+export const GridIcon = createRafalIcon(
+  "M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,80H136V56h64ZM120,56v64H56V56ZM56,136h64v64H56Zm144,64H136V136h64v64Z",
+  "GridIcon",
+);
+export const CheckIcon = createRafalIcon(
+  "M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z",
+  "CheckIcon",
+);
+export const XIcon = createRafalIcon(
+  "M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z",
+  "XIcon",
+);
+export const InfoIcon = createRafalIcon(
+  "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z",
+  "InfoIcon",
+);
 export const MoreHorizontalIcon = createRafalIcon(
-  MoreHorizontalSource,
+  "M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128Zm56-12a12,12,0,1,0,12,12A12,12,0,0,0,196,116ZM60,116a12,12,0,1,0,12,12A12,12,0,0,0,60,116Z",
   "MoreHorizontalIcon",
 );
-export const PlusIcon = createRafalIcon(PlusSource, "PlusIcon");
-export const SlidersIcon = createRafalIcon(SlidersSource, "SlidersIcon");
-export const BellIcon = createRafalIcon(BellSource, "BellIcon");
-export const MapPinIcon = createRafalIcon(MapPinSource, "MapPinIcon");
-export const TruckIcon = createRafalIcon(TruckSource, "TruckIcon");
-export const CrownIcon = createRafalIcon(CrownSource, "CrownIcon");
+export const PlusIcon = createRafalIcon(
+  "M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z",
+  "PlusIcon",
+);
+export const SlidersIcon = createRafalIcon(
+  "M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16h97a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z",
+  "SlidersIcon",
+);
+export const BellIcon = createRafalIcon(
+  "M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z",
+  "BellIcon",
+);
+export const MapPinIcon = createRafalIcon(
+  "M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z",
+  "MapPinIcon",
+);
+export const TruckIcon = createRafalIcon(
+  "M255.42,117l-14-35A15.93,15.93,0,0,0,226.58,72H192V64a8,8,0,0,0-8-8H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H49a32,32,0,0,0,62,0h50a32,32,0,0,0,62,0h17a16,16,0,0,0,16-16V120A7.94,7.94,0,0,0,255.42,117ZM192,88h34.58l9.6,24H192ZM32,72H176v64H32ZM80,208a16,16,0,1,1,16-16A16,16,0,0,1,80,208Zm81-24H111a32,32,0,0,0-62,0H32V152H176v12.31A32.11,32.11,0,0,0,161,184Zm31,24a16,16,0,1,1,16-16A16,16,0,0,1,192,208Zm48-24H223a32.06,32.06,0,0,0-31-24V128h48Z",
+  "TruckIcon",
+);
+export const CrownIcon = createRafalIcon(
+  "M248,80a28,28,0,1,0-51.12,15.77l-26.79,33L146,73.4a28,28,0,1,0-36.06,0L85.91,128.74l-26.79-33a28,28,0,1,0-26.6,12L47,194.63A16,16,0,0,0,62.78,208H193.22A16,16,0,0,0,209,194.63l14.47-86.85A28,28,0,0,0,248,80ZM128,40a12,12,0,1,1-12,12A12,12,0,0,1,128,40ZM24,80A12,12,0,1,1,36,92,12,12,0,0,1,24,80ZM193.22,192H62.78L48.86,108.52,81.79,149A8,8,0,0,0,88,152a7.83,7.83,0,0,0,1.08-.07,8,8,0,0,0,6.26-4.74l29.3-67.4a27,27,0,0,0,6.72,0l29.3,67.4a8,8,0,0,0,6.26,4.74A7.83,7.83,0,0,0,168,152a8,8,0,0,0,6.21-3l32.93-40.52ZM220,92a12,12,0,1,1,12-12A12,12,0,0,1,220,92Z",
+  "CrownIcon",
+);
 export const ShieldCheckIcon = createRafalIcon(
-  ShieldCheckSource,
+  "M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z",
   "ShieldCheckIcon",
 );
-export const HeadsetIcon = createRafalIcon(HeadsetSource, "HeadsetIcon");
-export const EyeIcon = createRafalIcon(EyeSource, "EyeIcon");
+export const HeadsetIcon = createRafalIcon(
+  "M201.89,54.66A103.43,103.43,0,0,0,128.79,24H128A104,104,0,0,0,24,128v56a24,24,0,0,0,24,24H64a24,24,0,0,0,24-24V144a24,24,0,0,0-24-24H40.36A88.12,88.12,0,0,1,190.54,65.93,87.39,87.39,0,0,1,215.65,120H192a24,24,0,0,0-24,24v40a24,24,0,0,0,24,24h24a24,24,0,0,1-24,24H136a8,8,0,0,0,0,16h56a40,40,0,0,0,40-40V128A103.41,103.41,0,0,0,201.89,54.66ZM64,136a8,8,0,0,1,8,8v40a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V136Zm128,56a8,8,0,0,1-8-8V144a8,8,0,0,1,8-8h24v56Z",
+  "HeadsetIcon",
+);
+export const EyeIcon = createRafalIcon(
+  "M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z",
+  "EyeIcon",
+);
+export const ClockIcon = createRafalIcon(
+  "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z",
+  "ClockIcon",
+);

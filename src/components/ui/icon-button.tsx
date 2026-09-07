@@ -18,6 +18,8 @@ const iconButtonVariants = cva(
         sm: "size-8 [&_svg]:size-[var(--icon-button-art-sm)]",
         md: "size-10 [&_svg]:size-[var(--icon-button-art-md)]",
         lg: "size-12 [&_svg]:size-[var(--icon-button-art-lg)]",
+        productCard:
+          "size-[var(--product-card-wishlist-size)] [&_svg]:size-[var(--product-card-wishlist-art-size)]",
       },
     },
     defaultVariants: {
@@ -28,7 +30,8 @@ const iconButtonVariants = cva(
 );
 
 export interface IconButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof iconButtonVariants> {
   "aria-label": string;
 }

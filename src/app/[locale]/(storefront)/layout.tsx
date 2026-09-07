@@ -1,3 +1,5 @@
+import AnnouncmentBanner from "@/components/shell/storefront/announcment-banner/AnnouncmentBanner";
+import Header from "@/components/shell/storefront/header/Header";
 import type { ReactNode } from "react";
 
 type StoreFontLayoutProps = {
@@ -9,7 +11,8 @@ export default async function StoreFontLayout({
 }: StoreFontLayoutProps) {
   return (
     <>
-      <h1>store font layout </h1>
+      <Header />
+      <AnnouncmentBanner message="test" dismissible={true} />
       <main>{children}</main>
     </>
   );

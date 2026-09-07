@@ -14,18 +14,26 @@
 
   --destructive: #c62828;
   --success: #2e7d32;
-  /* Temporary semantic values pending confirmation in Figma. */
-  --warning: #b54708;
-  --info: #175cd3;
+  --warning: #c77700;
+  --info: #1565c0;
 
-  --shadow-floating-action: 0 1px 4px rgb(0 0 0 / 15%);
-  --product-card-size: 10.625rem;
+  --shadow-product-card-wishlist: 0 1px 4px rgb(0 0 0 / 15%);
+  --shadow-product-card-quick-add: 0 2px 4px rgb(0 0 0 / 15%);
+  --product-card-width: 10.625rem;
   --rating-width: 3.625rem;
+  --rating-star-size: 0.625rem;
   --badge-padding-inline: 0.5625rem;
   --border-width-emphasis: 0.09375rem;
   --icon-button-art-sm: 0.8rem;
   --icon-button-art-md: 1rem;
   --icon-button-art-lg: 1.2rem;
+  --product-card-wishlist-size: 1.75rem;
+  --product-card-wishlist-art-size: 0.875rem;
+  --product-card-quick-add-offset-block-end: 1.125rem;
+  --phone-input-prefix-width: 4.875rem;
+  --phone-input-divider-height: 1.5rem;
+  --phone-input-flag-width: 1.375rem;
+  --phone-input-flag-height: 1rem;
 }
 
 @theme inline {
@@ -110,17 +118,23 @@
   --text-badge--line-height: 0.75rem;
   --text-badge--font-weight: 500;
   --text-card-price: 0.9375rem;
-  --text-card-price--line-height: 1.25rem;
+  --text-card-price--line-height: 1.125rem;
   --text-card-price--font-weight: 700;
+  --text-card-discount-price: 1rem;
+  --text-card-discount-price--line-height: 1.1875rem;
+  --text-card-discount-price--font-weight: 700;
+  --text-card-original-price: 0.75rem;
+  --text-card-original-price--line-height: 0.875rem;
+  --text-card-original-price--font-weight: 400;
 
   --spacing: 0.25rem;
 
+  --radius-none: 0;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-full: 9999px;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 999px;
 }
 
 @utility type-body {
@@ -169,6 +183,18 @@
   font-size: var(--text-card-price);
   line-height: var(--text-card-price--line-height);
   font-weight: var(--text-card-price--font-weight);
+}
+
+@utility type-card-discount-price {
+  font-size: var(--text-card-discount-price);
+  line-height: var(--text-card-discount-price--line-height);
+  font-weight: var(--text-card-discount-price--font-weight);
+}
+
+@utility type-card-original-price {
+  font-size: var(--text-card-original-price);
+  line-height: var(--text-card-original-price--line-height);
+  font-weight: var(--text-card-original-price--font-weight);
 }
 
 @layer base {

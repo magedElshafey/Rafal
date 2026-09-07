@@ -1,8 +1,13 @@
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
-const AppLogo = async () => {
-  const t = await getTranslations("Metadata");
-  return <Link href="/">{t("sitename")}</Link>;
+const AppLogo = () => {
+  return (
+    <Link
+      href="/"
+      className="uppercase font-bold text-lg sm:text-xl xl:text-2xl text-gray-1000"
+    >
+      rafal
+    </Link>
+  );
 };
 
 export default AppLogo;
