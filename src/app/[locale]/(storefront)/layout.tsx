@@ -12,7 +12,10 @@ export default async function StoreFontLayout({
   return (
     <>
       <Header />
-      <AnnouncmentBanner message="test" dismissible={true} />
+      <AnnouncmentBanner
+        message="شحن مجاني للطلبات فوق ٢٠٠ ر.س"
+        dismissible={true}
+      />
       <main>{children}</main>
     </>
   );

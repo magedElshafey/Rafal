@@ -27,20 +27,20 @@ const AnnouncementBanner = ({
     <aside
       {...props}
       className={cn(
-        "relative flex h-11 w-full items-center justify-center bg-gold-50 px-12",
+        "relative flex h-11 w-full items-center justify-center bg-accent px-12",
         className,
       )}
     >
-      <p className="type-body-sm text-gold-700">{message}</p>
+      <p className="type-body-sm text-gold-600 font-medium">{message}</p>
 
       {dismissible && (
         <IconButton
           type="button"
           variant="ghost"
-          size="sm"
+          size="md"
           aria-label="إغلاق شريط الإعلان"
           onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground cursor-pointer duration-300 hover:scale-105"
         >
           <XIcon />
         </IconButton>

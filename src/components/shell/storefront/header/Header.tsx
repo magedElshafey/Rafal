@@ -1,17 +1,23 @@
 import AppLogo from "@/components/shared/AppLogo";
-import ListLinks from "@/components/shell/storefront/header/ListLinks";
+import HeaderActions from "@/components/shell/storefront/header/HeaderActions";
+import ListLinks from "@/components/shell/storefront/header/PrimaryNavigation";
 import { Container } from "@/components/ui/container";
 
 const Header = () => {
   return (
-    <Container className="flex items-center justify-between gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-7">
-      <div className="shrink-0">
-        <AppLogo />
-      </div>
-      <div className="flex-1">
+    <header>
+      <Container className="flex min-h-16 items-center justify-between gap-4 py-3 md:min-h-20 md:py-4">
+        <div className="shrink-0">
+          <AppLogo />
+        </div>
+
         <ListLinks />
-      </div>
-    </Container>
+
+        <div className="shrink-0">
+          <HeaderActions />
+        </div>
+      </Container>
+    </header>
   );
 };
 

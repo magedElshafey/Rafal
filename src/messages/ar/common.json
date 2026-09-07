@@ -1,5 +1,14 @@
 {
   "LocaleSwitcher": {
     "label": "اللغة"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "offers": "العروض",
+    "about_us": "من نحن",
+    "blogs": "المدونة",
+    "login": "تسجيل الدخول",
+    "main_navigation": "التنقل الرئيسي"
   }
 }

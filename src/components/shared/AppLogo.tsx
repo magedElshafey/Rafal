@@ -1,11 +1,13 @@
 import { Link } from "@/i18n/navigation";
+
 const AppLogo = () => {
   return (
     <Link
       href="/"
-      className="uppercase font-bold text-lg sm:text-xl xl:text-2xl text-gray-1000"
+      aria-label="Rafal - Home"
+      className="inline-flex items-center rounded-sm font-bold uppercase text-lg text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-xl xl:text-2xl"
     >
-      rafal
+      Rafal
     </Link>
   );
 };
