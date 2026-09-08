@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/container";
 
 const Header = async () => {
   return (
-    <header>
+    <header className="bg-background">
       <Container className="flex min-h-16 items-center justify-between gap-4 py-3 md:min-h-20 md:py-4">
         <div className="shrink-0">
           <AppLogo />

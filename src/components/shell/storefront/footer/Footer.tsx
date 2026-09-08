@@ -8,12 +8,12 @@ import FooterLinksColumn from "./footer-links/FooterLinksColumn";
 import NewsLetter from "./news-letter/NewsLetter";
 
 const quickLinks = [
-  { href: "/about-us", key: "about" },
+  { href: "/about", key: "about" },
   { href: "/returns", key: "returns" },
   { href: "/shipping", key: "shipping" },
   { href: "/terms", key: "terms" },
   { href: "/privacy", key: "privacy" },
-  { href: "/complaints", key: "complaints" },
+  { href: "/contact", key: "complaints" },
 ] as const;
 
 const shoppingLinks = [
@@ -40,9 +40,9 @@ export default async function Footer() {
     href,
     label: t(`shopping.items.${key}`),
   }));
-  const stores = (Object.keys(storeDestinations) as Array<
-    keyof typeof storeDestinations
-  >).map((store) => ({
+  const stores = (
+    Object.keys(storeDestinations) as Array<keyof typeof storeDestinations>
+  ).map((store) => ({
     eyebrow: t(`stores.${store}.eyebrow`),
     href: storeDestinations[store],
     name: t(`stores.${store}.name`),
@@ -50,7 +50,7 @@ export default async function Footer() {
   }));
 
   return (
-    <footer className="w-full overflow-x-clip bg-gray-1000 text-gray-0">
+    <footer className="w-full overflow-x-clip bg-gray-1000 text-gray-0 mt-16 md:mt-24">
       <Container
         size="full"
         className="grid min-h-[var(--footer-columns-min-height)] grid-cols-1 gap-10 py-10 md:grid-cols-2 md:gap-x-12 xl:grid-cols-[var(--footer-desktop-columns)] xl:justify-between xl:gap-x-0 xl:px-[var(--footer-desktop-padding-inline)] xl:pt-13 xl:pb-7"

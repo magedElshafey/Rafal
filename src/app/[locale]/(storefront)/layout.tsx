@@ -64,7 +64,7 @@ export default async function StoreFontLayout({
         message="شحن مجاني للطلبات فوق ٢٠٠ ر.س"
         dismissible={true}
       />
-      <main className="flex-1 mt-5 md:mt-6 lg:mt-7 xl:mt-8">{children}</main>
+      <main className="flex-1 mt-5">{children}</main>
       <Footer />
       <MobileBottomNavigation />
     </div>

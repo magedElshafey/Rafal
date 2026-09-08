@@ -1,0 +1,52 @@
+{
+  "blog": {
+    "title": "Rafal Journal",
+    "description": "Gift ideas, personalization guides, and stories from Rafal",
+    "featured": "Featured article",
+    "allArticles": "All articles",
+    "empty": "There are no published articles yet.",
+    "viewMore": "View more articles",
+    "author": "Rafal team",
+    "readingTime": "{minutes} min read",
+    "related": "Related articles",
+    "breadcrumbs": { "home": "Home", "blog": "Blog" }
+  },
+  "about": {
+    "title": "Rafal",
+    "heroDescription": "Your destination for premium shopping in Saudi Arabia",
+    "story": {
+      "title": "Our story",
+      "description": "Rafal began with a genuine passion for creating an exceptional shopping experience for customers in Saudi Arabia and the Gulf. We carefully select fine jewelry, accessories, and gifts while committing to quality and authenticity in every piece we offer."
+    },
+    "mission": { "title": "Our mission", "description": "To provide a seamless, trusted shopping experience with the highest standards of quality and service." },
+    "vision": { "title": "Our vision", "description": "To become the region's leading destination for premium online shopping." },
+    "why": {
+      "title": "Why Rafal?",
+      "items": {
+        "shipping": { "title": "Fast, secure delivery", "description": "Delivery throughout Saudi Arabia within a few days." },
+        "quality": { "title": "Guaranteed quality", "description": "Authentic materials and high manufacturing standards in every product." },
+        "personalization": { "title": "Unique personalization", "description": "Names and messages engraved with care and precision." }
+      }
+    },
+    "rating": { "title": "Store rating", "starsLabel": "Five out of five stars", "description": "4.8 out of 5 — based on more than 120 reviews" }
+  },
+  "contact": {
+    "title": "Contact us",
+    "description": "We welcome your questions and feedback and will respond as soon as possible.",
+    "form": {
+      "title": "Send us a message",
+      "nameLabel": "Full name",
+      "namePlaceholder": "Enter your name...",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "example@email.com",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Question / feedback",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Write your message or feedback here...",
+      "submit": "Send message",
+      "notice": "Your message will go directly to our support team. We aim to reply within 24–48 hours."
+    },
+    "info": { "title": "Contact information", "phone": "Phone", "email": "Email", "hours": "Working hours", "hoursValue": "Daily, 9am–11pm" },
+    "help": { "title": "Need quick help?", "description": "Browse frequently asked questions for immediate answers about orders, shipping, and returns." }
+  }
+}

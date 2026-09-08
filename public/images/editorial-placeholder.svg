@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Rafal editorial placeholder</title>
+  <desc id="description">A neutral arrangement inspired by a personalized jewelry photograph.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3eee7"/>
+      <stop offset="1" stop-color="#d8c3a9"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9b948c"/>
+      <stop offset="0.5" stop-color="#f8f6f2"/>
+      <stop offset="1" stop-color="#aaa39b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#background)"/>
+  <path d="M0 500c260-55 520-42 1200-126v346H0z" fill="#c6a982" opacity=".62"/>
+  <path d="M360-20c40 210 102 333 218 470M846-20c-37 203-90 330-216 470" fill="none" stroke="#aaa49d" stroke-width="9"/>
+  <rect x="470" y="410" width="270" height="75" rx="14" fill="url(#metal)" stroke="#9a938a" stroke-width="3"/>
+  <text x="605" y="461" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" letter-spacing="18" fill="#827970">RAFAL</text>
+  <g fill="none" stroke="#8b8b62" stroke-width="5" opacity=".55">
+    <path d="M0 120c120 28 185 98 270 205"/>
+    <path d="M82 145l-4-70m58 113 48-65m5 131 75-18"/>
+  </g>
+</svg>

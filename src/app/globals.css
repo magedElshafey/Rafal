@@ -6,6 +6,7 @@
   --muted: #f2f2f2;
   --muted-foreground: #525252;
   --border: #e5e5e5;
+  --page: #f9f9f9;
   --primary: #b8834a;
   --primary-foreground: #ffffff;
   --accent: #fbf3e7;
@@ -13,7 +14,7 @@
   --ring: #b8834a;
 
   --destructive: #c62828;
-  --success: #2e7d32;
+  --success: #168b47;
   --warning: #c77700;
   --info: #1565c0;
 
@@ -98,7 +99,7 @@
   --color-warning: var(--warning);
   --color-info: var(--info);
   --color-ring: var(--ring);
-
+  --color-page: var(--page);
   --font-sans: var(--font-tajawal), "Tajawal", ui-sans-serif, sans-serif;
 
   --text-display: 2rem;
@@ -231,10 +232,15 @@
   line-height: var(--mobile-bottom-navigation-label-line-height);
   font-weight: 400;
 }
-
+@utility padding-page-sm {
+  padding-top: 64px;
+}
+@utility padding-page-lg {
+  padding-top: 96px;
+}
 @layer base {
   body {
-    background: var(--background);
+    background: var(--page);
     color: var(--foreground);
     font-family: var(--font-tajawal), "Tajawal", ui-sans-serif, sans-serif;
   }
