@@ -1,5 +1,5 @@
-const Loginpage = () => {
-  return <div>Loginpage</div>;
-};
+import { EmailEntryScreen } from "@/features/auth/components/EmailEntryScreen";
 
-export default Loginpage;
+export default function LoginPage() {
+  return <EmailEntryScreen />;
+}

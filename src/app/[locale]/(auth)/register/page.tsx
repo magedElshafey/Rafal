@@ -1,5 +1,5 @@
-const Registerpage = () => {
-  return <div>Registerpage</div>;
-};
+import { CompleteProfileScreen } from "@/features/auth/components/CompleteProfileScreen";
 
-export default Registerpage;
+export default function RegisterPage() {
+  return <CompleteProfileScreen />;
+}

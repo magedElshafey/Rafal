@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 
 import { env } from "@/config/env";
 import { routing } from "@/i18n/routing";
+import { RafalToaster } from "@/components/ui/rafal-toaster";
 
 import "../globals.css";
 
@@ -68,6 +69,7 @@ export default async function LocaleLayout({
     <html lang={locale} dir={direction}>
       <body className={tajawal.variable}>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <RafalToaster direction={direction} />
       </body>
     </html>
   );

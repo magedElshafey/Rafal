@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
   --muted: #f2f2f2;
   --muted-foreground: #525252;
   --border: #e5e5e5;
@@ -50,6 +50,13 @@
   --mobile-bottom-navigation-icon-size: 1.125rem;
   --mobile-bottom-navigation-label-size: 0.625rem;
   --mobile-bottom-navigation-label-line-height: 0.75rem;
+  --auth-card-width: 24.375rem;
+  --auth-card-block-offset: 6.25rem;
+  --otp-cell-height: 3.5rem;
+  --modal-max-width: 18.75rem;
+  --shadow-auth-card: 0 1.125rem 2rem rgb(0 0 0 / 10%);
+  --shadow-modal: 0 1rem 2rem rgb(0 0 0 / 16%);
+  --shadow-toast: 0 0.5rem 1rem rgb(0 0 0 / 20%);
 }
 
 @theme inline {

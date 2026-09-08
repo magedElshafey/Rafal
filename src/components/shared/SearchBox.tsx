@@ -2,6 +2,8 @@ import { forwardRef, type InputHTMLAttributes } from "react";
 
 import { SearchIcon, XIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type SearchBoxProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -26,23 +28,24 @@ const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(
         {label}
       </label>
       <SearchIcon size={20} className="shrink-0 text-gray-1000" />
-      <input
+      <Input
         ref={ref}
         id={id}
         type="search"
         value={value}
-        className="min-w-0 flex-1 bg-transparent type-ui-sm leading-none text-gray-1000 outline-none placeholder:text-gray-400 [&::-webkit-search-cancel-button]:hidden"
+        className="min-w-0 flex-1 bg-transparent type-ui-sm [&::-webkit-search-cancel-button]:hidden border-none"
         {...props}
       />
+
       {onClear && value ? (
-        <button
+        <Button
           type="button"
           aria-label={clearLabel}
           onClick={onClear}
-          className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-transparent"
         >
           <XIcon size={16} />
-        </button>
+        </Button>
       ) : null}
     </search>
   ),

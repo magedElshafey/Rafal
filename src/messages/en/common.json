@@ -96,5 +96,45 @@
       "paymentMethods": "Secure and flexible payment methods",
       "copyright": "All rights reserved to Rafal Store"
     }
+  },
+  "auth": {
+    "brandHome": "Rafal — home page",
+    "backToEmail": "Back to email entry",
+    "backToOtp": "Back to email verification",
+    "email": {
+      "title": "Welcome to Rafal",
+      "description": "Enter your email address to continue",
+      "label": "Email address",
+      "placeholder": "example@email.com",
+      "continue": "Continue",
+      "or": "or",
+      "social": {
+        "apple": "Continue with Apple",
+        "google": "Continue with Google",
+        "facebook": "Continue with Facebook"
+      }
+    },
+    "otp": {
+      "title": "Verify your email",
+      "description": "We sent a verification code to",
+      "demoEmail": "example@email.com",
+      "label": "6-digit verification code",
+      "resendCountdown": "Resend in",
+      "resend": "Resend code",
+      "verify": "Verify"
+    },
+    "profile": {
+      "title": "Complete your profile",
+      "description": "Tell us a little more about yourself",
+      "firstName": "First name",
+      "firstNamePlaceholder": "Example: Mohammed",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Example: Ahmed",
+      "mobile": "Mobile number",
+      "mobilePlaceholder": "5X XXX XXXX",
+      "terms": "I agree to the terms and conditions and privacy policy",
+      "marketing": "I would like to receive marketing messages and offers",
+      "createAccount": "Create account"
+    }
   }
 }

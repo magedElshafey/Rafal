@@ -7,7 +7,7 @@ interface FooterTitleProps {
 
 export default function FooterTitle({ children, id }: FooterTitleProps) {
   return (
-    <h2 id={id} className="type-body-lg font-bold text-gray-0">
+    <h2 id={id} className="type-body-lg font-bold text-background">
       {children}
     </h2>
   );

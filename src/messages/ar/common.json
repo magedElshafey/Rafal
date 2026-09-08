@@ -96,5 +96,45 @@
       "paymentMethods": "طرق دفع آمنة ومتعددة",
       "copyright": "جميع الحقوق محفوظة لمتجر رافال"
     }
+  },
+  "auth": {
+    "brandHome": "رافال — الصفحة الرئيسية",
+    "backToEmail": "العودة إلى إدخال البريد الإلكتروني",
+    "backToOtp": "العودة إلى التحقق من البريد الإلكتروني",
+    "email": {
+      "title": "أهلاً بك في رافال",
+      "description": "أدخل بريدك الإلكتروني للمتابعة",
+      "label": "البريد الإلكتروني",
+      "placeholder": "example@email.com",
+      "continue": "متابعة",
+      "or": "أو",
+      "social": {
+        "apple": "المتابعة عبر Apple",
+        "google": "المتابعة عبر Google",
+        "facebook": "المتابعة عبر Facebook"
+      }
+    },
+    "otp": {
+      "title": "تحقق من بريدك الإلكتروني",
+      "description": "أرسلنا رمز التحقق إلى",
+      "demoEmail": "example@email.com",
+      "label": "رمز التحقق المكون من 6 أرقام",
+      "resendCountdown": "إعادة الإرسال خلال",
+      "resend": "إعادة إرسال الرمز",
+      "verify": "تحقق"
+    },
+    "profile": {
+      "title": "استكمال البيانات",
+      "description": "أخبرنا بمزيد من المعلومات عنك",
+      "firstName": "الاسم الأول",
+      "firstNamePlaceholder": "مثال: محمد",
+      "lastName": "الاسم الأخير",
+      "lastNamePlaceholder": "مثال: أحمد",
+      "mobile": "رقم الجوال",
+      "mobilePlaceholder": "5X XXX XXXX",
+      "terms": "أوافق على الشروط والأحكام وسياسة الخصوصية",
+      "marketing": "أرغب في استقبال الرسائل والعروض التسويقية",
+      "createAccount": "إنشاء الحساب"
+    }
   }
 }

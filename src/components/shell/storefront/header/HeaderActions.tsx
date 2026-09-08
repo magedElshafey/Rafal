@@ -19,7 +19,7 @@ const HeaderActions = async ({
     return (
       <Link
         href="/login"
-        className="rounded-sm type-card-price font-medium text-gold-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="rounded-sm type-card-price font-medium text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         {t("login")}
       </Link>

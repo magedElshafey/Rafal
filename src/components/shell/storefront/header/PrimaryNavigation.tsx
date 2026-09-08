@@ -7,7 +7,7 @@ const PrimaryNavigation = async () => {
 
   return (
     <nav aria-label={t("main_navigation")} className="hidden md:block">
-      <ul className="flex items-center gap-8">
+      <ul className="flex items-center gap-4 sm:gap-5">
         {primaryNavigationItems.map((item) => (
           <li key={item.href}>
             <NavigationLink

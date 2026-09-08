@@ -27,7 +27,7 @@ export default function StoreDownloadLink({
       dir="ltr"
       className={cn(
         buttonVariants({ size: "md", variant: "outline" }),
-        "w-full justify-start border-gray-0 bg-gray-0 px-3 text-gray-1000 hover:bg-gray-100",
+        "w-full justify-start border-[#FFFFFF59] bg-transparent px-3 text-background",
       )}
     >
       <StoreIcon
@@ -36,10 +36,10 @@ export default function StoreDownloadLink({
         className="size-5 shrink-0"
       />
       <span className="flex min-w-0 flex-col items-start leading-none">
-        <span className="type-footer-store-eyebrow text-gray-600">
+        <span className="type-footer-store-eyebrow text-[#FFFFFFA6]">
           {eyebrow}
         </span>
-        <span className="type-body font-bold">{name}</span>
+        <span className="type-body font-bold text-background">{name}</span>
       </span>
     </a>
   );

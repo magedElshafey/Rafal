@@ -133,7 +133,10 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
   });
 
   return (
-    <div ref={rootRef} className="relative w-full md:w-[var(--header-search-width)]">
+    <div
+      ref={rootRef}
+      className="relative w-full md:w-[var(--header-search-width)]"
+    >
       <SearchBox
         ref={inputRef}
         id="storefront-product-search"
@@ -149,7 +152,9 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
         aria-controls={listboxId}
         aria-expanded={showPanel}
         aria-activedescendant={
-          activeIndex >= 0 ? `${listboxId}-${products[activeIndex]?.id}` : undefined
+          activeIndex >= 0
+            ? `${listboxId}-${products[activeIndex]?.id}`
+            : undefined
         }
         onChange={handleChange}
         onFocus={() => query.trim() && setIsOpen(true)}
@@ -165,11 +170,17 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
           className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-40 overflow-hidden rounded-md border border-gray-200 bg-gray-0"
         >
           {state === "loading" ? (
-            <p className="px-4 py-6 text-center type-body text-gray-600" aria-live="polite">
+            <p
+              className="px-4 py-6 text-center type-body text-gray-600"
+              aria-live="polite"
+            >
               {copy.loading}
             </p>
           ) : state === "empty" ? (
-            <p className="px-4 py-6 text-center type-body text-gray-600" aria-live="polite">
+            <p
+              className="px-4 py-6 text-center type-body text-gray-600"
+              aria-live="polite"
+            >
               {copy.noResults}
             </p>
           ) : (

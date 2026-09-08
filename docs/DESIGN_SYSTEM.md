@@ -176,6 +176,12 @@ product-card-quick-add 0 2px 4px rgb(0 0 0 / 15%)
 
 Both values are taken from the corresponding Product Card controls in Figma.
 
+The approved authentication and feedback references add these elevation and
+geometry tokens: a 390px maximum auth card width with a 100px desktop block
+offset, a 300px modal maximum width, 56px OTP cells, and dedicated auth-card,
+modal, and toast shadows. Responsive modals use the same content tree as a
+mobile bottom sheet and desktop centered dialog.
+
 ### Breakpoints
 
 ```text

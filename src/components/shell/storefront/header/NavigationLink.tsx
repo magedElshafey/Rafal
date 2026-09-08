@@ -23,9 +23,10 @@ const NavigationLink = ({ href, label, match }: AppLinkProps) => {
       aria-current={isActive ? "page" : undefined}
       className={cn(
         "relative inline-flex rounded-full py-1.5 px-3.5 type-card-price font-medium text-foreground transition-colors",
+        "type-card-price",
         "hover:text-gold-500",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        isActive && "text-gold-500 bg-gold-50 ",
+        isActive && "text-primary bg-accent",
       )}
     >
       {label}
