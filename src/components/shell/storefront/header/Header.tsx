@@ -15,7 +15,7 @@ const Header = async () => {
         <ListLinks />
 
         <div className="shrink-0">
-          <HeaderActions />
+          <HeaderActions isAuthenticated={false} />
         </div>
       </Container>
     </header>

@@ -19,12 +19,14 @@ export async function EmailEntryScreen() {
       <div className="mb-10 text-center">
         <AppLogo
           aria-label={t("brandHome")}
-          className="text-h3 tracking-[0.18em]"
+          className="text-2xl tracking-[3px]"
         />
       </div>
       <header className="mb-8 text-center">
-        <h1 className="text-h2 font-bold text-gray-1000">{t("email.title")}</h1>
-        <p className="mt-1 type-body text-gray-600">{t("email.description")}</p>
+        <h1 className="text-2xl font-bold text-foreground">
+          {t("email.title")}
+        </h1>
+        <p className="mt-1 text-sm text-gray-600">{t("email.description")}</p>
       </header>
 
       <form className="flex flex-col gap-5">
@@ -36,7 +38,6 @@ export async function EmailEntryScreen() {
           required
           label={t("email.label")}
           placeholder={t("email.placeholder")}
-          className="h-12"
         />
         <Button type="button" size="lg" className="w-full">
           {t("email.continue")}

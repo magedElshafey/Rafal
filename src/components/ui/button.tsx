@@ -5,7 +5,7 @@ import { CircleNotchIcon } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-opacity motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:opacity-90 active:opacity-80 disabled:pointer-events-none disabled:opacity-100",
+  "relative inline-flex shrink-0 items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-opacity motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:opacity-90 active:opacity-80 disabled:pointer-events-none disabled:opacity-100 cursor-pointer",
   {
     variants: {
       variant: {
@@ -15,8 +15,7 @@ const buttonVariants = cva(
           "bg-gold-500 text-gray-1000 disabled:bg-gray-100 disabled:text-gray-400",
         outline:
           "border-[length:var(--border-width-emphasis)] border-gray-1000 bg-transparent text-gray-1000 disabled:border-gray-100 disabled:text-gray-400",
-        ghost:
-          "bg-transparent text-gray-1000 disabled:text-gray-400",
+        ghost: "bg-transparent text-gray-1000 disabled:text-gray-400",
       },
       size: {
         sm: "h-9 px-3.5 type-ui-sm",
@@ -32,7 +31,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   loading?: boolean;
   loadingLabel?: string;
@@ -60,9 +60,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled={disabled || loading}
       {...props}
       aria-busy={loading || undefined}
-      aria-label={loading ? loadingLabel || props["aria-label"] : props["aria-label"]}
+      aria-label={
+        loading ? loadingLabel || props["aria-label"] : props["aria-label"]
+      }
     >
-      <span className={cn("inline-flex items-center gap-2", loading && "opacity-0")}>
+      <span
+        className={cn("inline-flex items-center gap-2", loading && "opacity-0")}
+      >
         {children}
       </span>
       {loading ? (
