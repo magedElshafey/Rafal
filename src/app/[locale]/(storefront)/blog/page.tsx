@@ -17,10 +17,7 @@ export async function generateMetadata({
 }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
   const resolvedLocale: BlogLocale = locale === "en" ? "en" : "ar";
-  const t = await getTranslations({
-    locale: resolvedLocale,
-    namespace: "ContentPages.blog",
-  });
+  const t = await getTranslations("ContentPages.blog");
   return {
     title: t("title"),
     description: t("description"),
@@ -32,18 +29,19 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const { locale } = await params;
   const resolvedLocale: BlogLocale = locale === "en" ? "en" : "ar";
   const [t, articles] = await Promise.all([
-    getTranslations({ locale: resolvedLocale, namespace: "ContentPages.blog" }),
+    getTranslations("ContentPages.blog"),
     Promise.resolve(getLocalizedArticles(resolvedLocale)),
   ]);
   const featured = articles.find((article) => article.featured);
   const remaining = articles.filter((article) => !article.featured);
 
   return (
-    <Container size="wide" className="pb-16 pt-4 md:pb-24 md:pt-8">
+    <Container className="pb-16 pt-4 md:pb-24 md:pt-8">
       <PageIntro
         title={t("title")}
         description={t("description")}
-        className="mb-8 md:mb-12"
+        className="mb-8 md:mb-12 text-start"
+        descriptionClassName="mt-6 sm:mt-7 md:mt-8"
       />
       {featured ? (
         <FeaturedArticle

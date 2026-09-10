@@ -40,7 +40,7 @@ export default async function AboutPage() {
         className="bg-success px-4 py-14 md:py-18"
         description={t("heroDescription")}
         titleClassName="text-background lg:text-5xl"
-        descriptionClassName="text-background"
+        descriptionClassName="text-background mx-auto"
       />
 
       <Container size="default" className="pt-10 md:pt-12">

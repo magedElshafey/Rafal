@@ -23,8 +23,8 @@ function QuickAccessHeader({
   searchCopy,
 }: QuickAccessHeaderProps) {
   return (
-    <div className="bg-gray-50">
-      <Container className="flex flex-col  md:flex-row md:items-center md:justify-between md:py-3">
+    <div className="bg-gray-50 py-3 border-b border-b-gray-200">
+      <Container className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
         <div className="flex w-full items-center md:w-auto">
           <LocationController
             copy={locationCopy}
