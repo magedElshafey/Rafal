@@ -30,7 +30,7 @@ export default async function AboutPage() {
   const t = await getTranslations("ContentPages.about");
 
   return (
-    <div className="">
+    <div className="main-content-spacing">
       <PageIntro
         title={t("title")}
         className="bg-success px-4 py-14 md:py-18"

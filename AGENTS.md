@@ -476,6 +476,12 @@ _<!-- END\:nextjs-agent-rules -->_
 - Manual cancellation is caller-owned through `AbortSignal`; autocomplete/effect cleanup should cancel stale requests when appropriate.
 - A Server Component must never call the temporary Next mock through a production-style BFF abstraction; the mock is development substitution only.
 
+### Carousel implementation
+
+- All storefront carousel implementations must reuse the canonical `AppCarousel` primitive in `src/components/ui/app-carousel.tsx`.
+- Do not introduce another carousel package or create feature-specific Embla implementations unless an approved architecture decision explicitly requires it.
+- Feature modules must not import Embla directly; Embla integration is owned by `AppCarousel`.
+
 ### Next.js server boundaries
 
 - Prefer Server Actions for web-only mutations/side effects triggered by the Next.js UI when server execution is required.

@@ -32,7 +32,10 @@ type ErrorResponse = {
 };
 
 function buildUrl(path: string, baseUrl: URL, query?: QueryParams): URL {
-  const url = new URL(path, baseUrl);
+  const normalizedBaseUrl = new URL(baseUrl);
+  normalizedBaseUrl.pathname = `${normalizedBaseUrl.pathname.replace(/\/$/, "")}/`;
+
+  const url = new URL(path.replace(/^\/+/, ""), normalizedBaseUrl);
 
   if (!query) {
     return url;

@@ -13,6 +13,7 @@ import {
   getLocalizedArticles,
 } from "@/features/blog/data/articles";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
+import { Badge } from "@/components/ui/badge";
 
 type ArticlePageProps = { params: Promise<{ slug: string }> };
 
@@ -58,15 +59,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <Container>
         <Breadcrumbs items={breadcrumbItems} label={t("breadcrumbs.label")} />
       </Container>
-      <Container size="default" className="mt-8">
-        <header className="text-center">
-          <p className="mx-auto w-fit rounded-full bg-success/10 px-3 py-1 type-body-sm font-medium text-success">
+      <Container size="default" className="mt-6">
+        <header className="text-center space-y-4">
+          <Badge className="bg-success/10 text-success">
             {article.category}
-          </p>
-          <h1 className="mt-4 text-h1 font-bold text-gray-1000 md:text-display">
+          </Badge>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
             {article.title}
           </h1>
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center">
             <ArticleMeta
               date={article.publishedAt}
               author={t("author")}
@@ -81,7 +82,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           aspectRatio="16 / 9"
           sizes="(max-width: 1024px) 100vw, 1024px"
           preload
-          frameClassName="mt-7 rounded-lg md:mt-9"
+          frameClassName="mt-5 rounded-lg"
         />
       </Container>
       <Container size="wide" className="mt-6 md:mt-8">

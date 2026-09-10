@@ -1,4 +1,14 @@
 {
   "title": "الرئيسية",
-  "productNavigate": "الانتقال الي صفحة المنتجات"
+  "productNavigate": "الانتقال الي صفحة المنتجات",
+  "hero": {
+    "carouselLabel": "العروض المميزة",
+    "paginationLabel": "اختيار العرض",
+    "goToSlide": "الانتقال إلى العرض {number}",
+    "slideLabel": "العرض {current} من {total}",
+    "errorTitle": "تعذر تحميل العروض",
+    "errorDescription": "حدث خطأ مؤقت أثناء تحميل العروض. يرجى المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "retrying": "جارٍ إعادة المحاولة"
+  }
 }

@@ -15,11 +15,6 @@ export function ArticleMeta({
   locale,
   readingTime,
 }: ArticleMetaProps) {
-  // const formattedDate = new Intl.DateTimeFormat(locale, {
-  //   day: "numeric",
-  //   month: "long",
-  //   year: "numeric",
-  // }).format(new Date(`${date}T00:00:00Z`));
   const formattedDate = formateDate(locale, date);
   return (
     <p className="flex flex-wrap items-center gap-x-1.5 type-caption text-gray-400">

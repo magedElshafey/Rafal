@@ -30,6 +30,12 @@ It is intentionally more restrictive than a generic Next.js guide: coding agents
 
 - RTL is handled as an application/layout concern
 
+### Carousel foundation
+
+- `AppCarousel` is the canonical storefront carousel primitive.
+- Embla Carousel is the approved headless interaction engine behind that primitive.
+- Feature modules configure and compose `AppCarousel`; they do not import Embla directly.
+
 ### Backend
 
 - Separate Laravel backend

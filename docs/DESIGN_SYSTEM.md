@@ -238,7 +238,39 @@ gutters 16px base, 24px from sm, 32px from lg
 horizontal gutters or max-width behavior; compose it with `Container` when both
 responsibilities are needed.
 
+The approved Home Hero frame has a 1320px maximum width, a 420px height at that
+width, a `22 / 7` aspect ratio, and the `radius/lg` (16px) radius. Below its
+maximum width it remains fluid inside the standard `Container` gutters while
+preserving that aspect ratio. Its pagination is a separate normal-flow row below
+the image viewport.
+
 ## 5.3 DS-02 Component Registry
+
+### AppCarousel
+
+`AppCarousel` and its compositional `AppCarouselViewport`,
+`AppCarouselContent`, `AppCarouselSlide`, `AppCarouselPrevious`,
+`AppCarouselNext`, and `AppCarouselDots` exports form the canonical headless
+carousel primitive in `src/components/ui/app-carousel.tsx`. They own Embla
+integration, direction-aware keyboard navigation, carousel/slide semantics,
+control state, pagination state, and reduced-motion behavior. Callers own slide
+content, responsive `flex-basis`, gap, dimensions, aspect ratio, positioning,
+and which controls are rendered. Feature modules must not import Embla directly.
+
+### Skeleton
+
+`Skeleton` is the reusable presentation-only loading primitive in
+`src/components/ui/skeleton.tsx`. It provides a token-based reduced-motion-safe
+loading surface and accepts caller-owned dimensions through `className`. Feature
+skeletons must compose it with the exact layout geometry of the content they
+replace.
+
+### ErrorState
+
+`ErrorState` is the domain-agnostic error presentation primitive in
+`src/components/ui/error-state.tsx`. Callers provide safe title/description
+content and optional visual/action slots. It does not inspect transport errors,
+navigate, retry, redirect, or fetch data.
 
 ### Breadcrumbs
 

@@ -1,4 +1,14 @@
 {
   "title": "home",
-  "productNavigate": "navigate to home page"
+  "productNavigate": "navigate to home page",
+  "hero": {
+    "carouselLabel": "Featured offers",
+    "paginationLabel": "Choose an offer",
+    "goToSlide": "Go to offer {number}",
+    "slideLabel": "Offer {current} of {total}",
+    "errorTitle": "Offers could not be loaded",
+    "errorDescription": "There was a temporary problem loading the offers. Please try again.",
+    "retry": "Try again",
+    "retrying": "Trying again"
+  }
 }
