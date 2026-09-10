@@ -9,7 +9,7 @@
     "author": "فريق رافال",
     "readingTime": "{minutes} دقائق قراءة",
     "related": "مقالات ذات صلة",
-    "breadcrumbs": { "home": "الرئيسية", "blog": "المدونة" }
+    "breadcrumbs": { "label": "مسار التنقل", "home": "الرئيسية", "blog": "المدونة" }
   },
   "about": {
     "title": "رافال",

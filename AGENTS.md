@@ -285,6 +285,24 @@ If a requested implementation changes an established technical decision, label i
 
 Agents are encouraged to improve code quality inside existing boundaries, but not to expand scope or architecture autonomously.
 
+## 16. Breadcrumb Rule
+
+All breadcrumb navigation in the Rafal storefront MUST use the shared canonical `Breadcrumbs` component at `src/components/ui/breadcrumbs.tsx`.
+
+Do not create page-specific breadcrumb markup or duplicate breadcrumb styling.
+
+For static routes, pass static breadcrumb items to the shared component. For dynamic routes, resolve dynamic labels in the page/server/domain layer and pass the resolved items to the shared component.
+
+The `Breadcrumbs` component must remain domain-agnostic and must not fetch product, category, blog, CMS, or other business data itself.
+
+Do not derive user-facing dynamic labels by blindly parsing `pathname` segments.
+
+Keep breadcrumbs server-rendered whenever possible and do not introduce a client boundary solely for breadcrumb navigation.
+
+Reuse the project's established localization-aware `Link` from `src/i18n/navigation.ts`.
+
+Any future breadcrumb implementation must extend or reuse the canonical component rather than creating an alternative breadcrumb system.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

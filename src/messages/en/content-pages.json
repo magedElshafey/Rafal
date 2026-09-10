@@ -9,7 +9,7 @@
     "author": "Rafal team",
     "readingTime": "{minutes} min read",
     "related": "Related articles",
-    "breadcrumbs": { "home": "Home", "blog": "Blog" }
+    "breadcrumbs": { "label": "Breadcrumb", "home": "Home", "blog": "Blog" }
   },
   "about": {
     "title": "Rafal",

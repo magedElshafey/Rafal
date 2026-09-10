@@ -240,6 +240,42 @@ responsibilities are needed.
 
 ## 5.3 DS-02 Component Registry
 
+### Breadcrumbs
+
+`Breadcrumbs` is the canonical breadcrumb navigation primitive in
+`src/components/ui/breadcrumbs.tsx`. It accepts a localized accessible `label`
+and a non-empty `items` array. Each item contains a localized `label` and an
+optional locale-aware `href`; the component always renders the final item as
+the non-link current page.
+
+Static route example:
+
+```tsx
+<Breadcrumbs
+  label={t("breadcrumbs.label")}
+  items={[
+    { label: t("breadcrumbs.home"), href: "/" },
+    { label: t("breadcrumbs.about") },
+  ]}
+/>
+```
+
+Dynamic route example (after the page/server layer resolves `article`):
+
+```tsx
+<Breadcrumbs
+  label={t("breadcrumbs.label")}
+  items={[
+    { label: t("breadcrumbs.home"), href: "/" },
+    { label: t("breadcrumbs.blog"), href: "/blog" },
+    { label: article.title },
+  ]}
+/>
+```
+
+Breadcrumb labels and domain data are caller-owned. The primitive performs no
+translation, pathname parsing, data fetching, or page-layout spacing.
+
 ### Button
 
 `Button` is the semantic text/action primitive. Its Figma-backed API is:

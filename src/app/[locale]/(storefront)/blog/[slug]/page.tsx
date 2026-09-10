@@ -3,10 +3,13 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { AppImage } from "@/components/ui/app-image";
+import {
+  Breadcrumbs,
+  type BreadcrumbItem,
+} from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { ArticleMeta } from "@/features/blog/components/ArticleMeta";
 import { BlogCard } from "@/features/blog/components/BlogCard";
-import { Breadcrumbs } from "@/features/blog/components/Breadcrumbs";
 import { blogArticles, getLocalizedArticle, getLocalizedArticles } from "@/features/blog/data/articles";
 import type { BlogLocale } from "@/features/blog/types";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
@@ -37,11 +40,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (!article) notFound();
   const t = await getTranslations({ locale: resolvedLocale, namespace: "ContentPages.blog" });
   const related = getLocalizedArticles(resolvedLocale).filter((item) => item.slug !== slug).slice(0, 3);
+  const breadcrumbItems = [
+    { label: t("breadcrumbs.home"), href: "/" },
+    { label: t("breadcrumbs.blog"), href: "/blog" },
+    { label: article.title },
+  ] satisfies readonly [BreadcrumbItem, ...BreadcrumbItem[]];
 
   return (
     <article className="pb-16 pt-3 md:pb-24 md:pt-6">
       <Container size="wide">
-        <Breadcrumbs homeLabel={t("breadcrumbs.home")} blogLabel={t("breadcrumbs.blog")} current={article.title} />
+        <Breadcrumbs
+          items={breadcrumbItems}
+          label={t("breadcrumbs.label")}
+        />
       </Container>
       <Container size="default" className="mt-8">
         <header className="text-center">
@@ -65,4 +76,3 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     </article>
   );
 }
-
