@@ -6,10 +6,9 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { env } from "@/config/env";
 import { routing } from "@/i18n/routing";
 import { RafalToaster } from "@/components/ui/rafal-toaster";
-
+import { serverEnv } from "@/config/server-env";
 import "../globals.css";
 
 const tajawal = Tajawal({
@@ -40,7 +39,7 @@ export async function generateMetadata({
   });
 
   return {
-    metadataBase: env.siteUrl,
+    metadataBase: serverEnv.siteUrl,
     title: {
       default: t("siteName"),
       template: `%s | ${t("siteName")}`,
