@@ -1,26 +1,24 @@
+import type { Locale } from "next-intl";
+
 import { MOCK_CITIES } from "@/features/location/data/mock-cities";
-import type {
-  City,
-  CityLocale,
-  Coordinates,
-} from "@/features/location/types";
+import type { City, Coordinates } from "@/features/location/types";
 
 export type CityService = {
-  getCityById(cityId: string, locale: CityLocale): Promise<City | null>;
-  listCities(locale: CityLocale): Promise<City[]>;
+  getCityById(cityId: string, locale: Locale): Promise<City | null>;
+  listCities(locale: Locale): Promise<City[]>;
   findCityByCoordinates(
     coordinates: Coordinates,
-    locale: CityLocale,
+    locale: Locale,
   ): Promise<City | null>;
 };
 
 const MOCK_RESPONSE_DELAY_MS = 250;
 const MOCK_GEOLOCATED_CITY_ID = "riyadh";
-const cityListRequests = new Map<CityLocale, Promise<City[]>>();
+const cityListRequests = new Map<Locale, Promise<City[]>>();
 
 function mapCity(
   city: (typeof MOCK_CITIES)[number],
-  locale: CityLocale,
+  locale: Locale,
 ): City {
   return {
     id: city.id,

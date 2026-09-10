@@ -4,8 +4,6 @@ export type City = {
   isAvailable: boolean;
 };
 
-export type CityLocale = "ar" | "en";
-
 export type Coordinates = {
   latitude: number;
   longitude: number;

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
 import { CrownIcon, HeadsetIcon, TruckIcon } from "@/components/ui/icons";
@@ -9,7 +9,6 @@ import AboutCard from "@/features/about/components/AboutCard";
 import WhyusCard from "@/features/about/components/WhyusCard";
 import StoreRate from "@/features/about/components/StoreRate";
 
-type AboutPageProps = { params: Promise<{ locale: string }> };
 const benefitKeys = ["shipping", "quality", "personalization"] as const;
 const benefitIcons = {
   shipping: TruckIcon,
@@ -17,16 +16,13 @@ const benefitIcons = {
   personalization: HeadsetIcon,
 } as const;
 
-export async function generateMetadata({
-  params,
-}: AboutPageProps): Promise<Metadata> {
-  const { locale } = await params;
-  const resolvedLocale = locale === "en" ? "en" : "ar";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations("ContentPages.about");
   return {
     title: t("title"),
     description: t("heroDescription"),
-    alternates: getLocalizedAlternates(resolvedLocale, "/about"),
+    alternates: getLocalizedAlternates(locale, "/about"),
   };
 }
 const aboutData = ["mission", "vision"] as const;

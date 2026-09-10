@@ -1,6 +1,8 @@
+import type { Locale } from "next-intl";
+
 type MockCityRecord = {
   id: string;
-  names: Record<"ar" | "en", string>;
+  names: Record<Locale, string>;
   isAvailable: boolean;
 };
 

@@ -1,3 +1,5 @@
+import type { Locale } from "next-intl";
+
 import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 
@@ -8,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 type FeaturedArticleProps = {
   article: LocalizedBlogArticle;
   featuredLabel: string;
-  locale: string;
+  locale: Locale;
 };
 
 export function FeaturedArticle({

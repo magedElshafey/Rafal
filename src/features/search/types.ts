@@ -12,5 +12,3 @@ export type SearchProduct = {
   };
   price: ProductPrice;
 };
-
-export type SearchLocale = "ar" | "en";

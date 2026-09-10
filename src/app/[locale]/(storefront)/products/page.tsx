@@ -1,22 +1,16 @@
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{
-    locale: string;
-  }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations({
     locale,
     namespace: "Metadata.ProductsPage",
   });
   return {
     title: t("title"),
-    alternates: getLocalizedAlternates(locale as "ar" | "en", "/products"),
+    alternates: getLocalizedAlternates(locale, "/products"),
   };
 }
 const page = () => {

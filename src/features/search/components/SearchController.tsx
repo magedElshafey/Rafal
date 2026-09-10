@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { Locale } from "next-intl";
 import {
   useEffect,
   useRef,
@@ -11,7 +12,7 @@ import {
 
 import { SearchBox } from "@/components/shared/SearchBox";
 import { searchProducts } from "@/features/search/services/product-search-service";
-import type { SearchLocale, SearchProduct } from "@/features/search/types";
+import type { SearchProduct } from "@/features/search/types";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -26,7 +27,7 @@ export type SearchControllerCopy = {
 
 type SearchControllerProps = {
   copy: SearchControllerCopy;
-  locale: SearchLocale;
+  locale: Locale;
 };
 
 type SearchState = "idle" | "loading" | "results" | "empty";

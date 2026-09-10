@@ -5,7 +5,6 @@ import MobileBottomNavigation from "@/components/shell/storefront/mobile-navigat
 import QuickAccessHeader from "@/components/shell/storefront/quick-acess/QuickAccessHeader";
 import { GUEST_CITY_COOKIE_NAME } from "@/features/location/constants";
 import { cityService } from "@/features/location/services/city-service";
-import type { CityLocale } from "@/features/location/types";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
@@ -17,13 +16,12 @@ type StoreFontLayoutProps = {
 export default async function StoreFontLayout({
   children,
 }: StoreFontLayoutProps) {
-  const [t, requestedLocale, cookieStore] = await Promise.all([
+  const [t, locale, cookieStore] = await Promise.all([
     getTranslations("Common.headerUtility"),
     getLocale(),
     cookies(),
   ]);
 
-  const locale: CityLocale = requestedLocale === "en" ? "en" : "ar";
   const persistedCityId = cookieStore.get(GUEST_CITY_COOKIE_NAME)?.value;
   const initialCity = persistedCityId
     ? await cityService.getCityById(persistedCityId, locale)

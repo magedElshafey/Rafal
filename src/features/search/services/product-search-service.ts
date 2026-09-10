@@ -1,8 +1,10 @@
+import type { Locale } from "next-intl";
+
 import { MOCK_SEARCH_PRODUCTS } from "@/features/search/data/mock-products";
-import type { SearchLocale, SearchProduct } from "@/features/search/types";
+import type { SearchProduct } from "@/features/search/types";
 
 export type ProductSearchService = {
-  searchProducts(query: string, locale: SearchLocale): Promise<SearchProduct[]>;
+  searchProducts(query: string, locale: Locale): Promise<SearchProduct[]>;
 };
 
 const MOCK_RESPONSE_DELAY_MS = 250;

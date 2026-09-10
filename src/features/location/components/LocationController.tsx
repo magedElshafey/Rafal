@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import type { Locale } from "next-intl";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { LocationSelector } from "@/components/shared/LocationSelector";
+import { setGuestCityId } from "@/features/location/actions/set-guest-city";
 import { CitySelectionDialog } from "@/features/location/components/CitySelectionDialog";
-import type { City, CityLocale, Coordinates } from "@/features/location/types";
-import { writeGuestCityId } from "@/features/location/utils/guest-location-session";
+import type { City, Coordinates } from "@/features/location/types";
 
 export type LocationControllerCopy = {
   deliveryLabel: string;
@@ -28,12 +29,12 @@ export type LocationControllerCopy = {
 type LocationControllerProps = {
   copy: LocationControllerCopy;
   initialCity: City | null;
-  locale: CityLocale;
+  locale: Locale;
 };
 
-const cityCatalogRequests = new Map<CityLocale, Promise<City[]>>();
+const cityCatalogRequests = new Map<Locale, Promise<City[]>>();
 
-async function loadCityCatalog(locale: CityLocale) {
+async function loadCityCatalog(locale: Locale) {
   const cachedRequest = cityCatalogRequests.get(locale);
   if (cachedRequest) return cachedRequest;
 
@@ -52,7 +53,7 @@ async function loadCityCatalog(locale: CityLocale) {
 
 async function findCityFromCoordinates(
   coordinates: Coordinates,
-  locale: CityLocale,
+  locale: Locale,
 ) {
   const { cityService } = await import(
     "@/features/location/services/city-service"
@@ -72,6 +73,7 @@ export function LocationController({
   const [geolocationState, setGeolocationState] = useState<
     "idle" | "loading" | "error"
   >("idle");
+  const [, startTransition] = useTransition();
   const mountedRef = useRef(true);
 
   useEffect(() => {
@@ -99,10 +101,10 @@ export function LocationController({
   const handleSelect = (city: City) => {
     if (!city.isAvailable) return;
 
-    writeGuestCityId(city.id);
     setSelectedCity(city);
     setIsOpen(false);
     setGeolocationState("idle");
+    startTransition(() => setGuestCityId(city.id));
   };
 
   const handleOpen = () => {

@@ -1,13 +1,13 @@
-export type BlogLocale = "ar" | "en";
+import type { Locale } from "next-intl";
 
-export type LocalizedText = Record<BlogLocale, string>;
+export type LocalizedText = Record<Locale, string>;
 
 export type BlogArticle = {
   id: string;
   slug: string;
   title: LocalizedText;
   excerpt: LocalizedText;
-  content: Record<BlogLocale, readonly string[]>;
+  content: Record<Locale, readonly string[]>;
   category: LocalizedText;
   publishedAt: string;
   readingTime: number;
@@ -28,4 +28,3 @@ export type LocalizedBlogArticle = Omit<
   image: { src: string | null; alt: string };
   title: string;
 };
-

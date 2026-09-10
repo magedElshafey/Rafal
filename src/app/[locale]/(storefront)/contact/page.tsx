@@ -1,34 +1,28 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
 import { ContactForm } from "@/features/content/components/ContactForm";
 import { PageIntro } from "@/components/shared/PageIntro";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 
-type ContactPageProps = { params: Promise<{ locale: string }> };
-
-export async function generateMetadata({
-  params,
-}: ContactPageProps): Promise<Metadata> {
-  const { locale } = await params;
-  const resolvedLocale = locale === "en" ? "en" : "ar";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations({
-    locale: resolvedLocale,
+    locale,
     namespace: "ContentPages.contact",
   });
   return {
     title: t("title"),
     description: t("description"),
-    alternates: getLocalizedAlternates(resolvedLocale, "/contact"),
+    alternates: getLocalizedAlternates(locale, "/contact"),
   };
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
-  const { locale } = await params;
-  const resolvedLocale = locale === "en" ? "en" : "ar";
+export default async function ContactPage() {
+  const locale = await getLocale();
   const t = await getTranslations({
-    locale: resolvedLocale,
+    locale,
     namespace: "ContentPages.contact",
   });
   const formKeys = [

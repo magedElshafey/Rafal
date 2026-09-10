@@ -312,3 +312,20 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Frontend architecture rules
+
+### Internationalization
+
+- Locale is an application-level i18n concern, never a feature-specific type.
+- Use the locale type configured through `next-intl`; do not create `CityLocale`, `BlogLocale`, `ProductLocale`, or equivalent `"ar" | "en"` unions.
+- Supported locales must have one source of truth in the i18n configuration.
+- Do not add locale resolver/narrowing helpers when the type can be fixed at the i18n boundary.
+
+### Next.js server boundaries
+
+- Prefer Server Actions for web-only mutations/side effects triggered by the Next.js UI when server execution is required.
+- Do not create Route Handlers when no HTTP API boundary is actually needed.
+- Laravel remains the source of truth for domain/business logic. Do not duplicate business rules in Next.js.
+- Browser-provided values, including cookies, are untrusted inputs.
+- Do not call `router.refresh`, `revalidatePath`, or `revalidateTag` automatically after mutations; first verify that the current rendering/cache behavior requires it.

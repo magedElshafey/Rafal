@@ -1,3 +1,5 @@
+import type { Locale } from "next-intl";
+
 import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -7,7 +9,7 @@ import { ArticleMeta } from "./ArticleMeta";
 
 type BlogCardProps = {
   article: LocalizedBlogArticle;
-  locale: string;
+  locale: Locale;
   variant?: "default" | "compact";
 };
 

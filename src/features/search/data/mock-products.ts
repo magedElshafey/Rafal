@@ -1,7 +1,9 @@
+import type { Locale } from "next-intl";
+
 type MockProductRecord = {
   id: string;
-  names: Record<"ar" | "en", string>;
-  keywords: Record<"ar" | "en", readonly string[]>;
+  names: Record<Locale, string>;
+  keywords: Record<Locale, readonly string[]>;
   thumbnailSrc: string;
   price: {
     amount: number;

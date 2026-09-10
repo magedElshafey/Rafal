@@ -1,4 +1,6 @@
-import type { BlogArticle, BlogLocale, LocalizedBlogArticle } from "../types";
+import type { Locale } from "next-intl";
+
+import type { BlogArticle, LocalizedBlogArticle } from "../types";
 
 const sharedContent = {
   ar: [
@@ -96,7 +98,7 @@ export const blogArticles: readonly BlogArticle[] = [
   },
 ] as const;
 
-export function getLocalizedArticles(locale: BlogLocale): LocalizedBlogArticle[] {
+export function getLocalizedArticles(locale: Locale): LocalizedBlogArticle[] {
   return blogArticles.map((article) => ({
     ...article,
     category: article.category[locale],
@@ -107,6 +109,6 @@ export function getLocalizedArticles(locale: BlogLocale): LocalizedBlogArticle[]
   }));
 }
 
-export function getLocalizedArticle(locale: BlogLocale, slug: string) {
+export function getLocalizedArticle(locale: Locale, slug: string) {
   return getLocalizedArticles(locale).find((article) => article.slug === slug);
 }

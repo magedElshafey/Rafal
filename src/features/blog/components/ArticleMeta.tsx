@@ -1,9 +1,11 @@
+import type { Locale } from "next-intl";
+
 import { formateDate } from "@/utils/date/date.helpers";
 
 type ArticleMetaProps = {
   author?: string;
   date: string;
-  locale: string;
+  locale: Locale;
   readingTime?: string;
 };
 

@@ -1,9 +1,11 @@
+import type { Locale } from "next-intl";
+
 import { Container } from "@/components/ui/container";
 import {
   LocationController,
   type LocationControllerCopy,
 } from "@/features/location/components/LocationController";
-import type { City, CityLocale } from "@/features/location/types";
+import type { City } from "@/features/location/types";
 import {
   SearchController,
   type SearchControllerCopy,
@@ -11,7 +13,7 @@ import {
 
 type QuickAccessHeaderProps = {
   initialCity: City | null;
-  locale: CityLocale;
+  locale: Locale;
   locationCopy: LocationControllerCopy;
   searchCopy: SearchControllerCopy;
 };
