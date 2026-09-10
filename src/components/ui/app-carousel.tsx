@@ -1,6 +1,7 @@
 "use client";
 
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import {
   createContext,
   forwardRef,
@@ -46,7 +47,7 @@ function useAppCarousel() {
 }
 
 function usePrefersReducedMotion() {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -63,6 +64,7 @@ function usePrefersReducedMotion() {
 
 type AppCarouselProps = ComponentPropsWithoutRef<"section"> & {
   align?: CarouselAlign;
+  autoplay?: boolean;
   direction: CarouselDirection;
   dragFree?: boolean;
   draggable?: boolean;
@@ -73,6 +75,7 @@ type AppCarouselProps = ComponentPropsWithoutRef<"section"> & {
 
 function AppCarouselRoot({
   align = "start",
+  autoplay = false,
   children,
   className,
   direction,
@@ -95,12 +98,43 @@ function AppCarouselRoot({
     }),
     [align, direction, dragFree, draggable, loop, slidesToScroll],
   );
-  const [viewportRef, api] = useEmblaCarousel(options);
+  const autoplayPlugin = useMemo(
+    () =>
+      autoplay
+        ? Autoplay({
+            playOnInit: false,
+            rootNode: (emblaRoot) =>
+              emblaRoot.closest<HTMLElement>(
+                '[aria-roledescription="carousel"]',
+              ),
+            stopOnFocusIn: true,
+            stopOnInteraction: true,
+          })
+        : undefined,
+    [autoplay],
+  );
+  const plugins = useMemo(
+    () => (autoplayPlugin ? [autoplayPlugin] : []),
+    [autoplayPlugin],
+  );
+  const [viewportRef, api] = useEmblaCarousel(options, plugins);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [snapCount, setSnapCount] = useState(0);
   const [canScrollPrevious, setCanScrollPrevious] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
+  const shouldReduceMotion = reducedMotion ?? true;
+
+  useEffect(() => {
+    const autoplayApi = api?.plugins().autoplay;
+
+    if (!autoplayApi) return;
+
+    if (reducedMotion === false) autoplayApi.play();
+    else autoplayApi.stop();
+
+    return () => autoplayApi.stop();
+  }, [api, reducedMotion]);
 
   const updateState = useCallback(() => {
     if (!api) return;
@@ -126,16 +160,16 @@ function AppCarouselRoot({
   }, [api, updateState]);
 
   const scrollPrevious = useCallback(
-    () => api?.scrollPrev(reducedMotion),
-    [api, reducedMotion],
+    () => api?.scrollPrev(shouldReduceMotion),
+    [api, shouldReduceMotion],
   );
   const scrollNext = useCallback(
-    () => api?.scrollNext(reducedMotion),
-    [api, reducedMotion],
+    () => api?.scrollNext(shouldReduceMotion),
+    [api, shouldReduceMotion],
   );
   const scrollTo = useCallback(
-    (index: number) => api?.scrollTo(index, reducedMotion),
-    [api, reducedMotion],
+    (index: number) => api?.scrollTo(index, shouldReduceMotion),
+    [api, shouldReduceMotion],
   );
 
   const contextValue = useMemo(
@@ -143,7 +177,7 @@ function AppCarouselRoot({
       canScrollNext,
       canScrollPrevious,
       direction,
-      reducedMotion,
+      reducedMotion: shouldReduceMotion,
       scrollNext,
       scrollPrevious,
       scrollTo,
@@ -155,7 +189,7 @@ function AppCarouselRoot({
       canScrollNext,
       canScrollPrevious,
       direction,
-      reducedMotion,
+      shouldReduceMotion,
       scrollNext,
       scrollPrevious,
       scrollTo,

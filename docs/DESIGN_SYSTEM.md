@@ -255,7 +255,9 @@ carousel primitive in `src/components/ui/app-carousel.tsx`. They own Embla
 integration, direction-aware keyboard navigation, carousel/slide semantics,
 control state, pagination state, and reduced-motion behavior. Callers own slide
 content, responsive `flex-basis`, gap, dimensions, aspect ratio, positioning,
-and which controls are rendered. Feature modules must not import Embla directly.
+and which controls are rendered. Its optional autoplay behavior is off by
+default, stops on meaningful interaction or focus, and is disabled for reduced
+motion. Feature modules must not import Embla or its plugins directly.
 
 ### Skeleton
 

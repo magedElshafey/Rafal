@@ -241,6 +241,9 @@
 @utility main-content-spacing {
   @apply pt-4 pb-8 md:pt-8 md:pb-16;
 }
+@utility section-spacing {
+  @apply space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 xl:space-y-8 2xl:space-y-10;
+}
 @layer base {
   body {
     background: var(--page);

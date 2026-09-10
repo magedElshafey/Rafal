@@ -23,12 +23,14 @@ canonical `AppCarousel` primitive in `src/components/ui/app-carousel.tsx`.
 - RTL/LTR direction and direction-aware keyboard behavior;
 - carousel, slide, control, and pagination semantics;
 - previous/next availability and selected-snap state;
-- reduced-motion-aware programmatic navigation.
+- reduced-motion-aware programmatic navigation;
+- the approved optional `embla-carousel-autoplay` plugin and its lifecycle.
 
 Feature modules own their content, dimensions, responsive slide basis, gaps,
 aspect ratios, and control placement. They may compose `AppCarousel`, but must
-not import Embla directly. Autoplay remains off and no autoplay or fade plugin
-is installed until an approved design explicitly requires it.
+not import Embla or its plugins directly. Autoplay is opt-in through
+`AppCarousel`, remains off by default, stops after pointer interaction or focus,
+and does not run when the user prefers reduced motion.
 
 ## Alternatives considered
 
@@ -57,10 +59,10 @@ accessible slide content.
 
 ## Performance and dependency boundary
 
-Only `AppCarousel` imports `embla-carousel-react`. Data loading and slide content
-remain server-first where possible, so feature pages do not become Client
-Components. Plugins are not installed speculatively, and carousel event
-subscriptions are cleaned up with the primitive lifecycle.
+Only `AppCarousel` imports `embla-carousel-react` and approved Embla plugins.
+Data loading and slide content remain server-first where possible, so feature
+pages do not become Client Components. Plugin instances are memoized and timers
+and event subscriptions are cleaned up with the primitive lifecycle.
 
 ## Consequences
 

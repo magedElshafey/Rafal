@@ -34,6 +34,7 @@ It is intentionally more restrictive than a generic Next.js guide: coding agents
 
 - `AppCarousel` is the canonical storefront carousel primitive.
 - Embla Carousel is the approved headless interaction engine behind that primitive.
+- `embla-carousel-autoplay` is an approved optional plugin owned by `AppCarousel`; autoplay is opt-in and reduced-motion aware.
 - Feature modules configure and compose `AppCarousel`; they do not import Embla directly.
 
 ### Backend

@@ -1,6 +1,15 @@
 {
   "title": "الرئيسية",
   "productNavigate": "الانتقال الي صفحة المنتجات",
+  "categories": {
+    "title": "تسوق حسب الفئة",
+    "carouselLabel": "فئات التسوق",
+    "slideLabel": "الفئة {current} من {total}",
+    "errorTitle": "تعذر تحميل الفئات",
+    "errorDescription": "حدث خطأ مؤقت أثناء تحميل الفئات. يرجى المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "retrying": "جارٍ إعادة المحاولة"
+  },
   "hero": {
     "carouselLabel": "العروض المميزة",
     "paginationLabel": "اختيار العرض",

@@ -1,6 +1,15 @@
 {
   "title": "home",
   "productNavigate": "navigate to home page",
+  "categories": {
+    "title": "Shop by category",
+    "carouselLabel": "Shopping categories",
+    "slideLabel": "Category {current} of {total}",
+    "errorTitle": "Categories could not be loaded",
+    "errorDescription": "There was a temporary problem loading the categories. Please try again.",
+    "retry": "Try again",
+    "retrying": "Trying again"
+  },
   "hero": {
     "carouselLabel": "Featured offers",
     "paginationLabel": "Choose an offer",
