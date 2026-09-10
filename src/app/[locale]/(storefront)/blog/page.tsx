@@ -29,7 +29,7 @@ export default async function BlogPage() {
   const remaining = articles.filter((article) => !article.featured);
 
   return (
-    <Container className="pb-16 pt-4 md:pb-24 md:pt-8">
+    <Container className="main-content-spacing">
       <PageIntro
         title={t("title")}
         description={t("description")}
@@ -49,11 +49,7 @@ export default async function BlogPage() {
           className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {remaining.map((article) => (
-            <BlogCard
-              key={article.id}
-              article={article}
-              locale={locale}
-            />
+            <BlogCard key={article.id} article={article} locale={locale} />
           ))}
         </section>
       ) : (

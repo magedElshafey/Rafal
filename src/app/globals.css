@@ -238,6 +238,9 @@
 @utility padding-page-lg {
   padding-top: 96px;
 }
+@utility main-content-spacing {
+  @apply pt-4 pb-16 md:pt-8 md:pb-24;
+}
 @layer base {
   body {
     background: var(--page);

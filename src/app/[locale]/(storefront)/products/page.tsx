@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 const page = () => {
-  return <div>page</div>;
+  return <div className="main-content-spacing">page</div>;
 };
 
 export default page;

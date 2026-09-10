@@ -1,5 +1,5 @@
 const CategoriesPage = () => {
-  return <div>CategoriesPage</div>;
+  return <div className="main-content-spacing">CategoriesPage</div>;
 };
 
 export default CategoriesPage;

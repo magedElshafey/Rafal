@@ -43,7 +43,7 @@ export default async function ContactPage() {
   ) as Record<(typeof formKeys)[number], string>;
 
   return (
-    <Container size="default" className="pb-16 pt-4 md:pb-24 md:pt-8">
+    <Container size="default" className="main-content-spacing">
       <PageIntro title={t("title")} description={t("description")} />
       <div className="mt-9 grid items-start gap-6 md:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)] md:mt-12">
         <ContactForm copy={formCopy} />
