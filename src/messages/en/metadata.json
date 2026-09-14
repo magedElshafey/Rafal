@@ -4,5 +4,8 @@
 
   "ProductsPage": {
     "title": "Products"
+  },
+  "CategoriesPage": {
+    "title": "Categories"
   }
 }

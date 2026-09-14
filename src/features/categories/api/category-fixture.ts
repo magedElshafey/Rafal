@@ -5,6 +5,10 @@ import type { CategoriesResponseDto } from "@/features/categories/types";
 export const categoriesFixture = {
   success: true,
   message: "Categories retrieved successfully",
+  current_page: 1,
+  last_page: 1,
+  per_page: 12,
+  total: 5,
   data: [
     {
       id: 1,

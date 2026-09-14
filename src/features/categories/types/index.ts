@@ -5,4 +5,5 @@ export type {
   CategoryChildDto,
   CategoryDto,
   CategoryResponseDto,
+  PaginatedCategories,
 } from "./category.types";

@@ -2,6 +2,16 @@
   "LocaleSwitcher": {
     "label": "language"
   },
+  "categoriesPage": {
+    "title": "Categories",
+    "loadMore": "Load more categories",
+    "loadingMore": "Loading more categories",
+    "initialErrorTitle": "Categories could not be loaded",
+    "initialErrorDescription": "There was a temporary problem loading the categories. Please try again.",
+    "nextPageError": "More categories could not be loaded. You can try again.",
+    "retry": "Try again",
+    "retrying": "Retrying"
+  },
   "nav": {
     "home": "Home",
     "categories": "Categories",

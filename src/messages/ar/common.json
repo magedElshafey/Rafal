@@ -2,6 +2,16 @@
   "LocaleSwitcher": {
     "label": "اللغة"
   },
+  "categoriesPage": {
+    "title": "الفئات",
+    "loadMore": "عرض المزيد من الفئات",
+    "loadingMore": "جارٍ تحميل المزيد من الفئات",
+    "initialErrorTitle": "تعذر تحميل الفئات",
+    "initialErrorDescription": "حدثت مشكلة مؤقتة أثناء تحميل الفئات. حاول مرة أخرى.",
+    "nextPageError": "تعذر تحميل المزيد من الفئات. يمكنك المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "retrying": "جارٍ إعادة المحاولة"
+  },
   "nav": {
     "home": "الرئيسية",
     "categories": "الفئات",

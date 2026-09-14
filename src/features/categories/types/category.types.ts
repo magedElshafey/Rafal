@@ -1,3 +1,5 @@
+import type { PaginationMeta } from "@/lib/api/pagination";
+
 export type CategoryChildDto = {
   id: number;
   name: string;
@@ -11,7 +13,7 @@ export type CategoryDto = CategoryChildDto & {
   children: CategoryChildDto[];
 };
 
-export type CategoriesResponseDto = {
+export type CategoriesResponseDto = PaginationMeta & {
   success: boolean;
   message: string;
   data: CategoryDto[];
@@ -34,4 +36,9 @@ export type CategoryChild = {
 
 export type Category = CategoryChild & {
   children: CategoryChild[];
+};
+
+export type PaginatedCategories = {
+  items: Category[];
+  pagination: PaginationMeta;
 };

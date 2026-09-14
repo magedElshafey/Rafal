@@ -3,5 +3,8 @@
   "siteDescription": "متجر سعودي متخصص",
   "ProductsPage": {
     "title": "المنتجات"
+  },
+  "CategoriesPage": {
+    "title": "الفئات"
   }
 }

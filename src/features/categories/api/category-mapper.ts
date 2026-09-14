@@ -3,6 +3,8 @@ import type {
   CategoryChild,
   CategoryChildDto,
   CategoryDto,
+  CategoriesResponseDto,
+  PaginatedCategories,
 } from "@/features/categories/types";
 
 export function mapCategoryChildDto(dto: CategoryChildDto): CategoryChild {
@@ -20,5 +22,19 @@ export function mapCategoryDto(dto: CategoryDto): Category {
   return {
     ...mapCategoryChildDto(dto),
     children: dto.children.map(mapCategoryChildDto),
+  };
+}
+
+export function mapCategoriesResponseDto(
+  response: CategoriesResponseDto,
+): PaginatedCategories {
+  return {
+    items: response.data.map(mapCategoryDto),
+    pagination: {
+      current_page: response.current_page,
+      last_page: response.last_page,
+      per_page: response.per_page,
+      total: response.total,
+    },
   };
 }

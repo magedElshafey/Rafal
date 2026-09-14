@@ -224,7 +224,10 @@ Default request placement:
 
 The request location is chosen by runtime need, not by HTTP method alone. A `GET` may still be client-side when it is triggered by browser interaction.
 
-Before adding a client data cache such as TanStack Query/SWR, write an Architecture Decision Request explaining why the current primitives are insufficient.
+TanStack React Query is approved only for interaction-driven paginated listings
+as documented in `ADR-003-tanstack-query-load-more.md`. It does not replace the
+shared HTTP transport or the server-first default. Any broader client-cache use
+still requires an explicit architecture decision.
 
 ## 8. Mutation Strategy
 
