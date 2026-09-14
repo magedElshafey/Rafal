@@ -19,5 +19,103 @@
     "errorDescription": "There was a temporary problem loading the offers. Please try again.",
     "retry": "Try again",
     "retrying": "Trying again"
+  },
+  "productSections": {
+    "viewAll": "View all",
+    "rating": "Rated {value} out of 5",
+    "badges": {
+      "discount": "Sale",
+      "new": "New",
+      "personalization": "Personalized"
+    },
+    "bestSellers": {
+      "title": "Best sellers",
+      "carouselLabel": "Our best-selling products"
+    },
+    "latest": {
+      "title": "Latest products",
+      "carouselLabel": "Rafal's latest products",
+      "filtersLabel": "Filter latest products",
+      "filters": {
+        "all": "All",
+        "jewelry": "Jewelry",
+        "perfumes": "Perfumes",
+        "accessories": "Accessories"
+      }
+    },
+    "collection": {
+      "title": "Latest products",
+      "carouselLabel": "More latest products"
+    }
+  },
+  "promoBanners": {
+    "menAlt": "Rafal men's collection of watches, pens, and refined accessories",
+    "giftsAlt": "Rafal gifts collection for special occasions",
+    "loyaltyAlt": "Rafal Rewards, earn points with every purchase"
+  },
+  "whyRafal": {
+    "title": "Why Rafal?",
+    "items": {
+      "support": {
+        "title": "24/7 support",
+        "description": "Our team is ready to help and answer your questions"
+      },
+      "guarantee": {
+        "title": "Money-back guarantee",
+        "description": "Shop confidently with a clear and simple return policy"
+      },
+      "loyalty": {
+        "title": "Loyalty benefits",
+        "description": "Special rewards and benefits for our loyal customers"
+      },
+      "delivery": {
+        "title": "Fast delivery",
+        "description": "Your order is delivered carefully and as quickly as possible"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Customer reviews",
+    "items": {
+      "noura": {
+        "author": "Noura Ali",
+        "quote": "Wonderful products and excellent quality. A distinctive shopping experience I will repeat."
+      },
+      "mohammed": {
+        "author": "Mohammed Alqahtani",
+        "quote": "Fast delivery and elegant packaging. The gift arrived on time and delighted someone special."
+      },
+      "reem": {
+        "author": "Reem Almousa",
+        "quote": "Excellent service and the product details matched the photos. Thank you, Rafal team."
+      }
+    }
+  },
+  "departments": {
+    "title": "Shop by department",
+    "carouselLabel": "Rafal departments",
+    "items": {
+      "silver": {
+        "title": "Silver plaques",
+        "imageAlt": "An elegant silver design"
+      },
+      "carAccessories": {
+        "title": "Car accessories",
+        "imageAlt": "Premium car accessories"
+      },
+      "men": { "title": "Men", "imageAlt": "Gifts and accessories for men" },
+      "giftBoxes": {
+        "title": "Gift boxes",
+        "imageAlt": "A distinctive gift box"
+      },
+      "perfumes": {
+        "title": "Perfumes",
+        "imageAlt": "Rafal perfume collection"
+      },
+      "jewelry": {
+        "title": "Women's jewelry",
+        "imageAlt": "Women's jewelry collection"
+      }
+    }
   }
 }
