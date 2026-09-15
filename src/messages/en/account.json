@@ -32,6 +32,72 @@
       "description": "Equivalent to {amount} SAR — redeemable on your next order"
     }
   },
+  "addresses": {
+    "title": "My addresses",
+    "helper": "You have {count} saved addresses (maximum {maximum}).",
+    "maximumReached": "Address limit reached",
+    "add": "Add new address",
+    "edit": "Edit",
+    "defaultLabel": "Default",
+    "types": {
+      "home": "Home",
+      "work": "Work"
+    },
+    "empty": {
+      "title": "No saved addresses",
+      "description": "Add an address to make future checkout details easier."
+    },
+    "newTitle": "Add a new address",
+    "editTitle": "Edit address",
+    "form": {
+      "sectionTitle": "Address details",
+      "fields": {
+        "fullName": "Full name",
+        "phone": "Mobile number",
+        "city": "City",
+        "district": "District",
+        "street": "Street",
+        "additionalDetails": "Additional description or landmark",
+        "postalCode": "Postal code",
+        "postalCodeOptional": "Optional"
+      },
+      "type": {
+        "label": "Address type"
+      },
+      "isDefault": "Set as default address",
+      "save": "Save address",
+      "saving": "Saving address",
+      "cancel": "Cancel"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "phone": "Enter a valid phone number.",
+      "postalCode": "Enter a valid postal code.",
+      "type": "Choose a valid address type.",
+      "invalid": "Enter a valid value."
+    },
+    "delete": {
+      "trigger": "Delete address",
+      "title": "Delete this address?",
+      "description": "This is a destructive action. Confirm that you want to delete this saved address.",
+      "confirm": "Delete",
+      "confirming": "Deleting address",
+      "cancel": "Cancel"
+    },
+    "feedback": {
+      "savedPreview": "Address accepted for this preview only. It will reset because persistence is not connected yet.",
+      "deletedPreview": "Delete accepted for this preview only. The address remains until persistence is connected.",
+      "saveError": "The address could not be saved. Please try again.",
+      "deleteError": "The address could not be deleted. Please try again.",
+      "maximumReached": "You have reached the maximum number of saved addresses.",
+      "defaultDeleteUnsupported": "Deleting the default address requires a confirmed replacement rule and is not available yet."
+    },
+    "location": {
+      "title": "Choose the location on the map",
+      "description": "Map selection will be connected here when a location provider is approved.",
+      "unavailable": "Map search, current location, and pin selection are not available yet."
+    }
+  },
   "orders": {
     "title": "My orders",
     "filters": {
