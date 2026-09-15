@@ -52,6 +52,21 @@
       "personalizable": "قابل للتخصيص بالاسم"
     }
   },
+  "searchResults": {
+    "breadcrumbs": {
+      "label": "مسار التنقل",
+      "home": "الرئيسية",
+      "search": "نتائج البحث"
+    },
+    "title": "نتائج البحث",
+    "summary": "{count} نتيجة بحث عن «{query}»",
+    "emptyQueryTitle": "ابحث عن المنتجات",
+    "emptyQueryDescription": "أدخل اسم منتج أو هدية في حقل البحث لعرض النتائج.",
+    "noResultsTitle": "لا توجد نتائج بحث",
+    "noResultsDescription": "لم نعثر على منتجات تطابق «{query}». جرّب بحثاً آخر أو عدّل خيارات التصفية.",
+    "errorTitle": "تعذر تحميل نتائج البحث",
+    "errorDescription": "حدثت مشكلة مؤقتة أثناء تحميل نتائج البحث. حاول مرة أخرى."
+  },
   "nav": {
     "home": "الرئيسية",
     "categories": "الفئات",

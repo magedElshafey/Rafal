@@ -4,7 +4,31 @@ const images = [
   "/images/home/heart-necklace.png",
   "/images/home/name-necklace.png",
 ] as const;
-const subcategories = ["rings", "bracelets", "necklaces", "earrings"] as const;
+export const categoryProductSubcategoriesFixture = [
+  {
+    value: "rings",
+    label: { ar: "خواتم", en: "Rings" },
+    keywords: { ar: ["خاتم", "خواتم"], en: ["ring", "rings"] },
+  },
+  {
+    value: "bracelets",
+    label: { ar: "أساور", en: "Bracelets" },
+    keywords: { ar: ["سوار", "أساور"], en: ["bracelet", "bracelets"] },
+  },
+  {
+    value: "necklaces",
+    label: { ar: "قلائد", en: "Necklaces" },
+    keywords: { ar: ["قلادة", "قلائد"], en: ["necklace", "necklaces"] },
+  },
+  {
+    value: "earrings",
+    label: { ar: "أقراط", en: "Earrings" },
+    keywords: { ar: ["قرط", "أقراط"], en: ["earring", "earrings"] },
+  },
+] as const;
+const subcategories = categoryProductSubcategoriesFixture.map(
+  (subcategory) => subcategory.value,
+);
 
 export const categoryProductsFixture: readonly ListingProduct[] = Array.from(
   { length: 24 },

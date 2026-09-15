@@ -13,6 +13,7 @@ import {
 import { SearchBox } from "@/components/shared/SearchBox";
 import { searchProducts } from "@/features/search/services/product-search-service";
 import type { SearchProduct } from "@/features/search/types";
+import { useRouter } from "@/i18n/navigation";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -33,6 +34,7 @@ type SearchControllerProps = {
 type SearchState = "idle" | "loading" | "results" | "empty";
 
 export function SearchController({ copy, locale }: SearchControllerProps) {
+  const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
@@ -99,6 +101,20 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
       return;
     }
 
+    if (event.key === "Enter") {
+      const normalizedQuery = query.trim();
+
+      if (state === "results" && activeIndex >= 0) {
+        event.preventDefault();
+        selectProduct(products[activeIndex]);
+      } else if (normalizedQuery) {
+        event.preventDefault();
+        setIsOpen(false);
+        router.push(`/search?q=${encodeURIComponent(normalizedQuery)}`);
+      }
+      return;
+    }
+
     if (state !== "results" || products.length === 0) return;
 
     if (event.key === "ArrowDown") {
@@ -111,9 +127,6 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
       setActiveIndex((current) =>
         current <= 0 ? products.length - 1 : current - 1,
       );
-    } else if (event.key === "Enter" && activeIndex >= 0) {
-      event.preventDefault();
-      selectProduct(products[activeIndex]);
     }
   };
 

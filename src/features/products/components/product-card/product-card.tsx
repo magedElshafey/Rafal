@@ -83,7 +83,7 @@ function ProductMedia({
   };
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-gray-50">
+    <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-gray-0">
       <Image
         src={image}
         alt={imageAlt}
@@ -146,8 +146,8 @@ function ProductInfo({
   "href" | "originalPrice" | "price" | "rating" | "title"
 >) {
   return (
-    <div className="flex flex-col items-end gap-1 px-1.5">
-      <h3 className="w-full truncate text-end type-ui-sm font-normal text-gray-1000">
+    <div className="flex flex-col  gap-1 px-1.5">
+      <h3 className="w-full truncate  type-ui-sm font-normal text-foreground">
         {href ? (
           <Link
             href={href}

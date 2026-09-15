@@ -2,44 +2,45 @@
 
 import type { Locale } from "next-intl";
 
-import { getCategoryProducts } from "@/features/products/api/get-category-products";
-import { productListingQuery } from "@/features/products/api/product-listing-query";
 import {
   ProductListing,
   type ProductListingCopy,
 } from "@/features/products/components/listing/product-listing";
 import type { ListingSubcategoryOption } from "@/features/products/types/product-listing.types";
+import { searchProductListingQuery } from "@/features/search/api/search-product-listing-query";
+import { searchListingProducts } from "@/features/search/api/search-products";
 
-type Props = {
-  category: string;
-  categoryTotal: number;
+type SearchProductListingProps = {
   copy: ProductListingCopy;
   locale: Locale;
+  query: string;
   subcategoryOptions: readonly ListingSubcategoryOption[];
+  total: number;
 };
 
-export function CategoryProductListing({
-  category,
-  categoryTotal,
+export function SearchProductListing({
   copy,
   locale,
+  query,
   subcategoryOptions,
-}: Props) {
+  total,
+}: SearchProductListingProps) {
   return (
     <ProductListing
       copy={copy}
       getPage={(filters, sort, page, signal) =>
-        getCategoryProducts({ category, filters, page, sort }, signal)
+        searchListingProducts(
+          { filters, locale, page, query, sort },
+          signal,
+        )
       }
-      getNextPageParam={productListingQuery.getNextPageParam}
+      getNextPageParam={searchProductListingQuery.getNextPageParam}
       getQueryKey={(filters, sort) =>
-        productListingQuery.key(locale, category, filters, sort)
+        searchProductListingQuery.key(locale, query, filters, sort)
       }
       locale={locale}
       subcategoryOptions={subcategoryOptions}
-      total={categoryTotal}
+      total={total}
     />
   );
 }
-
-export type { ProductListingCopy };
