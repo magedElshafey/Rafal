@@ -1,0 +1,47 @@
+import { getLocale, getTranslations } from "next-intl/server";
+
+import { getAccountProfile } from "@/features/account/profile/api/get-account-profile";
+import {
+  ProfileForm,
+  type ProfileFormCopy,
+} from "@/features/account/profile/components/profile-form";
+import { ProfileLoyaltySummary } from "@/features/account/profile/components/profile-loyalty-summary";
+
+export default async function AccountProfilePage() {
+  const [profile, locale, t] = await Promise.all([
+    getAccountProfile(),
+    getLocale(),
+    getTranslations("Account.profile"),
+  ]);
+  const numberFormatter = new Intl.NumberFormat(locale);
+  const formCopy: ProfileFormCopy = {
+    title: t("title"),
+    firstName: t("fields.firstName"),
+    lastName: t("fields.lastName"),
+    email: t("fields.email"),
+    phone: t("fields.phone"),
+    save: t("save"),
+    saving: t("saving"),
+    saved: t("saved"),
+    saveError: t("saveError"),
+    validation: {
+      required: t("validation.required"),
+      email: t("validation.email"),
+      phone: t("validation.phone"),
+    },
+  };
+
+  return (
+    <div className="space-y-6">
+      <ProfileForm copy={formCopy} profile={profile} />
+      <ProfileLoyaltySummary
+        title={t("loyalty.title", {
+          points: numberFormatter.format(profile.loyalty.points),
+        })}
+        description={t("loyalty.description", {
+          amount: numberFormatter.format(profile.loyalty.equivalentSar),
+        })}
+      />
+    </div>
+  );
+}

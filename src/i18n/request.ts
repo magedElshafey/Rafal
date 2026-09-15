@@ -6,7 +6,8 @@ import { routing } from "./routing";
 
 const messageLoaders = {
   ar: async () => {
-    const [common, contentPages, home, metadata] = await Promise.all([
+    const [account, common, contentPages, home, metadata] = await Promise.all([
+      import("../messages/ar/account.json"),
       import("../messages/ar/common.json"),
       import("../messages/ar/content-pages.json"),
       import("../messages/ar/home.json"),
@@ -14,6 +15,7 @@ const messageLoaders = {
     ]);
 
     return {
+      Account: account.default,
       Common: common.default,
       ContentPages: contentPages.default,
       Home: home.default,
@@ -22,7 +24,8 @@ const messageLoaders = {
   },
 
   en: async () => {
-    const [common, contentPages, home, metadata] = await Promise.all([
+    const [account, common, contentPages, home, metadata] = await Promise.all([
+      import("../messages/en/account.json"),
       import("../messages/en/common.json"),
       import("../messages/en/content-pages.json"),
       import("../messages/en/home.json"),
@@ -30,6 +33,7 @@ const messageLoaders = {
     ]);
 
     return {
+      Account: account.default,
       Common: common.default,
       ContentPages: contentPages.default,
       Home: home.default,

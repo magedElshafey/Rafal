@@ -1,0 +1,22 @@
+import {
+  CrownIcon,
+  HeartIcon,
+  MapPinIcon,
+  ShoppingBagIcon,
+  SlidersIcon,
+  UserIcon,
+} from "@/components/ui/icons";
+import type { AccountNavigationKey } from "@/features/account/navigation/account-navigation.types";
+
+export const accountNavigationItems = [
+  { key: "profile", href: "/account/profile", icon: UserIcon },
+  { key: "orders", icon: ShoppingBagIcon },
+  { key: "addresses", icon: MapPinIcon },
+  { key: "wishlist", icon: HeartIcon },
+  { key: "loyalty", icon: CrownIcon },
+  { key: "settings", icon: SlidersIcon },
+] as const satisfies readonly {
+  key: AccountNavigationKey;
+  href?: string;
+  icon: typeof UserIcon;
+}[];

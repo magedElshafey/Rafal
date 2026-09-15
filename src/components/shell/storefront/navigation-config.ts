@@ -56,7 +56,7 @@ const navigationDestinations = {
     match: "prefix",
   },
   profile: {
-    href: "/my-profile",
+    href: "/account/profile",
     icon: UserIcon,
     key: "profile",
     match: "prefix",

@@ -4,7 +4,7 @@ import ListLinks from "@/components/shell/storefront/header/PrimaryNavigation";
 
 import { Container } from "@/components/ui/container";
 
-const Header = async () => {
+const Header = () => {
   return (
     <header className="bg-background">
       <Container className="flex min-h-16 items-center justify-between gap-4 py-3 md:min-h-20 md:py-4">
@@ -15,7 +15,7 @@ const Header = async () => {
         <ListLinks />
 
         <div className="shrink-0">
-          <HeaderActions isAuthenticated={false} />
+          <HeaderActions />
         </div>
       </Container>
     </header>

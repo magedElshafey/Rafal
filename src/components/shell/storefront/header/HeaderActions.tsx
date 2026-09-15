@@ -3,28 +3,11 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
 
-type HeaderActionsProps = {
-  isAuthenticated?: boolean;
-};
-
 const actionLinkClassName =
   "inline-flex size-8 md:size-11 items-center justify-center rounded-full text-foreground transition-colors hover:text-gold-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
-const HeaderActions = async ({
-  isAuthenticated = true,
-}: HeaderActionsProps) => {
+const HeaderActions = async () => {
   const t = await getTranslations("Common.nav");
-
-  if (!isAuthenticated) {
-    return (
-      <Link
-        href="/login"
-        className="rounded-sm type-card-price font-medium text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        {t("login")}
-      </Link>
-    );
-  }
 
   return (
     <nav aria-label={t("user_navigation")}>
