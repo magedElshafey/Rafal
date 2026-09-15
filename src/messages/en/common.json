@@ -12,6 +12,50 @@
     "retry": "Try again",
     "retrying": "Retrying"
   },
+  "productListing": {
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home",
+      "categories": "Categories"
+    },
+    "resultCount": "{count} products",
+    "rating": "Rated {value} out of 5",
+    "filterButton": "Filter products",
+    "closeFilters": "Close filters",
+    "loadMore": "Load more products",
+    "loading": "Loading products",
+    "loadingMore": "Loading more products",
+    "nextPageError": "More products could not be loaded. Try again.",
+    "retry": "Try again",
+    "initialErrorTitle": "Products could not be loaded",
+    "initialErrorDescription": "There was a temporary problem loading the products. Please try again.",
+    "emptyTitle": "No products",
+    "emptyDescription": "No products match the current filters.",
+    "unavailable": "Unavailable",
+    "badges": {
+      "discount": "Sale",
+      "new": "New",
+      "personalization": "Personalized"
+    },
+    "sort": {
+      "label": "Sort:",
+      "bestSelling": "Best selling",
+      "priceAsc": "Lowest price",
+      "priceDesc": "Highest price",
+      "newest": "Newest"
+    },
+    "filters": {
+      "subcategories": "Subcategories",
+      "all": "All",
+      "priceRange": "Price range",
+      "minPrice": "From",
+      "maxPrice": "To",
+      "invalidPriceRange": "The minimum price cannot be greater than the maximum price.",
+      "additional": "Additional options",
+      "available": "In stock only",
+      "personalizable": "Personalizable"
+    }
+  },
   "nav": {
     "home": "Home",
     "categories": "Categories",

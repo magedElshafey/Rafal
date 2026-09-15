@@ -12,6 +12,46 @@
     "retry": "إعادة المحاولة",
     "retrying": "جارٍ إعادة المحاولة"
   },
+  "productListing": {
+    "breadcrumbs": {
+      "label": "مسار التنقل",
+      "home": "الرئيسية",
+      "categories": "الفئات"
+    },
+    "resultCount": "{count} منتج",
+    "rating": "التقييم {value} من 5",
+    "filterButton": "تصفية المنتجات",
+    "closeFilters": "إغلاق التصفية",
+    "loadMore": "عرض المزيد من المنتجات",
+    "loading": "جارٍ تحميل المنتجات",
+    "loadingMore": "جارٍ تحميل المزيد من المنتجات",
+    "nextPageError": "تعذر تحميل المزيد من المنتجات. حاول مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "initialErrorTitle": "تعذر تحميل المنتجات",
+    "initialErrorDescription": "حدثت مشكلة مؤقتة أثناء تحميل المنتجات. حاول مرة أخرى.",
+    "emptyTitle": "لا توجد منتجات",
+    "emptyDescription": "لم نعثر على منتجات تطابق خيارات التصفية الحالية.",
+    "unavailable": "غير متوفر",
+    "badges": { "discount": "خصم", "new": "جديد", "personalization": "بالاسم" },
+    "sort": {
+      "label": "الترتيب:",
+      "bestSelling": "الأكثر مبيعاً",
+      "priceAsc": "السعر من الأقل",
+      "priceDesc": "السعر من الأعلى",
+      "newest": "الأحدث"
+    },
+    "filters": {
+      "subcategories": "الفئات الفرعية",
+      "all": "الكل",
+      "priceRange": "نطاق السعر",
+      "minPrice": "من",
+      "maxPrice": "إلى",
+      "invalidPriceRange": "يجب ألا يكون الحد الأدنى للسعر أكبر من الحد الأقصى.",
+      "additional": "خيارات إضافية",
+      "available": "متوفر فقط",
+      "personalizable": "قابل للتخصيص بالاسم"
+    }
+  },
   "nav": {
     "home": "الرئيسية",
     "categories": "الفئات",
