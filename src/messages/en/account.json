@@ -31,5 +31,70 @@
       "title": "{points} loyalty points",
       "description": "Equivalent to {amount} SAR — redeemable on your next order"
     }
+  },
+  "orders": {
+    "title": "My orders",
+    "filters": {
+      "label": "Filter orders",
+      "all": "All",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "status": {
+      "new": "New",
+      "confirmed": "Confirmed",
+      "processing": "In progress",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "returned": "Returned"
+    },
+    "itemCount": "{count, plural, one {# product} other {# products}}",
+    "detailsLink": "View order {number}",
+    "empty": {
+      "title": "No orders found",
+      "description": "There are no orders matching this status."
+    },
+    "details": {
+      "title": "Order #{number}",
+      "currentStatus": {
+        "new": "New order",
+        "confirmed": "Order confirmed",
+        "processing": "Order in progress",
+        "shipped": "Order shipped",
+        "delivered": "Order delivered",
+        "cancelled": "Order cancelled",
+        "returned": "Order returned"
+      },
+      "timeline": {
+        "title": "Track order",
+        "confirmed": "Order confirmed",
+        "processing": "Preparing order",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled",
+        "returned": "Returned",
+        "completedState": "Completed",
+        "pendingState": "Pending"
+      },
+      "shipmentTrackingNumber": "Shipment tracking number",
+      "itemsTitle": "Products",
+      "quantity": "Quantity: {count}",
+      "gift": {
+        "title": "Gift recipient",
+        "address": "Recipient and delivery address",
+        "phone": "Recipient phone",
+        "message": "Gift message"
+      },
+      "shippingAddress": "Shipping address",
+      "paymentTitle": "Payment summary",
+      "paymentMethod": "Payment method",
+      "paymentMethods": {
+        "mada": "Mada card",
+        "creditCard": "Credit card"
+      },
+      "total": "Total"
+    }
   }
 }

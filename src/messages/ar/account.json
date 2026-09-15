@@ -31,5 +31,70 @@
       "title": "{points} نقطة ولاء",
       "description": "تعادل {amount} ر.س — يمكن استبدالها في طلبك القادم"
     }
+  },
+  "orders": {
+    "title": "طلباتي",
+    "filters": {
+      "label": "تصفية الطلبات",
+      "all": "الكل",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتملة",
+      "cancelled": "ملغاة"
+    },
+    "status": {
+      "new": "جديد",
+      "confirmed": "تم التأكيد",
+      "processing": "قيد التنفيذ",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "ملغاة",
+      "returned": "مرتجعة"
+    },
+    "itemCount": "{count} منتجات",
+    "detailsLink": "عرض تفاصيل الطلب {number}",
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "لا توجد طلبات تطابق هذه الحالة."
+    },
+    "details": {
+      "title": "طلب #{number}",
+      "currentStatus": {
+        "new": "طلب جديد",
+        "confirmed": "تم تأكيد الطلب",
+        "processing": "الطلب قيد التنفيذ",
+        "shipped": "تم شحن الطلب",
+        "delivered": "تم توصيل الطلب",
+        "cancelled": "تم إلغاء الطلب",
+        "returned": "تم إرجاع الطلب"
+      },
+      "timeline": {
+        "title": "تتبع الطلب",
+        "confirmed": "تم تأكيد الطلب",
+        "processing": "قيد التجهيز",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "تم الإلغاء",
+        "returned": "تم الإرجاع",
+        "completedState": "مكتملة",
+        "pendingState": "قيد الانتظار"
+      },
+      "shipmentTrackingNumber": "رقم تتبع الشحنة",
+      "itemsTitle": "المنتجات",
+      "quantity": "الكمية: {count}",
+      "gift": {
+        "title": "مستلم الهدية",
+        "address": "المستلم وعنوان التوصيل",
+        "phone": "جوال المستلم",
+        "message": "رسالة الهدية"
+      },
+      "shippingAddress": "عنوان الشحن",
+      "paymentTitle": "ملخص الدفع",
+      "paymentMethod": "طريقة الدفع",
+      "paymentMethods": {
+        "mada": "بطاقة مدى",
+        "creditCard": "بطاقة ائتمان"
+      },
+      "total": "الإجمالي"
+    }
   }
 }

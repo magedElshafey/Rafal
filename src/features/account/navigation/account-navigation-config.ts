@@ -10,7 +10,7 @@ import type { AccountNavigationKey } from "@/features/account/navigation/account
 
 export const accountNavigationItems = [
   { key: "profile", href: "/account/profile", icon: UserIcon },
-  { key: "orders", icon: ShoppingBagIcon },
+  { key: "orders", href: "/account/orders", icon: ShoppingBagIcon },
   { key: "addresses", icon: MapPinIcon },
   { key: "wishlist", icon: HeartIcon },
   { key: "loyalty", icon: CrownIcon },
