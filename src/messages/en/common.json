@@ -71,6 +71,27 @@
     "errorTitle": "Search results could not be loaded",
     "errorDescription": "There was a temporary problem loading the search results. Please try again."
   },
+  "offersPage": {
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home",
+      "offers": "Offers"
+    },
+    "title": "Offers and promotions",
+    "bannerAlt": "Rafal gifts promotion for special occasions",
+    "filterLabel": "Filter offers",
+    "filters": {
+      "all": "All",
+      "new": "New",
+      "personalizedDiscounts": "Discounted personalized products",
+      "weekend": "Weekend offers",
+      "upTo30": "Discounts up to 30%"
+    },
+    "emptyTitle": "No offers found",
+    "emptyDescription": "There are no products in this promotion right now.",
+    "errorTitle": "Offers could not be loaded",
+    "errorDescription": "There was a temporary problem loading the offers. Please try again."
+  },
   "nav": {
     "home": "Home",
     "categories": "Categories",

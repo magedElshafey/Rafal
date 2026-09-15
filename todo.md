@@ -1,0 +1,1 @@
+- Offers banner asset pending

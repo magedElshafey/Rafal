@@ -6,6 +6,13 @@ import {
 
 export const defaultListingSort: ListingSort = "best-selling";
 
+export function parseListingSort(searchParams: URLSearchParams): ListingSort {
+  const rawSort = searchParams.get("sort");
+  return (
+    listingSortValues.find((value) => value === rawSort) ?? defaultListingSort
+  );
+}
+
 function parsePrice(value: string | null): number | undefined {
   if (!value) return undefined;
   const parsed = Number(value);
@@ -16,9 +23,7 @@ export function parseListingSearchParams(searchParams: URLSearchParams): {
   filters: ProductListingFilters;
   sort: ListingSort;
 } {
-  const rawSort = searchParams.get("sort");
-  const sort =
-    listingSortValues.find((value) => value === rawSort) ?? defaultListingSort;
+  const sort = parseListingSort(searchParams);
   const subcategory = searchParams.get("subcategory")?.trim() || undefined;
 
   return {
