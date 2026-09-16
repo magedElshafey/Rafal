@@ -29,7 +29,7 @@ const navigationDestinations = {
     match: "prefix",
   },
   wishlist: {
-    href: "/wishlist",
+    href: "/account/wishlist",
     icon: HeartIcon,
     key: "wishlist",
     match: "exact",
