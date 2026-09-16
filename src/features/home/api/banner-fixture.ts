@@ -24,7 +24,7 @@ export const bannersFixture = {
       id: 21,
       title: "عرض محدود الوقت",
       image_url: "/images/hero-03.png",
-      link_url: "/products/quia-odio-temporibus-architecto-molestiae",
+      link_url: "/products/personalized-gold-chain",
       sort_order: 10,
     },
   ],

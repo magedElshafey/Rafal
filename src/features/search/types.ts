@@ -1,7 +1,6 @@
-export type ProductPrice = {
-  amount: number;
-  currency: "SAR";
-};
+import type { Money } from "@/types/money.types";
+
+export type ProductPrice = Money;
 
 export type SearchProduct = {
   id: string;
