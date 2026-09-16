@@ -5,13 +5,18 @@ import { hasLocale, useLocale, useTranslations } from "next-intl";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 const localeLabels = {
   ar: "العربية",
   en: "English",
 } satisfies Record<(typeof routing.locales)[number], string>;
 
-export function LocaleSwitcher() {
+type LocaleSwitcherProps = {
+  className?: string;
+};
+
+export function LocaleSwitcher({ className }: LocaleSwitcherProps) {
   const locale = useLocale();
   const t = useTranslations("Common.LocaleSwitcher");
 
@@ -47,6 +52,10 @@ export function LocaleSwitcher() {
       value={locale}
       onChange={handleLocaleChange}
       disabled={isPending}
+      className={cn(
+        "cursor-pointer rounded-sm bg-transparent text-gray-500 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait",
+        className,
+      )}
     >
       {routing.locales.map((localeOption) => (
         <option key={localeOption} value={localeOption}>

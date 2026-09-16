@@ -1,3 +1,5 @@
+import type { Locale } from "next-intl";
+
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { AccountNavigation } from "@/features/account/components/account-navigation";
 import { AccountUserSummary } from "@/features/account/components/account-user-summary";
@@ -6,10 +8,11 @@ import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user
 
 type AccountSidebarProps = {
   copy: AccountNavigationCopy;
+  locale: Locale;
   user: AuthenticatedUser;
 };
 
-export function AccountSidebar({ copy, user }: AccountSidebarProps) {
+export function AccountSidebar({ copy, locale, user }: AccountSidebarProps) {
   return (
     <>
       <details className="group overflow-hidden rounded-lg border border-gray-200 bg-gray-0 lg:hidden">
@@ -23,12 +26,12 @@ export function AccountSidebar({ copy, user }: AccountSidebarProps) {
             className="me-5 size-5 shrink-0 transition-transform group-open:rotate-180"
           />
         </summary>
-        <AccountNavigation copy={copy} />
+        <AccountNavigation copy={copy} locale={locale} />
       </details>
 
       <aside className="hidden overflow-hidden rounded-lg border border-gray-200 bg-gray-0 lg:block">
         <AccountUserSummary user={user} />
-        <AccountNavigation copy={copy} />
+        <AccountNavigation copy={copy} locale={locale} />
       </aside>
     </>
   );

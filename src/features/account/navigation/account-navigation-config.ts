@@ -14,7 +14,7 @@ export const accountNavigationItems = [
   { key: "addresses", href: "/account/addresses", icon: MapPinIcon },
   { key: "wishlist", href: "/account/wishlist", icon: HeartIcon },
   { key: "loyalty", icon: CrownIcon },
-  { key: "settings", icon: SlidersIcon },
+  { key: "settings", href: "/account/settings", icon: SlidersIcon },
 ] as const satisfies readonly {
   key: AccountNavigationKey;
   href?: string;

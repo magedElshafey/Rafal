@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
+import type { Locale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
 
@@ -29,11 +30,12 @@ export const getCurrentUser = cache(
 
 export async function requireUser(
   returnTo = "/account/profile",
+  redirectLocale?: Locale,
 ): Promise<AuthenticatedUser> {
   const user = await getCurrentUser();
   if (user) return user;
 
-  const locale = await getLocale();
+  const locale = redirectLocale ?? (await getLocale());
   return redirect({
     href: {
       pathname: "/login",

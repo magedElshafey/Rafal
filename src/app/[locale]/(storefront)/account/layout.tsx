@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
 import { AccountSidebar } from "@/features/account/components/account-sidebar";
@@ -11,8 +11,9 @@ type AccountLayoutProps = {
 };
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-  const [user, t] = await Promise.all([
+  const [user, locale, t] = await Promise.all([
     requireUser(),
+    getLocale(),
     getTranslations("Account.navigation"),
   ]);
   const navigationCopy: AccountNavigationCopy = {
@@ -32,7 +33,7 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
   return (
     <Container size="wide" className="pb-12 md:pb-16">
       <div className="grid items-start gap-6 lg:grid-cols-[17.5rem_minmax(0,1fr)] lg:gap-8">
-        <AccountSidebar copy={navigationCopy} user={user} />
+        <AccountSidebar copy={navigationCopy} locale={locale} user={user} />
         <div className="min-w-0">{children}</div>
       </div>
     </Container>

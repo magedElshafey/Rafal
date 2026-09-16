@@ -184,5 +184,35 @@
       "new": "New",
       "personalization": "Personalized"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": {
+      "title": "Notifications",
+      "orderUpdates": {
+        "label": "Order notifications",
+        "description": "Order confirmation, shipping, and delivery updates"
+      },
+      "offers": {
+        "label": "Offers and discounts",
+        "description": "Promotional offer and discount notifications"
+      },
+      "pending": "Updating notification preferences",
+      "mutationError": "Your preferences could not be updated. Please try again."
+    },
+    "security": {
+      "title": "Security",
+      "biometric": {
+        "label": "Sign in with face or fingerprint",
+        "description": "An additional protection layer over OTP sign-in",
+        "note": "Note: Biometric sign-in is available only in the mobile app. The website uses an email one-time code (OTP) for sign-in."
+      }
+    },
+    "general": {
+      "title": "General",
+      "language": "App language",
+      "version": "App version",
+      "logout": "Sign out"
+    }
   }
 }
