@@ -11,9 +11,5 @@ export async function getAccountProfile(): Promise<AccountProfile> {
     lastName: user.lastName,
     email: user.email,
     phone: "0501234567",
-    loyalty: {
-      points: 250,
-      equivalentSar: 12.5,
-    },
   };
 }

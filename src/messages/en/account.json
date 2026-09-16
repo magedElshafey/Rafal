@@ -29,7 +29,7 @@
     },
     "loyalty": {
       "title": "{points} loyalty points",
-      "description": "Equivalent to {amount} SAR — redeemable on your next order"
+      "description": "Use your points for discounts according to the Loyalty program terms"
     }
   },
   "addresses": {
@@ -183,6 +183,33 @@
       "discount": "Sale",
       "new": "New",
       "personalization": "Personalized"
+    }
+  },
+  "loyalty": {
+    "title": "Loyalty points",
+    "balance": {
+      "points": "{points} points",
+      "description": "Your available Loyalty points balance"
+    },
+    "howItWorks": {
+      "title": "How do loyalty points work?",
+      "earning": "Eligible purchases can earn Loyalty points.",
+      "redemption": "Eligible points can be redeemed for discounts.",
+      "programRules": "Earning and redemption details follow the current Loyalty program terms.",
+      "details": "Approved details and conditions will be shown when available in the program."
+    },
+    "history": {
+      "title": "Points history",
+      "empty": "There is no points activity yet.",
+      "order": "Order",
+      "types": {
+        "earned": "Points earned",
+        "redeemed": "Points redeemed"
+      },
+      "points": {
+        "earned": "+{points} points",
+        "redeemed": "-{points} points"
+      }
     }
   },
   "settings": {

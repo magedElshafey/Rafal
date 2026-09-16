@@ -26,34 +26,22 @@ export function AccountNavigation({ copy, locale }: AccountNavigationProps) {
         {accountNavigationItems.map((item) => {
           const Icon = item.icon;
           const active =
-            "href" in item &&
-            (pathname === item.href || pathname.startsWith(`${item.href}/`));
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <li key={item.key}>
-              {"href" in item ? (
-                <Link
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    itemClassName,
-                    "hover:bg-gray-50",
-                    active && "bg-gold-50 font-bold text-gold-600",
-                  )}
-                >
-                  <Icon aria-hidden="true" className="size-5 shrink-0" />
-                  <span>{copy.items[item.key]}</span>
-                </Link>
-              ) : (
-                <span
-                  aria-disabled="true"
-                  title={copy.unavailable}
-                  className={cn(itemClassName, "cursor-not-allowed text-gray-400")}
-                >
-                  <Icon aria-hidden="true" className="size-5 shrink-0" />
-                  <span>{copy.items[item.key]}</span>
-                </span>
-              )}
+              <Link
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  itemClassName,
+                  "hover:bg-gray-50",
+                  active && "bg-gold-50 font-bold text-gold-600",
+                )}
+              >
+                <Icon aria-hidden="true" className="size-5 shrink-0" />
+                <span>{copy.items[item.key]}</span>
+              </Link>
             </li>
           );
         })}

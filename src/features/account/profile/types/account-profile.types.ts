@@ -5,12 +5,7 @@ export type AccountProfileInput = {
   phone: string;
 };
 
-export type AccountProfile = AccountProfileInput & {
-  loyalty: {
-    points: number;
-    equivalentSar: number;
-  };
-};
+export type AccountProfile = AccountProfileInput;
 
 export type AccountProfileField = keyof AccountProfileInput;
 export type AccountProfileValidationError = "required" | "email" | "phone";

@@ -227,7 +227,11 @@ export function AddressForm(props: AddressFormProps) {
           </div>
         </div>
 
-        <fieldset className="mt-5">
+        <fieldset
+          className="mt-5"
+          aria-invalid={Boolean(errors.type) || undefined}
+          aria-describedby={errors.type ? "address-type-error" : undefined}
+        >
           <legend className="type-label text-gray-600">{copy.type.label}</legend>
           <div className="mt-2 flex gap-2">
             {addressTypeValues.map((type: AddressType) => (
@@ -240,10 +244,6 @@ export function AddressForm(props: AddressFormProps) {
                   checked={values.type === type}
                   onChange={() => updateField("type", type)}
                   className="peer sr-only"
-                  aria-invalid={Boolean(errors.type) || undefined}
-                  aria-describedby={
-                    errors.type ? "address-type-error" : undefined
-                  }
                 />
                 <span className="inline-flex h-9 min-w-16 items-center justify-center rounded-full bg-gray-100 px-4 type-ui-sm text-gray-700 peer-checked:bg-success peer-checked:text-gray-0 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
                   {copy.type[type]}
