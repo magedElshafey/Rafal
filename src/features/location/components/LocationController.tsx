@@ -7,6 +7,7 @@ import { LocationSelector } from "@/components/shared/LocationSelector";
 import { setGuestCityId } from "@/features/location/actions/set-guest-city";
 import { CitySelectionDialog } from "@/features/location/components/CitySelectionDialog";
 import type { City, Coordinates } from "@/features/location/types";
+import { useRouter } from "@/i18n/navigation";
 
 export type LocationControllerCopy = {
   deliveryLabel: string;
@@ -74,6 +75,7 @@ export function LocationController({
     "idle" | "loading" | "error"
   >("idle");
   const [, startTransition] = useTransition();
+  const router = useRouter();
   const mountedRef = useRef(true);
 
   useEffect(() => {
@@ -104,7 +106,10 @@ export function LocationController({
     setSelectedCity(city);
     setIsOpen(false);
     setGeolocationState("idle");
-    startTransition(() => setGuestCityId(city.id));
+    startTransition(async () => {
+      await setGuestCityId(city.id);
+      router.refresh();
+    });
   };
 
   const handleOpen = () => {

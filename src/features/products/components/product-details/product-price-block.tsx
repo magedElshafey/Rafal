@@ -1,12 +1,23 @@
 import type { Locale } from "next-intl";
 
 import type { ProductVariantPricing } from "@/features/products/types/product-details.types";
+import { PromotionCountdown } from "@/features/products/components/product-details/promotion-countdown";
+import { formatProductMessage } from "@/features/products/utils/format-product-message";
 
 type ProductPriceBlockProps = {
   locale: Locale;
   pricing: ProductVariantPricing;
+  renderedAt: number;
   copy: {
-    discount: (percentage: number) => string;
+    countdown: {
+      days: string;
+      expired: string;
+      hours: string;
+      label: string;
+      minutes: string;
+      seconds: string;
+    };
+    discountTemplate: string;
     promotion: string;
   };
 };
@@ -15,7 +26,9 @@ function getDiscountPercentage(pricing: ProductVariantPricing): number | null {
   const compareAt = pricing.compareAt?.amount;
   const current = pricing.current.amount;
 
-  if (!compareAt || compareAt <= 0 || current >= compareAt) return null;
+  if (!compareAt || compareAt <= 0 || current < 0 || current >= compareAt) {
+    return null;
+  }
 
   return Math.round(((compareAt - current) / compareAt) * 100);
 }
@@ -24,6 +37,7 @@ export function ProductPriceBlock({
   copy,
   locale,
   pricing,
+  renderedAt,
 }: ProductPriceBlockProps) {
   const currency = new Intl.NumberFormat(locale, {
     style: "currency",
@@ -50,19 +64,31 @@ export function ProductPriceBlock({
         >
           <bdi>{currency.format(pricing.current.amount)}</bdi>
         </strong>
-        {pricing.compareAt ? (
+        {hasDiscount && pricing.compareAt ? (
           <del className="type-body text-gray-400">
             <bdi>{currency.format(pricing.compareAt.amount)}</bdi>
           </del>
         ) : null}
         {hasDiscount ? (
           <span className="rounded-full bg-destructive px-3 py-1 type-badge text-gray-0">
-            {copy.discount(discountPercentage)}
+            {formatProductMessage(copy.discountTemplate, {
+              percentage: discountPercentage,
+            })}
           </span>
         ) : null}
       </div>
       {pricing.promotion ? (
-        <span className="type-ui-sm text-destructive">{copy.promotion}</span>
+        <div className="flex flex-col items-start gap-1">
+          <span className="type-ui-sm text-destructive">{copy.promotion}</span>
+          {pricing.promotion.endsAt ? (
+            <PromotionCountdown
+              key={pricing.promotion.endsAt}
+              copy={copy.countdown}
+              endsAt={pricing.promotion.endsAt}
+              initialNow={renderedAt}
+            />
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

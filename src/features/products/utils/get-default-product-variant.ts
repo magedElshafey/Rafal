@@ -4,7 +4,7 @@ import type {
 } from "@/features/products/types/product-details.types";
 
 export function getDefaultProductVariant(
-  product: ProductDetails,
+  product: Pick<ProductDetails, "defaultVariantId" | "id" | "variants">,
 ): ProductVariant {
   const variant = product.variants.find(
     (candidate) => candidate.id === product.defaultVariantId,

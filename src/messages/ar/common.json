@@ -33,10 +33,30 @@
     "price": {
       "discount": "خصم {percentage}٪",
       "promotion": "عرض خاص",
-      "vatInclusive": "السعر شامل ضريبة القيمة المضافة"
+      "vatInclusive": "السعر شامل ضريبة القيمة المضافة",
+      "countdown": {
+        "label": "ينتهي العرض خلال",
+        "expired": "انتهى العد التنازلي للعرض",
+        "days": "يوم",
+        "hours": "ساعة",
+        "minutes": "دقيقة",
+        "seconds": "ثانية"
+      }
+    },
+    "gallery": {
+      "selectImage": "عرض صورة المنتج: {image}"
+    },
+    "availability": {
+      "available": "متوفر — الحد الأقصى {max} لكل طلب",
+      "outOfStock": "نفد من المخزون",
+      "unavailableAtLocation": "غير متوفر في موقع التوصيل المحدد"
     },
     "addToCart": "أضف إلى السلة",
-    "quantity": "الكمية: {value}",
+    "quantity": {
+      "label": "الكمية: {value}",
+      "increase": "زيادة الكمية",
+      "decrease": "تقليل الكمية"
+    },
     "descriptionTitle": "وصف المنتج",
     "personalization": {
       "title": "التخصيص بالاسم",

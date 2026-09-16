@@ -33,10 +33,30 @@
     "price": {
       "discount": "{percentage}% off",
       "promotion": "Special offer",
-      "vatInclusive": "Price includes value-added tax"
+      "vatInclusive": "Price includes value-added tax",
+      "countdown": {
+        "label": "Offer ends in",
+        "expired": "Offer countdown ended",
+        "days": "days",
+        "hours": "hours",
+        "minutes": "minutes",
+        "seconds": "seconds"
+      }
+    },
+    "gallery": {
+      "selectImage": "View product image: {image}"
+    },
+    "availability": {
+      "available": "Available — maximum {max} per order",
+      "outOfStock": "Out of stock",
+      "unavailableAtLocation": "Unavailable at the selected delivery location"
     },
     "addToCart": "Add to cart",
-    "quantity": "Quantity: {value}",
+    "quantity": {
+      "label": "Quantity: {value}",
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity"
+    },
     "descriptionTitle": "Product description",
     "personalization": {
       "title": "Personalize with a name",

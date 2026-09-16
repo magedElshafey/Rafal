@@ -1,31 +1,57 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { GUEST_CITY_COOKIE_NAME } from "@/features/location/constants";
+import { cityService } from "@/features/location/services/city-service";
 import { ProductDescription } from "@/features/products/components/product-details/product-description";
-import { ProductGallery } from "@/features/products/components/product-details/product-gallery";
-import { ProductPurchasePanel } from "@/features/products/components/product-details/product-purchase-panel";
+import { ProductPurchaseExperience } from "@/features/products/components/product-details/product-purchase-experience";
+import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsBySlug } from "@/features/products/server/product-boundary";
-import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
+import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [product, t] = await Promise.all([
+  const [{ slug }, locale, cookieStore] = await Promise.all([
+    params,
+    getLocale(),
+    cookies(),
+  ]);
+  const persistedCityId = cookieStore.get(GUEST_CITY_COOKIE_NAME)?.value;
+  const [product, t, city] = await Promise.all([
     getProductDetailsBySlug(slug, locale),
     getTranslations({
       locale,
       namespace: "Common.productDetails",
     }),
+    persistedCityId
+      ? cityService.getCityById(persistedCityId, locale)
+      : Promise.resolve(null),
   ]);
 
   if (!product) notFound();
 
-  const defaultVariant = getDefaultProductVariant(product);
+  assertProductConfiguration(product);
+  const availabilityByVariantId = await getResolvedVariantAvailability({
+    locationId: city?.id ?? null,
+    variants: product.variants,
+  });
+  const purchaseProduct = {
+    defaultVariantId: product.defaultVariantId,
+    id: product.id,
+    images: product.images,
+    name: product.name,
+    options: product.options,
+    personalization: product.personalization,
+    ratingSummary: product.ratingSummary,
+    variants: product.variants,
+  };
+  const renderedAt = new Date().getTime();
 
   return (
     <Container className="main-content-spacing lg:px-[3.75rem]">
@@ -41,18 +67,68 @@ export default async function ProductPage({ params }: ProductPageProps) {
         ]}
       />
 
-      <div className="mt-7 flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12 rtl:lg:flex-row-reverse">
-        <div className="min-w-0 lg:w-[44%]">
-          <ProductGallery product={product} variant={defaultVariant} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <ProductPurchasePanel
-            locale={locale}
-            product={product}
-            variant={defaultVariant}
-          />
-        </div>
-      </div>
+      <ProductPurchaseExperience
+        availabilityByVariantId={availabilityByVariantId}
+        locale={locale}
+        product={purchaseProduct}
+        renderedAt={renderedAt}
+        copy={{
+          gallery: {
+            selectImageTemplate: t.raw("gallery.selectImage") as string,
+          },
+          panel: {
+            addToCart: t("addToCart"),
+            availability: {
+              availableTemplate: t.raw(
+                "availability.available",
+              ) as string,
+              outOfStock: t("availability.outOfStock"),
+              unavailableAtLocation: t(
+                "availability.unavailableAtLocation",
+              ),
+            },
+            personalization: {
+              additionalFeeTemplate: t.raw(
+                "personalization.additionalFee",
+              ) as string,
+              characterCountTemplate: t.raw(
+                "personalization.characterCount",
+              ) as string,
+              description: t("personalization.description"),
+              inputLabel: t("personalization.inputLabel"),
+              languageLabel: t("personalization.languageLabel"),
+              languages: {
+                arabic: t("personalization.languages.arabic"),
+                english: t("personalization.languages.english"),
+              },
+              lettersAndSpaces: t("personalization.lettersAndSpaces"),
+              placeholder: t("personalization.placeholder"),
+              title: t("personalization.title"),
+            },
+            price: {
+              countdown: {
+                days: t("price.countdown.days"),
+                expired: t("price.countdown.expired"),
+                hours: t("price.countdown.hours"),
+                label: t("price.countdown.label"),
+                minutes: t("price.countdown.minutes"),
+                seconds: t("price.countdown.seconds"),
+              },
+              discountTemplate: t.raw("price.discount") as string,
+              promotion: t("price.promotion"),
+              vatInclusive: t("price.vatInclusive"),
+            },
+            quantity: {
+              decrease: t("quantity.decrease"),
+              increase: t("quantity.increase"),
+              labelTemplate: t.raw("quantity.label") as string,
+            },
+            ratingLabelTemplate: t.raw("rating.label") as string,
+            ratingSummaryTemplate: t.raw("rating.summary") as string,
+            skuTemplate: t.raw("sku") as string,
+          },
+        }}
+      />
 
       <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
         <ProductDescription
