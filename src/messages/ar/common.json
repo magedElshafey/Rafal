@@ -20,6 +20,39 @@
     "retry": "إعادة المحاولة",
     "retrying": "جارٍ إعادة المحاولة"
   },
+  "productDetails": {
+    "breadcrumbs": {
+      "label": "مسار التنقل",
+      "home": "الرئيسية"
+    },
+    "sku": "رمز المنتج: {sku}",
+    "rating": {
+      "label": "التقييم {value} من 5",
+      "summary": "{average} من 5 ({count} تقييم)"
+    },
+    "price": {
+      "discount": "خصم {percentage}٪",
+      "promotion": "عرض خاص",
+      "vatInclusive": "السعر شامل ضريبة القيمة المضافة"
+    },
+    "addToCart": "أضف إلى السلة",
+    "quantity": "الكمية: {value}",
+    "descriptionTitle": "وصف المنتج",
+    "personalization": {
+      "title": "التخصيص بالاسم",
+      "description": "أضف اسمًا أو عبارة قصيرة لنقشها على هذا المنتج.",
+      "additionalFee": "+ {amount}",
+      "languageLabel": "لغة النقش",
+      "languages": {
+        "arabic": "العربية",
+        "english": "الإنجليزية"
+      },
+      "inputLabel": "الاسم المراد نقشه",
+      "placeholder": "مثال: سارة",
+      "lettersAndSpaces": "الحروف والمسافات فقط",
+      "characterCount": "0 / {max} حرف"
+    }
+  },
   "productListing": {
     "breadcrumbs": {
       "label": "مسار التنقل",

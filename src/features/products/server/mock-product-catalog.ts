@@ -199,7 +199,7 @@ function getVariantConfiguration(
         sku: createMockSku(product.id, "SILVER"),
         optionValues: [{ optionId, valueId: "silver" }],
         pricing: product.defaultPricing,
-        imageIds: [product.primaryImage.id],
+        imageIds: ["personalized-gold-chain-name-detail"],
       },
       {
         id: "personalized-gold-chain-gold",

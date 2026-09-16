@@ -21,10 +21,12 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { rafalToast } from "@/lib/rafal-toast";
 
 type ProductWishlistActionProps = {
+  className?: string;
   productId: string;
 };
 
 export function ProductWishlistAction({
+  className,
   productId,
 }: ProductWishlistActionProps) {
   const t = useTranslations("Common.wishlistAction");
@@ -118,6 +120,7 @@ export function ProductWishlistAction({
       disabled={!stateKnown || pending}
       label={label}
       onClick={handleClick}
+      className={className}
     />
   );
 }

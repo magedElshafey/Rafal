@@ -62,6 +62,7 @@ interface ProductMediaProps extends Pick<
 }
 
 export function ProductCardWishlistButton({
+  className,
   label,
   ...buttonProps
 }: ProductCardAction) {
@@ -73,7 +74,10 @@ export function ProductCardWishlistButton({
       aria-label={label}
       size="productCard"
       variant="ghost"
-      className="absolute start-2 top-2 z-20 bg-gray-0 text-gray-1000 shadow-[var(--shadow-product-card-wishlist)] aria-[pressed=true]:bg-gold-50 aria-[pressed=true]:text-gold-600"
+      className={cn(
+        "absolute start-2 top-2 z-20 bg-gray-0 text-gray-1000 shadow-[var(--shadow-product-card-wishlist)] aria-[pressed=true]:bg-gold-50 aria-[pressed=true]:text-gold-600",
+        className,
+      )}
     >
       {pressed ? <HeartFilledIcon /> : <HeartIcon />}
     </IconButton>

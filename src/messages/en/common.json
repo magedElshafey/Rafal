@@ -20,6 +20,39 @@
     "retry": "Try again",
     "retrying": "Retrying"
   },
+  "productDetails": {
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home"
+    },
+    "sku": "Product code: {sku}",
+    "rating": {
+      "label": "Rated {value} out of 5",
+      "summary": "{average} out of 5 ({count} ratings)"
+    },
+    "price": {
+      "discount": "{percentage}% off",
+      "promotion": "Special offer",
+      "vatInclusive": "Price includes value-added tax"
+    },
+    "addToCart": "Add to cart",
+    "quantity": "Quantity: {value}",
+    "descriptionTitle": "Product description",
+    "personalization": {
+      "title": "Personalize with a name",
+      "description": "Add a name or short phrase to be engraved on this product.",
+      "additionalFee": "+ {amount}",
+      "languageLabel": "Engraving language",
+      "languages": {
+        "arabic": "Arabic",
+        "english": "English"
+      },
+      "inputLabel": "Name to engrave",
+      "placeholder": "Example: Sarah",
+      "lettersAndSpaces": "Letters and spaces only",
+      "characterCount": "0 / {max} characters"
+    }
+  },
   "productListing": {
     "breadcrumbs": {
       "label": "Breadcrumb",
