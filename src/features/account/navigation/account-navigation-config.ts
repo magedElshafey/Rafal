@@ -12,7 +12,7 @@ export const accountNavigationItems = [
   { key: "profile", href: "/account/profile", icon: UserIcon },
   { key: "orders", href: "/account/orders", icon: ShoppingBagIcon },
   { key: "addresses", href: "/account/addresses", icon: MapPinIcon },
-  { key: "wishlist", icon: HeartIcon },
+  { key: "wishlist", href: "/account/wishlist", icon: HeartIcon },
   { key: "loyalty", icon: CrownIcon },
   { key: "settings", icon: SlidersIcon },
 ] as const satisfies readonly {

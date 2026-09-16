@@ -2,6 +2,7 @@ import type { Locale } from "next-intl";
 
 import { ProductCard } from "@/features/products/components/product-card/product-card";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
+import { ProductWishlistAction } from "@/features/wishlist/components/product-wishlist-action";
 
 type HomeProductCardLabels = {
   discount: string;
@@ -50,6 +51,7 @@ export function HomeProductCard({
         label: labels.rating(product.rating),
       }}
       title={product.name[locale]}
+      wishlistControl={<ProductWishlistAction productId={product.id} />}
     />
   );
 }

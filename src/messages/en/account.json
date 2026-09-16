@@ -162,5 +162,27 @@
       },
       "total": "Total"
     }
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "description": "Products you have saved to revisit later.",
+    "empty": {
+      "title": "Your wishlist is empty",
+      "description": "Save products you love so you can easily find them again.",
+      "cta": "Browse products"
+    },
+    "actions": {
+      "add": "Add to wishlist",
+      "remove": "Remove from wishlist",
+      "pending": "Updating wishlist"
+    },
+    "mutationError": "Your wishlist could not be updated. Please try again.",
+    "rating": "Rated {value} out of 5",
+    "unavailable": "Unavailable",
+    "badges": {
+      "discount": "Sale",
+      "new": "New",
+      "personalization": "Personalized"
+    }
   }
 }

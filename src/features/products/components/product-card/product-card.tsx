@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
-import { HeartIcon } from "@/components/ui/icons";
+import { HeartFilledIcon, HeartIcon } from "@/components/ui/icons";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +38,7 @@ interface ProductCardBaseProps {
   badge?: ProductCardBadge;
   rating?: ProductCardRating;
   wishlistAction?: ProductCardAction;
+  wishlistControl?: ReactNode;
   quickAddAction?: ProductCardAction;
   imagePriority?: boolean;
   className?: string;
@@ -57,6 +58,26 @@ interface ProductMediaProps extends Pick<
   unavailable: boolean;
   unavailableLabel?: ReactNode;
   wishlistAction?: ProductCardAction;
+  wishlistControl?: ReactNode;
+}
+
+export function ProductCardWishlistButton({
+  label,
+  ...buttonProps
+}: ProductCardAction) {
+  const pressed = buttonProps["aria-pressed"] === true;
+
+  return (
+    <IconButton
+      {...buttonProps}
+      aria-label={label}
+      size="productCard"
+      variant="ghost"
+      className="absolute start-2 top-2 z-20 bg-gray-0 text-gray-1000 shadow-[var(--shadow-product-card-wishlist)] aria-[pressed=true]:bg-gold-50 aria-[pressed=true]:text-gold-600"
+    >
+      {pressed ? <HeartFilledIcon /> : <HeartIcon />}
+    </IconButton>
+  );
 }
 
 function ProductMedia({
@@ -69,15 +90,13 @@ function ProductMedia({
   unavailable,
   unavailableLabel,
   wishlistAction,
+  wishlistControl,
 }: ProductMediaProps) {
   const visibleBadge = unavailable
     ? unavailableLabel
       ? { variant: "unavailable" as const, label: unavailableLabel }
       : undefined
     : badge;
-  const { label: wishlistLabel, ...wishlistButtonProps } = wishlistAction ?? {
-    label: "",
-  };
   const { label: quickAddLabel, ...quickAddButtonProps } = quickAddAction ?? {
     label: "",
   };
@@ -102,17 +121,10 @@ function ProductMedia({
         </Badge>
       ) : null}
 
-      {wishlistAction && wishlistLabel ? (
-        <IconButton
-          {...wishlistButtonProps}
-          aria-label={wishlistLabel}
-          size="productCard"
-          variant="ghost"
-          className="absolute start-2 top-2 z-20 bg-gray-0 shadow-[var(--shadow-product-card-wishlist)]"
-        >
-          <HeartIcon />
-        </IconButton>
-      ) : null}
+      {wishlistControl ??
+        (wishlistAction?.label ? (
+          <ProductCardWishlistButton {...wishlistAction} />
+        ) : null)}
 
       {quickAddAction && quickAddLabel ? (
         <IconButton
@@ -181,6 +193,7 @@ export function ProductCard({
   unavailable = false,
   unavailableLabel,
   wishlistAction,
+  wishlistControl,
 }: ProductCardProps) {
   return (
     <article
@@ -199,6 +212,7 @@ export function ProductCard({
         unavailable={unavailable}
         unavailableLabel={unavailableLabel}
         wishlistAction={wishlistAction}
+        wishlistControl={wishlistControl}
       />
       <ProductInfo
         href={href}

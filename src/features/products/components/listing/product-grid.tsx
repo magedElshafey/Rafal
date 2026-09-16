@@ -1,8 +1,12 @@
 import type { Locale } from "next-intl";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProductCard } from "@/features/products/components/product-card";
+import {
+  ProductCard,
+  type ProductCardAction,
+} from "@/features/products/components/product-card";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
+import { ProductWishlistAction } from "@/features/wishlist/components/product-wishlist-action";
 
 type ProductGridProps = {
   locale: Locale;
@@ -10,6 +14,7 @@ type ProductGridProps = {
   ratingLabel: (value: number) => string;
   badgeLabels: Record<"discount" | "new" | "personalization", string>;
   unavailableLabel: string;
+  getWishlistAction?: (product: ListingProduct) => ProductCardAction;
 };
 
 const productGridClassName =
@@ -17,6 +22,7 @@ const productGridClassName =
 
 export function ProductGrid({
   badgeLabels,
+  getWishlistAction,
   locale,
   products,
   ratingLabel,
@@ -48,6 +54,10 @@ export function ProductGrid({
             label: ratingLabel(product.rating),
           },
           title: product.name[locale],
+          wishlistAction: getWishlistAction?.(product),
+          wishlistControl: getWishlistAction ? undefined : (
+            <ProductWishlistAction productId={product.id} />
+          ),
         };
 
         return product.inStock ? (

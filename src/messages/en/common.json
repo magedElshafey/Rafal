@@ -2,6 +2,14 @@
   "LocaleSwitcher": {
     "label": "language"
   },
+  "wishlistAction": {
+    "add": "Add to wishlist",
+    "remove": "Remove from wishlist",
+    "loading": "Loading wishlist state",
+    "pending": "Updating wishlist",
+    "unavailable": "Wishlist is currently unavailable",
+    "error": "Your wishlist could not be updated. Please try again."
+  },
   "categoriesPage": {
     "title": "Categories",
     "loadMore": "Load more categories",
