@@ -1,8 +1,11 @@
+import type { Locale } from "next-intl";
+
 export type WishlistEntry = {
   productId: string;
 };
 
 export type SetWishlistStateInput = {
+  locale: Locale;
   productId: string;
   wishlisted: boolean;
 };

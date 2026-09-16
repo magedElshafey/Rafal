@@ -1,6 +1,6 @@
 "use server";
 
-import { getLocale } from "next-intl/server";
+import { hasLocale } from "next-intl";
 import { revalidatePath } from "next/cache";
 
 import { requireUser } from "@/features/auth/server/auth-boundary";
@@ -13,6 +13,7 @@ import type {
   SetWishlistStateInput,
   WishlistMutationResult,
 } from "@/features/wishlist/types/wishlist.types";
+import { routing } from "@/i18n/routing";
 
 function parseInput(input: unknown): SetWishlistStateInput | null {
   if (typeof input !== "object" || input === null || Array.isArray(input)) {
@@ -21,6 +22,8 @@ function parseInput(input: unknown): SetWishlistStateInput | null {
 
   const candidate = input as Record<string, unknown>;
   if (
+    typeof candidate.locale !== "string" ||
+    !hasLocale(routing.locales, candidate.locale) ||
     typeof candidate.productId !== "string" ||
     !isKnownProductId(candidate.productId) ||
     typeof candidate.wishlisted !== "boolean"
@@ -29,6 +32,7 @@ function parseInput(input: unknown): SetWishlistStateInput | null {
   }
 
   return {
+    locale: candidate.locale,
     productId: candidate.productId,
     wishlisted: candidate.wishlisted,
   };
@@ -43,10 +47,7 @@ export async function setWishlistState(
   if (!parsedInput) return { ok: false };
 
   try {
-    const [entries, locale] = await Promise.all([
-      readMockWishlistEntries(user),
-      getLocale(),
-    ]);
+    const entries = await readMockWishlistEntries(user);
     const withoutProduct = entries.filter(
       (entry) => entry.productId !== parsedInput.productId,
     );
@@ -55,10 +56,21 @@ export async function setWishlistState(
       : withoutProduct;
 
     await writeMockWishlistEntries(user, nextEntries);
-    revalidatePath(`/${locale}/account/wishlist`);
+    revalidatePath(`/${parsedInput.locale}/account/wishlist`);
 
     return { ok: true };
-  } catch {
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      const errorMessage =
+        error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : String(error);
+
+      console.error(
+        `[wishlist:set-state] Unexpected mutation failure for product "${parsedInput.productId}": ${errorMessage}`,
+      );
+    }
+
     return { ok: false };
   }
 }

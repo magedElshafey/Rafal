@@ -5,7 +5,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { ProductCardWishlistButton } from "@/features/products/components/product-card";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
@@ -28,6 +28,7 @@ export function ProductWishlistAction({
   productId,
 }: ProductWishlistActionProps) {
   const t = useTranslations("Common.wishlistAction");
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -43,7 +44,7 @@ export function ProductWishlistAction({
     // atomic. Review this global serialization when Laravel owns persistence.
     scope: { id: "wishlist-mutations" },
     mutationFn: async (wishlisted: boolean) => {
-      const result = await setWishlistState({ productId, wishlisted });
+      const result = await setWishlistState({ locale, productId, wishlisted });
       if (!result.ok) throw new Error("Wishlist mutation failed.");
       return wishlisted;
     },

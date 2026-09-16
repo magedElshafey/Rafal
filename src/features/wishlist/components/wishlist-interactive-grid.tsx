@@ -116,8 +116,8 @@ export function WishlistInteractiveGrid({
         // still receives an immediate, independent optimistic UI. Review this
         // queue when Laravel provides atomic Wishlist persistence.
         const mutation = mutationQueueRef.current.then(
-          () => setWishlistState({ productId, wishlisted }),
-          () => setWishlistState({ productId, wishlisted }),
+          () => setWishlistState({ locale, productId, wishlisted }),
+          () => setWishlistState({ locale, productId, wishlisted }),
         );
         mutationQueueRef.current = mutation.then(
           () => undefined,
