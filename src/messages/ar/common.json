@@ -69,8 +69,17 @@
       },
       "inputLabel": "الاسم المراد نقشه",
       "placeholder": "مثال: سارة",
-      "lettersAndSpaces": "الحروف والمسافات فقط",
-      "characterCount": "0 / {max} حرف"
+      "characterPolicies": {
+        "lettersAndSpaces": "الحروف والمسافات فقط"
+      },
+      "characterCount": "{count} / {max} حرف",
+      "errors": {
+        "required": "أدخل الاسم أو العبارة المراد نقشها.",
+        "unsupportedLanguage": "اختر إحدى لغات النقش المتاحة.",
+        "tooLong": "استخدم {max} أحرف كحد أقصى.",
+        "invalidCharacters": "استخدم الحروف والمسافات فقط.",
+        "languageScriptMismatch": "أدخل النص باستخدام حروف اللغة {language}."
+      }
     }
   },
   "productListing": {

@@ -10,7 +10,9 @@ import {
 } from "@/features/products/components/product-details/product-purchase-panel";
 import type { VariantAvailabilityById } from "@/features/products/types/product-availability.types";
 import type {
+  PersonalizationLanguage,
   ProductDetails,
+  ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
@@ -18,6 +20,7 @@ import {
   getSelectedOptionsFromVariant,
   resolveProductVariant,
 } from "@/features/products/utils/product-variant-resolver";
+import { validateProductPersonalization } from "@/features/products/utils/validate-product-personalization";
 
 export type ProductPurchaseData = Pick<
   ProductDetails,
@@ -63,6 +66,21 @@ function getPreferredImageId(
   return imageId;
 }
 
+function getInitialPersonalizationInput(
+  product: ProductPurchaseData,
+): ProductPersonalizationInput | null {
+  if (!product.personalization.enabled) return null;
+
+  const [language] = product.personalization.allowedLanguages;
+  if (!language) {
+    throw new Error(
+      `Product "${product.id}" enables personalization without an allowed language.`,
+    );
+  }
+
+  return { language, text: "" };
+}
+
 export function ProductPurchaseExperience({
   availabilityByVariantId,
   copy,
@@ -79,6 +97,9 @@ export function ProductPurchaseExperience({
     initialImageId,
   );
   const [quantity, setQuantity] = useState(1);
+  const [personalizationInput, setPersonalizationInput] = useState(() =>
+    getInitialPersonalizationInput(product),
+  );
   const selectedVariant = resolveProductVariant(
     product.options,
     product.variants,
@@ -92,6 +113,13 @@ export function ProductPurchaseExperience({
     availability?.status === "available"
       ? availability.maxOrderQuantity
       : 1;
+  const personalizationValidation =
+    product.personalization.enabled && personalizationInput
+      ? validateProductPersonalization(
+          product.personalization,
+          personalizationInput,
+        )
+      : null;
 
   useEffect(() => {
     if (!availabilityStatus) return;
@@ -160,6 +188,20 @@ export function ProductPurchaseExperience({
     );
   };
 
+  const handleSelectPersonalizationLanguage = (
+    language: PersonalizationLanguage,
+  ) => {
+    setPersonalizationInput((currentInput) =>
+      currentInput ? { ...currentInput, language } : currentInput,
+    );
+  };
+
+  const handleChangePersonalizationText = (text: string) => {
+    setPersonalizationInput((currentInput) =>
+      currentInput ? { ...currentInput, text } : currentInput,
+    );
+  };
+
   return (
     <div className="mt-7 flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12 rtl:lg:flex-row-reverse">
       <div className="min-w-0 lg:w-[44%]">
@@ -180,7 +222,13 @@ export function ProductPurchaseExperience({
           locale={locale}
           onDecreaseQuantity={handleDecreaseQuantity}
           onIncreaseQuantity={handleIncreaseQuantity}
+          onChangePersonalizationText={handleChangePersonalizationText}
+          onSelectPersonalizationLanguage={
+            handleSelectPersonalizationLanguage
+          }
           onSelectOption={handleSelectOption}
+          personalizationInput={personalizationInput}
+          personalizationValidation={personalizationValidation}
           product={product}
           quantity={quantity}
           renderedAt={renderedAt}

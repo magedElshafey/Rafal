@@ -67,6 +67,11 @@ export type PersonalizationLanguage = "arabic" | "english";
 
 export type PersonalizationCharacterPolicy = "letters-and-spaces";
 
+export type ProductPersonalizationInput = {
+  language: PersonalizationLanguage;
+  text: string;
+};
+
 export type ProductPersonalizationConfig =
   | { enabled: false }
   | {
@@ -76,6 +81,11 @@ export type ProductPersonalizationConfig =
       characterPolicy: PersonalizationCharacterPolicy;
       additionalFee: Money | null;
     };
+
+export type EnabledProductPersonalizationConfig = Extract<
+  ProductPersonalizationConfig,
+  { enabled: true }
+>;
 
 // ProductDetails is a localized product projection. It intentionally excludes
 // selected UI state, Cart state, reviews, and location-resolved availability.

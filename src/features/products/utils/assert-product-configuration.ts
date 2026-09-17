@@ -1,6 +1,8 @@
 import type { ProductDetails } from "@/features/products/types/product-details.types";
 import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
 
+const SUPPORTED_PERSONALIZATION_LANGUAGES = new Set(["arabic", "english"]);
+
 export function assertProductConfiguration(product: ProductDetails): void {
   const optionValuesByOptionId = new Map(
     product.options.map((option) => [
@@ -11,6 +13,51 @@ export function assertProductConfiguration(product: ProductDetails): void {
   const imageIds = new Set(product.images.map((image) => image.id));
   const combinations = new Set<string>();
   const variantIds = new Set<string>();
+
+  if (product.personalization.enabled) {
+    const {
+      additionalFee,
+      allowedLanguages,
+      characterPolicy,
+      maxLength,
+    } = product.personalization;
+
+    if (allowedLanguages.length === 0) {
+      throw new Error(
+        `Product "${product.id}" enables personalization without an allowed language.`,
+      );
+    }
+    if (
+      new Set(allowedLanguages).size !== allowedLanguages.length ||
+      allowedLanguages.some(
+        (language) => !SUPPORTED_PERSONALIZATION_LANGUAGES.has(language),
+      )
+    ) {
+      throw new Error(
+        `Product "${product.id}" contains an invalid personalization language configuration.`,
+      );
+    }
+    if (!Number.isFinite(maxLength) || !Number.isInteger(maxLength) || maxLength <= 0) {
+      throw new Error(
+        `Product "${product.id}" personalization maxLength must be a positive finite integer.`,
+      );
+    }
+    if (characterPolicy !== "letters-and-spaces") {
+      throw new Error(
+        `Product "${product.id}" contains an unknown personalization character policy.`,
+      );
+    }
+    if (
+      additionalFee !== null &&
+      (!Number.isFinite(additionalFee.amount) ||
+        additionalFee.amount < 0 ||
+        additionalFee.currency !== "SAR")
+    ) {
+      throw new Error(
+        `Product "${product.id}" contains an invalid personalization fee.`,
+      );
+    }
+  }
 
   if (optionValuesByOptionId.size !== product.options.length) {
     throw new Error(`Product "${product.id}" contains duplicate option IDs.`);

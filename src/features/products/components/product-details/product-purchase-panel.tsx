@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ShieldCheckIcon } from "@/components/ui/icons";
@@ -6,14 +7,20 @@ import { ProductPriceBlock } from "@/features/products/components/product-detail
 import { Rating } from "@/features/products/components/product-card/rating";
 import type { ResolvedVariantAvailability } from "@/features/products/types/product-availability.types";
 import type {
+  PersonalizationCharacterPolicy,
   PersonalizationLanguage,
   ProductDetails,
   ProductOption,
+  ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
 import type { SelectedProductOptions } from "@/features/products/utils/product-variant-resolver";
 import { resolveProductVariant } from "@/features/products/utils/product-variant-resolver";
+import type {
+  ProductPersonalizationValidationError,
+  ProductPersonalizationValidationResult,
+} from "@/features/products/utils/validate-product-personalization";
 
 export type ProductPurchasePanelCopy = {
   addToCart: string;
@@ -29,7 +36,14 @@ export type ProductPurchasePanelCopy = {
     inputLabel: string;
     languages: Record<PersonalizationLanguage, string>;
     languageLabel: string;
-    lettersAndSpaces: string;
+    characterPolicies: Record<PersonalizationCharacterPolicy, string>;
+    errors: {
+      invalidCharacters: string;
+      languageScriptMismatchTemplate: string;
+      required: string;
+      tooLongTemplate: string;
+      unsupportedLanguage: string;
+    };
     placeholder: string;
     title: string;
   };
@@ -60,9 +74,15 @@ type ProductPurchasePanelProps = {
   availability: ResolvedVariantAvailability;
   copy: ProductPurchasePanelCopy;
   locale: Locale;
+  onChangePersonalizationText: (text: string) => void;
   onDecreaseQuantity: () => void;
   onIncreaseQuantity: () => void;
+  onSelectPersonalizationLanguage: (
+    language: PersonalizationLanguage,
+  ) => void;
   onSelectOption: (optionId: string, valueId: string) => void;
+  personalizationInput: ProductPersonalizationInput | null;
+  personalizationValidation: ProductPersonalizationValidationResult | null;
   product: Pick<
     ProductDetails,
     "id" | "name" | "options" | "personalization" | "ratingSummary" | "variants"
@@ -141,15 +161,46 @@ function ProductOptions({
 function ProductPersonalizationSummary({
   copy,
   locale,
+  onChangeText,
+  onSelectLanguage,
+  personalizationInput,
+  personalizationValidation,
   product,
 }: {
   copy: ProductPurchasePanelCopy["personalization"];
   locale: Locale;
+  onChangeText: (text: string) => void;
+  onSelectLanguage: (language: PersonalizationLanguage) => void;
+  personalizationInput: ProductPersonalizationInput | null;
+  personalizationValidation: ProductPersonalizationValidationResult | null;
   product: Pick<ProductDetails, "id" | "personalization">;
 }) {
-  if (!product.personalization.enabled) return null;
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  if (
+    !product.personalization.enabled ||
+    !personalizationInput ||
+    !personalizationValidation
+  ) {
+    return null;
+  }
 
   const inputId = `personalization-${product.id}`;
+  const policyId = `${inputId}-policy`;
+  const counterId = `${inputId}-counter`;
+  const errorId = `${inputId}-error`;
+  const showError =
+    !personalizationValidation.valid &&
+    (hasInteracted || personalizationInput.text.length > 0);
+  const errorMessage = personalizationValidation.valid
+    ? null
+    : getPersonalizationErrorMessage(
+        personalizationValidation.error,
+        copy,
+      );
+  const describedBy = [policyId, counterId, showError ? errorId : null]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section
@@ -175,19 +226,36 @@ function ProductPersonalizationSummary({
         ) : null}
       </div>
 
-      <div className="mt-4">
-        <p className="type-label text-gray-700">{copy.languageLabel}</p>
-        <ul className="mt-2 flex flex-wrap gap-2">
+      <fieldset className="mt-4">
+        <legend className="type-label text-gray-700">
+          {copy.languageLabel}
+        </legend>
+        <div className="mt-2 flex flex-wrap gap-2">
           {product.personalization.allowedLanguages.map((language) => (
-            <li
+            <label
               key={language}
-              className="rounded-full border border-gray-300 bg-gray-0 px-4 py-2 type-body-sm text-gray-700"
+              className="relative cursor-pointer"
             >
-              {copy.languages[language]}
-            </li>
+              <input
+                type="radio"
+                name={`${inputId}-language`}
+                value={language}
+                checked={personalizationInput.language === language}
+                onChange={() => {
+                  onSelectLanguage(language);
+                  if (personalizationInput.text.trim().length > 0) {
+                    setHasInteracted(true);
+                  }
+                }}
+                className="peer sr-only"
+              />
+              <span className="flex min-h-11 items-center rounded-full border border-gray-300 bg-gray-0 px-4 py-2 type-body-sm text-gray-700 peer-checked:border-gold-500 peer-checked:bg-gold-500 peer-checked:text-gray-0 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
+                {copy.languages[language]}
+              </span>
+            </label>
           ))}
-        </ul>
-      </div>
+        </div>
+      </fieldset>
 
       <div className="mt-4">
         <label htmlFor={inputId} className="type-label text-gray-700">
@@ -195,22 +263,63 @@ function ProductPersonalizationSummary({
         </label>
         <input
           id={inputId}
-          disabled
+          value={personalizationInput.text}
+          onChange={(event) => {
+            setHasInteracted(true);
+            onChangeText(event.target.value);
+          }}
+          onBlur={() => setHasInteracted(true)}
           maxLength={product.personalization.maxLength}
           placeholder={copy.placeholder}
-          className="mt-2 h-11 w-full rounded-md border border-gray-200 bg-gray-0 px-4 type-body text-gray-400 disabled:cursor-not-allowed disabled:opacity-100"
+          dir={personalizationInput.language === "arabic" ? "rtl" : "ltr"}
+          aria-invalid={showError || undefined}
+          aria-describedby={describedBy}
+          className={`mt-2 h-11 w-full rounded-md border bg-gray-0 px-4 type-body text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+            showError ? "border-destructive" : "border-gray-200"
+          }`}
         />
         <div className="mt-2 flex flex-wrap justify-between gap-2 type-caption text-gray-400">
-          <span>{copy.lettersAndSpaces}</span>
-          <span>
+          <span id={policyId}>
+            {copy.characterPolicies[product.personalization.characterPolicy]}
+          </span>
+          <span id={counterId}>
             {formatProductMessage(copy.characterCountTemplate, {
+              count: personalizationInput.text.length,
               max: product.personalization.maxLength,
             })}
           </span>
         </div>
+        {showError && errorMessage ? (
+          <p id={errorId} className="mt-2 type-caption text-destructive">
+            {errorMessage}
+          </p>
+        ) : null}
       </div>
     </section>
   );
+}
+
+function getPersonalizationErrorMessage(
+  error: ProductPersonalizationValidationError,
+  copy: ProductPurchasePanelCopy["personalization"],
+): string {
+  switch (error.code) {
+    case "required":
+      return copy.errors.required;
+    case "unsupported-language":
+      return copy.errors.unsupportedLanguage;
+    case "too-long":
+      return formatProductMessage(copy.errors.tooLongTemplate, {
+        max: error.maxLength,
+      });
+    case "invalid-characters":
+      return copy.errors.invalidCharacters;
+    case "language-script-mismatch":
+      return formatProductMessage(
+        copy.errors.languageScriptMismatchTemplate,
+        { language: copy.languages[error.language] },
+      );
+  }
 }
 
 function AvailabilityMessage({
@@ -247,9 +356,13 @@ export function ProductPurchasePanel({
   availability,
   copy,
   locale,
+  onChangePersonalizationText,
   onDecreaseQuantity,
   onIncreaseQuantity,
+  onSelectPersonalizationLanguage,
   onSelectOption,
+  personalizationInput,
+  personalizationValidation,
   product,
   quantity,
   renderedAt,
@@ -356,6 +469,10 @@ export function ProductPurchasePanel({
       <ProductPersonalizationSummary
         copy={copy.personalization}
         locale={locale}
+        onChangeText={onChangePersonalizationText}
+        onSelectLanguage={onSelectPersonalizationLanguage}
+        personalizationInput={personalizationInput}
+        personalizationValidation={personalizationValidation}
         product={product}
       />
     </section>

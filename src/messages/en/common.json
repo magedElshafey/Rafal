@@ -69,8 +69,17 @@
       },
       "inputLabel": "Name to engrave",
       "placeholder": "Example: Sarah",
-      "lettersAndSpaces": "Letters and spaces only",
-      "characterCount": "0 / {max} characters"
+      "characterPolicies": {
+        "lettersAndSpaces": "Letters and spaces only"
+      },
+      "characterCount": "{count} / {max} characters",
+      "errors": {
+        "required": "Enter the name or phrase to engrave.",
+        "unsupportedLanguage": "Select an available engraving language.",
+        "tooLong": "Use no more than {max} characters.",
+        "invalidCharacters": "Use letters and spaces only.",
+        "languageScriptMismatch": "Enter the text using {language} letters."
+      }
     }
   },
   "productListing": {
