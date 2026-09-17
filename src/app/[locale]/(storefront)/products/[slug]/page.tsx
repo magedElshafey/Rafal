@@ -1,11 +1,9 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
-import { GUEST_CITY_COOKIE_NAME } from "@/features/location/constants";
-import { cityService } from "@/features/location/services/city-service";
+import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { ProductDescription } from "@/features/products/components/product-details/product-description";
 import { ProductPurchaseExperience } from "@/features/products/components/product-details/product-purchase-experience";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
@@ -17,21 +15,17 @@ type ProductPageProps = {
 };
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const [{ slug }, locale, cookieStore] = await Promise.all([
+  const [{ slug }, locale] = await Promise.all([
     params,
     getLocale(),
-    cookies(),
   ]);
-  const persistedCityId = cookieStore.get(GUEST_CITY_COOKIE_NAME)?.value;
   const [product, t, city] = await Promise.all([
     getProductDetailsBySlug(slug, locale),
     getTranslations({
       locale,
       namespace: "Common.productDetails",
     }),
-    persistedCityId
-      ? cityService.getCityById(persistedCityId, locale)
-      : Promise.resolve(null),
+    resolveCurrentLocation(locale),
   ]);
 
   if (!product) notFound();

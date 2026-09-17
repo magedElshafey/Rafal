@@ -347,3 +347,11 @@ export function getMockProductDetailsBySlug(
   const product = productsBySlug.get(slug);
   return product ? toProductDetails(product, locale) : null;
 }
+
+export function getMockProductDetailsById(
+  productId: string,
+  locale: Locale,
+): ProductDetails | null {
+  const product = productsById.get(productId);
+  return product ? toProductDetails(product, locale) : null;
+}

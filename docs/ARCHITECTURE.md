@@ -229,6 +229,9 @@ as documented in `ADR-003-tanstack-query-load-more.md`. It does not replace the
 shared HTTP transport or the server-first default. Any broader client-cache use
 still requires an explicit architecture decision.
 
+Shared Cart server-state synchronization is separately approved by
+`ADR-Guest Cart Ownership & Persistence.md`.
+
 ## 8. Mutation Strategy
 
 Laravel remains authoritative for commerce/business mutations. The web application must not duplicate backend business rules.

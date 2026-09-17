@@ -3,7 +3,10 @@ import "server-only";
 import type { Locale } from "next-intl";
 
 import { serverEnv } from "@/config/server-env";
-import { getMockProductDetailsBySlug } from "@/features/products/server/mock-product-catalog";
+import {
+  getMockProductDetailsById,
+  getMockProductDetailsBySlug,
+} from "@/features/products/server/mock-product-catalog";
 import type { ProductDetails } from "@/features/products/types/product-details.types";
 
 function assertProductSourceAvailable() {
@@ -18,4 +21,12 @@ export async function getProductDetailsBySlug(
 ): Promise<ProductDetails | null> {
   assertProductSourceAvailable();
   return getMockProductDetailsBySlug(slug, locale);
+}
+
+export async function getProductDetailsById(
+  productId: string,
+  locale: Locale,
+): Promise<ProductDetails | null> {
+  assertProductSourceAvailable();
+  return getMockProductDetailsById(productId, locale);
 }
