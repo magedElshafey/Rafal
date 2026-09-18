@@ -15,10 +15,7 @@ type ProductPageProps = {
 };
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const [{ slug }, locale] = await Promise.all([
-    params,
-    getLocale(),
-  ]);
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
   const [product, t, city] = await Promise.all([
     getProductDetailsBySlug(slug, locale),
     getTranslations({
@@ -73,13 +70,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           panel: {
             addToCart: t("addToCart"),
             availability: {
-              availableTemplate: t.raw(
-                "availability.available",
-              ) as string,
+              availableTemplate: t.raw("availability.available") as string,
               outOfStock: t("availability.outOfStock"),
-              unavailableAtLocation: t(
-                "availability.unavailableAtLocation",
-              ),
+              unavailableAtLocation: t("availability.unavailableAtLocation"),
             },
             personalization: {
               additionalFeeTemplate: t.raw(
@@ -139,6 +132,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
             ratingLabelTemplate: t.raw("rating.label") as string,
             ratingSummaryTemplate: t.raw("rating.summary") as string,
             skuTemplate: t.raw("sku") as string,
+          },
+          purchase: {
+            adding: t("purchase.adding"),
+            errors: {
+              cartSessionFailure: t("purchase.errors.cartSessionFailure"),
+              invalidInput: t("purchase.errors.invalidInput"),
+              invalidPersonalization: t(
+                "purchase.errors.invalidPersonalization",
+              ),
+              locationRequired: t("purchase.errors.locationRequired"),
+              outOfStock: t("purchase.errors.outOfStock"),
+              productUnavailable: t("purchase.errors.productUnavailable"),
+              quantityLimitTemplate: t.raw(
+                "purchase.errors.quantityLimit",
+              ) as string,
+              serviceUnavailable: t("purchase.errors.serviceUnavailable"),
+              unavailableAtLocation: t("purchase.errors.unavailableAtLocation"),
+              variantInvalid: t("purchase.errors.variantInvalid"),
+            },
+            sticky: {
+              desktopLabel: t("purchase.sticky.desktopLabel"),
+              mobileLabel: t("purchase.sticky.mobileLabel"),
+            },
+            success: {
+              checkout: t("purchase.success.checkout"),
+              close: t("purchase.success.close"),
+              continueShopping: t("purchase.success.continueShopping"),
+              countTemplate: t.raw("purchase.success.count") as string,
+              title: t("purchase.success.title"),
+              totalLabel: t("purchase.success.total"),
+            },
           },
         }}
       />

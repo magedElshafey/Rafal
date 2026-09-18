@@ -1,6 +1,6 @@
 "use server";
 
-import { getLocale } from "next-intl/server";
+import { hasLocale } from "next-intl";
 
 import { GuestCartSessionError } from "@/features/cart/server/guest-cart-session";
 import { addLineToCurrentCart } from "@/features/cart/server/cart-boundary";
@@ -9,6 +9,7 @@ import type {
   AddCartLineResult,
 } from "@/features/cart/types/cart.types";
 import type { PersonalizationLanguage } from "@/features/products/types/product-details.types";
+import { routing } from "@/i18n/routing";
 
 const MAX_ID_LENGTH = 128;
 const MAX_RAW_PERSONALIZATION_LENGTH = 1_024;
@@ -92,14 +93,21 @@ function parseInput(value: unknown): AddCartLineInput | null {
   };
 }
 
-export async function addCartLine(input: unknown): Promise<AddCartLineResult> {
+export async function addCartLine(
+  input: unknown,
+  locale: unknown,
+): Promise<AddCartLineResult> {
   const parsedInput = parseInput(input);
-  if (!parsedInput) {
+  if (
+    !parsedInput ||
+    typeof locale !== "string" ||
+    !hasLocale(routing.locales, locale)
+  ) {
     return { ok: false, error: { code: "invalid-input" } };
   }
 
   try {
-    return await addLineToCurrentCart(parsedInput, await getLocale());
+    return await addLineToCurrentCart(parsedInput, locale);
   } catch (error) {
     return {
       ok: false,

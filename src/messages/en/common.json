@@ -52,6 +52,33 @@
       "unavailableAtLocation": "Unavailable at the selected delivery location"
     },
     "addToCart": "Add to cart",
+    "purchase": {
+      "adding": "Adding to cart...",
+      "errors": {
+        "invalidInput": "Check your product choices and try again.",
+        "productUnavailable": "This product is no longer available.",
+        "variantInvalid": "This product option is no longer available. Choose another option.",
+        "locationRequired": "Select a delivery location before adding this product.",
+        "unavailableAtLocation": "This product is unavailable at your selected delivery location.",
+        "outOfStock": "This product is out of stock.",
+        "quantityLimit": "You can add up to {max} of this item.",
+        "invalidPersonalization": "Review the personalization details and try again.",
+        "cartSessionFailure": "We could not create your cart. Please try again.",
+        "serviceUnavailable": "The cart is temporarily unavailable. Please try again."
+      },
+      "sticky": {
+        "mobileLabel": "Quick product purchase",
+        "desktopLabel": "Product purchase actions"
+      },
+      "success": {
+        "title": "Added to cart",
+        "count": "Items in your cart: {count}",
+        "total": "Cart total",
+        "checkout": "Continue to checkout",
+        "continueShopping": "Continue shopping",
+        "close": "Close cart confirmation"
+      }
+    },
     "quantity": {
       "label": "Quantity: {value}",
       "increase": "Increase quantity",

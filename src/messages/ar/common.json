@@ -52,6 +52,33 @@
       "unavailableAtLocation": "غير متوفر في موقع التوصيل المحدد"
     },
     "addToCart": "أضف إلى السلة",
+    "purchase": {
+      "adding": "جارٍ الإضافة إلى السلة...",
+      "errors": {
+        "invalidInput": "تحقق من خيارات المنتج وحاول مرة أخرى.",
+        "productUnavailable": "هذا المنتج لم يعد متاحًا.",
+        "variantInvalid": "خيار المنتج هذا لم يعد متاحًا. اختر خيارًا آخر.",
+        "locationRequired": "اختر موقع التوصيل قبل إضافة هذا المنتج.",
+        "unavailableAtLocation": "هذا المنتج غير متوفر في موقع التوصيل المحدد.",
+        "outOfStock": "نفد هذا المنتج من المخزون.",
+        "quantityLimit": "يمكنك إضافة {max} كحد أقصى من هذا المنتج.",
+        "invalidPersonalization": "راجع بيانات التخصيص وحاول مرة أخرى.",
+        "cartSessionFailure": "تعذر إنشاء سلة التسوق. حاول مرة أخرى.",
+        "serviceUnavailable": "سلة التسوق غير متاحة مؤقتًا. حاول مرة أخرى."
+      },
+      "sticky": {
+        "mobileLabel": "شراء المنتج بسرعة",
+        "desktopLabel": "إجراءات شراء المنتج"
+      },
+      "success": {
+        "title": "تمت الإضافة إلى السلة",
+        "count": "عدد القطع في السلة: {count}",
+        "total": "إجمالي السلة",
+        "checkout": "متابعة الدفع",
+        "continueShopping": "متابعة التسوق",
+        "close": "إغلاق تأكيد السلة"
+      }
+    },
     "quantity": {
       "label": "الكمية: {value}",
       "increase": "زيادة الكمية",

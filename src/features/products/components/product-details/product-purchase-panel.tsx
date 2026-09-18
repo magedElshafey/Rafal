@@ -1,5 +1,5 @@
 import type { Locale } from "next-intl";
-import { useState } from "react";
+import { useState, type MouseEventHandler, type Ref } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ShieldCheckIcon } from "@/components/ui/icons";
@@ -71,9 +71,14 @@ export type ProductPurchasePanelCopy = {
 };
 
 type ProductPurchasePanelProps = {
+  addToCartErrorMessage: string | null;
+  addingToCartLabel: string;
   availability: ResolvedVariantAvailability;
+  canAddToCart: boolean;
   copy: ProductPurchasePanelCopy;
+  isAddingToCart: boolean;
   locale: Locale;
+  onAddToCart: MouseEventHandler<HTMLButtonElement>;
   onChangePersonalizationText: (text: string) => void;
   onDecreaseQuantity: () => void;
   onIncreaseQuantity: () => void;
@@ -88,6 +93,7 @@ type ProductPurchasePanelProps = {
     "id" | "name" | "options" | "personalization" | "ratingSummary" | "variants"
   >;
   quantity: number;
+  purchaseActionRef: Ref<HTMLDivElement>;
   renderedAt: number;
   selectedOptions: SelectedProductOptions;
   variant: ProductVariant;
@@ -353,9 +359,14 @@ function AvailabilityMessage({
 }
 
 export function ProductPurchasePanel({
+  addToCartErrorMessage,
+  addingToCartLabel,
   availability,
+  canAddToCart,
   copy,
+  isAddingToCart,
   locale,
+  onAddToCart,
   onChangePersonalizationText,
   onDecreaseQuantity,
   onIncreaseQuantity,
@@ -365,6 +376,7 @@ export function ProductPurchasePanel({
   personalizationValidation,
   product,
   quantity,
+  purchaseActionRef,
   renderedAt,
   selectedOptions,
   variant,
@@ -423,47 +435,61 @@ export function ProductPurchasePanel({
 
       <AvailabilityMessage availability={availability} copy={copy.availability} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button
-          disabled
-          size="lg"
-          aria-describedby="product-availability"
-          className={
-            available
-              ? "w-full flex-1 disabled:bg-gray-1000 disabled:text-gray-0"
-              : "w-full flex-1"
-          }
-        >
-          {copy.addToCart}
-        </Button>
-        <div className="flex h-13 shrink-0 items-center justify-between rounded-md border border-gray-200 bg-gray-0">
-          <button
-            type="button"
-            aria-label={copy.quantity.decrease}
-            disabled={!canDecrease}
-            onClick={onDecreaseQuantity}
-            className="size-11 type-body-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:text-gray-300"
+      <div ref={purchaseActionRef}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button
+            disabled={!canAddToCart || isAddingToCart}
+            loading={isAddingToCart}
+            loadingLabel={addingToCartLabel}
+            size="lg"
+            aria-describedby={
+              addToCartErrorMessage
+                ? "product-availability product-add-to-cart-error"
+                : "product-availability"
+            }
+            className="w-full flex-1"
+            onClick={onAddToCart}
           >
-            −
-          </button>
-          <output
-            aria-label={formatProductMessage(copy.quantity.labelTemplate, {
-              value: quantity,
-            })}
-            className="min-w-8 text-center type-body font-medium"
-          >
-            {quantity}
-          </output>
-          <button
-            type="button"
-            aria-label={copy.quantity.increase}
-            disabled={!canIncrease}
-            onClick={onIncreaseQuantity}
-            className="size-11 type-body-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:text-gray-300"
-          >
-            +
-          </button>
+            {copy.addToCart}
+          </Button>
+          <div className="flex h-13 shrink-0 items-center justify-between rounded-md border border-gray-200 bg-gray-0">
+            <button
+              type="button"
+              aria-label={copy.quantity.decrease}
+              disabled={!canDecrease}
+              onClick={onDecreaseQuantity}
+              className="size-11 type-body-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:text-gray-300"
+            >
+              −
+            </button>
+            <output
+              aria-label={formatProductMessage(copy.quantity.labelTemplate, {
+                value: quantity,
+              })}
+              className="min-w-8 text-center type-body font-medium"
+            >
+              {quantity}
+            </output>
+            <button
+              type="button"
+              aria-label={copy.quantity.increase}
+              disabled={!canIncrease}
+              onClick={onIncreaseQuantity}
+              className="size-11 type-body-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:text-gray-300"
+            >
+              +
+            </button>
+          </div>
         </div>
+        {addToCartErrorMessage ? (
+          <p
+            id="product-add-to-cart-error"
+            role="status"
+            className="mt-2 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 type-body-sm text-destructive"
+          >
+            {addToCartErrorMessage}
+          </p>
+        ) : null}
       </div>
 
       <ProductPersonalizationSummary

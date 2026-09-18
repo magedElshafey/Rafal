@@ -1,10 +1,8 @@
 import type { Locale } from "next-intl";
 
+import { StorefrontLocationController } from "@/components/shell/storefront/quick-acess/StorefrontLocationController";
 import { Container } from "@/components/ui/container";
-import {
-  LocationController,
-  type LocationControllerCopy,
-} from "@/features/location/components/LocationController";
+import type { LocationControllerCopy } from "@/features/location/components/LocationController";
 import type { City } from "@/features/location/types";
 import {
   SearchController,
@@ -28,7 +26,7 @@ function QuickAccessHeader({
     <div className="bg-gray-50 py-3 border-b border-b-gray-200">
       <Container className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
         <div className="flex w-full items-center md:w-auto">
-          <LocationController
+          <StorefrontLocationController
             copy={locationCopy}
             initialCity={initialCity}
             locale={locale}

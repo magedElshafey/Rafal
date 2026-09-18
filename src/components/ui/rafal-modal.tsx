@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 
 import { Button } from "@/components/ui/button";
 import { XIcon } from "@/components/ui/icons";
@@ -18,6 +18,8 @@ type RafalModalProps = {
   closeLabel?: string;
   showClose?: boolean;
   className?: string;
+  returnFocusRef?: RefObject<HTMLElement | null>;
+  variant?: "modal" | "bottom-sheet";
 };
 
 export function RafalModal({
@@ -29,8 +31,10 @@ export function RafalModal({
   footer,
   onOpenChange,
   open,
+  returnFocusRef,
   showClose = false,
   title,
+  variant = "modal",
 }: RafalModalProps) {
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen || dismissible) onOpenChange(nextOpen);
@@ -41,6 +45,12 @@ export function RafalModal({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-gray-1000/45" />
         <DialogPrimitive.Content
+          onCloseAutoFocus={(event) => {
+            if (!returnFocusRef?.current) return;
+
+            event.preventDefault();
+            returnFocusRef.current.focus();
+          }}
           onEscapeKeyDown={(event) => {
             if (!dismissible) event.preventDefault();
           }}
@@ -49,7 +59,9 @@ export function RafalModal({
           }}
           className={cn(
             "fixed inset-x-0 bottom-0 z-50 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)] outline-none",
-            "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",
+            variant === "bottom-sheet"
+              ? "sm:inset-x-auto sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2"
+              : "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",
             className,
           )}
         >

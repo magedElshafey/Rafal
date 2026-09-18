@@ -31,6 +31,7 @@ type LocationControllerProps = {
   copy: LocationControllerCopy;
   initialCity: City | null;
   locale: Locale;
+  onLocationPersisted?: () => void | Promise<void>;
 };
 
 const cityCatalogRequests = new Map<Locale, Promise<City[]>>();
@@ -66,6 +67,7 @@ export function LocationController({
   copy,
   initialCity,
   locale,
+  onLocationPersisted,
 }: LocationControllerProps) {
   const [cities, setCities] = useState<City[] | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
@@ -108,6 +110,7 @@ export function LocationController({
     setGeolocationState("idle");
     startTransition(async () => {
       await setGuestCityId(city.id);
+      await onLocationPersisted?.();
       router.refresh();
     });
   };
