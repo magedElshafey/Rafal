@@ -7,8 +7,10 @@ import {
 } from "@/features/products/components/product-card";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
 import { ProductWishlistAction } from "@/features/wishlist/components/product-wishlist-action";
+import { cn } from "@/lib/utils";
 
 type ProductGridProps = {
+  className?: string;
   locale: Locale;
   products: readonly ListingProduct[];
   ratingLabel: (value: number) => string;
@@ -20,57 +22,76 @@ type ProductGridProps = {
 const productGridClassName =
   "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4";
 
+export function ListingProductCard({
+  badgeLabels,
+  getWishlistAction,
+  locale,
+  product,
+  ratingLabel,
+  unavailableLabel,
+}: Omit<ProductGridProps, "className" | "products"> & {
+  product: ListingProduct;
+}) {
+  const currency = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "SAR",
+  });
+  const cardProps = {
+    badge: product.badge
+      ? { variant: product.badge, label: badgeLabels[product.badge] }
+      : undefined,
+    href: `/products/${product.slug}`,
+    image: product.imageUrl,
+    imageAlt: product.name[locale],
+    imageSizes: "(max-width: 639px) 45vw, (max-width: 1023px) 30vw, 18vw",
+    originalPrice: product.originalPrice
+      ? currency.format(product.originalPrice)
+      : undefined,
+    price: currency.format(product.price),
+    rating: {
+      value: product.rating,
+      label: ratingLabel(product.rating),
+    },
+    title: product.name[locale],
+    wishlistAction: getWishlistAction?.(product),
+    wishlistControl: getWishlistAction ? undefined : (
+      <ProductWishlistAction productId={product.id} />
+    ),
+  };
+
+  return product.inStock ? (
+    <ProductCard {...cardProps} />
+  ) : (
+    <ProductCard
+      {...cardProps}
+      unavailable
+      unavailableLabel={unavailableLabel}
+    />
+  );
+}
+
 export function ProductGrid({
   badgeLabels,
+  className,
   getWishlistAction,
   locale,
   products,
   ratingLabel,
   unavailableLabel,
 }: ProductGridProps) {
-  const currency = new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "SAR",
-  });
-
   return (
-    <div className={productGridClassName}>
-      {products.map((product) => {
-        const cardProps = {
-          badge: product.badge
-            ? { variant: product.badge, label: badgeLabels[product.badge] }
-            : undefined,
-          href: `/products/${product.slug}`,
-          image: product.imageUrl,
-          imageAlt: product.name[locale],
-          imageSizes:
-            "(max-width: 639px) 45vw, (max-width: 1023px) 30vw, 18vw",
-          originalPrice: product.originalPrice
-            ? currency.format(product.originalPrice)
-            : undefined,
-          price: currency.format(product.price),
-          rating: {
-            value: product.rating,
-            label: ratingLabel(product.rating),
-          },
-          title: product.name[locale],
-          wishlistAction: getWishlistAction?.(product),
-          wishlistControl: getWishlistAction ? undefined : (
-            <ProductWishlistAction productId={product.id} />
-          ),
-        };
-
-        return product.inStock ? (
-          <ProductCard key={product.id} {...cardProps} />
-        ) : (
-          <ProductCard
-            key={product.id}
-            {...cardProps}
-            unavailable
-            unavailableLabel={unavailableLabel}
-          />
-        );
-      })}
+    <div className={cn(productGridClassName, className)}>
+      {products.map((product) => (
+        <ListingProductCard
+          key={product.id}
+          badgeLabels={badgeLabels}
+          getWishlistAction={getWishlistAction}
+          locale={locale}
+          product={product}
+          ratingLabel={ratingLabel}
+          unavailableLabel={unavailableLabel}
+        />
+      ))}
     </div>
   );
 }

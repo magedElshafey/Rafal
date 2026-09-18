@@ -3,12 +3,24 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { serverEnv } from "@/config/server-env";
+import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
+import { ComplementaryProducts } from "@/features/products/components/product-details/complementary-products";
+import { ProductBnplInformation } from "@/features/products/components/product-details/product-bnpl-information";
 import { ProductDescription } from "@/features/products/components/product-details/product-description";
 import { ProductPurchaseExperience } from "@/features/products/components/product-details/product-purchase-experience";
+import { ProductShareActions } from "@/features/products/components/product-details/product-share-actions";
+import { RelatedProducts } from "@/features/products/components/product-details/related-products";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsBySlug } from "@/features/products/server/product-boundary";
+import {
+  getComplementaryProducts,
+  getRelatedProducts,
+} from "@/features/products/server/product-discovery-boundary";
 import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
+import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
+import { getPublishedProductReviews } from "@/features/reviews/server/product-review-boundary";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -16,11 +28,15 @@ type ProductPageProps = {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [product, t, city] = await Promise.all([
+  const [product, t, listingT, city] = await Promise.all([
     getProductDetailsBySlug(slug, locale),
     getTranslations({
       locale,
       namespace: "Common.productDetails",
+    }),
+    getTranslations({
+      locale,
+      namespace: "Common.productListing",
     }),
     resolveCurrentLocation(locale),
   ]);
@@ -28,10 +44,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   assertProductConfiguration(product);
-  const availabilityByVariantId = await getResolvedVariantAvailability({
-    locationId: city?.id ?? null,
-    variants: product.variants,
-  });
+  const [
+    availabilityByVariantId,
+    relatedProducts,
+    complementaryProducts,
+    reviewReadResult,
+  ] = await Promise.all([
+    getResolvedVariantAvailability({
+      locationId: city?.id ?? null,
+      variants: product.variants,
+    }),
+    getRelatedProducts({
+      categoryId: product.category.id,
+      currentProductId: product.id,
+    }),
+    getComplementaryProducts({
+      currentProductId: product.id,
+      locationId: city?.id ?? null,
+    }),
+    getPublishedProductReviews(product.id, locale),
+  ]);
   const purchaseProduct = {
     defaultVariantId: product.defaultVariantId,
     id: product.id,
@@ -43,6 +75,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
     variants: product.variants,
   };
   const renderedAt = new Date().getTime();
+  const canonicalProductUrl = new URL(
+    `/${locale}/products/${product.slug}`,
+    serverEnv.siteUrl,
+  ).toString();
+  const productPathname = `/products/${product.slug}`;
+  const safeLoginReturnTo = getSafeInternalReturnTo(productPathname, "/");
+  const listingCopy = {
+    badgeLabels: {
+      discount: listingT("badges.discount"),
+      new: listingT("badges.new"),
+      personalization: listingT("badges.personalization"),
+    },
+    ratingLabel: (value: number) => listingT("rating", { value }),
+    unavailableLabel: listingT("unavailable"),
+  };
 
   return (
     <Container className="main-content-spacing lg:px-[3.75rem]">
@@ -60,6 +107,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductPurchaseExperience
         availabilityByVariantId={availabilityByVariantId}
+        bnplInformation={
+          <ProductBnplInformation
+            informationLabel={t("bnpl.informationLabel")}
+            message={t("bnpl.message")}
+            tabbyLabel={t("bnpl.tabbyLabel")}
+            tamaraLabel={t("bnpl.tamaraLabel")}
+          />
+        }
         locale={locale}
         product={purchaseProduct}
         renderedAt={renderedAt}
@@ -171,6 +226,100 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ProductDescription
           description={product.description}
           title={t("descriptionTitle")}
+        />
+      </div>
+
+      <div className="mt-8">
+        <ProductShareActions
+          copyFailedLabel={t("sharing.copyFailed")}
+          copyLabel={t("sharing.copyLink")}
+          copySuccessLabel={t("sharing.copySuccess")}
+          productName={product.name}
+          title={t("sharing.title")}
+          twitterLabel={t("sharing.twitter")}
+          url={canonicalProductUrl}
+          whatsappLabel={t("sharing.whatsapp")}
+        />
+      </div>
+
+      {relatedProducts.length > 0 ? (
+        <div className="mt-10 lg:mt-12">
+          <RelatedProducts
+            {...listingCopy}
+            locale={locale}
+            products={relatedProducts}
+            title={t("discovery.relatedTitle")}
+          />
+        </div>
+      ) : null}
+
+      {complementaryProducts.length > 0 ? (
+        <div className="mt-10 pb-10 lg:mt-12 lg:pb-14">
+          <ComplementaryProducts
+            {...listingCopy}
+            carouselLabel={t("discovery.complementaryCarouselLabel")}
+            locale={locale}
+            nextLabel={t("discovery.next")}
+            previousLabel={t("discovery.previous")}
+            products={complementaryProducts}
+            title={t("discovery.complementaryTitle")}
+          />
+        </div>
+      ) : null}
+
+      <div className="mt-10 lg:mt-12">
+        <ProductReviewsSection
+          copy={{
+            aggregateTemplate: t.raw("reviews.aggregate") as string,
+            empty: t("reviews.empty"),
+            ratingLabelTemplate: t.raw("rating.label") as string,
+            readErrorDescription: t("reviews.readError.description"),
+            readErrorTitle: t("reviews.readError.title"),
+            retry: t("reviews.readError.retry"),
+            submission: {
+              commentLabel: t("reviews.submission.commentLabel"),
+              commentOptional: t("reviews.submission.commentOptional"),
+              commentPlaceholder: t("reviews.submission.commentPlaceholder"),
+              errors: {
+                "auth-required": t(
+                  "reviews.submission.errors.authRequired",
+                ),
+                "invalid-input": t("reviews.submission.errors.invalidInput"),
+                "not-eligible": t("reviews.submission.errors.notEligible"),
+                "product-unavailable": t(
+                  "reviews.submission.errors.productUnavailable",
+                ),
+                "rating-required": t(
+                  "reviews.submission.errors.ratingRequired",
+                ),
+                "service-unavailable": t(
+                  "reviews.submission.errors.serviceUnavailable",
+                ),
+              },
+              guestDescription: t("reviews.submission.guestDescription"),
+              login: t("reviews.submission.login"),
+              loading: t("reviews.submission.loading"),
+              notVerified: t("reviews.submission.notVerified"),
+              ratingLabel: t("reviews.submission.ratingLabel"),
+              ratingOptionTemplate: t.raw(
+                "reviews.submission.ratingOption",
+              ) as string,
+              retry: t("reviews.submission.retry"),
+              retrying: t("reviews.submission.retrying"),
+              submit: t("reviews.submission.submit"),
+              submitting: t("reviews.submission.submitting"),
+              success: t("reviews.submission.success"),
+              title: t("reviews.submission.title"),
+              unavailable: t("reviews.submission.unavailable"),
+            },
+            titleTemplate: t.raw("reviews.title") as string,
+          }}
+          locale={locale}
+          loginReturnTo={safeLoginReturnTo}
+          productId={product.id}
+          ratingSummary={product.ratingSummary}
+          readResult={reviewReadResult}
+          retryHref={productPathname}
         />
       </div>
     </Container>

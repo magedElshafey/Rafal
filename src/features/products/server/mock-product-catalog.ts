@@ -340,6 +340,78 @@ export function getListingProductById(
   return listingProductsById.get(productId);
 }
 
+export function getMockRelatedProducts(
+  categoryId: string,
+  currentProductId: string,
+  limit: number,
+): readonly ListingProduct[] {
+  return Array.from(listingProductsById.values())
+    .filter(
+      (product) =>
+        product.id !== currentProductId &&
+        productsById.get(product.id)?.primaryCategory.id === categoryId,
+    )
+    .slice(0, limit);
+}
+
+export type MockComplementaryProductCandidate = {
+  listingProduct: ListingProduct;
+  variants: readonly ProductVariant[];
+};
+
+export function getMockComplementaryProductCandidates(
+  currentProductId: string,
+): readonly MockComplementaryProductCandidate[] {
+  return Array.from(listingProductsById.values())
+    .filter((listingProduct) => listingProduct.id !== currentProductId)
+    .map((listingProduct) => {
+      const catalogProduct = productsById.get(listingProduct.id);
+      if (!catalogProduct) {
+        throw new Error(
+          `Listing projection references unknown Product "${listingProduct.id}".`,
+        );
+      }
+
+      // Variant identity is locale-independent. The locale is used only for
+      // option labels, which are not returned from this mock catalog read.
+      const { variants } = getVariantConfiguration(catalogProduct, "en");
+
+      return { listingProduct, variants };
+    });
+}
+
+function getStableSelectionOffset(
+  value: string,
+  candidateCount: number,
+): number {
+  if (candidateCount === 0) return 0;
+
+  let hash = 0;
+  for (const character of value) {
+    hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
+  }
+
+  return hash % candidateCount;
+}
+
+export function selectMockComplementaryProducts(
+  eligibleProducts: readonly ListingProduct[],
+  currentProductId: string,
+  locationId: string,
+  limit: number,
+): readonly ListingProduct[] {
+  const offset = getStableSelectionOffset(
+    `${currentProductId}:${locationId}`,
+    eligibleProducts.length,
+  );
+  const orderedCandidates = [
+    ...eligibleProducts.slice(offset),
+    ...eligibleProducts.slice(0, offset),
+  ];
+
+  return orderedCandidates.slice(0, limit);
+}
+
 export function getMockProductDetailsBySlug(
   slug: string,
   locale: Locale,

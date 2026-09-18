@@ -1,5 +1,10 @@
 import type { Locale } from "next-intl";
-import { useState, type MouseEventHandler, type Ref } from "react";
+import {
+  useState,
+  type MouseEventHandler,
+  type ReactNode,
+  type Ref,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import { ShieldCheckIcon } from "@/components/ui/icons";
@@ -78,6 +83,7 @@ type ProductPurchasePanelProps = {
   copy: ProductPurchasePanelCopy;
   isAddingToCart: boolean;
   locale: Locale;
+  bnplInformation: ReactNode;
   onAddToCart: MouseEventHandler<HTMLButtonElement>;
   onChangePersonalizationText: (text: string) => void;
   onDecreaseQuantity: () => void;
@@ -366,6 +372,7 @@ export function ProductPurchasePanel({
   copy,
   isAddingToCart,
   locale,
+  bnplInformation,
   onAddToCart,
   onChangePersonalizationText,
   onDecreaseQuantity,
@@ -420,6 +427,8 @@ export function ProductPurchasePanel({
         renderedAt={renderedAt}
         copy={copy.price}
       />
+
+      {bnplInformation}
 
       <p className="flex items-center gap-2 type-body-sm text-gray-500">
         <ShieldCheckIcon className="size-4 shrink-0" />

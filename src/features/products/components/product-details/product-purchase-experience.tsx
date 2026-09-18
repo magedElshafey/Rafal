@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type MouseEventHandler,
+  type ReactNode,
 } from "react";
 
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
@@ -82,6 +83,7 @@ export type ProductPurchaseExperienceCopy = {
 
 type ProductPurchaseExperienceProps = {
   availabilityByVariantId: VariantAvailabilityById;
+  bnplInformation: ReactNode;
   copy: ProductPurchaseExperienceCopy;
   locale: Locale;
   product: ProductPurchaseData;
@@ -152,6 +154,7 @@ function getAddToCartErrorMessage(
 
 export function ProductPurchaseExperience({
   availabilityByVariantId,
+  bnplInformation,
   copy,
   locale,
   product,
@@ -422,6 +425,7 @@ export function ProductPurchaseExperience({
             addToCartErrorMessage={addToCartErrorMessage}
             addingToCartLabel={copy.purchase.adding}
             availability={availability}
+            bnplInformation={bnplInformation}
             canAddToCart={canAddToCart}
             copy={copy.panel}
             isAddingToCart={isAddingToCart}

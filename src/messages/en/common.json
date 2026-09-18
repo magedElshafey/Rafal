@@ -85,6 +85,63 @@
       "decrease": "Decrease quantity"
     },
     "descriptionTitle": "Product description",
+    "bnpl": {
+      "message": "Pay in 4 interest-free installments with",
+      "informationLabel": "Available installment providers",
+      "tabbyLabel": "Tabby",
+      "tamaraLabel": "Tamara"
+    },
+    "sharing": {
+      "title": "Share this product",
+      "whatsapp": "WhatsApp",
+      "twitter": "X",
+      "copyLink": "Copy link",
+      "copySuccess": "Product link copied.",
+      "copyFailed": "The link could not be copied. Please copy it from your browser."
+    },
+    "discovery": {
+      "relatedTitle": "You may also like",
+      "complementaryTitle": "Often ordered with this product",
+      "complementaryCarouselLabel": "Complementary products",
+      "previous": "Previous products",
+      "next": "Next products"
+    },
+    "reviews": {
+      "title": "Ratings and reviews ({count})",
+      "aggregate": "{average} out of 5 from {count} reviews",
+      "empty": "There are no published reviews for this product yet.",
+      "readError": {
+        "title": "Reviews could not be loaded",
+        "description": "There was a temporary problem loading product reviews.",
+        "retry": "Try again"
+      },
+      "submission": {
+        "title": "Write a review",
+        "loading": "Checking review eligibility...",
+        "guestDescription": "Sign in to check whether this purchase is eligible for a review.",
+        "login": "Sign in to review",
+        "notVerified": "Reviews can only be submitted after a verified purchase of this product.",
+        "unavailable": "Review eligibility is temporarily unavailable.",
+        "retry": "Try again",
+        "retrying": "Checking eligibility...",
+        "ratingLabel": "Your rating",
+        "ratingOption": "{value} out of 5 stars",
+        "commentLabel": "Comment",
+        "commentOptional": "(optional)",
+        "commentPlaceholder": "Share your experience with this product",
+        "submit": "Submit review",
+        "submitting": "Submitting review...",
+        "success": "Your review was submitted and is pending moderation.",
+        "errors": {
+          "ratingRequired": "Select a rating from 1 to 5 stars.",
+          "authRequired": "Sign in before submitting your review.",
+          "invalidInput": "Check your rating and comment, then try again.",
+          "notEligible": "Only verified purchasers can review this product.",
+          "productUnavailable": "This product is no longer available for review.",
+          "serviceUnavailable": "Reviews are temporarily unavailable. Please try again."
+        }
+      }
+    },
     "personalization": {
       "title": "Personalize with a name",
       "description": "Add a name or short phrase to be engraved on this product.",
