@@ -44,7 +44,21 @@
       }
     },
     "gallery": {
-      "selectImage": "View product image: {image}"
+      "selectImage": "View product image: {image}",
+      "openImage": "Enlarge product image: {image}",
+      "lightboxTitle": "Product image: {image}",
+      "closeLightbox": "Close image viewer",
+      "previousImage": "Previous product image",
+      "nextImage": "Next product image",
+      "imagePosition": "{current} of {total}"
+    },
+    "route": {
+      "errorTitle": "Product could not be loaded",
+      "errorDescription": "There was a temporary problem loading this product. Please try again.",
+      "retry": "Try again",
+      "notFoundTitle": "Product not found",
+      "notFoundDescription": "This product may have been removed or the link may be incorrect.",
+      "backToProducts": "Browse products"
     },
     "availability": {
       "available": "Available — maximum {max} per order",

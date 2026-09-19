@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Locale } from "next-intl";
+import { cache } from "react";
 
 import { serverEnv } from "@/config/server-env";
 import {
@@ -15,13 +16,13 @@ function assertProductSourceAvailable() {
   }
 }
 
-export async function getProductDetailsBySlug(
+export const getProductDetailsBySlug = cache(async function getProductDetailsBySlug(
   slug: string,
   locale: Locale,
 ): Promise<ProductDetails | null> {
   assertProductSourceAvailable();
   return getMockProductDetailsBySlug(slug, locale);
-}
+});
 
 export async function getProductDetailsById(
   productId: string,

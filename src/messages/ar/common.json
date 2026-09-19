@@ -44,7 +44,21 @@
       }
     },
     "gallery": {
-      "selectImage": "عرض صورة المنتج: {image}"
+      "selectImage": "عرض صورة المنتج: {image}",
+      "openImage": "تكبير صورة المنتج: {image}",
+      "lightboxTitle": "صورة المنتج: {image}",
+      "closeLightbox": "إغلاق عارض الصور",
+      "previousImage": "صورة المنتج السابقة",
+      "nextImage": "صورة المنتج التالية",
+      "imagePosition": "{current} من {total}"
+    },
+    "route": {
+      "errorTitle": "تعذر تحميل المنتج",
+      "errorDescription": "حدثت مشكلة مؤقتة أثناء تحميل هذا المنتج. حاول مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "notFoundTitle": "المنتج غير موجود",
+      "notFoundDescription": "ربما تمت إزالة هذا المنتج أو أن الرابط غير صحيح.",
+      "backToProducts": "تصفح المنتجات"
     },
     "availability": {
       "available": "متوفر — الحد الأقصى {max} لكل طلب",

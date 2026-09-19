@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
@@ -19,12 +20,48 @@ import {
   getRelatedProducts,
 } from "@/features/products/server/product-discovery-boundary";
 import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
+import {
+  createProductStructuredData,
+  serializeStructuredData,
+} from "@/features/products/utils/create-product-structured-data";
 import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
 import { getPublishedProductReviews } from "@/features/reviews/server/product-review-boundary";
+import { getLocalizedAlternates } from "@/lib/seo/alternates";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
+  const product = await getProductDetailsBySlug(slug, locale);
+
+  if (!product) return {};
+
+  const pathname = `/products/${product.slug}`;
+  const canonicalUrl = new URL(`/${locale}${pathname}`, serverEnv.siteUrl);
+  const description = product.description.paragraphs.join(" ").trim();
+  const images = product.images.map((image) => ({
+    url: new URL(image.src, serverEnv.siteUrl).toString(),
+    alt: image.alt,
+  }));
+
+  return {
+    title: product.name,
+    ...(description ? { description } : {}),
+    alternates: getLocalizedAlternates(locale, pathname),
+    openGraph: {
+      title: product.name,
+      ...(description ? { description } : {}),
+      type: "website",
+      url: canonicalUrl,
+      locale,
+      images,
+    },
+  };
+}
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
@@ -79,6 +116,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     `/${locale}/products/${product.slug}`,
     serverEnv.siteUrl,
   ).toString();
+  const productStructuredData = createProductStructuredData(
+    product,
+    canonicalProductUrl,
+    serverEnv.siteUrl,
+  );
   const productPathname = `/products/${product.slug}`;
   const safeLoginReturnTo = getSafeInternalReturnTo(productPathname, "/");
   const listingCopy = {
@@ -93,6 +135,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <Container className="main-content-spacing lg:px-[3.75rem]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(productStructuredData),
+        }}
+      />
+
       <Breadcrumbs
         label={t("breadcrumbs.label")}
         items={[
@@ -120,6 +169,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
         renderedAt={renderedAt}
         copy={{
           gallery: {
+            closeLightbox: t("gallery.closeLightbox"),
+            imagePositionTemplate: t.raw(
+              "gallery.imagePosition",
+            ) as string,
+            lightboxTitleTemplate: t.raw(
+              "gallery.lightboxTitle",
+            ) as string,
+            nextImage: t("gallery.nextImage"),
+            openImageTemplate: t.raw("gallery.openImage") as string,
+            previousImage: t("gallery.previousImage"),
             selectImageTemplate: t.raw("gallery.selectImage") as string,
           },
           panel: {

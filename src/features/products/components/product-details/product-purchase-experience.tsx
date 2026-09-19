@@ -56,6 +56,12 @@ export type ProductPurchaseData = Pick<
 
 export type ProductPurchaseExperienceCopy = {
   gallery: {
+    closeLightbox: string;
+    imagePositionTemplate: string;
+    lightboxTitleTemplate: string;
+    nextImage: string;
+    openImageTemplate: string;
+    previousImage: string;
     selectImageTemplate: string;
   };
   panel: ProductPurchasePanelCopy;
@@ -412,6 +418,7 @@ export function ProductPurchaseExperience({
         <div className="min-w-0 lg:w-[44%]">
           <ProductGallery
             copy={copy.gallery}
+            direction={locale === "ar" ? "rtl" : "ltr"}
             images={product.images}
             initialImageId={initialImageId}
             onSelectImage={setSelectedImageId}
