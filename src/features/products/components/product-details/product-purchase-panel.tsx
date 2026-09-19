@@ -353,6 +353,7 @@ function AvailabilityMessage({
   return (
     <p
       id="product-availability"
+      aria-live="polite"
       className={
         available
           ? "rounded-md border border-success/20 bg-success/10 px-4 py-3 type-body-sm text-success"
@@ -475,6 +476,7 @@ export function ProductPurchasePanel({
               aria-label={formatProductMessage(copy.quantity.labelTemplate, {
                 value: quantity,
               })}
+              aria-live="polite"
               className="min-w-8 text-center type-body font-medium"
             >
               {quantity}

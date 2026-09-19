@@ -53,6 +53,7 @@
       "imagePosition": "{current} من {total}"
     },
     "route": {
+      "loading": "جارٍ تحميل المنتج...",
       "errorTitle": "تعذر تحميل المنتج",
       "errorDescription": "حدثت مشكلة مؤقتة أثناء تحميل هذا المنتج. حاول مرة أخرى.",
       "retry": "إعادة المحاولة",

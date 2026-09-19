@@ -53,6 +53,7 @@
       "imagePosition": "{current} of {total}"
     },
     "route": {
+      "loading": "Loading product...",
       "errorTitle": "Product could not be loaded",
       "errorDescription": "There was a temporary problem loading this product. Please try again.",
       "retry": "Try again",

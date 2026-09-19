@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
 type ProductErrorProps = {
+  error: Error & { digest?: string };
   retry: () => void;
 };
 
@@ -14,7 +15,10 @@ export default function ProductError({ retry }: ProductErrorProps) {
 
   return (
     <Container className="main-content-spacing">
-      <div className="flex flex-col items-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center sm:p-8">
+      <div
+        role="alert"
+        className="flex flex-col items-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center sm:p-8"
+      >
         <h1 className="text-h3 font-bold text-gray-1000">
           {t("errorTitle")}
         </h1>
