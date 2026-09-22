@@ -22,17 +22,6 @@ type ProductPriceBlockProps = {
   };
 };
 
-function getDiscountPercentage(pricing: ProductVariantPricing): number | null {
-  const compareAt = pricing.compareAt?.amount;
-  const current = pricing.current.amount;
-
-  if (!compareAt || compareAt <= 0 || current < 0 || current >= compareAt) {
-    return null;
-  }
-
-  return Math.round(((compareAt - current) / compareAt) * 100);
-}
-
 export function ProductPriceBlock({
   copy,
   locale,
@@ -43,8 +32,8 @@ export function ProductPriceBlock({
     style: "currency",
     currency: pricing.current.currency,
   });
-  const discountPercentage = getDiscountPercentage(pricing);
-  const hasDiscount = discountPercentage !== null;
+  const hasDiscount = pricing.compareAt !== null;
+  const discountPercentage = pricing.promotion?.percentage ?? null;
 
   return (
     <div
@@ -69,7 +58,7 @@ export function ProductPriceBlock({
             <bdi>{currency.format(pricing.compareAt.amount)}</bdi>
           </del>
         ) : null}
-        {hasDiscount ? (
+        {discountPercentage !== null ? (
           <span className="rounded-full bg-destructive px-3 py-1 type-badge text-gray-0">
             {formatProductMessage(copy.discountTemplate, {
               percentage: discountPercentage,

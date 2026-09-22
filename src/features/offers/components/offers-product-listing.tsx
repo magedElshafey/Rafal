@@ -54,7 +54,7 @@ export function OffersProductListing({
   const query = useInfiniteQuery({
     queryKey: offersProductsQuery.key(locale, offer),
     queryFn: ({ pageParam, signal }) =>
-      getOffersProducts({ offer, page: pageParam }, signal),
+      getOffersProducts({ locale, offer, page: pageParam }, signal),
     initialPageParam: 1,
     getNextPageParam: offersProductsQuery.getNextPageParam,
   });

@@ -36,7 +36,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
     else value?.forEach((item) => urlSearchParams.append(key, item));
   }
   const offer = parseOfferType(urlSearchParams);
-  const firstPage = await getOffersProducts({ offer, page: 1 });
+  const firstPage = await getOffersProducts({ locale, offer, page: 1 });
   const queryClient = new QueryClient();
   queryClient.setQueryData<InfiniteData<PaginatedListingProducts>>(
     offersProductsQuery.key(locale, offer),

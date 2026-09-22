@@ -30,7 +30,7 @@ type ProductReviewsSectionProps = {
   locale: Locale;
   loginReturnTo: string;
   productId: string;
-  ratingSummary: ProductRatingSummary;
+  ratingSummary: ProductRatingSummary | null;
   readResult: ProductReviewReadResult;
   retryHref: string;
 };
@@ -50,11 +50,17 @@ export function ProductReviewsSection({
   const numberFormatter = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
   });
-  const formattedAverage = numberFormatter.format(ratingSummary.average);
-  const formattedCount = numberFormatter.format(ratingSummary.count);
-  const ratingLabel = formatProductMessage(copy.ratingLabelTemplate, {
-    value: formattedAverage,
-  });
+  const formattedAverage = ratingSummary
+    ? numberFormatter.format(ratingSummary.average)
+    : null;
+  const reviewCount =
+    ratingSummary?.count ?? (readResult.ok ? readResult.reviews.length : 0);
+  const formattedCount = numberFormatter.format(reviewCount);
+  const ratingLabel = formattedAverage
+    ? formatProductMessage(copy.ratingLabelTemplate, {
+        value: formattedAverage,
+      })
+    : null;
 
   return (
     <section aria-labelledby="product-reviews-title">
@@ -64,20 +70,22 @@ export function ProductReviewsSection({
         })}
       </h2>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3 rounded-lg bg-gray-50 p-5">
-        <span className="text-h2 font-bold text-gray-1000">
-          {formattedAverage}
-        </span>
-        <div>
-          <Rating value={ratingSummary.average} label={ratingLabel} />
-          <p className="mt-1 type-body-sm text-gray-500">
-            {formatProductMessage(copy.aggregateTemplate, {
-              average: formattedAverage,
-              count: formattedCount,
-            })}
-          </p>
+      {ratingSummary && formattedAverage && ratingLabel ? (
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-lg bg-gray-50 p-5">
+          <span className="text-h2 font-bold text-gray-1000">
+            {formattedAverage}
+          </span>
+          <div>
+            <Rating value={ratingSummary.average} label={ratingLabel} />
+            <p className="mt-1 type-body-sm text-gray-500">
+              {formatProductMessage(copy.aggregateTemplate, {
+                average: formattedAverage,
+                count: formattedCount,
+              })}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {readResult.ok ? (
         readResult.reviews.length > 0 ? (

@@ -1,26 +1,49 @@
+import type { Locale } from "next-intl";
+
+import {
+  mapMockListingProducts,
+  type MockListingProductSource,
+} from "@/features/products/api/mock-product-listing";
 import { mockStorefrontProductRecords } from "@/features/products/data/mock-product-catalog";
-import { toStorefrontProduct } from "@/features/products/data/product-projections";
+import { createMockProductPayload } from "@/features/products/data/mock-product-contract";
+import type { StorefrontProduct } from "@/features/products/types/storefront-product.types";
 
-const products = mockStorefrontProductRecords.map(({ product, storefront }) =>
-  toStorefrontProduct(product, storefront),
-);
+function selectProducts(
+  products: readonly StorefrontProduct[],
+  indices: readonly number[],
+): readonly StorefrontProduct[] {
+  return indices.flatMap((index) => {
+    const product = products[index];
+    return product ? [product] : [];
+  });
+}
 
-export const bestSellerProducts = products;
+export function getStorefrontProductCollections(locale: Locale) {
+  const categoryByProductId = new Map<string, StorefrontProduct["category"]>();
+  const sources: MockListingProductSource[] =
+    mockStorefrontProductRecords.map(({ product, storefront }, index) => {
+      const payload = createMockProductPayload(product, locale, {
+        badge: storefront.badge,
+      });
+      categoryByProductId.set(String(payload.id), storefront.category);
 
-export const latestProducts = [
-  products[3],
-  products[5],
-  products[2],
-  products[0],
-  products[1],
-  products[4],
-];
+      return {
+        payload,
+        compatibility: {
+          badge: storefront.badge,
+          createdOrder: index + 1,
+          subcategory: storefront.category,
+        },
+      };
+    });
+  const products = mapMockListingProducts(sources).flatMap((product) => {
+    const category = categoryByProductId.get(product.id);
+    return category ? [{ ...product, category }] : [];
+  });
 
-export const featuredProducts = [
-  products[1],
-  products[4],
-  products[0],
-  products[2],
-  products[5],
-  products[3],
-];
+  return {
+    bestSellerProducts: products,
+    latestProducts: selectProducts(products, [3, 5, 2, 0, 1, 4]),
+    featuredProducts: selectProducts(products, [1, 4, 0, 2, 5, 3]),
+  };
+}

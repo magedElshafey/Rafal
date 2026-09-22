@@ -1,5 +1,5 @@
 import type { ProductDetails } from "@/features/products/types/product-details.types";
-import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
+import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
 
 const SUPPORTED_PERSONALIZATION_LANGUAGES = new Set(["arabic", "english"]);
 
@@ -73,7 +73,7 @@ export function assertProductConfiguration(product: ProductDetails): void {
     }
   }
 
-  getDefaultProductVariant(product);
+  getInitialProductVariant(product);
 
   for (const variant of product.variants) {
     if (variantIds.has(variant.id)) {
@@ -119,12 +119,9 @@ export function assertProductConfiguration(product: ProductDetails): void {
       }
     }
 
-    if (
-      variant.imageIds.length === 0 ||
-      variant.imageIds.some((imageId) => !imageIds.has(imageId))
-    ) {
+    if (variant.imageIds.some((imageId) => !imageIds.has(imageId))) {
       throw new Error(
-        `Product variant "${variant.id}" must reference valid Product images.`,
+        `Product variant "${variant.id}" references an unknown Product image.`,
       );
     }
 

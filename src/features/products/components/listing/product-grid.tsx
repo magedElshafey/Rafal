@@ -36,23 +36,27 @@ export function ListingProductCard({
     style: "currency",
     currency: "SAR",
   });
+  const name = product.name;
   const cardProps = {
     badge: product.badge
       ? { variant: product.badge, label: badgeLabels[product.badge] }
       : undefined,
     href: `/products/${product.slug}`,
     image: product.imageUrl,
-    imageAlt: product.name[locale],
+    imageAlt: name,
     imageSizes: "(max-width: 639px) 45vw, (max-width: 1023px) 30vw, 18vw",
     originalPrice: product.originalPrice
       ? currency.format(product.originalPrice)
       : undefined,
     price: currency.format(product.price),
-    rating: {
-      value: product.rating,
-      label: ratingLabel(product.rating),
-    },
-    title: product.name[locale],
+    rating:
+      product.rating === null
+        ? undefined
+        : {
+            value: product.rating,
+            label: ratingLabel(product.rating),
+          },
+    title: name,
     wishlistAction: getWishlistAction?.(product),
     wishlistControl: getWishlistAction ? undefined : (
       <ProductWishlistAction productId={product.id} />

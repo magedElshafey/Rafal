@@ -27,6 +27,7 @@ import {
 import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
 import { getPublishedProductReviews } from "@/features/reviews/server/product-review-boundary";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
+import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -42,7 +43,10 @@ export async function generateMetadata({
 
   const pathname = `/products/${product.slug}`;
   const canonicalUrl = new URL(`/${locale}${pathname}`, serverEnv.siteUrl);
-  const description = product.description.paragraphs.join(" ").trim();
+  const description = sanitizeHtmlToText(
+    product.description.html,
+    "product-rich-text",
+  );
   const images = product.images.map((image) => ({
     url: new URL(image.src, serverEnv.siteUrl).toString(),
     alt: image.alt,
@@ -94,15 +98,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     getRelatedProducts({
       categoryId: product.category.id,
       currentProductId: product.id,
+      locale,
     }),
     getComplementaryProducts({
       currentProductId: product.id,
+      locale,
       locationId: city?.id ?? null,
     }),
     getPublishedProductReviews(product.id, locale),
   ]);
   const purchaseProduct = {
-    defaultVariantId: product.defaultVariantId,
     id: product.id,
     images: product.images,
     name: product.name,

@@ -69,7 +69,7 @@ export function ProductShelf({
                 <AppCarouselSlide
                   key={product.id}
                   className="basis-[58%] ps-4 min-[480px]:basis-[42%] sm:basis-[34%] md:basis-1/4 lg:basis-1/6"
-                  label={product.name[locale]}
+                  label={product.name}
                 >
                   <HomeProductCard
                     labels={labels}

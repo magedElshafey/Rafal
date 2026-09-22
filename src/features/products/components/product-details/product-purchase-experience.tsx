@@ -33,7 +33,7 @@ import type {
   ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
-import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
+import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
 import {
   getSelectedOptionsFromVariant,
   resolveProductVariant,
@@ -44,7 +44,6 @@ import { useRouter } from "@/i18n/navigation";
 
 export type ProductPurchaseData = Pick<
   ProductDetails,
-  | "defaultVariantId"
   | "id"
   | "images"
   | "name"
@@ -100,13 +99,14 @@ function getPreferredImageId(
   product: ProductPurchaseData,
   variant: ProductVariant,
 ): string {
-  const imageId = variant.imageIds.find((candidate) =>
-    product.images.some((image) => image.id === candidate),
-  );
+  const imageId =
+    variant.imageIds.find((candidate) =>
+      product.images.some((image) => image.id === candidate),
+    ) ?? product.images[0]?.id;
 
   if (!imageId) {
     throw new Error(
-      `Product variant "${variant.id}" does not reference a valid preferred image.`,
+      `Product "${product.id}" does not provide an image for variant "${variant.id}".`,
     );
   }
 
@@ -168,14 +168,14 @@ export function ProductPurchaseExperience({
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const defaultVariant = getDefaultProductVariant(product);
-  const initialImageId = getPreferredImageId(product, defaultVariant);
+  const initialVariant = getInitialProductVariant(product);
+  const initialImageId = getPreferredImageId(product, initialVariant);
   const purchaseActionRef = useRef<HTMLDivElement>(null);
   const lastAddToCartTriggerRef = useRef<HTMLElement | null>(null);
   const [isSuccessSheetOpen, setIsSuccessSheetOpen] = useState(false);
   const [isStickyPurchaseVisible, setIsStickyPurchaseVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState(() =>
-    getSelectedOptionsFromVariant(defaultVariant),
+    getSelectedOptionsFromVariant(initialVariant),
   );
   const [selectedImageId, setSelectedImageId] = useState(() =>
     initialImageId,

@@ -1,6 +1,6 @@
 import type { Locale } from "next-intl";
 
-import { MOCK_SEARCH_PRODUCTS } from "@/features/search/data/mock-products";
+import { getMockSearchProducts } from "@/features/search/data/mock-products";
 import type { SearchProduct } from "@/features/search/types";
 
 export type ProductSearchService = {
@@ -17,10 +17,10 @@ export const productSearchService: ProductSearchService = {
     const normalizedQuery = query.trim().toLocaleLowerCase(locale);
     if (!normalizedQuery) return [];
 
-    return MOCK_SEARCH_PRODUCTS.filter((product) => {
+    return getMockSearchProducts(locale).filter((product) => {
       const searchableText = [
-        product.names[locale],
-        ...product.keywords[locale],
+        product.name,
+        ...product.keywords,
       ]
         .join(" ")
         .toLocaleLowerCase(locale);
@@ -30,10 +30,10 @@ export const productSearchService: ProductSearchService = {
       .slice(0, MAX_SUGGESTIONS)
       .map((product) => ({
         id: product.id,
-        name: product.names[locale],
+        name: product.name,
         thumbnail: {
           src: product.thumbnailSrc,
-          alt: product.names[locale],
+          alt: product.name,
         },
         price: product.price,
       }));

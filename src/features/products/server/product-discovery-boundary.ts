@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Locale } from "next-intl";
+
 import { serverEnv } from "@/config/server-env";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import {
@@ -18,29 +20,36 @@ function assertProductDiscoverySourceAvailable() {
 export async function getRelatedProducts({
   categoryId,
   currentProductId,
+  locale,
   limit = 6,
 }: {
   categoryId: string;
   currentProductId: string;
+  locale: Locale;
   limit?: number;
 }): Promise<readonly ListingProduct[]> {
   assertProductDiscoverySourceAvailable();
-  return getMockRelatedProducts(categoryId, currentProductId, limit);
+  return getMockRelatedProducts(categoryId, currentProductId, locale, limit);
 }
 
 export async function getComplementaryProducts({
   currentProductId,
+  locale,
   locationId,
   limit = 6,
 }: {
   currentProductId: string;
+  locale: Locale;
   locationId: string | null;
   limit?: number;
 }): Promise<readonly ListingProduct[]> {
   assertProductDiscoverySourceAvailable();
   if (!locationId) return [];
 
-  const candidates = getMockComplementaryProductCandidates(currentProductId);
+  const candidates = getMockComplementaryProductCandidates(
+    currentProductId,
+    locale,
+  );
   const availabilityByVariantId = await getResolvedVariantAvailability({
     locationId,
     variants: candidates.flatMap((candidate) => candidate.variants),

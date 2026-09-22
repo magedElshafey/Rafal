@@ -54,12 +54,14 @@ export default async function CategoryPage({
     ? await getCategoryProducts({
         category: slug,
         filters,
+        locale,
         page: 1,
         sort,
       })
     : undefined;
   const { subcategoryOptions, total: categoryTotal } =
     getCategoryListingFacets(
+      locale,
       category.children.map((subcategory) => ({
         label: subcategory.name,
         value: subcategory.slug,

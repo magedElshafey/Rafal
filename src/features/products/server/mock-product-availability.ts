@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getMockVariantTransportId } from "@/features/products/data/mock-product-contract";
 import type { VariantAvailabilityById } from "@/features/products/types/product-availability.types";
 import type { ProductVariant } from "@/features/products/types/product-details.types";
 
@@ -9,78 +10,82 @@ const showcaseAvailabilityByLocation: Readonly<
   // Synthetic development-only inventory. These quantities and states exist
   // solely to exercise location-aware storefront behavior in the mock adapter.
   riyadh: {
-    "women-jewelry-2-default": {
+    [String(getMockVariantTransportId("women-jewelry-2"))]: {
       status: "available",
       maxOrderQuantity: 4,
     },
-    "women-jewelry-3-default": {
+    [String(getMockVariantTransportId("women-jewelry-3"))]: {
       status: "available",
       maxOrderQuantity: 3,
     },
-    "women-jewelry-4-default": {
+    [String(getMockVariantTransportId("women-jewelry-4"))]: {
       status: "available",
       maxOrderQuantity: 5,
     },
-    "women-jewelry-5-default": {
+    [String(getMockVariantTransportId("women-jewelry-5"))]: {
       status: "available",
       maxOrderQuantity: 2,
     },
-    "women-jewelry-6-default": {
+    [String(getMockVariantTransportId("women-jewelry-6"))]: {
       status: "available",
       maxOrderQuantity: 4,
     },
-    "women-jewelry-7-default": {
+    [String(getMockVariantTransportId("women-jewelry-7"))]: {
       status: "available",
       maxOrderQuantity: 3,
     },
-    "women-jewelry-9-default": { status: "unavailable_at_location" },
-    "women-jewelry-10-default": {
+    [String(getMockVariantTransportId("women-jewelry-9"))]: { status: "unavailable_at_location" },
+    [String(getMockVariantTransportId("women-jewelry-10"))]: {
       status: "available",
       maxOrderQuantity: 2,
     },
-    "personalized-gold-chain-silver": {
+    [String(getMockVariantTransportId("personalized-gold-chain", "silver"))]: {
       status: "available",
       maxOrderQuantity: 5,
     },
-    "personalized-gold-chain-gold": {
+    [String(getMockVariantTransportId("personalized-gold-chain", "gold"))]: {
       status: "available",
       maxOrderQuantity: 3,
     },
-    "personalized-gold-chain-rose-gold": { status: "out_of_stock" },
+    [String(getMockVariantTransportId("personalized-gold-chain", "rose-gold"))]: {
+      status: "out_of_stock",
+    },
   },
   jeddah: {
-    "women-jewelry-2-default": { status: "unavailable_at_location" },
-    "women-jewelry-3-default": {
+    [String(getMockVariantTransportId("women-jewelry-2"))]: { status: "unavailable_at_location" },
+    [String(getMockVariantTransportId("women-jewelry-3"))]: {
       status: "available",
       maxOrderQuantity: 2,
     },
-    "women-jewelry-4-default": {
+    [String(getMockVariantTransportId("women-jewelry-4"))]: {
       status: "available",
       maxOrderQuantity: 4,
     },
-    "women-jewelry-5-default": {
+    [String(getMockVariantTransportId("women-jewelry-5"))]: {
       status: "available",
       maxOrderQuantity: 3,
     },
-    "women-jewelry-6-default": {
+    [String(getMockVariantTransportId("women-jewelry-6"))]: {
       status: "available",
       maxOrderQuantity: 2,
     },
-    "women-jewelry-7-default": {
+    [String(getMockVariantTransportId("women-jewelry-7"))]: {
       status: "available",
       maxOrderQuantity: 5,
     },
-    "women-jewelry-9-default": {
+    [String(getMockVariantTransportId("women-jewelry-9"))]: {
       status: "available",
       maxOrderQuantity: 3,
     },
-    "women-jewelry-10-default": { status: "out_of_stock" },
-    "personalized-gold-chain-silver": {
+    [String(getMockVariantTransportId("women-jewelry-10"))]: { status: "out_of_stock" },
+    [String(getMockVariantTransportId("personalized-gold-chain", "silver"))]: {
       status: "available",
       maxOrderQuantity: 2,
     },
-    "personalized-gold-chain-gold": { status: "unavailable_at_location" },
-    "personalized-gold-chain-rose-gold": {
+    [String(getMockVariantTransportId("personalized-gold-chain", "gold"))]: {
+      status: "unavailable_at_location",
+    },
+    [String(getMockVariantTransportId("personalized-gold-chain", "rose-gold"))]: {
       status: "available",
       maxOrderQuantity: 1,
     },

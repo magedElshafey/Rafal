@@ -1,5 +1,8 @@
+import "server-only";
+
 import type { ProductDetails } from "@/features/products/types/product-details.types";
-import { getDefaultProductVariant } from "@/features/products/utils/get-default-product-variant";
+import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
+import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
 
 type ProductStructuredData = {
   "@context": "https://schema.org";
@@ -30,8 +33,12 @@ export function createProductStructuredData(
   canonicalUrl: string,
   siteUrl: URL,
 ): ProductStructuredData {
-  const description = product.description.paragraphs.join(" ").trim();
-  const defaultVariant = getDefaultProductVariant(product);
+  const description = sanitizeHtmlToText(
+    product.description.html,
+    "product-rich-text",
+  );
+  const initialVariant = getInitialProductVariant(product);
+  const ratingSummary = product.ratingSummary;
   const prices = product.variants.map(
     (variant) => variant.pricing.current.amount,
   );
@@ -41,7 +48,7 @@ export function createProductStructuredData(
     "@type": "Product",
     name: product.name,
     ...(description ? { description } : {}),
-    sku: defaultVariant.sku,
+    sku: initialVariant.sku,
     image: product.images.map(({ src }) => new URL(src, siteUrl).toString()),
     url: canonicalUrl,
     offers: {
@@ -52,12 +59,14 @@ export function createProductStructuredData(
       offerCount: product.variants.length,
       url: canonicalUrl,
     },
-    ...(product.ratingSummary.count > 0 && product.ratingSummary.average > 0
+    ...(ratingSummary &&
+    ratingSummary.count > 0 &&
+    ratingSummary.average > 0
       ? {
           aggregateRating: {
             "@type": "AggregateRating" as const,
-            ratingValue: product.ratingSummary.average,
-            ratingCount: product.ratingSummary.count,
+            ratingValue: ratingSummary.average,
+            ratingCount: ratingSummary.count,
             bestRating: 5 as const,
           },
         }

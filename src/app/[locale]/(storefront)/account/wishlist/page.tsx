@@ -7,9 +7,9 @@ import {
 import { getWishlistProducts } from "@/features/wishlist/server/wishlist-boundary";
 
 export default async function WishlistPage() {
-  const [products, locale, t] = await Promise.all([
-    getWishlistProducts(),
-    getLocale(),
+  const locale = await getLocale();
+  const [products, t] = await Promise.all([
+    getWishlistProducts(locale),
     getTranslations("Account.wishlist"),
   ]);
   const copy: WishlistInteractiveGridCopy = {

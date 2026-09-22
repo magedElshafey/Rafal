@@ -6,11 +6,8 @@ export type ProductCategoryReference = {
   slug: string;
 };
 
-// Arbitrary backend HTML is not part of this projection until the Laravel/CMS
-// rich-text trust and sanitization contract is approved.
 export type ProductDescription = {
-  format: "plain-text";
-  paragraphs: readonly string[];
+  html: string;
 };
 
 export type ProductImage = {
@@ -19,7 +16,7 @@ export type ProductImage = {
   alt: string;
 };
 
-export type ProductOptionKey = "color" | "material" | "size";
+export type ProductOptionKey = string;
 
 export type ProductOptionValue = {
   id: string;
@@ -35,7 +32,7 @@ export type ProductOption = {
 };
 
 export type ProductPromotion = {
-  id: string;
+  percentage: number | null;
   endsAt: string | null;
 };
 
@@ -87,9 +84,10 @@ export type EnabledProductPersonalizationConfig = Extract<
   { enabled: true }
 >;
 
-// ProductDetails is a localized product projection. It intentionally excludes
-// selected UI state, Cart state, reviews, and location-resolved availability.
-// Its default variant is explicit; the Laravel contract must identify one too.
+// ProductDetails is a request-localized product projection. It intentionally
+// excludes selected UI state, Cart state, reviews, and location-resolved
+// availability. Initial variant selection is presentation behavior and uses
+// the first valid variant; it is not a backend/domain identity field.
 export type ProductDetails = {
   id: string;
   slug: string;
@@ -99,7 +97,6 @@ export type ProductDetails = {
   images: readonly ProductImage[];
   options: readonly ProductOption[];
   variants: readonly ProductVariant[];
-  defaultVariantId: string;
-  ratingSummary: ProductRatingSummary;
+  ratingSummary: ProductRatingSummary | null;
   personalization: ProductPersonalizationConfig;
 };

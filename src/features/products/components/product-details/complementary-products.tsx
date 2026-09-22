@@ -60,7 +60,7 @@ export function ComplementaryProducts({
             <AppCarouselSlide
               key={product.id}
               className="basis-[62%] ps-4 sm:basis-[38%] lg:basis-1/5 xl:basis-1/6"
-              label={product.name[locale]}
+              label={product.name}
             >
               <ListingProductCard
                 badgeLabels={badgeLabels}

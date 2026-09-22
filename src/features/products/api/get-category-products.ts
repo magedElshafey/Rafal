@@ -1,7 +1,8 @@
-import { categoryProductsFixture } from "@/features/products/api/category-products-fixture";
+import { getCategoryProductSources } from "@/features/products/api/category-products-fixture";
 import {
   createMockListingFacets,
   createMockProductListing,
+  mapMockListingProducts,
 } from "@/features/products/api/mock-product-listing";
 import type {
   CategoryProductsRequest,
@@ -18,9 +19,13 @@ type SubcategoryDescriptor = Pick<
 // Temporary mock facet source. A future products response can replace this
 // helper without changing ListingFilters or its option contract.
 export function getCategoryListingFacets(
+  locale: CategoryProductsRequest["locale"],
   subcategories: readonly SubcategoryDescriptor[],
 ): ProductListingFacets {
-  return createMockListingFacets(categoryProductsFixture, subcategories);
+  return createMockListingFacets(
+    mapMockListingProducts(getCategoryProductSources(locale)),
+    subcategories,
+  );
 }
 
 export async function getCategoryProducts(
@@ -28,13 +33,13 @@ export async function getCategoryProducts(
   signal?: AbortSignal,
 ): Promise<PaginatedListingProducts> {
   signal?.throwIfAborted();
-  const { filters, page, sort } = request;
+  const { filters, locale, page, sort } = request;
 
   return Promise.resolve(
     createMockProductListing({
       filters,
       page,
-      products: categoryProductsFixture,
+      products: getCategoryProductSources(locale),
       sort,
     }),
   );

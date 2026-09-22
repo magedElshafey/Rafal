@@ -29,7 +29,10 @@ export function CategoryProductListing({
     <ProductListing
       copy={copy}
       getPage={(filters, sort, page, signal) =>
-        getCategoryProducts({ category, filters, page, sort }, signal)
+        getCategoryProducts(
+          { category, filters, locale, page, sort },
+          signal,
+        )
       }
       getNextPageParam={productListingQuery.getNextPageParam}
       getQueryKey={(filters, sort) =>

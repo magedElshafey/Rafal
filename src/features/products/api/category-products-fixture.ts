@@ -1,6 +1,8 @@
+import type { Locale } from "next-intl";
+
+import type { MockListingProductSource } from "@/features/products/api/mock-product-listing";
 import { mockCategoryProductRecords } from "@/features/products/data/mock-product-catalog";
-import { toListingProduct } from "@/features/products/data/product-projections";
-import type { ListingProduct } from "@/features/products/types/product-listing.types";
+import { createMockProductPayload } from "@/features/products/data/mock-product-contract";
 
 export const categoryProductSubcategoriesFixture = [
   {
@@ -25,7 +27,19 @@ export const categoryProductSubcategoriesFixture = [
   },
 ] as const;
 
-export const categoryProductsFixture: readonly ListingProduct[] =
-  mockCategoryProductRecords.map(({ listing, product }) =>
-    toListingProduct(product, listing),
-  );
+export function getCategoryProductSources(
+  locale: Locale,
+): readonly MockListingProductSource[] {
+  return mockCategoryProductRecords.map(({ listing, product }) => ({
+    payload: createMockProductPayload(product, locale, {
+      badge: listing.badge,
+      inStock: listing.inStock,
+      timesOrdered: listing.salesCount,
+    }),
+    compatibility: {
+      badge: listing.badge,
+      createdOrder: listing.createdOrder,
+      subcategory: listing.subcategory,
+    },
+  }));
+}

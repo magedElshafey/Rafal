@@ -3,6 +3,7 @@ import "server-only";
 import type { Locale } from "next-intl";
 
 import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user.types";
+import { getMockProductTransportId } from "@/features/products/data/mock-product-contract";
 import type {
   ProductReview,
   ProductReviewRating,
@@ -21,12 +22,19 @@ type MockProductReviewRecord = {
   moderationStatus: MockModerationStatus;
 };
 
+const personalizedGoldChainProductId = String(
+  getMockProductTransportId("personalized-gold-chain"),
+);
+const personalizedSilverNecklaceProductId = String(
+  getMockProductTransportId("women-jewelry-2"),
+);
+
 // Stable development fixtures intentionally cover every storefront-visible
 // moderation state. Only published records are projected by the public read.
 const mockProductReviewRecords: readonly MockProductReviewRecord[] = [
   {
     id: "mock-review-gold-chain-published-01",
-    productId: "personalized-gold-chain",
+    productId: personalizedGoldChainProductId,
     reviewerDisplayNames: { ar: "سارة أ.", en: "Sara A." },
     rating: 5,
     comment: "هدية رائعة لأختي، أحببت التصميم كثيرًا.",
@@ -35,7 +43,7 @@ const mockProductReviewRecords: readonly MockProductReviewRecord[] = [
   },
   {
     id: "mock-review-gold-chain-published-02",
-    productId: "personalized-gold-chain",
+    productId: personalizedGoldChainProductId,
     reviewerDisplayNames: { ar: "نورة م.", en: "Noura M." },
     rating: 4,
     comment: "The engraving was clear and the gift packaging was beautiful.",
@@ -44,7 +52,7 @@ const mockProductReviewRecords: readonly MockProductReviewRecord[] = [
   },
   {
     id: "mock-review-gold-chain-pending-01",
-    productId: "personalized-gold-chain",
+    productId: personalizedGoldChainProductId,
     reviewerDisplayNames: { ar: "ريم س.", en: "Reem S." },
     rating: 5,
     comment: "بانتظار مراجعة فريق المتجر.",
@@ -53,7 +61,7 @@ const mockProductReviewRecords: readonly MockProductReviewRecord[] = [
   },
   {
     id: "mock-review-gold-chain-hidden-01",
-    productId: "personalized-gold-chain",
+    productId: personalizedGoldChainProductId,
     reviewerDisplayNames: { ar: "مستخدم مخفي", en: "Hidden user" },
     rating: 1,
     comment: "This hidden fixture must never reach the storefront.",
@@ -65,8 +73,8 @@ const mockProductReviewRecords: readonly MockProductReviewRecord[] = [
 // Existing Orders do not carry canonical product identity, so this small
 // synthetic fixture is the development-only verified-purchase authority.
 const mockVerifiedReviewEligibility = new Set([
-  "mock-customer-01:personalized-gold-chain",
-  "mock-customer-01:women-jewelry-2",
+  `mock-customer-01:${personalizedGoldChainProductId}`,
+  `mock-customer-01:${personalizedSilverNecklaceProductId}`,
 ]);
 
 const MAX_PENDING_REVIEW_RECORDS = 100;

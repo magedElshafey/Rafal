@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Locale } from "next-intl";
+
 import { serverEnv } from "@/config/server-env";
 import {
   getCurrentUser,
@@ -24,14 +26,16 @@ export async function getWishlistProductIds(): Promise<string[]> {
   return entries.map((entry) => entry.productId);
 }
 
-export async function getWishlistProducts(): Promise<ListingProduct[]> {
+export async function getWishlistProducts(
+  locale: Locale,
+): Promise<ListingProduct[]> {
   const user = await requireUser("/account/wishlist");
   assertWishlistSourceAvailable();
 
   const entries = await readMockWishlistEntries(user);
 
   return entries.flatMap((entry) => {
-    const product = getListingProductById(entry.productId);
+    const product = getListingProductById(entry.productId, locale);
     return product ? [product] : [];
   });
 }

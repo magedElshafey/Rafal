@@ -1,4 +1,4 @@
-import type { ListingProduct } from "@/features/products/types/product-listing.types";
+import type { MockListingProductSource } from "@/features/products/api/mock-product-listing";
 
 export const offerValues = [
   "all",
@@ -13,7 +13,7 @@ export type SpecificOfferType = Exclude<OfferType, "all">;
 
 export type OfferProductRecord = {
   offers: readonly SpecificOfferType[];
-  product: ListingProduct;
+  source: MockListingProductSource;
 };
 
 export type OfferOption = {

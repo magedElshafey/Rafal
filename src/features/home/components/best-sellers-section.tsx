@@ -1,13 +1,14 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { ProductShelf } from "@/features/home/components/product-shelf";
-import { bestSellerProducts } from "@/features/home/data/home-products";
+import { getStorefrontProductCollections } from "@/features/home/data/home-products";
 
 export async function BestSellersSection() {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("Home.productSections"),
   ]);
+  const { bestSellerProducts } = getStorefrontProductCollections(locale);
 
   return (
     <ProductShelf

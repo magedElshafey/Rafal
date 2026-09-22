@@ -406,20 +406,22 @@ export function ProductPurchasePanel({
         <p className="mt-2 type-body-sm text-gray-400">
           {formatProductMessage(copy.skuTemplate, { sku: variant.sku })}
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Rating
-            value={product.ratingSummary.average}
-            label={formatProductMessage(copy.ratingLabelTemplate, {
-              value: product.ratingSummary.average,
-            })}
-          />
-          <span className="type-body-sm text-gray-500">
-            {formatProductMessage(copy.ratingSummaryTemplate, {
-              average: product.ratingSummary.average,
-              count: product.ratingSummary.count,
-            })}
-          </span>
-        </div>
+        {product.ratingSummary ? (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Rating
+              value={product.ratingSummary.average}
+              label={formatProductMessage(copy.ratingLabelTemplate, {
+                value: product.ratingSummary.average,
+              })}
+            />
+            <span className="type-body-sm text-gray-500">
+              {formatProductMessage(copy.ratingSummaryTemplate, {
+                average: product.ratingSummary.average,
+                count: product.ratingSummary.count,
+              })}
+            </span>
+          </div>
+        ) : null}
       </div>
 
       <ProductPriceBlock

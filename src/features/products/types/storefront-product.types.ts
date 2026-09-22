@@ -1,4 +1,4 @@
-import type { Locale } from "next-intl";
+import type { ListingProduct } from "@/features/products/types/product-listing.types";
 
 export type StorefrontProductCategory =
   | "accessories"
@@ -10,14 +10,7 @@ export type StorefrontProductBadge =
   | "new"
   | "personalization";
 
-export type StorefrontProduct = {
-  badge?: StorefrontProductBadge;
+export type StorefrontProduct = Omit<ListingProduct, "name"> & {
   category: StorefrontProductCategory;
-  id: string;
-  imageUrl: string;
-  name: Record<Locale, string>;
-  originalPrice?: number;
-  price: number;
-  rating: number;
-  slug: string;
+  name: string;
 };

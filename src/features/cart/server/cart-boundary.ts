@@ -166,9 +166,11 @@ async function materializeStoredLine(
     throw new Error("A stored Cart variant has no availability projection.");
   }
 
-  const imageId = variant.imageIds[0];
-  const image = product.images.find((candidate) => candidate.id === imageId);
-  if (!image) throw new Error("A stored Cart variant has no valid image.");
+  const image =
+    product.images.find((candidate) =>
+      variant.imageIds.includes(candidate.id),
+    ) ?? product.images[0];
+  if (!image) throw new Error("A stored Cart Product has no valid image.");
 
   const unitPrice = variant.pricing.current;
   const personalizationFee = product.personalization.enabled

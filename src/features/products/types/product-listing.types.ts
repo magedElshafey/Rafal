@@ -20,15 +20,17 @@ export type ProductListingFilters = {
 
 export type ListingProduct = {
   badge?: "discount" | "new" | "personalization";
-  createdOrder: number;
+  /** Request-localized display labels from Laravel. Never inspect for logic. */
+  badges?: readonly string[];
+  createdOrder?: number;
   id: string;
   imageUrl: string;
   inStock: boolean;
-  name: Record<Locale, string>;
+  name: string;
   originalPrice?: number;
   personalizable: boolean;
   price: number;
-  rating: number;
+  rating: number | null;
   salesCount: number;
   slug: string;
   subcategory: string;
@@ -53,6 +55,7 @@ export type PaginatedListingProducts = {
 export type CategoryProductsRequest = {
   category: string;
   filters: ProductListingFilters;
+  locale: Locale;
   page: number;
   sort: ListingSort;
 };

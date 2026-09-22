@@ -422,6 +422,64 @@ Rules:
 
 A hand-written mock cannot be claimed to match the backend “100%” unless both are generated/validated from the same executable contract (for example OpenAPI). Treat examples-only documentation as a drift risk.
 
+### 10.10 Product transport boundary
+
+Laravel Product payloads cross a feature-owned boundary before reaching the
+storefront:
+
+```text
+Laravel Product DTO
+  -> runtime parser and normalization
+  -> Product mapper
+  -> ListingProduct / ProductDetails
+  -> UI
+```
+
+- UI modules must not consume Laravel Product DTOs or snake_case fields.
+- Product mocks use the same boundary as Laravel responses:
+
+  ```text
+  mock authoring data
+    -> request-localized Laravel-shaped mock transport
+    -> production runtime parser
+    -> production Product mapper
+    -> ListingProduct / ProductDetails
+    -> UI
+  ```
+
+  Mock transport IDs are stable authoring metadata and are not derived from
+  fixture array order. Frontend-only mock compatibility metadata such as
+  semantic card badges, mock sorting/grouping values, search keywords, and
+  unresolved option labels/swatches remains outside `ProductDto`.
+- Laravel is authoritative for VAT, discounts, and location-to-warehouse stock.
+  The frontend only projects server-calculated VAT-inclusive Variant prices and
+  preserves the backend discount percentage for presentation.
+- `warehouse_stocks[].quantity` is available physical stock only. The frontend
+  may derive availability from `quantity > 0`, but must not use that quantity as
+  `maxOrderQuantity`; Laravel remains authoritative for Add-to-Cart availability
+  and purchase-limit validation.
+- Product ratings remain explicitly absent until Laravel provides aggregates.
+- Dynamic Variant attributes are normalized at the API boundary; `null` and a
+  legacy empty array both normalize to an empty object. Attribute keys and
+  values are not assumed to be localized display metadata.
+- Personalization validation remains backend-authoritative.
+- Product and Variant image items use `{ id: number, url: string }`. Product
+  images are general gallery images; Variant images belong to that Variant and
+  may be empty. PDP presentation may fall back to Product-level images, and
+  duplicate IDs are represented once in the domain gallery.
+- Listings use the Variant with the lowest current VAT-inclusive display price
+  (`discounted_price_incl_vat ?? effective_price_incl_vat`). Current and
+  original listing prices always come from that same Variant. Laravel remains
+  authoritative for all price calculations.
+- Product descriptions are unsanitized Laravel HTML. The frontend-owned,
+  server-only `SafeHtml` component is the single reusable rich-HTML rendering
+  boundary and uses `sanitize-html` with centrally controlled allowlist policies.
+  Callers cannot supply sanitizer rules, and Backend rich HTML must not use
+  `dangerouslySetInnerHTML` outside `SafeHtml`.
+- Laravel badge strings are localized display data. The legacy ProductCard path
+  still renders semantic mock badges and must be migrated before real Laravel
+  badge labels can be shown.
+
 ## 11. Validation
 
 Business-critical input requires both backend validation and appropriate frontend validation.

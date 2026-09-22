@@ -1,12 +1,13 @@
 import type { Locale } from "next-intl";
 
 import {
-  categoryProductsFixture,
   categoryProductSubcategoriesFixture,
+  getCategoryProductSources,
 } from "@/features/products/api/category-products-fixture";
 import {
   createMockListingFacets,
   createMockProductListing,
+  mapMockListingProducts,
 } from "@/features/products/api/mock-product-listing";
 import type {
   ListingSort,
@@ -29,19 +30,21 @@ function getMatchingProducts(query: string, locale: Locale) {
 
   if (!normalizedQuery) return [];
 
-  return categoryProductsFixture.filter((product) => {
+  return getCategoryProductSources(locale).filter(
+    ({ compatibility, payload }) => {
     const subcategory = categoryProductSubcategoriesFixture.find(
-      (item) => item.value === product.subcategory,
+        (item) => item.value === compatibility.subcategory,
     );
     const searchableText = [
-      product.name[locale],
+        payload.name,
       ...(subcategory?.keywords[locale] ?? []),
     ]
       .join(" ")
       .toLocaleLowerCase(locale);
 
-    return searchableText.includes(normalizedQuery);
-  });
+      return searchableText.includes(normalizedQuery);
+    },
+  );
 }
 
 export function getSearchListingFacets(
@@ -51,7 +54,7 @@ export function getSearchListingFacets(
   const matchingProducts = getMatchingProducts(query, locale);
 
   return createMockListingFacets(
-    matchingProducts,
+    mapMockListingProducts(matchingProducts),
     categoryProductSubcategoriesFixture.map((subcategory) => ({
       label: subcategory.label[locale],
       value: subcategory.value,
