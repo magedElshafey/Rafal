@@ -23,7 +23,9 @@ function getBoolean(
   if (value === "true") return true;
   if (value === "false") return false;
 
-  throw new Error(`Invalid ${name} environment variable. Expected true or false.`);
+  throw new Error(
+    `Invalid ${name} environment variable. Expected true or false.`,
+  );
 }
 
 function getUseMockApi(value: string | undefined): boolean {
@@ -54,7 +56,9 @@ function getUseMockAuth(value: string | undefined): boolean {
   return enabled;
 }
 
-function getMockAuthState(value: string | undefined): "authenticated" | "guest" {
+function getMockAuthState(
+  value: string | undefined,
+): "authenticated" | "guest" {
   if (value === undefined || value === "authenticated") return "authenticated";
   if (value === "guest") return "guest";
 
