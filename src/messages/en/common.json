@@ -20,6 +20,48 @@
     "retry": "Try again",
     "retrying": "Retrying"
   },
+  "cartPage": {
+    "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },
+    "title": "Shopping cart",
+    "empty": {
+      "title": "Your cart is empty",
+      "description": "Explore Rafal products and add the gifts you love.",
+      "continueShopping": "Continue shopping"
+    },
+    "actions": {
+      "clear": "Clear cart",
+      "clearing": "Clearing cart...",
+      "remove": "Remove item",
+      "removing": "Removing item..."
+    },
+    "quantity": { "label": "Quantity", "increase": "Increase quantity", "decrease": "Decrease quantity" },
+    "line": { "unitPrice": "Unit price", "total": "Line total", "personalization": "Personalization", "sku": "Product code" },
+    "stock": { "ok": "In stock", "low": "Low stock", "outOfStock": "Out of stock" },
+    "summary": {
+      "title": "Order summary",
+      "subtotal": "Subtotal",
+      "productDiscount": "Product discount",
+      "personalization": "Personalization",
+      "giftWrap": "Gift wrap",
+      "shipping": "Shipping",
+      "couponDiscount": "Coupon discount",
+      "vatIncluded": "VAT included",
+      "total": "Total",
+      "checkout": "Continue to checkout",
+      "freeShippingQualified": "Your cart qualifies for free shipping.",
+      "freeShippingRemaining": "Remaining for free shipping"
+    },
+    "coupon": {
+      "guestTitle": "Have a coupon?",
+      "guestDescription": "Sign in or create an account to use available coupons.",
+      "login": "Sign in or register"
+    },
+    "errors": {
+      "generic": "Your cart could not be updated. Please try again.",
+      "validation": "That quantity is not available. Your cart has not changed.",
+      "notFound": "This cart item is no longer available. Refresh the cart and try again."
+    }
+  },
   "productDetails": {
     "breadcrumbs": {
       "label": "Breadcrumb",
@@ -64,6 +106,7 @@
     "availability": {
       "available": "Available — maximum {max} per order",
       "outOfStock": "Out of stock",
+      "purchaseUnavailable": "Purchasing this product is temporarily unavailable",
       "unavailableAtLocation": "Unavailable at the selected delivery location"
     },
     "addToCart": "Add to cart",

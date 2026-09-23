@@ -1,10 +1,6 @@
-import type { ResolvedVariantAvailability } from "@/features/products/types/product-availability.types";
-import type {
-  ProductImage,
-  ProductPersonalizationInput,
-} from "@/features/products/types/product-details.types";
-import type { ProductPersonalizationValidationError } from "@/features/products/utils/validate-product-personalization";
-import type { Money } from "@/types/money.types";
+import type { ProductPersonalizationInput } from "@/features/products/types/product-details.types";
+
+export type CartMoney = { amount: string; currency: string };
 
 export type AddCartLineInput = {
   productId: string;
@@ -13,11 +9,12 @@ export type AddCartLineInput = {
   personalization?: ProductPersonalizationInput;
 };
 
-export type CartSelectedOption = {
-  optionId: string;
-  optionName: string;
-  valueId: string;
-  valueLabel: string;
+export type UpdateCartLineInput = { lineId: string; quantity: number };
+
+export type CartLinePersonalization = {
+  language: string | null;
+  raw: unknown;
+  text: string | null;
 };
 
 export type CartLine = {
@@ -26,35 +23,63 @@ export type CartLine = {
     id: string;
     slug: string;
     name: string;
-    image: ProductImage;
+    image: { id: string; src: string } | null;
+    personalizable: boolean;
   };
   variant: {
     id: string;
     sku: string;
-    selectedOptions: readonly CartSelectedOption[];
+    attributes: Readonly<Record<string, string | number | boolean>>;
   };
-  personalization: ProductPersonalizationInput | null;
+  personalization: CartLinePersonalization | null;
   quantity: number;
-  availability: ResolvedVariantAvailability;
-  unitPrice: Money;
-  personalizationFee: Money | null;
-  lineTotal: Money;
+  stock: { status: "ok" | "low" | "out_of_stock"; available: number };
+  unitRegularPrice: CartMoney;
+  unitPrice: CartMoney;
+  discountActive: boolean;
+  personalizationFee: CartMoney;
+  lineTotal: CartMoney;
 };
 
 export type CartSummary = {
   lineCount: number;
   totalQuantity: number;
-  subtotal: Money;
-  personalizationFees: Money;
-  total: Money;
+  subtotal: CartMoney;
+  productDiscountTotal: CartMoney;
+  personalizationTotal: CartMoney;
+  couponDiscount: CartMoney;
+  giftWrapFee: CartMoney;
+  shippingFee: CartMoney | null;
+  freeShipping: {
+    enabled: boolean;
+    threshold: CartMoney;
+    qualifies: boolean;
+    remaining: CartMoney;
+  };
+  total: CartMoney;
+  vat: { rate: string; includedAmount: CartMoney };
 };
 
 export type CartSnapshot = {
+  city: { id: number; name: string } | null;
   lines: readonly CartLine[];
   summary: CartSummary;
+  coupon: {
+    code: string;
+    name: string;
+    applied: boolean;
+    discount: CartMoney;
+  } | null;
+  gift: {
+    isGift: boolean;
+    isAnonymous: boolean;
+    message: string | null;
+    giftWrap: boolean;
+    recipient: unknown;
+  };
 };
 
-export type AddCartLineError =
+export type CartMutationError =
   | { code: "invalid-input" }
   | { code: "product-unavailable" }
   | { code: "variant-invalid" }
@@ -62,17 +87,15 @@ export type AddCartLineError =
   | { code: "unavailable-at-location" }
   | { code: "out-of-stock" }
   | { code: "quantity-limit-exceeded"; maxOrderQuantity: number }
-  | {
-      code: "invalid-personalization";
-      reason: ProductPersonalizationValidationError["code"];
-    }
+  | { code: "invalid-personalization"; reason?: string }
+  | { code: "validation-rejected"; fields: readonly string[] }
+  | { code: "line-not-found" }
   | { code: "cart-session-failure" }
   | { code: "service-unavailable" };
 
-export type AddCartLineResult =
-  | {
-      ok: true;
-      cart: CartSnapshot;
-      affectedLineId: string;
-    }
-  | { ok: false; error: AddCartLineError };
+export type CartMutationResult =
+  | { ok: true; cart: CartSnapshot }
+  | { ok: false; error: CartMutationError };
+
+export type AddCartLineError = CartMutationError;
+export type AddCartLineResult = CartMutationResult;

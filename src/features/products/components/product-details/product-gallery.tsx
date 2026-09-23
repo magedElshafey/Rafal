@@ -31,6 +31,7 @@ type ProductGalleryProps = {
   productId: string;
   productName: string;
   selectedImageId: string;
+  wishlistEnabled: boolean;
 };
 
 export function ProductGallery({
@@ -42,6 +43,7 @@ export function ProductGallery({
   productId,
   productName,
   selectedImageId,
+  wishlistEnabled,
 }: ProductGalleryProps) {
   const lightboxTriggerRef = useRef<HTMLButtonElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -123,10 +125,12 @@ export function ProductGallery({
             <EyeIcon aria-hidden="true" className="size-5" />
           </span>
         </button>
-        <ProductWishlistAction
-          productId={productId}
-          className="start-4 top-4 size-12 [&_svg]:size-6"
-        />
+        {wishlistEnabled ? (
+          <ProductWishlistAction
+            productId={productId}
+            className="start-4 top-4 size-12 [&_svg]:size-6"
+          />
+        ) : null}
       </div>
 
       {images.length > 1 ? (

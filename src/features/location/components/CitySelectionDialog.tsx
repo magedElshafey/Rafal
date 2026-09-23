@@ -21,6 +21,7 @@ import type { City } from "@/features/location/types";
 import { cn } from "@/lib/utils";
 
 type CitySelectionDialogProps = {
+  canUseCurrentLocation: boolean;
   cities: City[];
   copy: {
     title: string;
@@ -40,7 +41,7 @@ type CitySelectionDialogProps = {
   isLoading: boolean;
   isOpen: boolean;
   isRequired: boolean;
-  selectedCityId?: string;
+  selectedCityId?: string | number;
   onClose: () => void;
   onSelect: (city: City) => void;
   onUseCurrentLocation: () => void;
@@ -56,6 +57,7 @@ const FOCUSABLE_SELECTOR = [
 ].join(",");
 
 export function CitySelectionDialog({
+  canUseCurrentLocation,
   cities,
   copy,
   geolocationState,
@@ -70,7 +72,7 @@ export function CitySelectionDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  const [activeCityId, setActiveCityId] = useState<string | undefined>(
+  const [activeCityId, setActiveCityId] = useState<string | number | undefined>(
     selectedCityId,
   );
   const titleId = "city-selection-title";
@@ -211,17 +213,19 @@ export function CitySelectionDialog({
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="md"
-          className="mb-4 w-full"
-          loading={geolocationState === "loading"}
-          loadingLabel={copy.geolocationLoading}
-          onClick={onUseCurrentLocation}
-        >
-          <MapPinIcon size={18} />
-          {copy.useCurrentLocation}
-        </Button>
+        {canUseCurrentLocation ? (
+          <Button
+            variant="outline"
+            size="md"
+            className="mb-4 w-full"
+            loading={geolocationState === "loading"}
+            loadingLabel={copy.geolocationLoading}
+            onClick={onUseCurrentLocation}
+          >
+            <MapPinIcon size={18} />
+            {copy.useCurrentLocation}
+          </Button>
+        ) : null}
 
         {geolocationState === "error" ? (
           <p role="alert" className="mb-3 type-caption text-destructive">

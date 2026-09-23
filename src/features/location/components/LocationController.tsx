@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { LocationSelector } from "@/components/shared/LocationSelector";
 import { setGuestCityId } from "@/features/location/actions/set-guest-city";
 import { CitySelectionDialog } from "@/features/location/components/CitySelectionDialog";
-import type { City, Coordinates } from "@/features/location/types";
+import type { City, Coordinates, LocationSource } from "@/features/location/types";
 import { useRouter } from "@/i18n/navigation";
 
 export type LocationControllerCopy = {
@@ -31,24 +31,26 @@ type LocationControllerProps = {
   copy: LocationControllerCopy;
   initialCity: City | null;
   locale: Locale;
+  source: LocationSource;
   onLocationPersisted?: () => void | Promise<void>;
 };
 
-const cityCatalogRequests = new Map<Locale, Promise<City[]>>();
+const cityCatalogRequests = new Map<string, Promise<City[]>>();
 
-async function loadCityCatalog(locale: Locale) {
-  const cachedRequest = cityCatalogRequests.get(locale);
+async function loadCityCatalog(locale: Locale, source: LocationSource) {
+  const requestKey = `${source}:${locale}`;
+  const cachedRequest = cityCatalogRequests.get(requestKey);
   if (cachedRequest) return cachedRequest;
 
   const request = import("@/features/location/services/city-service").then(
-    ({ cityService }) => cityService.listCities(locale),
+    ({ cityService }) => cityService.listCities(locale, source),
   );
-  cityCatalogRequests.set(locale, request);
+  cityCatalogRequests.set(requestKey, request);
 
   try {
     return await request;
   } catch (error) {
-    cityCatalogRequests.delete(locale);
+    cityCatalogRequests.delete(requestKey);
     throw error;
   }
 }
@@ -67,6 +69,7 @@ export function LocationController({
   copy,
   initialCity,
   locale,
+  source,
   onLocationPersisted,
 }: LocationControllerProps) {
   const [cities, setCities] = useState<City[] | null>(null);
@@ -90,7 +93,7 @@ export function LocationController({
   useEffect(() => {
     if (!isOpen || cities !== null || cityLoadFailed) return;
 
-    loadCityCatalog(locale).then(
+    loadCityCatalog(locale, source).then(
       (nextCities) => {
         if (mountedRef.current) setCities(nextCities);
       },
@@ -98,7 +101,7 @@ export function LocationController({
         if (mountedRef.current) setCityLoadFailed(true);
       },
     );
-  }, [cities, cityLoadFailed, isOpen, locale]);
+  }, [cities, cityLoadFailed, isOpen, locale, source]);
 
   const isRequired = selectedCity === null;
 
@@ -163,6 +166,7 @@ export function LocationController({
       />
       {isOpen ? (
         <CitySelectionDialog
+          canUseCurrentLocation={source === "mock"}
           cities={cities ?? []}
           copy={{
             title: copy.dialogTitle,

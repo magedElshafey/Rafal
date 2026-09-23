@@ -61,6 +61,7 @@ function mapVariant(
   return {
     id: String(variant.id),
     sku: variant.sku,
+    inStock: isVariantInStock(variant),
     optionValues: Object.entries(variant.attributes).map(([key, value]) => ({
       optionId: key,
       valueId: attributeValueId(value),

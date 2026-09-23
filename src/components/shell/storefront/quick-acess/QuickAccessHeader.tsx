@@ -3,7 +3,7 @@ import type { Locale } from "next-intl";
 import { StorefrontLocationController } from "@/components/shell/storefront/quick-acess/StorefrontLocationController";
 import { Container } from "@/components/ui/container";
 import type { LocationControllerCopy } from "@/features/location/components/LocationController";
-import type { City } from "@/features/location/types";
+import type { City, LocationSource } from "@/features/location/types";
 import {
   SearchController,
   type SearchControllerCopy,
@@ -12,6 +12,7 @@ import {
 type QuickAccessHeaderProps = {
   initialCity: City | null;
   locale: Locale;
+  locationSource: LocationSource;
   locationCopy: LocationControllerCopy;
   searchCopy: SearchControllerCopy;
 };
@@ -20,6 +21,7 @@ function QuickAccessHeader({
   initialCity,
   locale,
   locationCopy,
+  locationSource,
   searchCopy,
 }: QuickAccessHeaderProps) {
   return (
@@ -30,6 +32,7 @@ function QuickAccessHeader({
             copy={locationCopy}
             initialCity={initialCity}
             locale={locale}
+            source={locationSource}
           />
         </div>
 

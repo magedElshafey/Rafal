@@ -45,7 +45,7 @@ export function ProductPurchaseSuccessSheet({
   const total = new Intl.NumberFormat(locale, {
     style: "currency",
     currency: cart.summary.total.currency,
-  }).format(cart.summary.total.amount);
+  }).format(Number(cart.summary.total.amount));
 
   return (
     <RafalModal

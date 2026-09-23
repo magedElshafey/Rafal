@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import type { Locale } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { serverEnv } from "@/config/server-env";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
+import { getCanonicalBackendCityId } from "@/features/location/types";
 import { ComplementaryProducts } from "@/features/products/components/product-details/complementary-products";
 import { ProductBnplInformation } from "@/features/products/components/product-details/product-bnpl-information";
 import { ProductDescription } from "@/features/products/components/product-details/product-description";
@@ -26,6 +29,7 @@ import {
 } from "@/features/products/utils/create-product-structured-data";
 import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
 import { getPublishedProductReviews } from "@/features/reviews/server/product-review-boundary";
+import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
 
@@ -33,11 +37,24 @@ type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+const getProductPageData = cache(async (slug: string, locale: Locale) => {
+  const city = await resolveCurrentLocation(locale);
+  const cityId = getCanonicalBackendCityId(city) ?? undefined;
+  const readResult = await getProductDetailsBySlug(
+    slug,
+    locale,
+    cityId,
+  );
+
+  return { city, readResult };
+});
+
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const product = await getProductDetailsBySlug(slug, locale);
+  const { readResult } = await getProductPageData(slug, locale);
+  const { product } = readResult;
 
   if (!product) return {};
 
@@ -69,8 +86,8 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [product, t, listingT, city] = await Promise.all([
-    getProductDetailsBySlug(slug, locale),
+  const [{ city, readResult }, t, listingT, publicSettings] = await Promise.all([
+    getProductPageData(slug, locale),
     getTranslations({
       locale,
       namespace: "Common.productDetails",
@@ -79,33 +96,49 @@ export default async function ProductPage({ params }: ProductPageProps) {
       locale,
       namespace: "Common.productListing",
     }),
-    resolveCurrentLocation(locale),
+    getPublicSettings(),
   ]);
+  const { hasAuthoritativeStockContext, product, source } = readResult;
 
   if (!product) notFound();
 
   assertProductConfiguration(product);
+  const usesMockProductSource = source === "mock";
   const [
     availabilityByVariantId,
     relatedProducts,
     complementaryProducts,
     reviewReadResult,
   ] = await Promise.all([
-    getResolvedVariantAvailability({
-      locationId: city?.id ?? null,
-      variants: product.variants,
-    }),
-    getRelatedProducts({
-      categoryId: product.category.id,
-      currentProductId: product.id,
-      locale,
-    }),
-    getComplementaryProducts({
-      currentProductId: product.id,
-      locale,
-      locationId: city?.id ?? null,
-    }),
-    getPublishedProductReviews(product.id, locale),
+    source === "laravel"
+      ? getResolvedVariantAvailability({
+          hasAuthoritativeStockContext,
+          maxOrderQuantity: publicSettings.maxCartItemQuantity,
+          source,
+          variants: product.variants,
+        })
+      : getResolvedVariantAvailability({
+          locationId: city?.source === "mock" ? city.id : null,
+          source,
+          variants: product.variants,
+        }),
+    usesMockProductSource
+      ? getRelatedProducts({
+          categoryId: product.category.id,
+          currentProductId: product.id,
+          locale,
+        })
+      : Promise.resolve([]),
+    usesMockProductSource
+      ? getComplementaryProducts({
+          currentProductId: product.id,
+          locale,
+          locationId: city?.source === "mock" ? city.id : null,
+        })
+      : Promise.resolve([]),
+    usesMockProductSource
+      ? getPublishedProductReviews(product.id, locale)
+      : Promise.resolve(null),
   ]);
   const purchaseProduct = {
     id: product.id,
@@ -191,6 +224,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             availability: {
               availableTemplate: t.raw("availability.available") as string,
               outOfStock: t("availability.outOfStock"),
+              purchaseUnavailable: t("availability.purchaseUnavailable"),
               unavailableAtLocation: t("availability.unavailableAtLocation"),
             },
             personalization: {
@@ -284,6 +318,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             },
           },
         }}
+        wishlistEnabled={usesMockProductSource}
       />
 
       <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
@@ -331,61 +366,69 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       ) : null}
 
-      <div className="mt-10 lg:mt-12">
-        <ProductReviewsSection
-          copy={{
-            aggregateTemplate: t.raw("reviews.aggregate") as string,
-            empty: t("reviews.empty"),
-            ratingLabelTemplate: t.raw("rating.label") as string,
-            readErrorDescription: t("reviews.readError.description"),
-            readErrorTitle: t("reviews.readError.title"),
-            retry: t("reviews.readError.retry"),
-            submission: {
-              commentLabel: t("reviews.submission.commentLabel"),
-              commentOptional: t("reviews.submission.commentOptional"),
-              commentPlaceholder: t("reviews.submission.commentPlaceholder"),
-              errors: {
-                "auth-required": t(
-                  "reviews.submission.errors.authRequired",
+      {reviewReadResult ? (
+        <div className="mt-10 lg:mt-12">
+          <ProductReviewsSection
+            copy={{
+              aggregateTemplate: t.raw("reviews.aggregate") as string,
+              empty: t("reviews.empty"),
+              ratingLabelTemplate: t.raw("rating.label") as string,
+              readErrorDescription: t("reviews.readError.description"),
+              readErrorTitle: t("reviews.readError.title"),
+              retry: t("reviews.readError.retry"),
+              submission: {
+                commentLabel: t("reviews.submission.commentLabel"),
+                commentOptional: t("reviews.submission.commentOptional"),
+                commentPlaceholder: t(
+                  "reviews.submission.commentPlaceholder",
                 ),
-                "invalid-input": t("reviews.submission.errors.invalidInput"),
-                "not-eligible": t("reviews.submission.errors.notEligible"),
-                "product-unavailable": t(
-                  "reviews.submission.errors.productUnavailable",
-                ),
-                "rating-required": t(
-                  "reviews.submission.errors.ratingRequired",
-                ),
-                "service-unavailable": t(
-                  "reviews.submission.errors.serviceUnavailable",
-                ),
+                errors: {
+                  "auth-required": t(
+                    "reviews.submission.errors.authRequired",
+                  ),
+                  "invalid-input": t(
+                    "reviews.submission.errors.invalidInput",
+                  ),
+                  "not-eligible": t(
+                    "reviews.submission.errors.notEligible",
+                  ),
+                  "product-unavailable": t(
+                    "reviews.submission.errors.productUnavailable",
+                  ),
+                  "rating-required": t(
+                    "reviews.submission.errors.ratingRequired",
+                  ),
+                  "service-unavailable": t(
+                    "reviews.submission.errors.serviceUnavailable",
+                  ),
+                },
+                guestDescription: t("reviews.submission.guestDescription"),
+                login: t("reviews.submission.login"),
+                loading: t("reviews.submission.loading"),
+                notVerified: t("reviews.submission.notVerified"),
+                ratingLabel: t("reviews.submission.ratingLabel"),
+                ratingOptionTemplate: t.raw(
+                  "reviews.submission.ratingOption",
+                ) as string,
+                retry: t("reviews.submission.retry"),
+                retrying: t("reviews.submission.retrying"),
+                submit: t("reviews.submission.submit"),
+                submitting: t("reviews.submission.submitting"),
+                success: t("reviews.submission.success"),
+                title: t("reviews.submission.title"),
+                unavailable: t("reviews.submission.unavailable"),
               },
-              guestDescription: t("reviews.submission.guestDescription"),
-              login: t("reviews.submission.login"),
-              loading: t("reviews.submission.loading"),
-              notVerified: t("reviews.submission.notVerified"),
-              ratingLabel: t("reviews.submission.ratingLabel"),
-              ratingOptionTemplate: t.raw(
-                "reviews.submission.ratingOption",
-              ) as string,
-              retry: t("reviews.submission.retry"),
-              retrying: t("reviews.submission.retrying"),
-              submit: t("reviews.submission.submit"),
-              submitting: t("reviews.submission.submitting"),
-              success: t("reviews.submission.success"),
-              title: t("reviews.submission.title"),
-              unavailable: t("reviews.submission.unavailable"),
-            },
-            titleTemplate: t.raw("reviews.title") as string,
-          }}
-          locale={locale}
-          loginReturnTo={safeLoginReturnTo}
-          productId={product.id}
-          ratingSummary={product.ratingSummary}
-          readResult={reviewReadResult}
-          retryHref={productPathname}
-        />
-      </div>
+              titleTemplate: t.raw("reviews.title") as string,
+            }}
+            locale={locale}
+            loginReturnTo={safeLoginReturnTo}
+            productId={product.id}
+            ratingSummary={product.ratingSummary}
+            readResult={reviewReadResult}
+            retryHref={productPathname}
+          />
+        </div>
+      ) : null}
     </Container>
   );
 }

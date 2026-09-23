@@ -8,18 +8,20 @@ import {
   LocationController,
   type LocationControllerCopy,
 } from "@/features/location/components/LocationController";
-import type { City } from "@/features/location/types";
+import type { City, LocationSource } from "@/features/location/types";
 
 type StorefrontLocationControllerProps = {
   copy: LocationControllerCopy;
   initialCity: City | null;
   locale: Locale;
+  source: LocationSource;
 };
 
 export function StorefrontLocationController({
   copy,
   initialCity,
   locale,
+  source,
 }: StorefrontLocationControllerProps) {
   const queryClient = useQueryClient();
 
@@ -28,6 +30,7 @@ export function StorefrontLocationController({
       copy={copy}
       initialCity={initialCity}
       locale={locale}
+      source={source}
       onLocationPersisted={() => invalidateCurrentCartQueries(queryClient)}
     />
   );

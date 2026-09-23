@@ -1,11 +1,10 @@
 import type { Locale } from "next-intl";
 
 import { MOCK_CITIES } from "@/features/location/data/mock-cities";
-import type { City, Coordinates } from "@/features/location/types";
+import type { City, Coordinates, LocationSource } from "@/features/location/types";
 
 export type CityService = {
-  getCityById(cityId: string, locale: Locale): Promise<City | null>;
-  listCities(locale: Locale): Promise<City[]>;
+  listCities(locale: Locale, source: LocationSource): Promise<City[]>;
   findCityByCoordinates(
     coordinates: Coordinates,
     locale: Locale,
@@ -14,13 +13,14 @@ export type CityService = {
 
 const MOCK_RESPONSE_DELAY_MS = 250;
 const MOCK_GEOLOCATED_CITY_ID = "riyadh";
-const cityListRequests = new Map<Locale, Promise<City[]>>();
+const cityListRequests = new Map<string, Promise<City[]>>();
 
 function mapCity(
   city: (typeof MOCK_CITIES)[number],
   locale: Locale,
 ): City {
   return {
+    source: "mock",
     id: city.id,
     name: city.names[locale],
     isAvailable: city.isAvailable,
@@ -32,32 +32,28 @@ function findMockCity(cityId: string) {
 }
 
 export const cityService: CityService = {
-  async getCityById(cityId, locale) {
-    const city = findMockCity(cityId);
-    if (!city || !city.isAvailable) return null;
-
-    return mapCity(city, locale);
-  },
-
-  listCities(locale) {
-    const cachedRequest = cityListRequests.get(locale);
+  listCities(locale, source) {
+    const requestKey = `${source}:${locale}`;
+    const cachedRequest = cityListRequests.get(requestKey);
     if (cachedRequest) return cachedRequest;
 
-    const request = new Promise<City[]>((resolve) => {
-      setTimeout(() => {
-        const uniqueCities = new Map<string, City>();
+    const request = source === "laravel"
+      ? import("@/features/location/api/location-api.client").then(
+          ({ getLaravelCitiesClient }) => getLaravelCitiesClient(locale).then((cities) => [...cities]),
+        )
+      : new Promise<City[]>((resolve) => {
+          setTimeout(() => {
+            const uniqueCities = new Map<string, City>();
 
-        for (const city of MOCK_CITIES) {
-          if (!uniqueCities.has(city.id)) {
-            uniqueCities.set(city.id, mapCity(city, locale));
-          }
-        }
+            for (const city of MOCK_CITIES) {
+              if (!uniqueCities.has(city.id)) uniqueCities.set(city.id, mapCity(city, locale));
+            }
 
-        resolve([...uniqueCities.values()]);
-      }, MOCK_RESPONSE_DELAY_MS);
-    });
+            resolve([...uniqueCities.values()]);
+          }, MOCK_RESPONSE_DELAY_MS);
+        });
 
-    cityListRequests.set(locale, request);
+    cityListRequests.set(requestKey, request);
     return request;
   },
 

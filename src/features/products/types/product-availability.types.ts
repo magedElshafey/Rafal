@@ -8,6 +8,10 @@ export type ResolvedVariantAvailability =
     }
   | {
       status: "unavailable_at_location";
+    }
+  | {
+      /** Purchase is blocked because stock context or the Cart contract is unresolved. */
+      status: "purchase_unavailable";
     };
 
 export type VariantAvailabilityById = Readonly<

@@ -2,7 +2,7 @@
 
 import { hasLocale } from "next-intl";
 
-import { GuestCartSessionError } from "@/features/cart/server/guest-cart-session";
+import { mapCartActionError } from "@/features/cart/actions/cart-action-errors";
 import { addLineToCurrentCart } from "@/features/cart/server/cart-boundary";
 import type {
   AddCartLineInput,
@@ -109,14 +109,6 @@ export async function addCartLine(
   try {
     return await addLineToCurrentCart(parsedInput, locale);
   } catch (error) {
-    return {
-      ok: false,
-      error: {
-        code:
-          error instanceof GuestCartSessionError
-            ? "cart-session-failure"
-            : "service-unavailable",
-      },
-    };
+    return { ok: false, error: mapCartActionError(error) };
   }
 }

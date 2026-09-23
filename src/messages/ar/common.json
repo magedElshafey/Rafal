@@ -20,6 +20,48 @@
     "retry": "إعادة المحاولة",
     "retrying": "جارٍ إعادة المحاولة"
   },
+  "cartPage": {
+    "breadcrumbs": { "label": "مسار التنقل", "home": "الرئيسية" },
+    "title": "سلة التسوق",
+    "empty": {
+      "title": "سلة التسوق فارغة",
+      "description": "استكشف منتجات رفال وأضف الهدايا التي تحبها.",
+      "continueShopping": "متابعة التسوق"
+    },
+    "actions": {
+      "clear": "إفراغ السلة",
+      "clearing": "جارٍ إفراغ السلة...",
+      "remove": "إزالة المنتج",
+      "removing": "جارٍ إزالة المنتج..."
+    },
+    "quantity": { "label": "الكمية", "increase": "زيادة الكمية", "decrease": "تقليل الكمية" },
+    "line": { "unitPrice": "سعر الوحدة", "total": "إجمالي المنتج", "personalization": "التخصيص", "sku": "رمز المنتج" },
+    "stock": { "ok": "متوفر", "low": "الكمية محدودة", "outOfStock": "نفد المخزون" },
+    "summary": {
+      "title": "ملخص الطلب",
+      "subtotal": "الإجمالي الفرعي",
+      "productDiscount": "خصم المنتجات",
+      "personalization": "التخصيص",
+      "giftWrap": "تغليف الهدية",
+      "shipping": "الشحن",
+      "couponDiscount": "خصم القسيمة",
+      "vatIncluded": "ضريبة القيمة المضافة المتضمنة",
+      "total": "الإجمالي",
+      "checkout": "المتابعة إلى الدفع",
+      "freeShippingQualified": "سلتك مؤهلة للشحن المجاني.",
+      "freeShippingRemaining": "المتبقي للحصول على الشحن المجاني"
+    },
+    "coupon": {
+      "guestTitle": "لديك قسيمة؟",
+      "guestDescription": "سجل الدخول أو أنشئ حسابًا لاستخدام القسائم المتاحة.",
+      "login": "تسجيل الدخول أو إنشاء حساب"
+    },
+    "errors": {
+      "generic": "تعذر تحديث سلة التسوق. حاول مرة أخرى.",
+      "validation": "هذه الكمية غير متاحة. لم تتغير سلة التسوق.",
+      "notFound": "هذا المنتج لم يعد موجودًا في السلة. حدّث الصفحة وحاول مرة أخرى."
+    }
+  },
   "productDetails": {
     "breadcrumbs": {
       "label": "مسار التنقل",
@@ -64,6 +106,7 @@
     "availability": {
       "available": "متوفر — الحد الأقصى {max} لكل طلب",
       "outOfStock": "نفد من المخزون",
+      "purchaseUnavailable": "شراء هذا المنتج غير متاح مؤقتًا",
       "unavailableAtLocation": "غير متوفر في موقع التوصيل المحدد"
     },
     "addToCart": "أضف إلى السلة",

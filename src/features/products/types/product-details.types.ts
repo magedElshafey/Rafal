@@ -50,6 +50,8 @@ export type ProductVariantOptionValue = {
 export type ProductVariant = {
   id: string;
   sku: string;
+  /** Physical stock projected from Laravel warehouse quantities. */
+  inStock: boolean;
   optionValues: readonly ProductVariantOptionValue[];
   pricing: ProductVariantPricing;
   imageIds: readonly string[];

@@ -52,6 +52,7 @@ export async function getComplementaryProducts({
   );
   const availabilityByVariantId = await getResolvedVariantAvailability({
     locationId,
+    source: "mock",
     variants: candidates.flatMap((candidate) => candidate.variants),
   });
   const eligibleProducts = candidates

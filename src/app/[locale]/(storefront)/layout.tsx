@@ -3,6 +3,7 @@ import Footer from "@/components/shell/storefront/footer/Footer";
 import Header from "@/components/shell/storefront/header/Header";
 import MobileBottomNavigation from "@/components/shell/storefront/mobile-navigation/MobileBottomNavigation";
 import QuickAccessHeader from "@/components/shell/storefront/quick-acess/QuickAccessHeader";
+import { serverEnv } from "@/config/server-env";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
@@ -25,6 +26,7 @@ export default async function StoreFontLayout({
       <QuickAccessHeader
         initialCity={initialCity}
         locale={locale}
+        locationSource={serverEnv.useMockApi ? "mock" : "laravel"}
         locationCopy={{
           deliveryLabel: t("deliveryLabel"),
           selectCity: t("selectCity"),

@@ -32,6 +32,7 @@ export type ProductPurchasePanelCopy = {
   availability: {
     availableTemplate: string;
     outOfStock: string;
+    purchaseUnavailable: string;
     unavailableAtLocation: string;
   };
   personalization: {
@@ -151,11 +152,13 @@ function ProductOptions({
                     className="peer sr-only"
                   />
                   <span className="flex min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-gray-0 py-1 pe-3 ps-1 peer-checked:border-2 peer-checked:border-gray-800 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-40">
-                    <span
-                      aria-hidden="true"
-                      className="size-8 shrink-0 rounded-full border border-gray-200"
-                      style={{ backgroundColor: value.swatchHex }}
-                    />
+                    {value.swatchHex ? (
+                      <span
+                        aria-hidden="true"
+                        className="size-8 shrink-0 rounded-full border border-gray-200"
+                        style={{ backgroundColor: value.swatchHex }}
+                      />
+                    ) : null}
                     <span className="type-body-sm text-gray-700">
                       {value.label}
                     </span>
@@ -348,7 +351,9 @@ function AvailabilityMessage({
       })
     : availability.status === "out_of_stock"
       ? copy.outOfStock
-      : copy.unavailableAtLocation;
+      : availability.status === "purchase_unavailable"
+        ? copy.purchaseUnavailable
+        : copy.unavailableAtLocation;
 
   return (
     <p

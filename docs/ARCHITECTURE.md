@@ -436,6 +436,50 @@ Laravel Product DTO
 ```
 
 - UI modules must not consume Laravel Product DTOs or snake_case fields.
+- Initial PDP Product reads are server-side and use one Product-owned source
+  boundary. `USE_MOCK_API=true` selects the development mock; otherwise the
+  boundary calls Laravel and both sources converge on `ProductDetails` through
+  the production parser and mapper. Laravel failures never fall back to mocks.
+- PDP metadata and page rendering share the request-memoized Product read.
+  A Laravel `404` becomes the Product not-found state; network, HTTP contract,
+  parsing, and mapping failures remain errors for the route error boundary.
+- The Laravel PDP request includes `city_id` only when the Location boundary
+  supplies a canonical positive numeric city ID. Development city slugs are
+  never translated into invented backend IDs. Laravel warehouse stock is
+  authoritative for availability only when that canonical Backend location
+  context was supplied with the Product request; without it, stock is unresolved
+  and must not be presented as out of stock.
+- Wishlist, Reviews, Related Products, and Complementary Products remain
+  source-isolated until their Laravel contracts are integrated. A
+  Laravel-backed PDP does not pass its IDs to those development mock domains.
+  With authoritative location context, physical `warehouse_stocks[].quantity`
+  may mark a Variant out of stock. An in-stock Laravel Variant, or any Laravel
+  Variant read without authoritative location context remains non-purchasable.
+  With a canonical Laravel city, an in-stock Variant uses
+  `settings.max_cart_item_quantity` as the frontend control ceiling and submits
+  configuration intent through the Cart server boundary; physical stock is not
+  treated as that ceiling.
+
+### Laravel Cart identity and transport
+
+- Cart requests use JSON.
+- Guest browser interaction crosses the concrete Next server read/mutation
+  boundary. The server reads the HttpOnly `rafal_cart_token` cookie and sends
+  `X-Cart-Token` to Laravel when present.
+- A guest token is created only by the first successful mutation, is stable for
+  the Cart lifecycle, and is deleted after successful `DELETE /cart`.
+- Tokenless `GET /cart` sends no Cart token, returns Laravel's empty Cart, and
+  does not create or fabricate identity.
+- Authenticated Cart will use a server-resolved Bearer token. That token is not
+  available from the current Auth boundary, so activation and Guest-to-User
+  merge are deferred rather than simulated.
+- Laravel owns Cart prices, discounts, VAT, shipping, fees, free-shipping
+  qualification, totals, validation, and personalized line identity.
+- TanStack Query stores the mapped current-Cart snapshot under the established
+  locale key. Successful mutations write the returned canonical snapshot
+  directly; mutation retry and optimistic money calculation remain disabled.
+- Guest coupons are currently unsupported. Gift request types are prepared,
+  while coupon/gift UI and Checkout remain outside this slice.
 - Product mocks use the same boundary as Laravel responses:
 
   ```text

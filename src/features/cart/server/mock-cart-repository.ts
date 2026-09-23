@@ -134,6 +134,47 @@ export async function addMockStoredCartLine(
   });
 }
 
+export async function updateMockStoredCartLine(
+  owner: CartOwner,
+  lineId: string,
+  quantity: number,
+): Promise<StoredCart | null> {
+  assertMockCartRepositoryAvailable();
+  const ownerKey = getOwnerKey(owner);
+  return withOwnerMutationLock(ownerKey, async () => {
+    const now = Date.now();
+    const current = readEntry(ownerKey, now);
+    if (!current.lines.some((line) => line.lineId === lineId)) return null;
+    const cart = {
+      lines: current.lines.map((line) => line.lineId === lineId ? { ...line, quantity } : line),
+    };
+    carts.set(ownerKey, { cart, expiresAt: now + CART_TTL_MS, lastAccessedAt: now });
+    return cart;
+  });
+}
+
+export async function removeMockStoredCartLine(owner: CartOwner, lineId: string): Promise<StoredCart | null> {
+  assertMockCartRepositoryAvailable();
+  const ownerKey = getOwnerKey(owner);
+  return withOwnerMutationLock(ownerKey, async () => {
+    const now = Date.now();
+    const current = readEntry(ownerKey, now);
+    if (!current.lines.some((line) => line.lineId === lineId)) return null;
+    const cart = { lines: current.lines.filter((line) => line.lineId !== lineId) };
+    carts.set(ownerKey, { cart, expiresAt: now + CART_TTL_MS, lastAccessedAt: now });
+    return cart;
+  });
+}
+
+export async function clearMockStoredCart(owner: CartOwner): Promise<StoredCart> {
+  assertMockCartRepositoryAvailable();
+  const ownerKey = getOwnerKey(owner);
+  return withOwnerMutationLock(ownerKey, async () => {
+    carts.delete(ownerKey);
+    return { lines: [] };
+  });
+}
+
 // Development only: process restarts and HMR may lose state, multiple server
 // instances do not share state, and Laravel will own production persistence,
 // line equality, and guest/customer merge behavior.

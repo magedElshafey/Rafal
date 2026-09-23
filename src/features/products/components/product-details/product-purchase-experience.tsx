@@ -93,6 +93,7 @@ type ProductPurchaseExperienceProps = {
   locale: Locale;
   product: ProductPurchaseData;
   renderedAt: number;
+  wishlistEnabled: boolean;
 };
 
 function getPreferredImageId(
@@ -151,6 +152,10 @@ function getAddToCartErrorMessage(
       });
     case "invalid-personalization":
       return copy.invalidPersonalization;
+    case "validation-rejected":
+      return copy.invalidInput;
+    case "line-not-found":
+      return copy.serviceUnavailable;
     case "cart-session-failure":
       return copy.cartSessionFailure;
     case "service-unavailable":
@@ -165,6 +170,7 @@ export function ProductPurchaseExperience({
   locale,
   product,
   renderedAt,
+  wishlistEnabled,
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -425,6 +431,7 @@ export function ProductPurchaseExperience({
             productId={product.id}
             productName={product.name}
             selectedImageId={selectedImageId}
+            wishlistEnabled={wishlistEnabled}
           />
         </div>
         <div className="min-w-0 flex-1">
