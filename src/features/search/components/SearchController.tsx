@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import type { Locale } from "next-intl";
 import {
   useEffect,
@@ -11,6 +10,7 @@ import {
 } from "react";
 
 import { SearchBox } from "@/components/shared/SearchBox";
+import { AppImage } from "@/components/ui/app-image";
 import { searchProducts } from "@/features/search/services/product-search-service";
 import type { SearchProduct } from "@/features/search/types";
 import { useRouter } from "@/i18n/navigation";
@@ -209,12 +209,12 @@ export function SearchController({ copy, locale }: SearchControllerProps) {
                 onClick={() => selectProduct(product)}
                 className="flex w-full items-center gap-3 border-b border-gray-100 px-3 py-2 text-start last:border-b-0 hover:bg-gray-50 focus-visible:bg-gold-50 focus-visible:outline-none aria-selected:bg-gold-50"
               >
-                <Image
-                  src={product.thumbnail.src}
+                <AppImage
                   alt={product.thumbnail.alt}
-                  width={48}
-                  height={48}
-                  className="size-12 shrink-0 rounded-md object-cover"
+                  aspectRatio="1 / 1"
+                  frameClassName="size-12 shrink-0 rounded-md"
+                  sizes="48px"
+                  src={product.thumbnail.src}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate type-body font-medium text-gray-1000">

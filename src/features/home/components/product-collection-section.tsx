@@ -35,6 +35,7 @@ export async function ProductCollectionSection({
         new: t("badges.new"),
         personalization: t("badges.personalization"),
         rating: (value) => t("rating", { value }),
+        reviews: (count) => t("reviews", { count }),
       }}
       locale={locale}
       products={products}

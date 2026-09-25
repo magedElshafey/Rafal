@@ -178,6 +178,7 @@
     },
     "mutationError": "تعذر تحديث المفضلة. حاول مرة أخرى.",
     "rating": "التقييم {value} من 5",
+    "reviews": "{count} تقييم",
     "unavailable": "غير متوفر",
     "badges": {
       "discount": "خصم",

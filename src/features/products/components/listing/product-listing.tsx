@@ -45,6 +45,7 @@ export type ProductListingCopy = {
   loadingMore: string;
   nextPageError: string;
   rating: string;
+  reviews: string;
   retry: string;
   sortLabel: string;
   sortOptions: Record<ListingSort, string>;
@@ -163,6 +164,9 @@ export function ProductListing({
             products={products}
             ratingLabel={(value) =>
               copy.rating.replace("{value}", String(value))
+            }
+            reviewsLabel={(count) =>
+              copy.reviews.replace("{count}", String(count))
             }
             unavailableLabel={copy.unavailable}
           />

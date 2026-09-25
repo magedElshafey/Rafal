@@ -20,9 +20,14 @@
     "retry": "إعادة المحاولة",
     "retrying": "جارٍ إعادة المحاولة"
   },
+  "locationNotice": {
+    "title": "حدد مدينتك",
+    "description": "اختر مدينتك لعرض المنتجات المتاحة حسب موقعك."
+  },
   "productSections": {
     "viewAll": "عرض الكل",
     "rating": "التقييم {value} من 5",
+    "reviews": "{count} تقييم",
     "badges": {
       "discount": "خصم",
       "new": "جديد",
@@ -48,11 +53,10 @@
       "title": "أحدث المنتجات",
       "carouselLabel": "أحدث منتجات رافال",
       "filtersLabel": "تصفية أحدث المنتجات",
+      "emptyTitle": "لا توجد منتجات في هذا القسم",
+      "emptyDescription": "جرّب اختيار تصنيف آخر لعرض المنتجات.",
       "filters": {
-        "all": "الكل",
-        "jewelry": "مجوهرات",
-        "perfumes": "عطور",
-        "accessories": "إكسسوارات"
+        "all": "الكل"
       }
     },
     "collection": {
@@ -105,20 +109,6 @@
   },
   "departments": {
     "title": "تسوق حسب القسم",
-    "carouselLabel": "أقسام رافال",
-    "items": {
-      "silver": { "title": "لوحات فضية", "imageAlt": "تصميم فضي أنيق" },
-      "carAccessories": {
-        "title": "إكسسوارات السيارات",
-        "imageAlt": "إكسسوارات سيارات فاخرة"
-      },
-      "men": { "title": "قسم الرجال", "imageAlt": "هدايا وإكسسوارات رجالية" },
-      "giftBoxes": { "title": "بوكسات هدايا", "imageAlt": "بوكس هدايا مميز" },
-      "perfumes": { "title": "عطور", "imageAlt": "مجموعة عطور رافال" },
-      "jewelry": {
-        "title": "مجوهرات نسائية",
-        "imageAlt": "مجموعة مجوهرات نسائية"
-      }
-    }
+    "carouselLabel": "أقسام رافال"
   }
 }

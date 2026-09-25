@@ -149,11 +149,12 @@ export function mapProductDtoToListingProduct(
 
   const imageUrl = getListingImageUrl(product);
   const priceVariant = selectLowestDisplayPriceVariant(product.variants);
-  if (!imageUrl || !priceVariant) return null;
+  if (!priceVariant) return null;
 
   const price = getVariantPricePresentation(priceVariant);
   return {
     badges: product.badges,
+    categoryId: product.category.id,
     id: String(product.id),
     imageUrl,
     inStock: product.variants.some(isVariantInStock),
@@ -161,7 +162,8 @@ export function mapProductDtoToListingProduct(
     originalPrice: price.original ?? undefined,
     personalizable: product.is_personalizable,
     price: price.current,
-    rating: null,
+    ratingAverage: product.rating_average,
+    reviewsCount: product.reviews_count,
     salesCount: product.times_ordered,
     slug: product.slug,
     subcategory: product.category.slug,

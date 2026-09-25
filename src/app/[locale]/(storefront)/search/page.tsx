@@ -91,6 +91,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     loadingMore: tListing("loadingMore"),
     nextPageError: tListing("nextPageError"),
     rating: tListing.raw("rating") as string,
+    reviews: tListing.raw("reviews") as string,
     retry: tListing("retry"),
     sortLabel: tListing("sort.label"),
     sortOptions: {

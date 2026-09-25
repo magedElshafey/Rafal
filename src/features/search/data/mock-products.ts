@@ -10,7 +10,7 @@ type MockSearchProduct = {
   keywords: readonly string[];
   name: string;
   price: Money;
-  thumbnailSrc: string;
+  thumbnailSrc: string | null;
 };
 
 export function getMockSearchProducts(

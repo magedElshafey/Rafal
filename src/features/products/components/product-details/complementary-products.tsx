@@ -18,7 +18,8 @@ type ComplementaryProductsProps = {
   nextLabel: string;
   previousLabel: string;
   products: readonly ListingProduct[];
-  ratingLabel: (value: number) => string;
+  ratingLabel: (value: string) => string;
+  reviewsLabel: (count: number) => string;
   title: string;
   unavailableLabel: string;
 };
@@ -31,6 +32,7 @@ export function ComplementaryProducts({
   previousLabel,
   products,
   ratingLabel,
+  reviewsLabel,
   title,
   unavailableLabel,
 }: ComplementaryProductsProps) {
@@ -67,6 +69,7 @@ export function ComplementaryProducts({
                 locale={locale}
                 product={product}
                 ratingLabel={ratingLabel}
+                reviewsLabel={reviewsLabel}
                 unavailableLabel={unavailableLabel}
               />
             </AppCarouselSlide>

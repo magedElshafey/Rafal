@@ -3,12 +3,16 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
-import { HeartFilledIcon, HeartIcon } from "@/components/ui/icons";
+import {
+  HeartFilledIcon,
+  HeartIcon,
+  ImageIcon,
+} from "@/components/ui/icons";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 import { PriceDisplay } from "./price-display";
-import { Rating } from "./rating";
+import { RatingMetadata } from "./rating-metadata";
 
 export interface ProductCardBadge {
   variant: NonNullable<BadgeProps["variant"]>;
@@ -18,6 +22,7 @@ export interface ProductCardBadge {
 export interface ProductCardRating {
   value: number;
   label: string;
+  reviewsLabel: string;
 }
 
 export interface ProductCardAction extends Omit<
@@ -29,14 +34,14 @@ export interface ProductCardAction extends Omit<
 
 interface ProductCardBaseProps {
   title: string;
-  image: ImageProps["src"];
+  image: ImageProps["src"] | null;
   imageAlt: string;
   imageSizes: NonNullable<ImageProps["sizes"]>;
   price: ReactNode;
   originalPrice?: ReactNode;
   href?: string;
   badge?: ProductCardBadge;
-  rating?: ProductCardRating;
+  rating: ProductCardRating;
   wishlistAction?: ProductCardAction;
   wishlistControl?: ReactNode;
   quickAddAction?: ProductCardAction;
@@ -107,14 +112,23 @@ function ProductMedia({
 
   return (
     <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-gray-0">
-      <Image
-        src={image}
-        alt={imageAlt}
-        fill
-        priority={imagePriority}
-        sizes={imageSizes}
-        className="object-cover"
-      />
+      {image ? (
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          priority={imagePriority}
+          sizes={imageSizes}
+          className="object-cover"
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          className="flex size-full items-center justify-center bg-gray-100 text-gray-400"
+        >
+          <ImageIcon size={40} />
+        </div>
+      )}
 
       {visibleBadge ? (
         <Badge
@@ -175,7 +189,7 @@ function ProductInfo({
           title
         )}
       </h3>
-      {rating ? <Rating value={rating.value} label={rating.label} /> : null}
+      <RatingMetadata {...rating} />
       <PriceDisplay price={price} originalPrice={originalPrice} />
     </div>
   );

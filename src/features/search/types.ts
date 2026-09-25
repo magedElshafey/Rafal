@@ -6,7 +6,7 @@ export type SearchProduct = {
   id: string;
   name: string;
   thumbnail: {
-    src: string;
+    src: string | null;
     alt: string;
   };
   price: ProductPrice;

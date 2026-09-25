@@ -18,6 +18,7 @@ import { Link } from "@/i18n/navigation";
 
 type ProductShelfProps = {
   carouselLabel: string;
+  emptyContent?: ReactNode;
   headerContent?: ReactNode;
   labels: HomeProductCardLabels;
   locale: Locale;
@@ -29,6 +30,7 @@ type ProductShelfProps = {
 
 export function ProductShelf({
   carouselLabel,
+  emptyContent,
   headerContent,
   labels,
   locale,
@@ -37,7 +39,7 @@ export function ProductShelf({
   viewAllHref,
   viewAllLabel,
 }: ProductShelfProps) {
-  if (products.length === 0) return null;
+  if (products.length === 0 && !emptyContent) return null;
 
   const direction = new Intl.Locale(locale).language === "ar" ? "rtl" : "ltr";
 
@@ -56,31 +58,35 @@ export function ProductShelf({
 
         {headerContent ? <div className="mt-4">{headerContent}</div> : null}
 
-        <AppCarousel
-          className="mt-5"
-          direction={direction}
-          dragFree
-          label={carouselLabel}
-          slidesToScroll="auto"
-        >
-          <AppCarouselViewport>
-            <AppCarouselContent className="-ms-4">
-              {products.map((product) => (
-                <AppCarouselSlide
-                  key={product.id}
-                  className="basis-[58%] ps-4 min-[480px]:basis-[42%] sm:basis-[34%] md:basis-1/4 lg:basis-1/6"
-                  label={product.name}
-                >
-                  <HomeProductCard
-                    labels={labels}
-                    locale={locale}
-                    product={product}
-                  />
-                </AppCarouselSlide>
-              ))}
-            </AppCarouselContent>
-          </AppCarouselViewport>
-        </AppCarousel>
+        {products.length > 0 ? (
+          <AppCarousel
+            className="mt-5"
+            direction={direction}
+            dragFree
+            label={carouselLabel}
+            slidesToScroll="auto"
+          >
+            <AppCarouselViewport>
+              <AppCarouselContent className="-ms-4">
+                {products.map((product) => (
+                  <AppCarouselSlide
+                    key={product.id}
+                    className="basis-[58%] ps-4 min-[480px]:basis-[42%] sm:basis-[34%] md:basis-1/4 lg:basis-1/6"
+                    label={product.name}
+                  >
+                    <HomeProductCard
+                      labels={labels}
+                      locale={locale}
+                      product={product}
+                    />
+                  </AppCarouselSlide>
+                ))}
+              </AppCarouselContent>
+            </AppCarouselViewport>
+          </AppCarousel>
+        ) : (
+          <div className="mt-5">{emptyContent}</div>
+        )}
       </Container>
     </Section>
   );

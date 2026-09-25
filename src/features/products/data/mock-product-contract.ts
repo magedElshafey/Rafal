@@ -195,6 +195,8 @@ export function createMockProductPayload(
     personalization_fee: personalization?.fee ?? null,
     viewers_now: 0,
     times_ordered: options.timesOrdered ?? 0,
+    rating_average: 0,
+    reviews_count: 0,
     images: [
       {
         id: productId * 100 + 1,

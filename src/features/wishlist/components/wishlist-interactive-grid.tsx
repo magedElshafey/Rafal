@@ -174,6 +174,7 @@ export function WishlistInteractiveGrid({
       locale={locale}
       products={optimisticProducts}
       ratingLabel={(value) => t("rating", { value })}
+      reviewsLabel={(count) => t("reviews", { count })}
       unavailableLabel={copy.unavailable}
     />
   );

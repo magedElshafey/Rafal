@@ -13,7 +13,8 @@ type ProductGridProps = {
   className?: string;
   locale: Locale;
   products: readonly ListingProduct[];
-  ratingLabel: (value: number) => string;
+  ratingLabel: (value: string) => string;
+  reviewsLabel: (count: number) => string;
   badgeLabels: Record<"discount" | "new" | "personalization", string>;
   unavailableLabel: string;
   getWishlistAction?: (product: ListingProduct) => ProductCardAction;
@@ -28,6 +29,7 @@ export function ListingProductCard({
   locale,
   product,
   ratingLabel,
+  reviewsLabel,
   unavailableLabel,
 }: Omit<ProductGridProps, "className" | "products"> & {
   product: ListingProduct;
@@ -49,13 +51,11 @@ export function ListingProductCard({
       ? currency.format(product.originalPrice)
       : undefined,
     price: currency.format(product.price),
-    rating:
-      product.rating === null
-        ? undefined
-        : {
-            value: product.rating,
-            label: ratingLabel(product.rating),
-          },
+    rating: {
+      value: product.ratingAverage,
+      label: ratingLabel(product.ratingAverage.toFixed(1)),
+      reviewsLabel: reviewsLabel(product.reviewsCount),
+    },
     title: name,
     wishlistAction: getWishlistAction?.(product),
     wishlistControl: getWishlistAction ? undefined : (
@@ -81,6 +81,7 @@ export function ProductGrid({
   locale,
   products,
   ratingLabel,
+  reviewsLabel,
   unavailableLabel,
 }: ProductGridProps) {
   return (
@@ -93,6 +94,7 @@ export function ProductGrid({
           locale={locale}
           product={product}
           ratingLabel={ratingLabel}
+          reviewsLabel={reviewsLabel}
           unavailableLabel={unavailableLabel}
         />
       ))}
@@ -106,13 +108,10 @@ export function ProductCardSkeleton() {
       <Skeleton className="aspect-square w-full rounded-sm" />
       <div className="flex flex-col items-end gap-1 px-1.5">
         <Skeleton className="h-4 w-4/5" />
-        <div className="flex h-[var(--rating-star-size)] w-[var(--rating-width)] justify-between">
-          {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton
-              key={index}
-              className="size-[var(--rating-star-size)] rounded-full"
-            />
-          ))}
+        <div className="flex h-4 items-center gap-1">
+          <Skeleton className="size-3.5 rounded-full" />
+          <Skeleton className="h-3.5 w-6" />
+          <Skeleton className="h-3.5 w-14" />
         </div>
         <Skeleton className="h-[var(--text-card-price--line-height)] w-3/5" />
       </div>

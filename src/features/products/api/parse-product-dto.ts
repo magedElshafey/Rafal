@@ -247,6 +247,14 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.times_ordered,
       `${path}.times_ordered`,
     ),
+    rating_average: finiteNumber(
+      source.rating_average,
+      `${path}.rating_average`,
+    ),
+    reviews_count: nonNegativeInteger(
+      source.reviews_count,
+      `${path}.reviews_count`,
+    ),
     images: array(source.images, `${path}.images`).map((image, index) =>
       parseImage(image, `${path}.images[${index}]`),
     ),

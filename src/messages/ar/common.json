@@ -232,6 +232,7 @@
     },
     "resultCount": "{count} منتج",
     "rating": "التقييم {value} من 5",
+    "reviews": "{count} تقييم",
     "filterButton": "تصفية المنتجات",
     "closeFilters": "إغلاق التصفية",
     "loadMore": "عرض المزيد من المنتجات",

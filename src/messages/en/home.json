@@ -20,9 +20,14 @@
     "retry": "Try again",
     "retrying": "Trying again"
   },
+  "locationNotice": {
+    "title": "Select your city",
+    "description": "Choose your city to see products available for your location."
+  },
   "productSections": {
     "viewAll": "View all",
     "rating": "Rated {value} out of 5",
+    "reviews": "{count, plural, one {# review} other {# reviews}}",
     "badges": {
       "discount": "Sale",
       "new": "New",
@@ -48,11 +53,10 @@
       "title": "Latest products",
       "carouselLabel": "Rafal's latest products",
       "filtersLabel": "Filter latest products",
+      "emptyTitle": "No products in this category",
+      "emptyDescription": "Try another category to see available products.",
       "filters": {
-        "all": "All",
-        "jewelry": "Jewelry",
-        "perfumes": "Perfumes",
-        "accessories": "Accessories"
+        "all": "All"
       }
     },
     "collection": {
@@ -105,29 +109,6 @@
   },
   "departments": {
     "title": "Shop by department",
-    "carouselLabel": "Rafal departments",
-    "items": {
-      "silver": {
-        "title": "Silver plaques",
-        "imageAlt": "An elegant silver design"
-      },
-      "carAccessories": {
-        "title": "Car accessories",
-        "imageAlt": "Premium car accessories"
-      },
-      "men": { "title": "Men", "imageAlt": "Gifts and accessories for men" },
-      "giftBoxes": {
-        "title": "Gift boxes",
-        "imageAlt": "A distinctive gift box"
-      },
-      "perfumes": {
-        "title": "Perfumes",
-        "imageAlt": "Rafal perfume collection"
-      },
-      "jewelry": {
-        "title": "Women's jewelry",
-        "imageAlt": "Women's jewelry collection"
-      }
-    }
+    "carouselLabel": "Rafal departments"
   }
 }

@@ -167,7 +167,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       new: listingT("badges.new"),
       personalization: listingT("badges.personalization"),
     },
-    ratingLabel: (value: number) => listingT("rating", { value }),
+    ratingLabel: (value: string) => listingT("rating", { value }),
+    reviewsLabel: (count: number) => listingT("reviews", { count }),
     unavailableLabel: listingT("unavailable"),
   };
 

@@ -69,7 +69,11 @@ export default function DesignSystemReviewPage() {
             imageAlt="حقيبة رفال ذهبية"
             imageSizes="170px"
             price="149 ر.س"
-            rating={{ value: 4.5, label: "4.5 من 5 نجوم" }}
+            rating={{
+              value: 4.5,
+              label: "التقييم 4.5 من 5",
+              reviewsLabel: "128 تقييم",
+            }}
             badge={{ variant: "personalization", label: "قابل للتخصيص" }}
             wishlistAction={{ label: "أضف إلى المفضلة" }}
             className="w-[var(--product-card-width)]"
@@ -81,7 +85,11 @@ export default function DesignSystemReviewPage() {
             imageSizes="170px"
             price="119 ر.س"
             originalPrice="149 ر.س"
-            rating={{ value: 4, label: "4 من 5 نجوم" }}
+            rating={{
+              value: 4,
+              label: "التقييم 4.0 من 5",
+              reviewsLabel: "24 تقييم",
+            }}
             badge={{ variant: "discount", label: "خصم 20٪" }}
             wishlistAction={{ label: "أضف إلى المفضلة" }}
             quickAddAction={{ label: "أضف إلى السلة" }}

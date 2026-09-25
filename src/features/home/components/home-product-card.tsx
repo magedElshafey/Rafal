@@ -8,7 +8,8 @@ type HomeProductCardLabels = {
   discount: string;
   new: string;
   personalization: string;
-  rating: (value: number) => string;
+  rating: (value: string) => string;
+  reviews: (count: number) => string;
 };
 
 type HomeProductCardProps = {
@@ -46,14 +47,11 @@ export function HomeProductCard({
           : undefined
       }
       price={currency.format(product.price)}
-      rating={
-        product.rating === null
-          ? undefined
-          : {
-              value: product.rating,
-              label: labels.rating(product.rating),
-            }
-      }
+      rating={{
+        value: product.ratingAverage,
+        label: labels.rating(product.ratingAverage.toFixed(1)),
+        reviewsLabel: labels.reviews(product.reviewsCount),
+      }}
       title={product.name}
       wishlistControl={<ProductWishlistAction productId={product.id} />}
     />

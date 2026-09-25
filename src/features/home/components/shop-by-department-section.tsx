@@ -8,14 +8,20 @@ import {
 } from "@/components/ui/app-carousel";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
+import type { Category } from "@/features/categories/types";
 import { DepartmentCard } from "@/features/home/components/department-card";
-import { departments } from "@/features/home/data/home-content";
 
-export async function ShopByDepartmentSection() {
+export async function ShopByDepartmentSection({
+  categories,
+}: {
+  categories: readonly Category[];
+}) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("Home.departments"),
   ]);
+  if (categories.length === 0) return null;
+
   const direction = new Intl.Locale(locale).language === "ar" ? "rtl" : "ltr";
 
   return (
@@ -36,17 +42,17 @@ export async function ShopByDepartmentSection() {
         >
           <AppCarouselViewport>
             <AppCarouselContent className="-ms-4">
-              {departments.map((department) => (
+              {categories.map((category) => (
                 <AppCarouselSlide
-                  key={department.id}
+                  key={category.id}
                   className="basis-[60%] ps-4 min-[480px]:basis-[42%] sm:basis-1/3 lg:basis-1/6"
-                  label={t(`items.${department.id}.title`)}
+                  label={category.name}
                 >
                   <DepartmentCard
-                    href={department.href}
-                    imageAlt={t(`items.${department.id}.imageAlt`)}
-                    imageUrl={department.imageUrl}
-                    title={t(`items.${department.id}.title`)}
+                    href={`/categories/${category.slug}`}
+                    imageAlt={category.name}
+                    imageUrl={category.imageUrl}
+                    title={category.name}
                   />
                 </AppCarouselSlide>
               ))}

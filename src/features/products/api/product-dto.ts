@@ -44,6 +44,8 @@ export type ProductDto = {
   personalization_fee: string | null;
   viewers_now: number;
   times_ordered: number;
+  rating_average: number;
+  reviews_count: number;
   images: readonly ProductImageDto[];
   category: ProductCategoryDto | null;
   variants: readonly ProductVariantDto[];

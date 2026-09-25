@@ -8,6 +8,7 @@ import { BestSellersSection } from "@/features/home/components/best-sellers-sect
 import { GiftsPromoBanner } from "@/features/home/components/gifts-promo-banner";
 import { HeroCarouselSkeleton } from "@/features/home/components/hero-carousel-skeleton";
 import { HomeHero } from "@/features/home/components/home-hero";
+import { HomeLocationNotice } from "@/features/home/components/home-location-notice";
 import { LatestProductsSection } from "@/features/home/components/latest-products-section";
 import { LoyaltyPromoBanner } from "@/features/home/components/loyalty-promo-banner";
 import { MensPromoBanner } from "@/features/home/components/mens-promo-banner";
@@ -33,9 +34,13 @@ const HomePage = async () => {
       <Suspense fallback={<HeroCarouselSkeleton />}>
         <HomeHero banners={home.banners} />
       </Suspense>
+      {home.location.city === null ? <HomeLocationNotice /> : null}
       <BestSellersSection products={home.featured} />
       <MensPromoBanner />
-      <LatestProductsSection products={home.newArrivals} />
+      <LatestProductsSection
+        categories={home.categories}
+        products={home.newArrivals}
+      />
       <ProductCollectionSection kind="onDiscount" products={home.onDiscount} />
       <ProductCollectionSection
         kind="personalizable"
@@ -44,7 +49,7 @@ const HomePage = async () => {
       <GiftsPromoBanner />
       <WhyRafalSection />
       <TestimonialsSection />
-      <ShopByDepartmentSection />
+      <ShopByDepartmentSection categories={home.categories} />
       <LoyaltyPromoBanner />
     </div>
   );

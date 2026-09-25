@@ -69,6 +69,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
     loadingMore: tListing("loadingMore"),
     nextPageError: tListing("nextPageError"),
     rating: tListing.raw("rating") as string,
+    reviews: tListing.raw("reviews") as string,
     retry: tListing("retry"),
     unavailable: tListing("unavailable"),
   };

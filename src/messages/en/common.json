@@ -232,6 +232,7 @@
     },
     "resultCount": "{count} products",
     "rating": "Rated {value} out of 5",
+    "reviews": "{count} reviews",
     "filterButton": "Filter products",
     "closeFilters": "Close filters",
     "loadMore": "Load more products",

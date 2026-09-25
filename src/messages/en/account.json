@@ -178,6 +178,7 @@
     },
     "mutationError": "Your wishlist could not be updated. Please try again.",
     "rating": "Rated {value} out of 5",
+    "reviews": "{count, plural, one {# review} other {# reviews}}",
     "unavailable": "Unavailable",
     "badges": {
       "discount": "Sale",

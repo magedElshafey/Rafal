@@ -22,15 +22,17 @@ export type ListingProduct = {
   badge?: "discount" | "new" | "personalization";
   /** Request-localized display labels from Laravel. Never inspect for logic. */
   badges?: readonly string[];
+  categoryId: number;
   createdOrder?: number;
   id: string;
-  imageUrl: string;
+  imageUrl: string | null;
   inStock: boolean;
   name: string;
   originalPrice?: number;
   personalizable: boolean;
   price: number;
-  rating: number | null;
+  ratingAverage: number;
+  reviewsCount: number;
   salesCount: number;
   slug: string;
   subcategory: string;

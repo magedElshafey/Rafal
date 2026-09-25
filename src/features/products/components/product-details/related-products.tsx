@@ -7,7 +7,8 @@ type RelatedProductsProps = {
   badgeLabels: Record<"discount" | "new" | "personalization", string>;
   locale: Locale;
   products: readonly ListingProduct[];
-  ratingLabel: (value: number) => string;
+  ratingLabel: (value: string) => string;
+  reviewsLabel: (count: number) => string;
   title: string;
   unavailableLabel: string;
 };
@@ -17,6 +18,7 @@ export function RelatedProducts({
   locale,
   products,
   ratingLabel,
+  reviewsLabel,
   title,
   unavailableLabel,
 }: RelatedProductsProps) {
@@ -33,6 +35,7 @@ export function RelatedProducts({
         locale={locale}
         products={products}
         ratingLabel={ratingLabel}
+        reviewsLabel={reviewsLabel}
         unavailableLabel={unavailableLabel}
       />
     </section>

@@ -128,6 +128,7 @@ export default async function CategoryPage({
               loadingMore: t("loadingMore"),
               nextPageError: t("nextPageError"),
               rating: t.raw("rating") as string,
+              reviews: t.raw("reviews") as string,
               retry: t("retry"),
               sortLabel: t("sort.label"),
               sortOptions: {
