@@ -56,7 +56,7 @@ export function LocationController({
 }: LocationControllerProps) {
   const [cities, setCities] = useState<readonly City[] | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initialCity === null);
   const [cityLoadFailed, setCityLoadFailed] = useState(false);
   const [, startTransition] = useTransition();
   const router = useRouter();

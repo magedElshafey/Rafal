@@ -125,16 +125,34 @@ function AppCarouselRoot({
   const reducedMotion = usePrefersReducedMotion();
   const shouldReduceMotion = reducedMotion ?? true;
 
-  useEffect(() => {
-    const autoplayApi = api?.plugins().autoplay;
+  const updateAutoplay = useCallback(() => {
+    if (!api) return;
+
+    const autoplayApi = api.plugins().autoplay;
 
     if (!autoplayApi) return;
 
-    if (reducedMotion === false) autoplayApi.play();
-    else autoplayApi.stop();
+    const hasMultipleScrollSnaps = api.scrollSnapList().length > 1;
+    const canScroll = api.canScrollPrev() || api.canScrollNext();
 
-    return () => autoplayApi.stop();
+    if (reducedMotion === false && hasMultipleScrollSnaps && canScroll) {
+      autoplayApi.play();
+    } else {
+      autoplayApi.stop();
+    }
   }, [api, reducedMotion]);
+
+  useEffect(() => {
+    if (!api) return;
+
+    api.on("reInit", updateAutoplay);
+    updateAutoplay();
+
+    return () => {
+      api.off("reInit", updateAutoplay);
+      api.plugins().autoplay?.stop();
+    };
+  }, [api, updateAutoplay]);
 
   const updateState = useCallback(() => {
     if (!api) return;
