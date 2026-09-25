@@ -6,12 +6,6 @@ export type BannerDto = {
   sort_order: number;
 };
 
-export type BannersResponseDto = {
-  success: boolean;
-  message: string;
-  data: BannerDto[];
-};
-
 export type Banner = {
   id: number;
   title: string;

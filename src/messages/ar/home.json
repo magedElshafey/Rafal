@@ -32,6 +32,18 @@
       "title": "الأكثر مبيعاً",
       "carouselLabel": "منتجاتنا الأكثر مبيعاً"
     },
+    "featured": {
+      "title": "منتجات مميزة",
+      "carouselLabel": "المنتجات المميزة"
+    },
+    "onDiscount": {
+      "title": "عروض وتخفيضات",
+      "carouselLabel": "منتجات عليها خصم"
+    },
+    "personalizable": {
+      "title": "منتجات قابلة للتخصيص",
+      "carouselLabel": "منتجات يمكنك تخصيصها"
+    },
     "latest": {
       "title": "أحدث المنتجات",
       "carouselLabel": "أحدث منتجات رافال",

@@ -1,1 +1,1 @@
-export type { Banner, BannerDto, BannersResponseDto } from "./banner.types";
+export type { Banner, BannerDto } from "./banner.types";

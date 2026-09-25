@@ -5,8 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { ProductShelf } from "@/features/home/components/product-shelf";
-import { getStorefrontProductCollections } from "@/features/home/data/home-products";
-import type { HomeProductCategory } from "@/features/home/types/home-product.types";
+import type {
+  HomeProduct,
+  HomeProductCategory,
+} from "@/features/home/types/home-product.types";
 
 type LatestProductFilter = "all" | HomeProductCategory;
 
@@ -17,15 +19,18 @@ const filterKeys = [
   "accessories",
 ] as const satisfies readonly LatestProductFilter[];
 
-export function LatestProductsSection() {
+export function LatestProductsSection({
+  products,
+}: {
+  products: readonly HomeProduct[];
+}) {
   const locale = useLocale();
   const t = useTranslations("Home.productSections");
-  const { latestProducts } = getStorefrontProductCollections(locale);
   const [activeFilter, setActiveFilter] = useState<LatestProductFilter>("all");
   const visibleProducts =
     activeFilter === "all"
-      ? latestProducts
-      : latestProducts.filter((product) => product.category === activeFilter);
+      ? products
+      : products.filter((product) => product.subcategory === activeFilter);
 
   return (
     <ProductShelf

@@ -8,13 +8,10 @@ import {
   AppCarouselSlide,
   AppCarouselViewport,
 } from "@/components/ui/app-carousel";
-import { ErrorState } from "@/components/ui/error-state";
-import { getBanners } from "@/features/home/api/get-banners";
 import {
   HomeHeroFrame,
   HomeHeroLayout,
 } from "@/features/home/components/home-hero-layout";
-import { HomeHeroRetry } from "@/features/home/components/home-hero-retry";
 import type { Banner } from "@/features/home/types";
 import { Link } from "@/i18n/navigation";
 
@@ -49,30 +46,15 @@ function BannerImage({
   );
 }
 
-export async function HomeHero() {
-  const [t, locale, banners] = await Promise.all([
+export async function HomeHero({
+  banners,
+}: {
+  banners: readonly Banner[];
+}) {
+  const [t, locale] = await Promise.all([
     getTranslations("Home.hero"),
     getLocale(),
-    getBanners().catch(() => null),
   ]);
-
-  if (banners === null) {
-    return (
-      <HomeHeroLayout>
-        <HomeHeroFrame>
-          <ErrorState
-            role="alert"
-            className="size-full justify-center rounded-none border-0"
-            title={t("errorTitle")}
-            description={t("errorDescription")}
-            action={
-              <HomeHeroRetry label={t("retry")} pendingLabel={t("retrying")} />
-            }
-          />
-        </HomeHeroFrame>
-      </HomeHeroLayout>
-    );
-  }
 
   if (banners.length === 0) return null;
 

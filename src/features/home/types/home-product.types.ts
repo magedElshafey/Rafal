@@ -1,5 +1,5 @@
 export type {
-  StorefrontProduct as HomeProduct,
-  StorefrontProductBadge as HomeProductBadge,
-  StorefrontProductCategory as HomeProductCategory,
-} from "@/features/products/types/storefront-product.types";
+  ListingProduct as HomeProduct,
+} from "@/features/products/types/product-listing.types";
+
+export type HomeProductCategory = "accessories" | "jewelry" | "perfumes";

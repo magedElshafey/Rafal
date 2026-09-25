@@ -32,6 +32,18 @@
       "title": "Best sellers",
       "carouselLabel": "Our best-selling products"
     },
+    "featured": {
+      "title": "Featured products",
+      "carouselLabel": "Featured products"
+    },
+    "onDiscount": {
+      "title": "Offers and discounts",
+      "carouselLabel": "Products on discount"
+    },
+    "personalizable": {
+      "title": "Personalizable products",
+      "carouselLabel": "Products you can personalize"
+    },
     "latest": {
       "title": "Latest products",
       "carouselLabel": "Rafal's latest products",

@@ -1,18 +1,20 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { ProductShelf } from "@/features/home/components/product-shelf";
-import { getStorefrontProductCollections } from "@/features/home/data/home-products";
+import type { HomeProduct } from "@/features/home/types/home-product.types";
 
-export async function BestSellersSection() {
+export async function BestSellersSection({
+  products,
+}: {
+  products: readonly HomeProduct[];
+}) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("Home.productSections"),
   ]);
-  const { bestSellerProducts } = getStorefrontProductCollections(locale);
-
   return (
     <ProductShelf
-      carouselLabel={t("bestSellers.carouselLabel")}
+      carouselLabel={t("featured.carouselLabel")}
       labels={{
         discount: t("badges.discount"),
         new: t("badges.new"),
@@ -20,8 +22,8 @@ export async function BestSellersSection() {
         rating: (value) => t("rating", { value }),
       }}
       locale={locale}
-      products={bestSellerProducts}
-      title={t("bestSellers.title")}
+      products={products}
+      title={t("featured.title")}
       viewAllHref="/products"
       viewAllLabel={t("viewAll")}
     />
