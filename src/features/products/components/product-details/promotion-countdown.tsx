@@ -59,7 +59,7 @@ export function PromotionCountdown({
 
   if (remaining.status === "hidden") return null;
   if (remaining.status === "expired") {
-    return <span className="type-body-sm text-destructive">{copy.expired}</span>;
+    return <span className="type-body-sm text-gray-600">{copy.expired}</span>;
   }
 
   const totalSeconds = Math.floor(remaining.milliseconds / 1_000);
@@ -69,7 +69,7 @@ export function PromotionCountdown({
   const seconds = totalSeconds % 60;
 
   return (
-    <span className="type-body-sm text-destructive">
+    <span className="type-body-sm text-gray-700">
       {copy.label}: <bdi>{days}</bdi> {copy.days} <bdi>{hours}</bdi>{" "}
       {copy.hours} <bdi>{minutes}</bdi> {copy.minutes} <bdi>{seconds}</bdi>{" "}
       {copy.seconds}

@@ -62,6 +62,11 @@ export type ProductRatingSummary = {
   count: number;
 };
 
+export type ProductSocialProof = {
+  timesOrdered: number;
+  viewersNow: number;
+};
+
 export type PersonalizationLanguage = "arabic" | "english";
 
 export type PersonalizationCharacterPolicy = "letters-and-spaces";
@@ -100,5 +105,6 @@ export type ProductDetails = {
   options: readonly ProductOption[];
   variants: readonly ProductVariant[];
   ratingSummary: ProductRatingSummary | null;
+  socialProof: ProductSocialProof;
   personalization: ProductPersonalizationConfig;
 };

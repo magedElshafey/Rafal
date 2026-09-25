@@ -1,13 +1,21 @@
 import type { Locale } from "next-intl";
 import {
   useState,
+  useSyncExternalStore,
   type MouseEventHandler,
   type ReactNode,
   type Ref,
 } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ShieldCheckIcon } from "@/components/ui/icons";
+import {
+  CheckIcon,
+  EyeIcon,
+  MapPinIcon,
+  ShieldCheckIcon,
+  ShoppingBagIcon,
+} from "@/components/ui/icons";
+import { AnimatedProductMetric } from "@/features/products/components/product-details/animated-product-metric";
 import { ProductPriceBlock } from "@/features/products/components/product-details/product-price-block";
 import { Rating } from "@/features/products/components/product-card/rating";
 import type { ResolvedVariantAvailability } from "@/features/products/types/product-availability.types";
@@ -16,6 +24,7 @@ import type {
   PersonalizationLanguage,
   ProductDetails,
   ProductOption,
+  ProductOptionValue,
   ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
@@ -26,14 +35,17 @@ import type {
   ProductPersonalizationValidationError,
   ProductPersonalizationValidationResult,
 } from "@/features/products/utils/validate-product-personalization";
+import { cn } from "@/lib/utils";
 
 export type ProductPurchasePanelCopy = {
   addToCart: string;
   availability: {
     availableTemplate: string;
+    availableAtLocationTemplate: string;
     outOfStock: string;
     purchaseUnavailable: string;
     unavailableAtLocation: string;
+    unavailableAtLocationTemplate: string;
   };
   personalization: {
     additionalFeeTemplate: string;
@@ -53,6 +65,12 @@ export type ProductPurchasePanelCopy = {
     placeholder: string;
     title: string;
   };
+  options: {
+    labels: {
+      color: string;
+      size: string;
+    };
+  };
   price: {
     countdown: {
       days: string;
@@ -70,9 +88,14 @@ export type ProductPurchasePanelCopy = {
     decrease: string;
     increase: string;
     labelTemplate: string;
+    title: string;
   };
   ratingLabelTemplate: string;
   ratingSummaryTemplate: string;
+  socialProof: {
+    timesOrdered: string;
+    viewersNow: string;
+  };
   skuTemplate: string;
 };
 
@@ -84,6 +107,7 @@ type ProductPurchasePanelProps = {
   copy: ProductPurchasePanelCopy;
   isAddingToCart: boolean;
   locale: Locale;
+  locationName: string | null;
   bnplInformation: ReactNode;
   onAddToCart: MouseEventHandler<HTMLButtonElement>;
   onChangePersonalizationText: (text: string) => void;
@@ -97,21 +121,93 @@ type ProductPurchasePanelProps = {
   personalizationValidation: ProductPersonalizationValidationResult | null;
   product: Pick<
     ProductDetails,
-    "id" | "name" | "options" | "personalization" | "ratingSummary" | "variants"
+    | "id"
+    | "name"
+    | "options"
+    | "personalization"
+    | "ratingSummary"
+    | "socialProof"
+    | "variants"
   >;
   quantity: number;
   purchaseActionRef: Ref<HTMLDivElement>;
   renderedAt: number;
   selectedOptions: SelectedProductOptions;
+  shareActions: ReactNode;
   variant: ProductVariant;
 };
 
+const NON_VISUAL_CSS_COLORS = new Set([
+  "currentcolor",
+  "inherit",
+  "initial",
+  "revert",
+  "revert-layer",
+  "transparent",
+  "unset",
+]);
+
+function subscribeToCssColorSupport() {
+  return () => undefined;
+}
+
+function isUsableCssColor(value: string): boolean {
+  const normalizedValue = value.trim();
+  if (
+    normalizedValue.length === 0 ||
+    NON_VISUAL_CSS_COLORS.has(normalizedValue.toLowerCase()) ||
+    /^(?:env|var)\(/i.test(normalizedValue) ||
+    typeof CSS === "undefined"
+  ) {
+    return false;
+  }
+
+  return CSS.supports("color", normalizedValue);
+}
+
+function ColorOptionSwatch({ value }: { value: ProductOptionValue }) {
+  const colorValue = value.swatchHex ?? value.label;
+  const canRenderSwatch = useSyncExternalStore(
+    subscribeToCssColorSupport,
+    () => isUsableCssColor(colorValue),
+    () => false,
+  );
+
+  return canRenderSwatch ? (
+    <span
+      aria-hidden="true"
+      className="size-7 shrink-0 rounded-full border border-gray-300 shadow-[inset_0_0_0_1px_rgb(255_255_255_/_70%)]"
+      style={{ backgroundColor: colorValue }}
+    />
+  ) : null;
+}
+
+function getOptionLabel(
+  option: ProductOption,
+  locale: Locale,
+  copy: ProductPurchasePanelCopy["options"],
+): string {
+  const presentationKey = option.key.trim().toLowerCase();
+  if (presentationKey === "size") return copy.labels.size;
+  if (presentationKey === "color") return copy.labels.color;
+
+  const fallback = option.name.trim().replace(/[_-]+/g, " ");
+  const [firstCharacter, ...remainingCharacters] = fallback;
+  return firstCharacter
+    ? `${firstCharacter.toLocaleUpperCase(locale)}${remainingCharacters.join("")}`
+    : option.key;
+}
+
 function ProductOptions({
+  copy,
+  locale,
   onSelectOption,
   options,
   selectedOptions,
   variants,
 }: {
+  copy: ProductPurchasePanelCopy["options"];
+  locale: Locale;
   onSelectOption: (optionId: string, valueId: string) => void;
   options: readonly ProductOption[];
   selectedOptions: SelectedProductOptions;
@@ -120,55 +216,87 @@ function ProductOptions({
   if (options.length === 0) return null;
 
   return (
-    <div className="space-y-4">
-      {options.map((option) => (
-        <fieldset key={option.id}>
-          <legend className="type-body font-medium">{option.name}</legend>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {option.values.map((value) => {
-              const candidateSelection = {
-                ...selectedOptions,
-                [option.id]: value.id,
-              };
-              const selectable =
-                resolveProductVariant(options, variants, candidateSelection) !==
-                null;
-              const inputId = `${option.id}-${value.id}`;
+    <div className="space-y-5 border-t border-gray-200 pt-6">
+      {options.map((option) => {
+        const presentationKey = option.key.trim().toLowerCase();
+        const isColorOption = presentationKey === "color";
+        const isSizeOption = presentationKey === "size";
+        const optionLabel = getOptionLabel(option, locale, copy);
 
-              return (
-                <label
-                  key={value.id}
-                  htmlFor={inputId}
-                  className="relative cursor-pointer"
-                >
-                  <input
-                    id={inputId}
-                    type="radio"
-                    name={option.id}
-                    value={value.id}
-                    checked={selectedOptions[option.id] === value.id}
-                    disabled={!selectable}
-                    onChange={() => onSelectOption(option.id, value.id)}
-                    className="peer sr-only"
-                  />
-                  <span className="flex min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-gray-0 py-1 pe-3 ps-1 peer-checked:border-2 peer-checked:border-gray-800 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-40">
-                    {value.swatchHex ? (
-                      <span
-                        aria-hidden="true"
-                        className="size-8 shrink-0 rounded-full border border-gray-200"
-                        style={{ backgroundColor: value.swatchHex }}
-                      />
-                    ) : null}
-                    <span className="type-body-sm text-gray-700">
-                      {value.label}
+        return (
+          <fieldset key={option.id}>
+            <legend className="type-body font-medium text-gray-900">
+              {optionLabel}
+            </legend>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {option.values.map((value) => {
+                const candidateSelection = {
+                  ...selectedOptions,
+                  [option.id]: value.id,
+                };
+                const selectable =
+                  resolveProductVariant(
+                    options,
+                    variants,
+                    candidateSelection,
+                  ) !== null;
+                const inputId = `${option.id}-${value.id}`;
+                const selected = selectedOptions[option.id] === value.id;
+
+                return (
+                  <label
+                    key={value.id}
+                    htmlFor={inputId}
+                    className="relative cursor-pointer"
+                  >
+                    <input
+                      id={inputId}
+                      type="radio"
+                      name={option.id}
+                      value={value.id}
+                      checked={selected}
+                      disabled={!selectable}
+                      aria-label={`${optionLabel}: ${value.label}`}
+                      onChange={() => onSelectOption(option.id, value.id)}
+                      className="peer sr-only"
+                    />
+                    <span
+                      className={cn(
+                        "flex min-h-11 items-center justify-center gap-2 border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
+                        isColorOption ? "rounded-full ps-2" : "rounded-md",
+                        isSizeOption && "min-w-12",
+                        selected &&
+                          "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
+                        !selectable &&
+                          "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400 opacity-60",
+                      )}
+                    >
+                      {isColorOption ? (
+                        <ColorOptionSwatch value={value} />
+                      ) : value.swatchHex ? (
+                        <span
+                          aria-hidden="true"
+                          className="size-7 shrink-0 rounded-full border border-gray-300"
+                          style={{ backgroundColor: value.swatchHex }}
+                        />
+                      ) : null}
+                      <span className={cn(!selectable && "line-through")}>
+                        {value.label}
+                      </span>
+                      {selected ? (
+                        <CheckIcon
+                          aria-hidden="true"
+                          className="size-4 shrink-0 text-gold-700"
+                        />
+                      ) : null}
                     </span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
-      ))}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        );
+      })}
     </div>
   );
 }
@@ -340,33 +468,99 @@ function getPersonalizationErrorMessage(
 function AvailabilityMessage({
   availability,
   copy,
+  locationName,
 }: {
   availability: ResolvedVariantAvailability;
   copy: ProductPurchasePanelCopy["availability"];
+  locationName: string | null;
 }) {
   const available = availability.status === "available";
-  const message = available
-    ? formatProductMessage(copy.availableTemplate, {
-        max: availability.maxOrderQuantity,
-      })
-    : availability.status === "out_of_stock"
-      ? copy.outOfStock
-      : availability.status === "purchase_unavailable"
-        ? copy.purchaseUnavailable
-        : copy.unavailableAtLocation;
+  let message: string;
+
+  if (availability.status === "available") {
+    message = locationName
+      ? formatProductMessage(copy.availableAtLocationTemplate, {
+          city: locationName,
+          max: availability.maxOrderQuantity,
+        })
+      : formatProductMessage(copy.availableTemplate, {
+          max: availability.maxOrderQuantity,
+        });
+  } else if (
+    locationName &&
+    (availability.status === "out_of_stock" ||
+      availability.status === "unavailable_at_location")
+  ) {
+    message = formatProductMessage(copy.unavailableAtLocationTemplate, {
+      city: locationName,
+    });
+  } else if (availability.status === "out_of_stock") {
+    message = copy.outOfStock;
+  } else if (availability.status === "purchase_unavailable") {
+    message = copy.purchaseUnavailable;
+  } else {
+    message = copy.unavailableAtLocation;
+  }
 
   return (
     <p
       id="product-availability"
+      role="status"
       aria-live="polite"
-      className={
+      className={`flex items-start gap-3 border-s-2 py-2 ps-3 type-body-sm font-medium ${
         available
-          ? "rounded-md border border-success/20 bg-success/10 px-4 py-3 type-body-sm text-success"
-          : "rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 type-body-sm text-destructive"
-      }
+          ? "border-success text-success"
+          : "border-destructive text-destructive"
+      }`}
     >
-      {message}
+      <MapPinIcon aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
+      <span>{message}</span>
     </p>
+  );
+}
+
+function ProductSocialProofSummary({
+  copy,
+  locale,
+  socialProof,
+}: {
+  copy: ProductPurchasePanelCopy["socialProof"];
+  locale: Locale;
+  socialProof: ProductDetails["socialProof"];
+}) {
+  const items = [
+    {
+      icon: EyeIcon,
+      label: copy.viewersNow,
+      value: socialProof.viewersNow,
+    },
+    {
+      icon: ShoppingBagIcon,
+      label: copy.timesOrdered,
+      value: socialProof.timesOrdered,
+    },
+  ] as const;
+
+  return (
+    <dl className="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-gray-200 py-3">
+      {items.map(({ icon: Icon, label, value }) => (
+        <div
+          key={label}
+          className="flex min-w-0 items-center gap-2.5"
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-50 text-gold-700">
+            <Icon aria-hidden="true" className="size-4" />
+          </span>
+          <dt className="sr-only">{label}</dt>
+          <dd className="flex min-w-0 items-baseline gap-1.5">
+            <strong className="type-body font-bold text-gray-900">
+              <AnimatedProductMetric locale={locale} value={value} />
+            </strong>
+            <span className="type-caption text-gray-500">{label}</span>
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -378,6 +572,7 @@ export function ProductPurchasePanel({
   copy,
   isAddingToCart,
   locale,
+  locationName,
   bnplInformation,
   onAddToCart,
   onChangePersonalizationText,
@@ -392,6 +587,7 @@ export function ProductPurchasePanel({
   purchaseActionRef,
   renderedAt,
   selectedOptions,
+  shareActions,
   variant,
 }: ProductPurchasePanelProps) {
   const available = availability.status === "available";
@@ -400,7 +596,7 @@ export function ProductPurchasePanel({
     available && quantity < availability.maxOrderQuantity;
 
   return (
-    <section className="min-w-0 space-y-5" aria-labelledby="product-title">
+    <section className="min-w-0 space-y-6" aria-labelledby="product-title">
       <div>
         <h1
           id="product-title"
@@ -429,46 +625,58 @@ export function ProductPurchasePanel({
         ) : null}
       </div>
 
-      <ProductPriceBlock
+      <div className="space-y-2">
+        <ProductPriceBlock
+          locale={locale}
+          pricing={variant.pricing}
+          renderedAt={renderedAt}
+          copy={copy.price}
+        />
+        <p className="flex items-center gap-2 type-body-sm text-gray-500">
+          <ShieldCheckIcon aria-hidden="true" className="size-4 shrink-0" />
+          {copy.price.vatInclusive}
+        </p>
+      </div>
+
+      <ProductSocialProofSummary
+        copy={copy.socialProof}
         locale={locale}
-        pricing={variant.pricing}
-        renderedAt={renderedAt}
-        copy={copy.price}
+        socialProof={product.socialProof}
       />
 
-      {bnplInformation}
-
-      <p className="flex items-center gap-2 type-body-sm text-gray-500">
-        <ShieldCheckIcon className="size-4 shrink-0" />
-        {copy.price.vatInclusive}
-      </p>
+      <AvailabilityMessage
+        availability={availability}
+        copy={copy.availability}
+        locationName={locationName}
+      />
 
       <ProductOptions
+        copy={copy.options}
+        locale={locale}
         onSelectOption={onSelectOption}
         options={product.options}
         selectedOptions={selectedOptions}
         variants={product.variants}
       />
 
-      <AvailabilityMessage availability={availability} copy={copy.availability} />
+      <ProductPersonalizationSummary
+        copy={copy.personalization}
+        locale={locale}
+        onChangeText={onChangePersonalizationText}
+        onSelectLanguage={onSelectPersonalizationLanguage}
+        personalizationInput={personalizationInput}
+        personalizationValidation={personalizationValidation}
+        product={product}
+      />
 
-      <div ref={purchaseActionRef}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button
-            disabled={!canAddToCart || isAddingToCart}
-            loading={isAddingToCart}
-            loadingLabel={addingToCartLabel}
-            size="lg"
-            aria-describedby={
-              addToCartErrorMessage
-                ? "product-availability product-add-to-cart-error"
-                : "product-availability"
-            }
-            className="w-full flex-1"
-            onClick={onAddToCart}
-          >
-            {copy.addToCart}
-          </Button>
+      <div
+        ref={purchaseActionRef}
+        className="space-y-4 border-t border-gray-200 pt-6"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <span className="type-body font-medium text-gray-900">
+            {copy.quantity.title}
+          </span>
           <div className="flex h-13 shrink-0 items-center justify-between rounded-md border border-gray-200 bg-gray-0">
             <button
               type="button"
@@ -499,6 +707,23 @@ export function ProductPurchasePanel({
             </button>
           </div>
         </div>
+        <div>
+          <Button
+            disabled={!canAddToCart || isAddingToCart}
+            loading={isAddingToCart}
+            loadingLabel={addingToCartLabel}
+            size="lg"
+            aria-describedby={
+              addToCartErrorMessage
+                ? "product-availability product-add-to-cart-error"
+                : "product-availability"
+            }
+            className="w-full"
+            onClick={onAddToCart}
+          >
+            {copy.addToCart}
+          </Button>
+        </div>
         {addToCartErrorMessage ? (
           <p
             id="product-add-to-cart-error"
@@ -510,15 +735,9 @@ export function ProductPurchasePanel({
         ) : null}
       </div>
 
-      <ProductPersonalizationSummary
-        copy={copy.personalization}
-        locale={locale}
-        onChangeText={onChangePersonalizationText}
-        onSelectLanguage={onSelectPersonalizationLanguage}
-        personalizationInput={personalizationInput}
-        personalizationValidation={personalizationValidation}
-        product={product}
-      />
+      <div className="border-t border-gray-200 pt-5">{bnplInformation}</div>
+
+      <div className="border-t border-gray-200 pt-5">{shareActions}</div>
     </section>
   );
 }

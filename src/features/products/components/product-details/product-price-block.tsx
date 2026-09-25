@@ -39,18 +39,12 @@ export function ProductPriceBlock({
     <div
       className={
         pricing.promotion
-          ? "flex flex-wrap items-center justify-between gap-3 rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3"
+          ? "flex flex-wrap items-center justify-between gap-4 rounded-md border border-gold-200 bg-gold-50/50 px-4 py-4"
           : "flex flex-wrap items-baseline gap-3"
       }
     >
       <div className="flex flex-wrap items-baseline gap-3">
-        <strong
-          className={
-            hasDiscount
-              ? "text-h3 font-bold text-destructive"
-              : "text-h3 font-bold text-gray-900"
-          }
-        >
+        <strong className="text-display font-bold text-gray-900">
           <bdi>{currency.format(pricing.current.amount)}</bdi>
         </strong>
         {hasDiscount && pricing.compareAt ? (
@@ -67,8 +61,8 @@ export function ProductPriceBlock({
         ) : null}
       </div>
       {pricing.promotion ? (
-        <div className="flex flex-col items-start gap-1">
-          <span className="type-ui-sm text-destructive">{copy.promotion}</span>
+        <div className="flex flex-col items-start gap-1 sm:items-end sm:text-end">
+          <span className="type-ui-sm text-gold-700">{copy.promotion}</span>
           {pricing.promotion.endsAt ? (
             <PromotionCountdown
               key={pricing.promotion.endsAt}

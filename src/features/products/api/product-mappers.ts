@@ -115,7 +115,7 @@ function getListingImageUrl(product: ProductDto): string | null {
   return null;
 }
 
-function mapProductImages(product: ProductDto): ProductImageMapping | null {
+function mapProductImages(product: ProductDto): ProductImageMapping {
   const imagesById = new Map<string, ProductImage>();
   const addImage = (image: ProductDto["images"][number]) => {
     const id = String(image.id);
@@ -133,8 +133,6 @@ function mapProductImages(product: ProductDto): ProductImageMapping | null {
       Array.from(new Set(variant.images.map(addImage))),
     ]),
   );
-
-  if (imagesById.size === 0) return null;
 
   return {
     images: Array.from(imagesById.values()),
@@ -177,7 +175,7 @@ export function mapProductDtoToProductDetails(
 
   const personalization = mapPersonalization(product);
   const mappedImages = mapProductImages(product);
-  if (!personalization || !mappedImages) return null;
+  if (!personalization) return null;
 
   return {
     id: String(product.id),
@@ -198,7 +196,14 @@ export function mapProductDtoToProductDetails(
         mappedImages.imageIdsByVariantId[String(variant.id)] ?? [],
       ),
     ),
-    ratingSummary: null,
+    ratingSummary: {
+      average: product.rating_average,
+      count: product.reviews_count,
+    },
+    socialProof: {
+      timesOrdered: product.times_ordered,
+      viewersNow: product.viewers_now,
+    },
     personalization,
   };
 }

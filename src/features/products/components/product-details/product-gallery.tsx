@@ -8,6 +8,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EyeIcon,
+  ImageIcon,
 } from "@/components/ui/icons";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import type { ProductImage } from "@/features/products/types/product-details.types";
@@ -26,11 +27,11 @@ type ProductGalleryProps = {
   };
   direction: "ltr" | "rtl";
   images: readonly ProductImage[];
-  initialImageId: string;
+  initialImageId: string | null;
   onSelectImage: (imageId: string) => void;
   productId: string;
   productName: string;
-  selectedImageId: string;
+  selectedImageId: string | null;
   wishlistEnabled: boolean;
 };
 
@@ -85,9 +86,30 @@ export function ProductGallery({
     selectedImageIndex,
   ]);
 
-  if (!selectedImage) {
+  if (!selectedImage && images.length > 0) {
     throw new Error(
       `Product "${productId}" selected unknown image "${selectedImageId}".`,
+    );
+  }
+
+  if (!selectedImage) {
+    return (
+      <section className="min-w-0" aria-label={productName}>
+        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+          <div
+            aria-hidden="true"
+            className="flex size-full items-center justify-center text-gray-400"
+          >
+            <ImageIcon className="size-14" />
+          </div>
+          {wishlistEnabled ? (
+            <ProductWishlistAction
+              productId={productId}
+              className="start-4 top-4 size-12 [&_svg]:size-6"
+            />
+          ) : null}
+        </div>
+      </section>
     );
   }
 

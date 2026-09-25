@@ -1,7 +1,7 @@
 export type PublicSettings = {
   vatRate: number;
   freeShippingEnabled: boolean;
-  freeShippingThreshold: number;
+  freeShippingThreshold: number | null;
   giftWrapEnabled: boolean;
   giftWrapFee: number;
   maxAddressesPerUser: number;

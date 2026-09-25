@@ -85,6 +85,48 @@ export const FacebookIcon = forwardRef<SVGSVGElement, BrandIconProps>(
 );
 FacebookIcon.displayName = "FacebookIcon";
 
+export const WhatsAppIcon = forwardRef<SVGSVGElement, BrandIconProps>(
+  ({ label, variant = "brand", ...props }, ref) => {
+    const monochrome = variant === "monochrome";
+
+    return (
+      <svg
+        ref={ref}
+        viewBox="0 0 32 32"
+        {...brandAccessibility(label)}
+        {...props}
+      >
+        <path
+          fill={monochrome ? "currentColor" : "#25D366"}
+          d="M16.03 3A12.94 12.94 0 0 0 5.06 22.8L3.3 29l6.35-1.67A12.99 12.99 0 1 0 16.03 3Zm0 23.8c-1.93 0-3.82-.52-5.46-1.5l-.39-.23-3.77.99 1-3.67-.25-.38a10.82 10.82 0 1 1 8.87 4.79Z"
+        />
+        <path
+          fill={monochrome ? "currentColor" : "#fff"}
+          d="M22 18.11c-.33-.17-1.95-.96-2.25-1.07-.3-.11-.52-.17-.74.17-.22.33-.85 1.07-1.04 1.29-.19.22-.38.25-.71.08-.33-.16-1.39-.51-2.65-1.64a9.9 9.9 0 0 1-1.83-2.28c-.19-.33-.02-.5.15-.67.15-.15.33-.38.49-.57.17-.19.22-.33.33-.55.11-.22.05-.41-.03-.57-.08-.17-.74-1.79-1.02-2.45-.27-.65-.54-.56-.74-.57h-.63c-.22 0-.57.08-.88.41-.3.33-1.15 1.13-1.15 2.75s1.18 3.19 1.35 3.41c.16.22 2.32 3.54 5.62 4.97.79.34 1.4.54 1.88.69.79.25 1.5.22 2.07.13.63-.09 1.95-.8 2.22-1.57.27-.77.27-1.43.19-1.57-.08-.14-.3-.22-.63-.39Z"
+        />
+      </svg>
+    );
+  },
+);
+WhatsAppIcon.displayName = "WhatsAppIcon";
+
+export const XBrandIcon = forwardRef<SVGSVGElement, BrandIconProps>(
+  ({ label, ...props }, ref) => (
+    <svg
+      ref={ref}
+      viewBox="0 0 24 24"
+      {...brandAccessibility(label)}
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z"
+      />
+    </svg>
+  ),
+);
+XBrandIcon.displayName = "XBrandIcon";
+
 export const VisaIcon = forwardRef<SVGSVGElement, BrandIconProps>(
   ({ label, ...props }, ref) => (
     <svg

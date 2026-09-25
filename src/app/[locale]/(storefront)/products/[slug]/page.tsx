@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { Locale } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { cache } from "react";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
@@ -37,7 +36,30 @@ type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const getProductPageData = cache(async (slug: string, locale: Locale) => {
+const SHARE_DESCRIPTION_MAX_LENGTH = 140;
+
+function createShareDescription(html: string): string {
+  const plainText = sanitizeHtmlToText(
+    html,
+    "product-rich-text",
+  ).replace(/\s+/g, " ").trim();
+  if (plainText.length <= SHARE_DESCRIPTION_MAX_LENGTH) return plainText;
+
+  const candidate = plainText.slice(0, SHARE_DESCRIPTION_MAX_LENGTH + 1);
+  const lastWordBoundary = candidate.lastIndexOf(" ");
+  const excerpt = candidate
+    .slice(
+      0,
+      lastWordBoundary > SHARE_DESCRIPTION_MAX_LENGTH / 2
+        ? lastWordBoundary
+        : SHARE_DESCRIPTION_MAX_LENGTH,
+    )
+    .trimEnd();
+
+  return `${excerpt}…`;
+}
+
+async function getProductPageData(slug: string, locale: Locale) {
   const city = await resolveCurrentLocation(locale);
   const cityId = getCanonicalBackendCityId(city) ?? undefined;
   const readResult = await getProductDetailsBySlug(
@@ -46,8 +68,8 @@ const getProductPageData = cache(async (slug: string, locale: Locale) => {
     cityId,
   );
 
-  return { readResult };
-});
+  return { city, cityId, readResult };
+}
 
 export async function generateMetadata({
   params,
@@ -64,10 +86,13 @@ export async function generateMetadata({
     product.description.html,
     "product-rich-text",
   );
-  const images = product.images.map((image) => ({
-    url: new URL(image.src, serverEnv.siteUrl).toString(),
-    alt: image.alt,
-  }));
+  const primaryImage = product.images[0];
+  const socialImage = primaryImage
+    ? {
+        url: new URL(primaryImage.src, serverEnv.siteUrl).toString(),
+        alt: primaryImage.alt,
+      }
+    : null;
 
   return {
     title: product.name,
@@ -79,25 +104,32 @@ export async function generateMetadata({
       type: "website",
       url: canonicalUrl,
       locale,
-      images,
+      ...(socialImage ? { images: [socialImage] } : {}),
+    },
+    twitter: {
+      card: socialImage ? "summary_large_image" : "summary",
+      title: product.name,
+      ...(description ? { description } : {}),
+      ...(socialImage ? { images: [socialImage.url] } : {}),
     },
   };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [{ readResult }, t, listingT, publicSettings] = await Promise.all([
-    getProductPageData(slug, locale),
-    getTranslations({
-      locale,
-      namespace: "Common.productDetails",
-    }),
-    getTranslations({
-      locale,
-      namespace: "Common.productListing",
-    }),
-    getPublicSettings(),
-  ]);
+  const [{ city, cityId, readResult }, t, listingT, publicSettings] =
+    await Promise.all([
+      getProductPageData(slug, locale),
+      getTranslations({
+        locale,
+        namespace: "Common.productDetails",
+      }),
+      getTranslations({
+        locale,
+        namespace: "Common.productListing",
+      }),
+      getPublicSettings(),
+    ]);
   const { hasAuthoritativeStockContext, product, source } = readResult;
 
   if (!product) notFound();
@@ -147,6 +179,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     options: product.options,
     personalization: product.personalization,
     ratingSummary: product.ratingSummary,
+    socialProof: product.socialProof,
     variants: product.variants,
   };
   const renderedAt = new Date().getTime();
@@ -154,6 +187,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     `/${locale}/products/${product.slug}`,
     serverEnv.siteUrl,
   ).toString();
+  const shareDescription = createShareDescription(product.description.html);
   const productStructuredData = createProductStructuredData(
     product,
     canonicalProductUrl,
@@ -194,6 +228,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
 
       <ProductPurchaseExperience
+        key={`${product.id}:${cityId ?? "no-city"}`}
         availabilityByVariantId={availabilityByVariantId}
         bnplInformation={
           <ProductBnplInformation
@@ -204,8 +239,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         }
         locale={locale}
+        locationName={city?.name ?? null}
         product={purchaseProduct}
         renderedAt={renderedAt}
+        shareActions={
+          <ProductShareActions
+            copyFailedLabel={t("sharing.copyFailed")}
+            copyLabel={t("sharing.copyLink")}
+            copySuccessLabel={t("sharing.copySuccess")}
+            description={shareDescription}
+            productName={product.name}
+            title={t("sharing.title")}
+            twitterLabel={t("sharing.twitter")}
+            url={canonicalProductUrl}
+            whatsappLabel={t("sharing.whatsapp")}
+          />
+        }
         copy={{
           gallery: {
             closeLightbox: t("gallery.closeLightbox"),
@@ -224,9 +273,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
             addToCart: t("addToCart"),
             availability: {
               availableTemplate: t.raw("availability.available") as string,
+              availableAtLocationTemplate: t.raw(
+                "availability.availableAtLocation",
+              ) as string,
               outOfStock: t("availability.outOfStock"),
               purchaseUnavailable: t("availability.purchaseUnavailable"),
               unavailableAtLocation: t("availability.unavailableAtLocation"),
+              unavailableAtLocationTemplate: t.raw(
+                "availability.unavailableAtLocationNamed",
+              ) as string,
             },
             personalization: {
               additionalFeeTemplate: t.raw(
@@ -282,9 +337,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
               decrease: t("quantity.decrease"),
               increase: t("quantity.increase"),
               labelTemplate: t.raw("quantity.label") as string,
+              title: t("quantity.title"),
+            },
+            options: {
+              labels: {
+                color: t("options.color"),
+                size: t("options.size"),
+              },
             },
             ratingLabelTemplate: t.raw("rating.label") as string,
             ratingSummaryTemplate: t.raw("rating.summary") as string,
+            socialProof: {
+              timesOrdered: t("socialProof.timesOrdered"),
+              viewersNow: t("socialProof.viewersNow"),
+            },
             skuTemplate: t.raw("sku") as string,
           },
           purchase: {
@@ -326,19 +392,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ProductDescription
           description={product.description}
           title={t("descriptionTitle")}
-        />
-      </div>
-
-      <div className="mt-8">
-        <ProductShareActions
-          copyFailedLabel={t("sharing.copyFailed")}
-          copyLabel={t("sharing.copyLink")}
-          copySuccessLabel={t("sharing.copySuccess")}
-          productName={product.name}
-          title={t("sharing.title")}
-          twitterLabel={t("sharing.twitter")}
-          url={canonicalProductUrl}
-          whatsappLabel={t("sharing.whatsapp")}
         />
       </div>
 

@@ -50,6 +50,7 @@ export type ProductPurchaseData = Pick<
   | "options"
   | "personalization"
   | "ratingSummary"
+  | "socialProof"
   | "variants"
 >;
 
@@ -91,27 +92,24 @@ type ProductPurchaseExperienceProps = {
   bnplInformation: ReactNode;
   copy: ProductPurchaseExperienceCopy;
   locale: Locale;
+  locationName: string | null;
   product: ProductPurchaseData;
   renderedAt: number;
+  shareActions: ReactNode;
   wishlistEnabled: boolean;
 };
 
 function getPreferredImageId(
   product: ProductPurchaseData,
   variant: ProductVariant,
-): string {
-  const imageId =
+): string | null {
+  return (
     variant.imageIds.find((candidate) =>
       product.images.some((image) => image.id === candidate),
-    ) ?? product.images[0]?.id;
-
-  if (!imageId) {
-    throw new Error(
-      `Product "${product.id}" does not provide an image for variant "${variant.id}".`,
-    );
-  }
-
-  return imageId;
+    ) ??
+    product.images[0]?.id ??
+    null
+  );
 }
 
 function getInitialPersonalizationInput(
@@ -168,8 +166,10 @@ export function ProductPurchaseExperience({
   bnplInformation,
   copy,
   locale,
+  locationName,
   product,
   renderedAt,
+  shareActions,
   wishlistEnabled,
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
@@ -216,11 +216,6 @@ export function ProductPurchaseExperience({
   const availability = selectedVariant
     ? availabilityByVariantId[selectedVariant.id]
     : undefined;
-  const availabilityStatus = availability?.status;
-  const maxOrderQuantity =
-    availability?.status === "available"
-      ? availability.maxOrderQuantity
-      : 1;
   const personalizationValidation =
     product.personalization.enabled && personalizationInput
       ? validateProductPersonalization(
@@ -260,29 +255,19 @@ export function ProductPurchaseExperience({
     submittedConfigurationFingerprint === configurationFingerprint
       ? getAddToCartErrorMessage(mutationFailure, copy.purchase.errors)
       : null;
+  const quantityErrorMessage =
+    availability?.status === "available" &&
+    quantity > availability.maxOrderQuantity
+      ? formatProductMessage(copy.purchase.errors.quantityLimitTemplate, {
+          max: availability.maxOrderQuantity,
+        })
+      : null;
+  const purchaseErrorMessage =
+    addToCartErrorMessage ?? quantityErrorMessage;
   const successfulCart =
     addToCartResult?.ok === true
       ? addToCartResult.cart
       : undefined;
-
-  useEffect(() => {
-    if (!availabilityStatus) return;
-
-    const timeoutId = window.setTimeout(() => {
-      setQuantity((currentQuantity) => {
-        const nextQuantity =
-          availabilityStatus === "available"
-            ? Math.min(maxOrderQuantity, Math.max(1, currentQuantity))
-            : 1;
-
-        return nextQuantity === currentQuantity
-          ? currentQuantity
-          : nextQuantity;
-      });
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [availabilityStatus, maxOrderQuantity]);
 
   useEffect(() => {
     const target = purchaseActionRef.current;
@@ -358,11 +343,6 @@ export function ProductPurchaseExperience({
 
     setSelectedOptions(nextSelection);
     setSelectedImageId(getPreferredImageId(product, nextVariant));
-    setQuantity((currentQuantity) =>
-      nextAvailability.status === "available"
-        ? Math.min(currentQuantity, nextAvailability.maxOrderQuantity)
-        : 1,
-    );
   };
 
   const handleDecreaseQuantity = () => {
@@ -436,7 +416,7 @@ export function ProductPurchaseExperience({
         </div>
         <div className="min-w-0 flex-1">
           <ProductPurchasePanel
-            addToCartErrorMessage={addToCartErrorMessage}
+            addToCartErrorMessage={purchaseErrorMessage}
             addingToCartLabel={copy.purchase.adding}
             availability={availability}
             bnplInformation={bnplInformation}
@@ -444,6 +424,7 @@ export function ProductPurchaseExperience({
             copy={copy.panel}
             isAddingToCart={isAddingToCart}
             locale={locale}
+            locationName={locationName}
             onAddToCart={handleAddToCart}
             onDecreaseQuantity={handleDecreaseQuantity}
             onIncreaseQuantity={handleIncreaseQuantity}
@@ -459,6 +440,7 @@ export function ProductPurchaseExperience({
             quantity={quantity}
             renderedAt={renderedAt}
             selectedOptions={selectedOptions}
+            shareActions={shareActions}
             variant={selectedVariant}
           />
         </div>
@@ -469,7 +451,7 @@ export function ProductPurchaseExperience({
         addingLabel={copy.purchase.adding}
         canAddToCart={canAddToCart}
         desktopLabel={copy.purchase.sticky.desktopLabel}
-        errorMessage={addToCartErrorMessage}
+        errorMessage={purchaseErrorMessage}
         formattedPrice={formattedSelectedPrice}
         isPending={isAddingToCart}
         isVisible={isStickyPurchaseVisible}

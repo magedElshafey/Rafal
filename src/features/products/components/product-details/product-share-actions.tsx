@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from "react";
 
+import { IconButton, iconButtonVariants } from "@/components/ui/icon-button";
+import {
+  CheckIcon,
+  CopyIcon,
+  WhatsAppIcon,
+  XBrandIcon,
+} from "@/components/ui/icons";
+import { cn } from "@/lib/utils";
+
 type ProductShareActionsProps = {
   copyFailedLabel: string;
   copyLabel: string;
   copySuccessLabel: string;
+  description: string;
   productName: string;
   title: string;
   twitterLabel: string;
@@ -17,6 +27,7 @@ export function ProductShareActions({
   copyFailedLabel,
   copyLabel,
   copySuccessLabel,
+  description,
   productName,
   title,
   twitterLabel,
@@ -26,9 +37,14 @@ export function ProductShareActions({
   const [copyStatus, setCopyStatus] = useState<"idle" | "success" | "error">(
     "idle",
   );
-  const shareText = `${productName} ${url}`;
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(productName)}&url=${encodeURIComponent(url)}`;
+  const productSummary = [productName, description].filter(Boolean).join("\n\n");
+  const whatsappText = [productSummary, url].filter(Boolean).join("\n\n");
+  const twitterText =
+    productSummary.length > 220
+      ? `${productSummary.slice(0, 219).trimEnd()}…`
+      : productSummary;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappText)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(url)}`;
 
   useEffect(() => {
     if (copyStatus === "idle") return;
@@ -53,37 +69,61 @@ export function ProductShareActions({
 
   return (
     <section aria-labelledby="product-sharing-title">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 id="product-sharing-title" className="text-h4 font-bold">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2
+          id="product-sharing-title"
+          className="type-label text-gray-600"
+        >
           {title}
         </h2>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex items-center gap-2">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center rounded-full border border-gray-200 px-4 type-body-sm font-medium text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={whatsappLabel}
+            title={whatsappLabel}
+            className={cn(
+              iconButtonVariants({ size: "lg", variant: "ghost" }),
+              "border border-gray-200 bg-gray-0",
+            )}
           >
-            {whatsappLabel}
+            <WhatsAppIcon className="size-5" />
           </a>
           <a
             href={twitterUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center rounded-full border border-gray-200 px-4 type-body-sm font-medium text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={twitterLabel}
+            title={twitterLabel}
+            className={cn(
+              iconButtonVariants({ size: "lg", variant: "ghost" }),
+              "border border-gray-200 bg-gray-0 text-gray-900",
+            )}
           >
-            {twitterLabel}
+            <XBrandIcon className="size-4" />
           </a>
-          <button
-            type="button"
+          <IconButton
             onClick={handleCopy}
-            className="inline-flex min-h-11 items-center rounded-full border border-gray-200 px-4 type-body-sm font-medium text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={copyLabel}
+            title={copyLabel}
+            size="lg"
+            variant="ghost"
+            className="border border-gray-200 bg-gray-0 text-gray-700"
           >
-            {copyLabel}
-          </button>
+            {copyStatus === "success" ? (
+              <CheckIcon aria-hidden="true" className="text-success" />
+            ) : (
+              <CopyIcon aria-hidden="true" />
+            )}
+          </IconButton>
         </div>
       </div>
-      <p aria-live="polite" className="mt-2 min-h-5 type-caption text-gray-500">
+      <p
+        role="status"
+        aria-live="polite"
+        className="mt-2 min-h-4 type-caption text-gray-500"
+      >
         {copyStatus === "success"
           ? copySuccessLabel
           : copyStatus === "error"

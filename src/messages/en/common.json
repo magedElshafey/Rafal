@@ -72,6 +72,10 @@
       "label": "Rated {value} out of 5",
       "summary": "{average} out of 5 ({count} ratings)"
     },
+    "socialProof": {
+      "viewersNow": "Current viewers",
+      "timesOrdered": "Times ordered"
+    },
     "price": {
       "discount": "{percentage}% off",
       "promotion": "Special offer",
@@ -105,9 +109,11 @@
     },
     "availability": {
       "available": "Available — maximum {max} per order",
+      "availableAtLocation": "Available in {city} — maximum {max} per order",
       "outOfStock": "Out of stock",
       "purchaseUnavailable": "Purchasing this product is temporarily unavailable",
-      "unavailableAtLocation": "Unavailable at the selected delivery location"
+      "unavailableAtLocation": "Unavailable at the selected delivery location",
+      "unavailableAtLocationNamed": "Currently unavailable in {city}"
     },
     "addToCart": "Add to cart",
     "purchase": {
@@ -138,9 +144,14 @@
       }
     },
     "quantity": {
+      "title": "Quantity",
       "label": "Quantity: {value}",
       "increase": "Increase quantity",
       "decrease": "Decrease quantity"
+    },
+    "options": {
+      "size": "Size",
+      "color": "Color"
     },
     "descriptionTitle": "Product description",
     "bnpl": {

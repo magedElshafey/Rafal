@@ -11,6 +11,12 @@ function nonNegativeNumber(value: unknown, field: string): number {
   if (typeof value !== "number" || !Number.isFinite(value) || value < 0) throw new Error(`Invalid Public Settings API payload at "${field}".`);
   return value;
 }
+function nullableNonNegativeNumber(
+  value: unknown,
+  field: string,
+): number | null {
+  return value === null ? null : nonNegativeNumber(value, field);
+}
 function positiveInteger(value: unknown, field: string): number {
   if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) throw new Error(`Invalid Public Settings API payload at "${field}".`);
   return value;
@@ -34,7 +40,10 @@ export async function getPublicSettingsFromApi(): Promise<PublicSettings> {
   return {
     vatRate: nonNegativeNumber(data.vat_rate, "data.vat_rate"),
     freeShippingEnabled: boolean(data.free_shipping_enabled, "data.free_shipping_enabled"),
-    freeShippingThreshold: nonNegativeNumber(data.free_shipping_threshold, "data.free_shipping_threshold"),
+    freeShippingThreshold: nullableNonNegativeNumber(
+      data.free_shipping_threshold,
+      "data.free_shipping_threshold",
+    ),
     giftWrapEnabled: boolean(data.gift_wrap_enabled, "data.gift_wrap_enabled"),
     giftWrapFee: nonNegativeNumber(data.gift_wrap_fee, "data.gift_wrap_fee"),
     maxAddressesPerUser: positiveInteger(data.max_addresses_per_user, "data.max_addresses_per_user"),

@@ -165,7 +165,13 @@ async function materializeMockCart(storedCart: StoredCart, locale: Locale): Prom
     { subtotal: 0, personalization: 0, quantity: 0 },
   );
   const total = totals.subtotal + totals.personalization;
-  const remaining = Math.max(0, settings.freeShippingThreshold - total);
+  const freeShippingThreshold = settings.freeShippingThreshold;
+  if (freeShippingThreshold === null) {
+    throw new Error(
+      "Mock Cart free-shipping projection requires a numeric threshold.",
+    );
+  }
+  const remaining = Math.max(0, freeShippingThreshold - total);
 
   return {
     city: null,
@@ -181,7 +187,7 @@ async function materializeMockCart(storedCart: StoredCart, locale: Locale): Prom
       shippingFee: null,
       freeShipping: {
         enabled: settings.freeShippingEnabled,
-        threshold: money(settings.freeShippingThreshold),
+        threshold: money(freeShippingThreshold),
         qualifies: settings.freeShippingEnabled && remaining === 0,
         remaining: money(remaining),
       },
