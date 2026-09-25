@@ -33,7 +33,6 @@ type CitySelectionDialogProps = {
   };
   isLoading: boolean;
   isOpen: boolean;
-  isRequired: boolean;
   selectedCityId?: number;
   onClose: () => void;
   onSelect: (city: City) => void;
@@ -53,7 +52,6 @@ export function CitySelectionDialog({
   copy,
   isLoading,
   isOpen,
-  isRequired,
   onClose,
   onSelect,
   selectedCityId,
@@ -105,7 +103,7 @@ export function CitySelectionDialog({
   const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      if (!isRequired) onClose();
+      onClose();
       return;
     }
 
@@ -154,7 +152,7 @@ export function CitySelectionDialog({
   };
 
   const handleBackdropClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (!isRequired && event.target === event.currentTarget) onClose();
+    if (event.target === event.currentTarget) onClose();
   };
 
   const hasNoSearchResults =
@@ -175,16 +173,14 @@ export function CitySelectionDialog({
         onKeyDown={handleDialogKeyDown}
         className="relative max-h-[85dvh] w-full overflow-y-auto rounded-t-lg bg-gray-0 p-6 text-gray-1000 sm:max-w-md sm:rounded-lg"
       >
-        {!isRequired ? (
-          <button
-            type="button"
-            aria-label={copy.close}
-            onClick={onClose}
-            className="absolute end-4 top-4 inline-flex size-8 items-center justify-center rounded-full text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <XIcon size={18} />
-          </button>
-        ) : null}
+        <button
+          type="button"
+          aria-label={copy.close}
+          onClick={onClose}
+          className="absolute end-4 top-4 inline-flex size-8 items-center justify-center rounded-full text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <XIcon size={18} />
+        </button>
 
         <div className="mb-5 flex flex-col items-center gap-3 text-center">
           <span className="flex size-12 items-center justify-center rounded-full bg-gold-50 text-gold-700">

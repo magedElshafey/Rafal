@@ -46,7 +46,7 @@ const getProductPageData = cache(async (slug: string, locale: Locale) => {
     cityId,
   );
 
-  return { city, readResult };
+  return { readResult };
 });
 
 export async function generateMetadata({
@@ -86,7 +86,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [{ city, readResult }, t, listingT, publicSettings] = await Promise.all([
+  const [{ readResult }, t, listingT, publicSettings] = await Promise.all([
     getProductPageData(slug, locale),
     getTranslations({
       locale,

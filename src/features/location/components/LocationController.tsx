@@ -56,7 +56,7 @@ export function LocationController({
 }: LocationControllerProps) {
   const [cities, setCities] = useState<readonly City[] | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
-  const [isOpen, setIsOpen] = useState(initialCity === null);
+  const [isOpen, setIsOpen] = useState(false);
   const [cityLoadFailed, setCityLoadFailed] = useState(false);
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -81,8 +81,6 @@ export function LocationController({
       },
     );
   }, [cities, cityLoadFailed, isOpen, locale]);
-
-  const isRequired = selectedCity === null;
 
   const handleSelect = (city: City) => {
     setSelectedCity(city);
@@ -124,7 +122,6 @@ export function LocationController({
           }}
           isLoading={cities === null && !cityLoadFailed}
           isOpen
-          isRequired={isRequired}
           selectedCityId={selectedCity?.id}
           onClose={() => setIsOpen(false)}
           onSelect={handleSelect}
