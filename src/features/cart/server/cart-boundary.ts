@@ -22,7 +22,6 @@ import {
   persistGuestCartToken,
 } from "@/features/cart/server/guest-cart-session";
 import {
-  addMockStoredCartLine,
   clearMockStoredCart,
   readMockStoredCart,
   removeMockStoredCartLine,
@@ -153,9 +152,9 @@ async function materializeMockLine(
 
 async function materializeMockCart(storedCart: StoredCart, locale: Locale): Promise<CartSnapshot> {
   if (storedCart.lines.length === 0) return emptyCartSnapshot();
-  const [location, settings] = await Promise.all([resolveCurrentLocation(locale), getPublicSettings()]);
+  const settings = await getPublicSettings();
   const lines = await Promise.all(
-    storedCart.lines.map((line) => materializeMockLine(line, locale, location?.source === "mock" ? location.id : null)),
+    storedCart.lines.map((line) => materializeMockLine(line, locale, null)),
   );
   const totals = lines.reduce(
     (sum, line) => ({
@@ -258,23 +257,7 @@ async function addMockLine(input: AddCartLineInput, locale: Locale): Promise<Add
     if (!validation.valid) return { ok: false, error: { code: "invalid-personalization", reason: validation.error.code } };
   } else if (input.personalization) return { ok: false, error: { code: "invalid-input" } };
 
-  const location = await resolveCurrentLocation(locale);
-  if (!location || location.source !== "mock") return { ok: false, error: { code: "location-required" } };
-  const availability = (await getResolvedVariantAvailability({ locationId: location.id, source: "mock", variants: product.variants }))[variant.id];
-  if (!availability || availability.status === "unavailable_at_location") return { ok: false, error: { code: "unavailable-at-location" } };
-  if (availability.status === "out_of_stock") return { ok: false, error: { code: "out-of-stock" } };
-  if (availability.status !== "available") return { ok: false, error: { code: "service-unavailable" } };
-  if (input.quantity > availability.maxOrderQuantity) return { ok: false, error: { code: "quantity-limit-exceeded", maxOrderQuantity: availability.maxOrderQuantity } };
-
-  const owner = await resolveMockCartOwner(true);
-  if (!owner) throw new Error("A Cart owner could not be resolved.");
-  const { cart } = await addMockStoredCartLine(owner, {
-    productId: product.id,
-    variantId: variant.id,
-    quantity: input.quantity,
-    personalization: input.personalization ?? null,
-  });
-  return { ok: true, cart: await materializeMockCart(cart, locale) };
+  return { ok: false, error: { code: "location-required" } };
 }
 
 export async function updateCurrentCartLine(lineId: string, quantity: number, locale: Locale): Promise<CartMutationResult> {

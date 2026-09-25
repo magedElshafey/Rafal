@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           variants: product.variants,
         })
       : getResolvedVariantAvailability({
-          locationId: city?.source === "mock" ? city.id : null,
+          locationId: null,
           source,
           variants: product.variants,
         }),
@@ -133,7 +133,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       ? getComplementaryProducts({
           currentProductId: product.id,
           locale,
-          locationId: city?.source === "mock" ? city.id : null,
+          locationId: null,
         })
       : Promise.resolve([]),
     usesMockProductSource

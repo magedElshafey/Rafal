@@ -1,4 +1,4 @@
-import type { LaravelCity } from "@/features/location/types";
+import type { City } from "@/features/location/types";
 
 export type CityDto = { id: number; region_id: number; name: string; is_active: boolean };
 export type RegionDto = { id: number; name: string; cities: readonly CityDto[] };
@@ -59,18 +59,10 @@ export function parseRegionsResponse(value: unknown): RegionsResponseDto {
   };
 }
 
-export function parseCitiesResponse(value: unknown): readonly CityDto[] {
-  if (Array.isArray(value)) return value.map((city, index) => parseCity(city, `response[${index}]`));
-  const source = record(value, "response");
-  return array(source.data, "response.data").map((city, index) => parseCity(city, `response.data[${index}]`));
-}
-
-export function mapCityDto(city: CityDto): LaravelCity {
+export function mapCityDto(city: CityDto): City {
   return {
-    source: "laravel",
     id: city.id,
     regionId: city.region_id,
     name: city.name,
-    isAvailable: city.is_active,
   };
 }

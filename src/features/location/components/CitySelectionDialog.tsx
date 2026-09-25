@@ -9,7 +9,6 @@ import {
   type MouseEvent,
 } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   CheckIcon,
@@ -21,30 +20,23 @@ import type { City } from "@/features/location/types";
 import { cn } from "@/lib/utils";
 
 type CitySelectionDialogProps = {
-  canUseCurrentLocation: boolean;
-  cities: City[];
+  cities: readonly City[];
   copy: {
     title: string;
     description: string;
     loading: string;
     empty: string;
-    unavailable: string;
     close: string;
     searchLabel: string;
     searchPlaceholder: string;
     searchNoResults: string;
-    useCurrentLocation: string;
-    geolocationLoading: string;
-    geolocationError: string;
   };
-  geolocationState: "idle" | "loading" | "error";
   isLoading: boolean;
   isOpen: boolean;
   isRequired: boolean;
-  selectedCityId?: string | number;
+  selectedCityId?: number;
   onClose: () => void;
   onSelect: (city: City) => void;
-  onUseCurrentLocation: () => void;
 };
 
 const FOCUSABLE_SELECTOR = [
@@ -57,22 +49,19 @@ const FOCUSABLE_SELECTOR = [
 ].join(",");
 
 export function CitySelectionDialog({
-  canUseCurrentLocation,
   cities,
   copy,
-  geolocationState,
   isLoading,
   isOpen,
   isRequired,
   onClose,
   onSelect,
-  onUseCurrentLocation,
   selectedCityId,
 }: CitySelectionDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  const [activeCityId, setActiveCityId] = useState<string | number | undefined>(
+  const [activeCityId, setActiveCityId] = useState<number | undefined>(
     selectedCityId,
   );
   const titleId = "city-selection-title";
@@ -87,8 +76,6 @@ export function CitySelectionDialog({
       city.name.toLocaleLowerCase().includes(normalizedQuery),
     );
   }, [cities, query]);
-
-  const availableCities = filteredCities.filter((city) => city.isAvailable);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -144,25 +131,25 @@ export function CitySelectionDialog({
   };
 
   const handleComboboxKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (availableCities.length === 0) return;
+    if (filteredCities.length === 0) return;
 
-    const activeIndex = availableCities.findIndex(
+    const activeIndex = filteredCities.findIndex(
       (city) => city.id === activeCityId,
     );
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
       const nextIndex =
-        activeIndex < 0 ? 0 : (activeIndex + 1) % availableCities.length;
-      setActiveCityId(availableCities[nextIndex].id);
+        activeIndex < 0 ? 0 : (activeIndex + 1) % filteredCities.length;
+      setActiveCityId(filteredCities[nextIndex].id);
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       const nextIndex =
-        activeIndex <= 0 ? availableCities.length - 1 : activeIndex - 1;
-      setActiveCityId(availableCities[nextIndex].id);
+        activeIndex <= 0 ? filteredCities.length - 1 : activeIndex - 1;
+      setActiveCityId(filteredCities[nextIndex].id);
     } else if (event.key === "Enter" && activeIndex >= 0) {
       event.preventDefault();
-      onSelect(availableCities[activeIndex]);
+      onSelect(filteredCities[activeIndex]);
     }
   };
 
@@ -212,26 +199,6 @@ export function CitySelectionDialog({
             </p>
           </div>
         </div>
-
-        {canUseCurrentLocation ? (
-          <Button
-            variant="outline"
-            size="md"
-            className="mb-4 w-full"
-            loading={geolocationState === "loading"}
-            loadingLabel={copy.geolocationLoading}
-            onClick={onUseCurrentLocation}
-          >
-            <MapPinIcon size={18} />
-            {copy.useCurrentLocation}
-          </Button>
-        ) : null}
-
-        {geolocationState === "error" ? (
-          <p role="alert" className="mb-3 type-caption text-destructive">
-            {copy.geolocationError}
-          </p>
-        ) : null}
 
         <div aria-live="polite" aria-busy={isLoading || undefined}>
           {isLoading ? (
@@ -301,29 +268,19 @@ export function CitySelectionDialog({
                         type="button"
                         role="option"
                         aria-selected={selected}
-                        aria-disabled={!city.isAvailable}
-                        disabled={!city.isAvailable}
-                        onMouseEnter={() =>
-                          city.isAvailable && setActiveCityId(city.id)
-                        }
+                        onMouseEnter={() => setActiveCityId(city.id)}
                         onClick={() => onSelect(city)}
                         className={cn(
                           "flex w-full items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 text-start type-body last:border-b-0",
                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
                           active && "bg-gray-50",
                           selected && "bg-gold-50",
-                          !city.isAvailable &&
-                            "cursor-not-allowed text-gray-400",
                         )}
                       >
                         <span>{city.name}</span>
-                        {city.isAvailable ? (
-                          selected ? (
-                            <CheckIcon size={18} className="text-gold-700" />
-                          ) : null
-                        ) : (
-                          <span className="type-caption">{copy.unavailable}</span>
-                        )}
+                        {selected ? (
+                          <CheckIcon size={18} className="text-gold-700" />
+                        ) : null}
                       </button>
                     );
                   })
