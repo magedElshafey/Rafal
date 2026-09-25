@@ -8,28 +8,45 @@ import {
   parseProductDetailsResponse,
   parseProductListResponse,
 } from "@/features/products/api/parse-product-dto";
+import {
+  createProductListQuery,
+  type ProductListQueryInput,
+} from "@/features/products/api/product-api-query";
 import { serverApi } from "@/lib/api/server-api";
 
-export type GetProductsRequest = {
-  cityId?: number;
-  page?: number;
-  search?: string;
+export type GetProductsRequest = ProductListQueryInput & {
   signal?: AbortSignal;
 };
 
 export async function getProductsDto({
+  categoryId,
   cityId,
+  maxPrice,
+  minPrice,
+  newArrival,
+  onDiscount,
   page,
+  perPage,
+  personalizable,
   search,
   signal,
+  sort,
 }: GetProductsRequest = {}): Promise<ProductListResponseDto> {
   const payload = await serverApi.request<unknown>({
     path: "/products",
-    query: {
-      city_id: cityId,
+    query: createProductListQuery({
+      categoryId,
+      cityId,
+      maxPrice,
+      minPrice,
+      newArrival,
+      onDiscount,
       page,
-      search: search?.trim() || undefined,
-    },
+      perPage,
+      personalizable,
+      search,
+      sort,
+    }),
     signal,
   });
 

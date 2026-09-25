@@ -9,93 +9,46 @@ import type {
   ProductVariantDto,
   ProductWarehouseStockDto,
 } from "@/features/products/api/product-dto";
-
+import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 export class ProductContractError extends Error {
   constructor(path: string, expected: string) {
     super(`Invalid Product API payload at "${path}": expected ${expected}.`);
     this.name = "ProductContractError";
   }
 }
-
-function record(value: unknown, path: string): Record<string, unknown> {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    throw new ProductContractError(path, "an object");
-  }
-  return value as Record<string, unknown>;
-}
-
-function string(value: unknown, path: string): string {
-  if (typeof value !== "string") {
-    throw new ProductContractError(path, "a string");
-  }
-  return value;
-}
-
-function nonEmptyString(value: unknown, path: string): string {
-  const parsed = string(value, path);
-  if (parsed.trim() === "") {
-    throw new ProductContractError(path, "a non-empty string");
-  }
-  return parsed;
-}
-
-function nullableString(value: unknown, path: string): string | null {
-  return value === null ? null : string(value, path);
-}
-
-function finiteNumber(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new ProductContractError(path, "a finite number");
-  }
-  return value;
-}
+const {
+  parseArray,
+  parseBoolean,
+  parseFiniteNumber,
+  parseNonEmptyString,
+  parseNullableNumber,
+  parseNullableString,
+  parseRecord,
+  parseString,
+} = createRuntimeValidators(
+  (path, expected) => new ProductContractError(path, expected),
+);
 
 function positiveInteger(value: unknown, path: string): number {
-  if (
-    typeof value !== "number" ||
-    !Number.isInteger(value) ||
-    value <= 0
-  ) {
+  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
     throw new ProductContractError(path, "a positive integer");
   }
   return value;
 }
 
 function nonNegativeInteger(value: unknown, path: string): number {
-  if (
-    typeof value !== "number" ||
-    !Number.isInteger(value) ||
-    value < 0
-  ) {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
     throw new ProductContractError(path, "a non-negative integer");
   }
   return value;
-}
-
-function nullableNumber(value: unknown, path: string): number | null {
-  return value === null ? null : finiteNumber(value, path);
 }
 
 function nullablePositiveInteger(value: unknown, path: string): number | null {
   return value === null ? null : positiveInteger(value, path);
 }
 
-function boolean(value: unknown, path: string): boolean {
-  if (typeof value !== "boolean") {
-    throw new ProductContractError(path, "a boolean");
-  }
-  return value;
-}
-
-function array(value: unknown, path: string): unknown[] {
-  if (!Array.isArray(value)) {
-    throw new ProductContractError(path, "an array");
-  }
-  return value;
-}
-
 function decimalString(value: unknown, path: string): string {
-  const parsed = string(value, path);
+  const parsed = parseString(value, path);
   const numeric = Number(parsed);
   if (parsed.trim() === "" || !Number.isFinite(numeric) || numeric < 0) {
     throw new ProductContractError(path, "a non-negative decimal string");
@@ -120,7 +73,7 @@ function parseAttributes(
     );
   }
 
-  const attributes = record(value, path);
+  const attributes = parseRecord(value, path);
   return Object.fromEntries(
     Object.entries(attributes).map(([key, attributeValue]) => {
       if (
@@ -148,29 +101,26 @@ function parseWarehouseStock(
   value: unknown,
   path: string,
 ): ProductWarehouseStockDto {
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
-    warehouse_id: positiveInteger(
-      source.warehouse_id,
-      `${path}.warehouse_id`,
-    ),
+    warehouse_id: positiveInteger(source.warehouse_id, `${path}.warehouse_id`),
     quantity: nonNegativeInteger(source.quantity, `${path}.quantity`),
   };
 }
 
 function parseImage(value: unknown, path: string): ProductImageDto {
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    url: nonEmptyString(source.url, `${path}.url`),
+    url: parseNonEmptyString(source.url, `${path}.url`),
   };
 }
 
 function parseVariant(value: unknown, path: string): ProductVariantDto {
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    sku: string(source.sku, `${path}.sku`),
+    sku: parseString(source.sku, `${path}.sku`),
     attributes: parseAttributes(source.attributes, `${path}.attributes`),
     effective_price: decimalString(
       source.effective_price,
@@ -188,10 +138,10 @@ function parseVariant(value: unknown, path: string): ProductVariantDto {
       source.discounted_price_incl_vat,
       `${path}.discounted_price_incl_vat`,
     ),
-    images: array(source.images, `${path}.images`).map((image, index) =>
+    images: parseArray(source.images, `${path}.images`).map((image, index) =>
       parseImage(image, `${path}.images[${index}]`),
     ),
-    warehouse_stocks: array(
+    warehouse_stocks: parseArray(
       source.warehouse_stocks,
       `${path}.warehouse_stocks`,
     ).map((stock, index) =>
@@ -200,37 +150,40 @@ function parseVariant(value: unknown, path: string): ProductVariantDto {
   };
 }
 
-function parseCategory(value: unknown, path: string): ProductCategoryDto | null {
+function parseCategory(
+  value: unknown,
+  path: string,
+): ProductCategoryDto | null {
   if (value === null) return null;
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    name: string(source.name, `${path}.name`),
-    slug: string(source.slug, `${path}.slug`),
+    name: parseString(source.name, `${path}.name`),
+    slug: parseString(source.slug, `${path}.slug`),
   };
 }
 
 export function parseProductDto(value: unknown, path = "product"): ProductDto {
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    sku: string(source.sku, `${path}.sku`),
-    name: string(source.name, `${path}.name`),
-    description: nullableString(source.description, `${path}.description`),
-    slug: string(source.slug, `${path}.slug`),
+    sku: parseString(source.sku, `${path}.sku`),
+    name: parseString(source.name, `${path}.name`),
+    description: parseNullableString(source.description, `${path}.description`),
+    slug: parseString(source.slug, `${path}.slug`),
     base_price: decimalString(source.base_price, `${path}.base_price`),
-    discount_percentage: nullableNumber(
+    discount_percentage: parseNullableNumber(
       source.discount_percentage,
       `${path}.discount_percentage`,
     ),
-    discount_end_at: nullableString(
+    discount_end_at: parseNullableString(
       source.discount_end_at,
       `${path}.discount_end_at`,
     ),
-    badges: array(source.badges, `${path}.badges`).map((badge, index) =>
-      string(badge, `${path}.badges[${index}]`),
+    badges: parseArray(source.badges, `${path}.badges`).map((badge, index) =>
+      parseString(badge, `${path}.badges[${index}]`),
     ),
-    is_personalizable: boolean(
+    is_personalizable: parseBoolean(
       source.is_personalizable,
       `${path}.is_personalizable`,
     ),
@@ -247,7 +200,7 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.times_ordered,
       `${path}.times_ordered`,
     ),
-    rating_average: finiteNumber(
+    rating_average: parseFiniteNumber(
       source.rating_average,
       `${path}.rating_average`,
     ),
@@ -255,18 +208,18 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.reviews_count,
       `${path}.reviews_count`,
     ),
-    images: array(source.images, `${path}.images`).map((image, index) =>
+    images: parseArray(source.images, `${path}.images`).map((image, index) =>
       parseImage(image, `${path}.images[${index}]`),
     ),
     category: parseCategory(source.category, `${path}.category`),
-    variants: array(source.variants, `${path}.variants`).map((variant, index) =>
-      parseVariant(variant, `${path}.variants[${index}]`),
+    variants: parseArray(source.variants, `${path}.variants`).map(
+      (variant, index) => parseVariant(variant, `${path}.variants[${index}]`),
     ),
   };
 }
 
 function parseMeta(value: unknown, path: string): ProductListMetaDto {
-  const source = record(value, path);
+  const source = parseRecord(value, path);
   return {
     current_page: positiveInteger(source.current_page, `${path}.current_page`),
     last_page: positiveInteger(source.last_page, `${path}.last_page`),
@@ -278,11 +231,11 @@ function parseMeta(value: unknown, path: string): ProductListMetaDto {
 export function parseProductListResponse(
   value: unknown,
 ): ProductListResponseDto {
-  const source = record(value, "response");
+  const source = parseRecord(value, "response");
   return {
-    success: boolean(source.success, "response.success"),
-    message: string(source.message, "response.message"),
-    data: array(source.data, "response.data").map((product, index) =>
+    success: parseBoolean(source.success, "response.success"),
+    message: parseString(source.message, "response.message"),
+    data: parseArray(source.data, "response.data").map((product, index) =>
       parseProductDto(product, `response.data[${index}]`),
     ),
     meta: parseMeta(source.meta, "response.meta"),
@@ -292,10 +245,10 @@ export function parseProductListResponse(
 export function parseProductDetailsResponse(
   value: unknown,
 ): ProductDetailsResponseDto {
-  const source = record(value, "response");
+  const source = parseRecord(value, "response");
   return {
-    success: boolean(source.success, "response.success"),
-    message: string(source.message, "response.message"),
+    success: parseBoolean(source.success, "response.success"),
+    message: parseString(source.message, "response.message"),
     data: parseProductDto(source.data, "response.data"),
   };
 }

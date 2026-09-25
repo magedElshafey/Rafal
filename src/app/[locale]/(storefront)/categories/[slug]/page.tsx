@@ -1,23 +1,16 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  type InfiniteData,
-  QueryClient,
-} from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { getCategoryBySlug } from "@/features/categories/api/get-category-by-slug";
+import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
+import { getCatalogueProducts } from "@/features/products/api/get-catalogue-products";
+import { CatalogueProductListing } from "@/features/products/components/listing/catalogue-product-listing";
 import {
-  getCategoryListingFacets,
-  getCategoryProducts,
-} from "@/features/products/api/get-category-products";
-import { productListingQuery } from "@/features/products/api/product-listing-query";
-import { CategoryProductListing } from "@/features/products/components/listing/category-product-listing";
-import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
-import { parseListingSearchParams } from "@/features/products/utils/listing-search-params";
+  parseCatalogueListingSearchParams,
+  toUrlSearchParams,
+} from "@/features/products/utils/catalogue-listing-search-params";
 import { isListingPriceRangeValid } from "@/features/products/utils/listing-price-range";
 import { ApiError } from "@/lib/api/api-error";
 
@@ -36,6 +29,7 @@ export default async function CategoryPage({
     getLocale(),
     getTranslations("Common.productListing"),
   ]);
+
   let category;
   try {
     category = await getCategoryBySlug(slug);
@@ -43,37 +37,27 @@ export default async function CategoryPage({
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
   }
-  const urlSearchParams = new URLSearchParams();
-  for (const [key, value] of Object.entries(rawSearchParams)) {
-    if (typeof value === "string") urlSearchParams.set(key, value);
-    else value?.forEach((item) => urlSearchParams.append(key, item));
-  }
-  const { filters, sort } = parseListingSearchParams(urlSearchParams);
+
+  const city = await resolveCurrentLocation(locale);
+  const { filters: parsedFilters, sort } =
+    parseCatalogueListingSearchParams(toUrlSearchParams(rawSearchParams));
+  const selectedChild = category.children.find(
+    (child) => child.slug === parsedFilters.subcategory,
+  );
+  const filters = {
+    ...parsedFilters,
+    subcategory: selectedChild?.slug,
+  };
   const priceRangeIsValid = isListingPriceRangeValid(filters);
-  const firstPage = priceRangeIsValid
-    ? await getCategoryProducts({
-        category: slug,
+  const listing = priceRangeIsValid
+    ? await getCatalogueProducts({
+        categoryId: selectedChild?.id ?? category.id,
+        cityId: city?.id ?? null,
         filters,
-        locale,
         page: 1,
         sort,
       })
-    : undefined;
-  const { subcategoryOptions, total: categoryTotal } =
-    getCategoryListingFacets(
-      locale,
-      category.children.map((subcategory) => ({
-        label: subcategory.name,
-        value: subcategory.slug,
-      })),
-    );
-  const queryClient = new QueryClient();
-  if (firstPage) {
-    queryClient.setQueryData<InfiniteData<PaginatedListingProducts>>(
-      productListingQuery.key(locale, slug, filters, sort),
-      { pages: [firstPage], pageParams: [1] },
-    );
-  }
+    : null;
 
   return (
     <Container className="main-content-spacing pb-12">
@@ -87,60 +71,63 @@ export default async function CategoryPage({
       />
       <div className="mt-5">
         <h1 className="text-h1 font-bold text-foreground">{category.name}</h1>
-        <p className="mt-1 type-body-sm text-muted-foreground">
-          {t("resultCount", {
-            count: firstPage?.pagination.total ?? categoryTotal,
-          })}
-        </p>
+        {listing ? (
+          <p className="mt-1 type-body-sm text-muted-foreground">
+            {t("resultCount", { count: listing.pagination.total })}
+          </p>
+        ) : null}
       </div>
       <div className="mt-6">
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <CategoryProductListing
-            category={slug}
-            categoryTotal={categoryTotal}
-            locale={locale}
-            subcategoryOptions={subcategoryOptions}
-            copy={{
-              badges: {
-                discount: t("badges.discount"),
-                new: t("badges.new"),
-                personalization: t("badges.personalization"),
-              },
-              closeFilters: t("closeFilters"),
-              emptyDescription: t("emptyDescription"),
-              emptyTitle: t("emptyTitle"),
-              initialErrorDescription: t("initialErrorDescription"),
-              initialErrorTitle: t("initialErrorTitle"),
-              loading: t("loading"),
-              filterButton: t("filterButton"),
-              filters: {
-                additional: t("filters.additional"),
-                all: t("filters.all"),
-                available: t("filters.available"),
-                invalidPriceRange: t("filters.invalidPriceRange"),
-                maxPrice: t("filters.maxPrice"),
-                minPrice: t("filters.minPrice"),
-                personalizable: t("filters.personalizable"),
-                priceRange: t("filters.priceRange"),
-                subcategories: t("filters.subcategories"),
-              },
-              loadMore: t("loadMore"),
-              loadingMore: t("loadingMore"),
-              nextPageError: t("nextPageError"),
-              rating: t.raw("rating") as string,
-              reviews: t.raw("reviews") as string,
-              retry: t("retry"),
-              sortLabel: t("sort.label"),
-              sortOptions: {
-                "best-selling": t("sort.bestSelling"),
-                "price-asc": t("sort.priceAsc"),
-                "price-desc": t("sort.priceDesc"),
-                newest: t("sort.newest"),
-              },
-              unavailable: t("unavailable"),
-            }}
-          />
-        </HydrationBoundary>
+        <CatalogueProductListing
+          categoryId={selectedChild?.id ?? category.id}
+          cityId={city?.id ?? null}
+          copy={{
+            badges: {
+              discount: t("badges.discount"),
+              new: t("badges.new"),
+              personalization: t("badges.personalization"),
+            },
+            closeFilters: t("closeFilters"),
+            emptyDescription: t("emptyDescription"),
+            emptyTitle: t("emptyTitle"),
+            filterButton: t("filterButton"),
+            loading: t("loading"),
+            loadingMore: t("loadingMore"),
+            loadMore: t("loadMore"),
+            nextPageError: t("nextPageError"),
+            filters: {
+              additional: t("filters.additional"),
+              all: t("filters.all"),
+              invalidPriceRange: t("filters.invalidPriceRange"),
+              maxPrice: t("filters.maxPrice"),
+              minPrice: t("filters.minPrice"),
+              newArrival: t("filters.newArrival"),
+              onDiscount: t("filters.onDiscount"),
+              personalizable: t("filters.personalizable"),
+              priceRange: t("filters.priceRange"),
+              subcategories: t("filters.subcategories"),
+            },
+            rating: t.raw("rating") as string,
+            retry: t("retry"),
+            reviews: t.raw("reviews") as string,
+            sortLabel: t("sort.label"),
+            sortOptions: {
+              relevance: t("sort.relevance"),
+              newest: t("sort.newest"),
+              price_asc: t("sort.priceAsc"),
+              price_desc: t("sort.priceDesc"),
+            },
+            unavailable: t("unavailable"),
+          }}
+          filters={filters}
+          listing={listing}
+          locale={locale}
+          sort={sort}
+          subcategoryOptions={category.children.map((child) => ({
+            label: child.name,
+            value: child.slug,
+          }))}
+        />
       </div>
     </Container>
   );

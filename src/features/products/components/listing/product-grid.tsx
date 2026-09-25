@@ -119,10 +119,10 @@ export function ProductCardSkeleton() {
   );
 }
 
-export function ProductGridSkeleton() {
+export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
     <div className={productGridClassName} aria-hidden="true">
-      {Array.from({ length: 8 }, (_, index) => (
+      {Array.from({ length: count }, (_, index) => (
         <ProductCardSkeleton key={index} />
       ))}
     </div>

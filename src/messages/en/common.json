@@ -225,10 +225,12 @@
     }
   },
   "productListing": {
+    "title": "All products",
     "breadcrumbs": {
       "label": "Breadcrumb",
       "home": "Home",
-      "categories": "Categories"
+      "categories": "Categories",
+      "products": "Products"
     },
     "resultCount": "{count} products",
     "rating": "Rated {value} out of 5",
@@ -252,10 +254,16 @@
     },
     "sort": {
       "label": "Sort:",
+      "relevance": "Relevance",
       "bestSelling": "Best selling",
       "priceAsc": "Lowest price",
       "priceDesc": "Highest price",
       "newest": "Newest"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {current} of {total}"
     },
     "filters": {
       "subcategories": "Subcategories",
@@ -266,7 +274,9 @@
       "invalidPriceRange": "The minimum price cannot be greater than the maximum price.",
       "additional": "Additional options",
       "available": "In stock only",
-      "personalizable": "Personalizable"
+      "onDiscount": "On sale",
+      "personalizable": "Personalizable",
+      "newArrival": "New arrivals"
     }
   },
   "searchResults": {

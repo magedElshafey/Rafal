@@ -1,5 +1,3 @@
-import type { Locale } from "next-intl";
-
 import type { PaginationMeta } from "@/lib/api/pagination";
 
 export const listingSortValues = [
@@ -16,6 +14,28 @@ export type ProductListingFilters = {
   minPrice?: number;
   personalizable: boolean;
   subcategory?: string;
+};
+
+export const catalogueListingSortValues = [
+  "relevance",
+  "newest",
+  "price_asc",
+  "price_desc",
+] as const;
+export type CatalogueListingSort = (typeof catalogueListingSortValues)[number];
+
+export type CatalogueProductFilters = {
+  maxPrice?: number;
+  minPrice?: number;
+  newArrival: boolean;
+  onDiscount: boolean;
+  personalizable: boolean;
+  subcategory?: string;
+};
+
+export type CatalogueSubcategoryOption = {
+  label: string;
+  value: string;
 };
 
 export type ListingProduct = {
@@ -54,10 +74,10 @@ export type PaginatedListingProducts = {
   pagination: PaginationMeta;
 };
 
-export type CategoryProductsRequest = {
-  category: string;
-  filters: ProductListingFilters;
-  locale: Locale;
+export type CatalogueProductsRequest = {
+  categoryId?: number;
+  cityId: number | null;
+  filters: CatalogueProductFilters;
   page: number;
-  sort: ListingSort;
+  sort: CatalogueListingSort;
 };

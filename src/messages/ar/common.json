@@ -225,10 +225,12 @@
     }
   },
   "productListing": {
+    "title": "جميع المنتجات",
     "breadcrumbs": {
       "label": "مسار التنقل",
       "home": "الرئيسية",
-      "categories": "الفئات"
+      "categories": "الفئات",
+      "products": "المنتجات"
     },
     "resultCount": "{count} منتج",
     "rating": "التقييم {value} من 5",
@@ -248,10 +250,16 @@
     "badges": { "discount": "خصم", "new": "جديد", "personalization": "بالاسم" },
     "sort": {
       "label": "الترتيب:",
+      "relevance": "الأكثر صلة",
       "bestSelling": "الأكثر مبيعاً",
       "priceAsc": "السعر من الأقل",
       "priceDesc": "السعر من الأعلى",
       "newest": "الأحدث"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "status": "الصفحة {current} من {total}"
     },
     "filters": {
       "subcategories": "الفئات الفرعية",
@@ -262,7 +270,9 @@
       "invalidPriceRange": "يجب ألا يكون الحد الأدنى للسعر أكبر من الحد الأقصى.",
       "additional": "خيارات إضافية",
       "available": "متوفر فقط",
-      "personalizable": "قابل للتخصيص بالاسم"
+      "onDiscount": "العروض فقط",
+      "personalizable": "قابل للتخصيص بالاسم",
+      "newArrival": "وصل حديثاً"
     }
   },
   "searchResults": {
