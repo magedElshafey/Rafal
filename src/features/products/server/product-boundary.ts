@@ -21,6 +21,15 @@ export type ProductDetailsReadResult = {
   source: ProductDetailsSource;
 };
 
+function hasAuthoritativeStockContext(cityId?: number): boolean {
+  if (cityId === undefined) return false;
+
+  // The current endpoint accepts city_id but still returns the same unscoped
+  // warehouse_stocks payload for every city. Keep purchase availability
+  // unresolved until Laravel returns a city-authoritative stock context.
+  return false;
+}
+
 function assertMockProductSourceAvailable() {
   if (!serverEnv.useMockApi || process.env.NODE_ENV === "production") {
     throw new Error("The mock Product Details source is unavailable.");
@@ -50,14 +59,14 @@ export const getProductDetailsBySlug = cache(async function getProductDetailsByS
     }
 
     return {
-      hasAuthoritativeStockContext: cityId !== undefined,
+      hasAuthoritativeStockContext: hasAuthoritativeStockContext(cityId),
       product,
       source: "laravel",
     };
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return {
-        hasAuthoritativeStockContext: cityId !== undefined,
+        hasAuthoritativeStockContext: hasAuthoritativeStockContext(cityId),
         product: null,
         source: "laravel",
       };

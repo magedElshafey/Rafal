@@ -39,12 +39,8 @@ export function ProductShareActions({
   );
   const productSummary = [productName, description].filter(Boolean).join("\n\n");
   const whatsappText = [productSummary, url].filter(Boolean).join("\n\n");
-  const twitterText =
-    productSummary.length > 220
-      ? `${productSummary.slice(0, 219).trimEnd()}…`
-      : productSummary;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappText)}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(url)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(productSummary)}&url=${encodeURIComponent(url)}`;
 
   useEffect(() => {
     if (copyStatus === "idle") return;

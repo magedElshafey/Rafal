@@ -239,7 +239,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         }
         locale={locale}
-        locationName={city?.name ?? null}
+        locationName={
+          hasAuthoritativeStockContext ? (city?.name ?? null) : null
+        }
         product={purchaseProduct}
         renderedAt={renderedAt}
         shareActions={
