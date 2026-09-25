@@ -39,8 +39,9 @@ export default async function CategoryPage({
   }
 
   const city = await resolveCurrentLocation(locale);
-  const { filters: parsedFilters, sort } =
-    parseCatalogueListingSearchParams(toUrlSearchParams(rawSearchParams));
+  const { filters: parsedFilters, sort } = parseCatalogueListingSearchParams(
+    toUrlSearchParams(rawSearchParams),
+  );
   const selectedChild = category.children.find(
     (child) => child.slug === parsedFilters.subcategory,
   );

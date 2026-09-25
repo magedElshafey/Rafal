@@ -318,8 +318,10 @@ function CatalogueFilters({
         filters={filters}
         onChange={onPriceChange}
       />
-      <fieldset className="border-t border-border pt-6">
-        <legend className="text-h4 font-medium">{copy.additional}</legend>
+      <fieldset className="">
+        <legend className="text-h4 font-medium border-b border-border pb-3 block w-full">
+          {copy.additional}
+        </legend>
         <div className="mt-3 space-y-3">
           <label className="flex cursor-pointer items-center gap-3 type-body">
             <Checkbox
@@ -417,9 +419,7 @@ export function CatalogueProductListing({
         signal,
         sort,
       }),
-    initialData: listing
-      ? { pages: [listing], pageParams: [1] }
-      : undefined,
+    initialData: listing ? { pages: [listing], pageParams: [1] } : undefined,
     initialPageParam: 1,
     getNextPageParam: catalogueProductsQuery.getNextPageParam,
     enabled: listing !== null && priceRangeIsValid,
@@ -513,7 +513,10 @@ export function CatalogueProductListing({
           </div>
         ) : null}
         {!isNavigationPending && query.isFetchNextPageError ? (
-          <p className="mt-6 text-center type-body text-destructive" role="alert">
+          <p
+            className="mt-6 text-center type-body text-destructive"
+            role="alert"
+          >
             {copy.nextPageError}
           </p>
         ) : null}

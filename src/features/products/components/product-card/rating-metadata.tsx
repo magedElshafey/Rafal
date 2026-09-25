@@ -16,7 +16,6 @@ export function RatingMetadata({
       role="img"
       aria-label={`${label}. ${reviewsLabel}`}
       className="inline-flex min-w-0 items-center gap-1 type-body-sm"
-      dir="ltr"
     >
       <RatingStarIcon
         aria-hidden="true"
@@ -31,11 +30,7 @@ export function RatingMetadata({
       <span aria-hidden="true" className="text-gray-300">
         ·
       </span>
-      <span
-        aria-hidden="true"
-        className="truncate text-gray-500"
-        dir="auto"
-      >
+      <span aria-hidden="true" className="truncate text-gray-500" dir="auto">
         {reviewsLabel}
       </span>
     </span>
