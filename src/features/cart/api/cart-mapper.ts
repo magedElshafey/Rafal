@@ -1,5 +1,13 @@
-import type { CartDataDto } from "@/features/cart/api/cart-dto";
-import type { CartLinePersonalization, CartMoney, CartSnapshot } from "@/features/cart/types/cart.types";
+import type {
+  CartCouponOptionDto,
+  CartDataDto,
+} from "@/features/cart/api/cart-dto";
+import type {
+  CartCouponOption,
+  CartLinePersonalization,
+  CartMoney,
+  CartSnapshot,
+} from "@/features/cart/types/cart.types";
 
 function money(amount: string, currency: string): CartMoney {
   return { amount, currency };
@@ -23,6 +31,22 @@ function mapPersonalization(value: unknown | null): CartLinePersonalization | nu
           : null,
     raw: value,
     text: text ?? null,
+  };
+}
+
+export function mapCartCouponOption(
+  coupon: CartCouponOptionDto,
+): CartCouponOption {
+  return {
+    code: coupon.code,
+    name: coupon.name,
+    description: coupon.description,
+    type: coupon.type,
+    value: coupon.value,
+    maxDiscountAmount: coupon.max_discount_amount,
+    minOrderAmount: coupon.min_order_amount,
+    endsAt: coupon.ends_at,
+    estimatedDiscount: coupon.estimated_discount,
   };
 }
 
@@ -79,7 +103,7 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
       total: money(data.totals.total, currency),
       vat: {
         rate: data.totals.vat.rate,
-        includedAmount: money(data.totals.vat.amount, currency),
+        includedAmount: money(data.totals.vat.included_amount, currency),
       },
     },
     coupon: data.coupon
@@ -95,7 +119,15 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
       isAnonymous: data.gift.is_anonymous,
       message: data.gift.gift_message,
       giftWrap: data.gift.gift_wrap,
-      recipient: data.gift.recipient,
+      recipient: data.gift.recipient
+        ? {
+            name: data.gift.recipient.name,
+            phone: data.gift.recipient.phone,
+            city: data.gift.recipient.city,
+            district: data.gift.recipient.district,
+            streetDetails: data.gift.recipient.street_details,
+          }
+        : null,
     },
   };
 }

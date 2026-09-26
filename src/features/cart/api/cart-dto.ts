@@ -1,6 +1,25 @@
 export type CartAttributeDto = string | number | boolean;
 export type CartImageDto = { id: number; url: string };
 export type CartCityDto = { id: number; name: string };
+export type CartGiftRecipientDto = {
+  name: string;
+  phone: string;
+  city: CartCityDto;
+  district: string;
+  street_details: string;
+};
+
+export type CartCouponOptionDto = {
+  code: string;
+  name: string;
+  description: string;
+  type: string;
+  value: number;
+  max_discount_amount: number;
+  min_order_amount: number | null;
+  ends_at: string;
+  estimated_discount: string;
+};
 
 export type CartLineDto = {
   id: number;
@@ -60,7 +79,7 @@ export type CartDataDto = {
       remaining: string | null;
     };
     total: string;
-    vat: { rate: string; amount: string };
+    vat: { rate: string; included_amount: string };
     currency: string;
   };
   coupon: {
@@ -74,11 +93,16 @@ export type CartDataDto = {
     is_anonymous: boolean;
     gift_message: string | null;
     gift_wrap: boolean;
-    recipient: unknown | null;
+    recipient: CartGiftRecipientDto | null;
   };
 };
 
 export type CartResponseDto = { success: boolean; message: string; data: CartDataDto };
+export type CartCouponsResponseDto = {
+  success: boolean;
+  message: string;
+  data: readonly CartCouponOptionDto[];
+};
 
 export type AddCartItemDto = {
   product_variant_id: number;

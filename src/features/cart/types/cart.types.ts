@@ -2,6 +2,26 @@ import type { ProductPersonalizationInput } from "@/features/products/types/prod
 
 export type CartMoney = { amount: string; currency: string };
 
+export type CartCouponOption = {
+  code: string;
+  name: string;
+  description: string;
+  type: string;
+  value: number;
+  maxDiscountAmount: number;
+  minOrderAmount: number | null;
+  endsAt: string;
+  estimatedDiscount: string;
+};
+
+export type CartGiftRecipient = {
+  name: string;
+  phone: string;
+  city: { id: number; name: string };
+  district: string;
+  streetDetails: string;
+};
+
 export type AddCartLineInput = {
   productId: string;
   variantId: string;
@@ -75,7 +95,7 @@ export type CartSnapshot = {
     isAnonymous: boolean;
     message: string | null;
     giftWrap: boolean;
-    recipient: unknown;
+    recipient: CartGiftRecipient | null;
   };
 };
 

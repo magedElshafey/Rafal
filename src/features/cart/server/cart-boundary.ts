@@ -2,16 +2,26 @@ import "server-only";
 
 import type { Locale } from "next-intl";
 
+import { getAccessToken } from "@/features/auth/server/auth-session";
 import {
   addCartItemDto,
+  applyCartCouponDto,
   clearCartDto,
+  getCartCouponsDto,
   getCartDto,
+  removeCartCouponDto,
   removeCartItemDto,
   updateCartItemDto,
   type CartTransportIdentity,
 } from "@/features/cart/api/cart-api.server";
-import type { CartResponseDto } from "@/features/cart/api/cart-dto";
-import { mapCartData } from "@/features/cart/api/cart-mapper";
+import type {
+  CartCouponsResponseDto,
+  CartResponseDto,
+} from "@/features/cart/api/cart-dto";
+import {
+  mapCartCouponOption,
+  mapCartData,
+} from "@/features/cart/api/cart-mapper";
 import type { CartAddDiagnostics } from "@/features/cart/server/cart-add-diagnostics";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import {
@@ -21,6 +31,7 @@ import {
 import type {
   AddCartLineInput,
   AddCartLineResult,
+  CartCouponOption,
   CartMutationResult,
   CartSnapshot,
 } from "@/features/cart/types/cart.types";
@@ -31,6 +42,23 @@ function assertSuccessfulResponse(response: CartResponseDto): CartResponseDto {
     throw new Error("The Cart API returned an unsuccessful response.");
   }
   return response;
+}
+
+function assertSuccessfulCouponsResponse(
+  response: CartCouponsResponseDto,
+): CartCouponsResponseDto {
+  if (!response.success) {
+    throw new Error("The Cart Coupons API returned an unsuccessful response.");
+  }
+  return response;
+}
+
+async function requireAuthenticatedCartToken(): Promise<string> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error("An authenticated session is required for Cart coupons.");
+  }
+  return accessToken;
 }
 
 async function syncGuestToken(
@@ -146,4 +174,35 @@ export async function clearCurrentCart(
     await deleteGuestCartToken();
   }
   return { ok: true, cart: mapCartData(response.data) };
+}
+
+export async function getAvailableCartCoupons(
+  locale: Locale,
+): Promise<readonly CartCouponOption[]> {
+  const accessToken = await requireAuthenticatedCartToken();
+  const response = assertSuccessfulCouponsResponse(
+    await getCartCouponsDto(accessToken, locale),
+  );
+  return response.data.map(mapCartCouponOption);
+}
+
+export async function applyCouponToCurrentCart(
+  code: string,
+  locale: Locale,
+): Promise<CartSnapshot> {
+  const accessToken = await requireAuthenticatedCartToken();
+  const response = assertSuccessfulResponse(
+    await applyCartCouponDto(accessToken, locale, { code }),
+  );
+  return mapCartData(response.data);
+}
+
+export async function removeCouponFromCurrentCart(
+  locale: Locale,
+): Promise<CartSnapshot> {
+  const accessToken = await requireAuthenticatedCartToken();
+  const response = assertSuccessfulResponse(
+    await removeCartCouponDto(accessToken, locale),
+  );
+  return mapCartData(response.data);
 }

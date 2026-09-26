@@ -2,9 +2,18 @@ import "server-only";
 
 import type { Locale } from "next-intl";
 
-import type { AddCartItemDto, CartResponseDto, UpdateCartItemDto } from "@/features/cart/api/cart-dto";
+import type {
+  AddCartItemDto,
+  ApplyCartCouponDto,
+  CartCouponsResponseDto,
+  CartResponseDto,
+  UpdateCartItemDto,
+} from "@/features/cart/api/cart-dto";
 import { cartContractEndpoints } from "@/features/cart/api/cart-dto";
-import { parseCartResponse } from "@/features/cart/api/parse-cart-dto";
+import {
+  parseCartCouponsResponse,
+  parseCartResponse,
+} from "@/features/cart/api/parse-cart-dto";
 import {
   getCartAddResponseFacts,
   type CartAddDiagnostics,
@@ -73,6 +82,46 @@ export function removeCartItemDto(identity: CartTransportIdentity, locale: Local
 
 export function clearCartDto(identity: CartTransportIdentity, locale: Locale) {
   return cartRequest({ identity, locale, path: cartContractEndpoints.current, method: "DELETE" });
+}
+
+export async function getCartCouponsDto(
+  bearerToken: string,
+  locale: Locale,
+): Promise<CartCouponsResponseDto> {
+  const payload = await serverApi.request<unknown>({
+    path: cartContractEndpoints.coupons,
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "Accept-Language": locale,
+    },
+  });
+  return parseCartCouponsResponse(payload);
+}
+
+export function applyCartCouponDto(
+  bearerToken: string,
+  locale: Locale,
+  body: ApplyCartCouponDto,
+) {
+  return cartRequest({
+    identity: { kind: "authenticated", bearerToken },
+    locale,
+    path: cartContractEndpoints.coupon,
+    method: "POST",
+    body,
+  });
+}
+
+export function removeCartCouponDto(
+  bearerToken: string,
+  locale: Locale,
+) {
+  return cartRequest({
+    identity: { kind: "authenticated", bearerToken },
+    locale,
+    path: cartContractEndpoints.coupon,
+    method: "DELETE",
+  });
 }
 
 export async function mergeGuestCartDto(

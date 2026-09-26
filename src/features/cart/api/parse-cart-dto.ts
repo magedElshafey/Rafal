@@ -1,6 +1,9 @@
 import type {
   CartAttributeDto,
+  CartCouponOptionDto,
+  CartCouponsResponseDto,
   CartDataDto,
+  CartGiftRecipientDto,
   CartLineDto,
   CartResponseDto,
   CartTotalsLineDto,
@@ -53,11 +56,67 @@ function nonNegativeInteger(value: unknown, path: string): number {
 }
 
 function decimalString(value: unknown, path: string): string {
-  const parsed = string(value, path);
-  if (parsed.trim() === "" || !Number.isFinite(Number(parsed)) || Number(parsed) < 0) {
-    throw new CartContractError(path, "a non-negative decimal string");
+  if (typeof value === "number") {
+    if (!Number.isFinite(value) || value < 0) {
+      throw new CartContractError(
+        path,
+        "a finite non-negative number or decimal string",
+      );
+    }
+    return String(value);
   }
-  return parsed;
+
+  if (typeof value !== "string") {
+    throw new CartContractError(
+      path,
+      "a finite non-negative number or decimal string",
+    );
+  }
+
+  const normalized = value.trim();
+  if (
+    normalized === "" ||
+    !/^\d+(?:\.\d+)?$/.test(normalized) ||
+    !Number.isFinite(Number(normalized))
+  ) {
+    throw new CartContractError(
+      path,
+      "a finite non-negative number or decimal string",
+    );
+  }
+  return normalized;
+}
+
+function finiteNumber(value: unknown, path: string): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new CartContractError(path, "a finite number");
+  }
+  return value;
+}
+
+function nullableFiniteNumber(value: unknown, path: string): number | null {
+  return value === null ? null : finiteNumber(value, path);
+}
+
+function vatIncludedAmount(
+  value: Record<string, unknown>,
+  path: string,
+): string {
+  if (Object.hasOwn(value, "included_amount")) {
+    return decimalString(
+      value.included_amount,
+      `${path}.included_amount`,
+    );
+  }
+
+  if (Object.hasOwn(value, "amount")) {
+    return decimalString(value.amount, `${path}.amount`);
+  }
+
+  throw new CartContractError(
+    path,
+    'an object containing "included_amount" or "amount"',
+  );
 }
 
 function array(value: unknown, path: string): unknown[] {
@@ -144,6 +203,56 @@ function parseTotalsLine(value: unknown, path: string): CartTotalsLineDto {
   };
 }
 
+function parseGiftRecipient(
+  value: unknown,
+  path: string,
+): CartGiftRecipientDto {
+  const source = record(value, path);
+  const city = record(source.city, `${path}.city`);
+
+  return {
+    name: string(source.name, `${path}.name`),
+    phone: string(source.phone, `${path}.phone`),
+    city: {
+      id: positiveInteger(city.id, `${path}.city.id`),
+      name: string(city.name, `${path}.city.name`),
+    },
+    district: string(source.district, `${path}.district`),
+    street_details: string(
+      source.street_details,
+      `${path}.street_details`,
+    ),
+  };
+}
+
+function parseCouponOption(
+  value: unknown,
+  path: string,
+): CartCouponOptionDto {
+  const source = record(value, path);
+
+  return {
+    code: string(source.code, `${path}.code`),
+    name: string(source.name, `${path}.name`),
+    description: string(source.description, `${path}.description`),
+    type: string(source.type, `${path}.type`),
+    value: finiteNumber(source.value, `${path}.value`),
+    max_discount_amount: finiteNumber(
+      source.max_discount_amount,
+      `${path}.max_discount_amount`,
+    ),
+    min_order_amount: nullableFiniteNumber(
+      source.min_order_amount,
+      `${path}.min_order_amount`,
+    ),
+    ends_at: string(source.ends_at, `${path}.ends_at`),
+    estimated_discount: decimalString(
+      source.estimated_discount,
+      `${path}.estimated_discount`,
+    ),
+  };
+}
+
 function parseData(value: unknown, path: string): CartDataDto {
   const source = record(value, path);
   const city = source.city === undefined ? undefined : record(source.city, `${path}.city`);
@@ -186,7 +295,7 @@ function parseData(value: unknown, path: string): CartDataDto {
       total: decimalString(totals.total, `${path}.totals.total`),
       vat: {
         rate: decimalString(vat.rate, `${path}.totals.vat.rate`),
-        amount: decimalString(vat.amount, `${path}.totals.vat.amount`),
+        included_amount: vatIncludedAmount(vat, `${path}.totals.vat`),
       },
       currency: string(totals.currency, `${path}.totals.currency`),
     },
@@ -203,7 +312,10 @@ function parseData(value: unknown, path: string): CartDataDto {
       is_anonymous: boolean(gift.is_anonymous, `${path}.gift.is_anonymous`),
       gift_message: nullableString(gift.gift_message, `${path}.gift.gift_message`),
       gift_wrap: boolean(gift.gift_wrap, `${path}.gift.gift_wrap`),
-      recipient: gift.recipient ?? null,
+      recipient:
+        gift.recipient === null
+          ? null
+          : parseGiftRecipient(gift.recipient, `${path}.gift.recipient`),
     },
   };
 }
@@ -214,5 +326,18 @@ export function parseCartResponse(value: unknown): CartResponseDto {
     success: boolean(source.success, "response.success"),
     message: string(source.message, "response.message"),
     data: parseData(source.data, "response.data"),
+  };
+}
+
+export function parseCartCouponsResponse(
+  value: unknown,
+): CartCouponsResponseDto {
+  const source = record(value, "response");
+  return {
+    success: boolean(source.success, "response.success"),
+    message: string(source.message, "response.message"),
+    data: array(source.data, "response.data").map((coupon, index) =>
+      parseCouponOption(coupon, `response.data[${index}]`),
+    ),
   };
 }
