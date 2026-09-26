@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { StorefrontLocationController } from "@/components/shell/storefront/quick-acess/StorefrontLocationController";
 import { serverEnv } from "@/config/server-env";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { resolveLocationByCityId } from "@/features/location/api/location-api.server";
@@ -122,6 +123,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     { city, cityId, readResult, resolvedLocation },
     t,
     listingT,
+    locationT,
     publicSettings,
   ] =
     await Promise.all([
@@ -133,6 +135,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       getTranslations({
         locale,
         namespace: "Common.productListing",
+      }),
+      getTranslations({
+        locale,
+        namespace: "Common.headerUtility",
       }),
       getPublicSettings(),
     ]);
@@ -149,7 +155,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     reviewReadResult,
   ] = await Promise.all([
     source === "laravel"
-      ? resolvedLocation
+      ? resolvedLocation?.inCoverage &&
+        resolvedLocation.warehouseId !== null
         ? getResolvedVariantAvailability({
             maxOrderQuantity: publicSettings.maxCartItemQuantity,
             source,
@@ -160,7 +167,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             Object.fromEntries(
               product.variants.map((variant) => [
                 variant.id,
-                { status: "purchase_unavailable" as const },
+                {
+                  status: resolvedLocation
+                    ? ("unavailable_at_location" as const)
+                    : ("purchase_unavailable" as const),
+                },
               ]),
             ),
           )
@@ -254,6 +265,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         }
         locale={locale}
+        locationAction={
+          resolvedLocation?.inCoverage === false && city ? (
+            <StorefrontLocationController
+              copy={{
+                deliveryLabel: locationT("deliveryLabel"),
+                selectCity: locationT("selectCity"),
+                changeLocation: locationT("changeLocation"),
+                dialogTitle: locationT("locationDialog.title"),
+                dialogDescription: locationT("locationDialog.description"),
+                loading: locationT("locationDialog.loading"),
+                empty: locationT("locationDialog.empty"),
+                close: locationT("locationDialog.close"),
+                searchLabel: locationT("locationDialog.searchLabel"),
+                searchPlaceholder: locationT("locationDialog.searchPlaceholder"),
+                searchNoResults: locationT("locationDialog.searchNoResults"),
+              }}
+              initialCity={city}
+              locale={locale}
+            />
+          ) : null
+        }
+        locationInCoverage={resolvedLocation?.inCoverage ?? null}
         locationName={resolvedLocation?.city.name ?? city?.name ?? null}
         product={purchaseProduct}
         renderedAt={renderedAt}
@@ -292,6 +325,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
               unavailableAtLocation: t("availability.unavailableAtLocation"),
               unavailableAtLocationTemplate: t.raw(
                 "availability.unavailableAtLocationNamed",
+              ) as string,
+              uncoveredLocationTemplate: t.raw(
+                "availability.deliveryUnavailableAtLocationNamed",
               ) as string,
             },
             personalization: {
@@ -348,6 +384,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
               decrease: t("quantity.decrease"),
               increase: t("quantity.increase"),
               labelTemplate: t.raw("quantity.label") as string,
+              remainingHintTemplate: t.raw(
+                "quantity.remainingHint",
+              ) as string,
               title: t("quantity.title"),
             },
             options: {

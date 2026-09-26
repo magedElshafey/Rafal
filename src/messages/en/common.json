@@ -113,7 +113,8 @@
       "outOfStock": "Out of stock",
       "purchaseUnavailable": "Purchasing this product is temporarily unavailable",
       "unavailableAtLocation": "Unavailable at the selected delivery location",
-      "unavailableAtLocationNamed": "Currently unavailable in {city}"
+      "unavailableAtLocationNamed": "Currently unavailable in {city}",
+      "deliveryUnavailableAtLocationNamed": "Delivery is currently unavailable in {city}"
     },
     "addToCart": "Add to cart",
     "purchase": {
@@ -147,7 +148,8 @@
       "title": "Quantity",
       "label": "Quantity: {value}",
       "increase": "Increase quantity",
-      "decrease": "Decrease quantity"
+      "decrease": "Decrease quantity",
+      "remainingHint": "You can add up to {max} more."
     },
     "options": {
       "size": "Size",

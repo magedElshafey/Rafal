@@ -37,11 +37,14 @@ export async function getResolvedVariantAvailability(
         return [
           variant.id,
           !stock
-            ? { status: "unavailable_at_location" as const }
+            ? { status: "out_of_stock" as const }
             : stock.quantity > 0
               ? {
                   status: "available" as const,
-                  maxOrderQuantity: input.maxOrderQuantity,
+                  maxOrderQuantity: Math.min(
+                    stock.quantity,
+                    input.maxOrderQuantity,
+                  ),
                 }
               : { status: "out_of_stock" as const },
         ];

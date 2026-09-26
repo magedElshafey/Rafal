@@ -46,6 +46,7 @@ export type ProductPurchasePanelCopy = {
     purchaseUnavailable: string;
     unavailableAtLocation: string;
     unavailableAtLocationTemplate: string;
+    uncoveredLocationTemplate: string;
   };
   personalization: {
     additionalFeeTemplate: string;
@@ -88,6 +89,7 @@ export type ProductPurchasePanelCopy = {
     decrease: string;
     increase: string;
     labelTemplate: string;
+    remainingHintTemplate: string;
     title: string;
   };
   ratingLabelTemplate: string;
@@ -107,6 +109,8 @@ type ProductPurchasePanelProps = {
   copy: ProductPurchasePanelCopy;
   isAddingToCart: boolean;
   locale: Locale;
+  locationAction: ReactNode;
+  locationInCoverage: boolean | null;
   locationName: string | null;
   bnplInformation: ReactNode;
   onAddToCart: MouseEventHandler<HTMLButtonElement>;
@@ -130,6 +134,7 @@ type ProductPurchasePanelProps = {
     | "variants"
   >;
   quantity: number;
+  remainingAddable: number | null;
   purchaseActionRef: Ref<HTMLDivElement>;
   renderedAt: number;
   selectedOptions: SelectedProductOptions;
@@ -468,16 +473,22 @@ function getPersonalizationErrorMessage(
 function AvailabilityMessage({
   availability,
   copy,
+  locationInCoverage,
   locationName,
 }: {
   availability: ResolvedVariantAvailability;
   copy: ProductPurchasePanelCopy["availability"];
+  locationInCoverage: boolean | null;
   locationName: string | null;
 }) {
   const available = availability.status === "available";
   let message: string;
 
-  if (availability.status === "available") {
+  if (locationInCoverage === false && locationName) {
+    message = formatProductMessage(copy.uncoveredLocationTemplate, {
+      city: locationName,
+    });
+  } else if (availability.status === "available") {
     message = locationName
       ? formatProductMessage(copy.availableAtLocationTemplate, {
           city: locationName,
@@ -572,6 +583,8 @@ export function ProductPurchasePanel({
   copy,
   isAddingToCart,
   locale,
+  locationAction,
+  locationInCoverage,
   locationName,
   bnplInformation,
   onAddToCart,
@@ -584,6 +597,7 @@ export function ProductPurchasePanel({
   personalizationValidation,
   product,
   quantity,
+  remainingAddable,
   purchaseActionRef,
   renderedAt,
   selectedOptions,
@@ -593,7 +607,9 @@ export function ProductPurchasePanel({
   const available = availability.status === "available";
   const canDecrease = available && quantity > 1;
   const canIncrease =
-    available && quantity < availability.maxOrderQuantity;
+    available &&
+    remainingAddable !== null &&
+    quantity < remainingAddable;
 
   return (
     <section className="min-w-0 space-y-6" aria-labelledby="product-title">
@@ -647,8 +663,10 @@ export function ProductPurchasePanel({
       <AvailabilityMessage
         availability={availability}
         copy={copy.availability}
+        locationInCoverage={locationInCoverage}
         locationName={locationName}
       />
+      {locationInCoverage === false ? locationAction : null}
 
       <ProductOptions
         copy={copy.options}
@@ -707,6 +725,13 @@ export function ProductPurchasePanel({
             </button>
           </div>
         </div>
+        {remainingAddable !== null ? (
+          <p className="type-caption text-gray-500">
+            {formatProductMessage(copy.quantity.remainingHintTemplate, {
+              max: remainingAddable,
+            })}
+          </p>
+        ) : null}
         <div>
           <Button
             disabled={!canAddToCart || isAddingToCart}

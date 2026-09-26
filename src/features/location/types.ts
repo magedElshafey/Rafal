@@ -12,7 +12,7 @@ export type ResolvedLocation = {
     id: number;
     name: string;
   };
-  warehouseId: number;
+  warehouseId: number | null;
 };
 
 export function getCanonicalBackendCityId(city: City | null): number | null {

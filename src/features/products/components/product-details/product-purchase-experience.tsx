@@ -12,6 +12,7 @@ import {
 
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
 import { setCurrentCartQueryData } from "@/features/cart/api/cart-query";
+import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
 import type {
   AddCartLineError,
   AddCartLineInput,
@@ -92,6 +93,8 @@ type ProductPurchaseExperienceProps = {
   bnplInformation: ReactNode;
   copy: ProductPurchaseExperienceCopy;
   locale: Locale;
+  locationAction: ReactNode;
+  locationInCoverage: boolean | null;
   locationName: string | null;
   product: ProductPurchaseData;
   renderedAt: number;
@@ -166,6 +169,8 @@ export function ProductPurchaseExperience({
   bnplInformation,
   copy,
   locale,
+  locationAction,
+  locationInCoverage,
   locationName,
   product,
   renderedAt,
@@ -174,7 +179,11 @@ export function ProductPurchaseExperience({
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const initialVariant = getInitialProductVariant(product);
+  const { data: currentCart } = useCurrentCart(locale);
+  const initialVariant =
+    product.variants.find(
+      (variant) => availabilityByVariantId[variant.id]?.status === "available",
+    ) ?? getInitialProductVariant(product);
   const initialImageId = getPreferredImageId(product, initialVariant);
   const purchaseActionRef = useRef<HTMLDivElement>(null);
   const lastAddToCartTriggerRef = useRef<HTMLElement | null>(null);
@@ -205,6 +214,10 @@ export function ProductPurchaseExperience({
       if (!result.ok) return;
 
       setCurrentCartQueryData(queryClient, locale, result.cart);
+      setQuantity(1);
+      setPersonalizationInput(getInitialPersonalizationInput(product));
+      setSelectedOptions(getSelectedOptionsFromVariant(initialVariant));
+      setSelectedImageId(getPreferredImageId(product, initialVariant));
       setIsSuccessSheetOpen(true);
     },
   });
@@ -227,25 +240,47 @@ export function ProductPurchaseExperience({
     ? personalizationValidation?.valid === true
     : true;
   const hasVerifiedAvailability = availability?.status === "available";
+  const heldForVariant =
+    selectedVariant && currentCart
+      ? currentCart.lines.reduce(
+          (held, line) =>
+            line.variant.id === selectedVariant.id
+              ? held + line.quantity
+              : held,
+          0,
+        )
+      : null;
+  const remainingAddable =
+    availability?.status === "available" && heldForVariant !== null
+      ? Math.max(0, availability.maxOrderQuantity - heldForVariant)
+      : null;
+  const purchaseQuantity =
+    remainingAddable === null || remainingAddable === 0
+      ? 1
+      : Math.min(quantity, remainingAddable);
   const productIsAvailable = Object.values(availabilityByVariantId).some(
     (variantAvailability) => variantAvailability.status === "available",
   );
   const canAddToCart =
     productIsAvailable &&
     selectedVariant !== null &&
-    quantity >= 1 &&
+    purchaseQuantity >= 1 &&
     hasVerifiedAvailability &&
-    quantity <= availability.maxOrderQuantity &&
+    remainingAddable !== null &&
+    remainingAddable > 0 &&
+    purchaseQuantity <= remainingAddable &&
     personalizationIsValid;
   const configurationFingerprint = JSON.stringify([
     selectedVariant?.id,
-    quantity,
+    purchaseQuantity,
     personalizationInput?.language,
     personalizationInput?.text,
     availability?.status,
     availability?.status === "available"
       ? availability.maxOrderQuantity
       : null,
+    heldForVariant,
+    remainingAddable,
   ]);
   const previousConfigurationRef = useRef(configurationFingerprint);
   const previousAvailabilityContextRef = useRef(availabilityByVariantId);
@@ -260,15 +295,7 @@ export function ProductPurchaseExperience({
     submittedConfigurationFingerprint === configurationFingerprint
       ? getAddToCartErrorMessage(mutationFailure, copy.purchase.errors)
       : null;
-  const quantityErrorMessage =
-    availability?.status === "available" &&
-    quantity > availability.maxOrderQuantity
-      ? formatProductMessage(copy.purchase.errors.quantityLimitTemplate, {
-          max: availability.maxOrderQuantity,
-        })
-      : null;
-  const purchaseErrorMessage =
-    addToCartErrorMessage ?? quantityErrorMessage;
+  const purchaseErrorMessage = addToCartErrorMessage;
   const successfulCart =
     addToCartResult?.ok === true
       ? addToCartResult.cart
@@ -345,20 +372,34 @@ export function ProductPurchaseExperience({
         `Product variant "${nextVariant.id}" is missing resolved availability.`,
       );
     }
+    const nextHeld = currentCart
+      ? currentCart.lines.reduce(
+          (held, line) =>
+            line.variant.id === nextVariant.id ? held + line.quantity : held,
+          0,
+        )
+      : null;
+    const nextRemaining =
+      nextAvailability.status === "available" && nextHeld !== null
+        ? Math.max(0, nextAvailability.maxOrderQuantity - nextHeld)
+        : null;
 
     setSelectedOptions(nextSelection);
     setSelectedImageId(getPreferredImageId(product, nextVariant));
+    setQuantity((currentQuantity) =>
+      nextRemaining === null || nextRemaining === 0
+        ? 1
+        : Math.min(currentQuantity, nextRemaining),
+    );
   };
 
   const handleDecreaseQuantity = () => {
-    setQuantity((currentQuantity) => Math.max(1, currentQuantity - 1));
+    setQuantity(Math.max(1, purchaseQuantity - 1));
   };
 
   const handleIncreaseQuantity = () => {
-    if (availability.status !== "available") return;
-    setQuantity((currentQuantity) =>
-      Math.min(availability.maxOrderQuantity, currentQuantity + 1),
-    );
+    if (remainingAddable === null || remainingAddable === 0) return;
+    setQuantity(Math.min(remainingAddable, purchaseQuantity + 1));
   };
 
   const handleSelectPersonalizationLanguage = (
@@ -382,7 +423,7 @@ export function ProductPurchaseExperience({
     const input: AddCartLineInput = {
       productId: product.id,
       variantId: selectedVariant.id,
-      quantity,
+      quantity: purchaseQuantity,
       ...(product.personalization.enabled && personalizationInput
         ? { personalization: personalizationInput }
         : {}),
@@ -429,6 +470,8 @@ export function ProductPurchaseExperience({
             copy={copy.panel}
             isAddingToCart={isAddingToCart}
             locale={locale}
+            locationAction={locationAction}
+            locationInCoverage={locationInCoverage}
             locationName={locationName}
             onAddToCart={handleAddToCart}
             onDecreaseQuantity={handleDecreaseQuantity}
@@ -442,7 +485,8 @@ export function ProductPurchaseExperience({
             personalizationValidation={personalizationValidation}
             product={product}
             purchaseActionRef={purchaseActionRef}
-            quantity={quantity}
+            quantity={purchaseQuantity}
+            remainingAddable={remainingAddable}
             renderedAt={renderedAt}
             selectedOptions={selectedOptions}
             shareActions={shareActions}

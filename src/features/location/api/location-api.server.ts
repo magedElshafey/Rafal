@@ -30,6 +30,15 @@ function positiveInteger(value: unknown, path: string): number {
   return value;
 }
 
+function resolvedWarehouseId(
+  value: unknown,
+  inCoverage: boolean,
+  path: string,
+): number | null {
+  if (!inCoverage && value === null) return null;
+  return positiveInteger(value, path);
+}
+
 export async function getCities(locale: Locale): Promise<readonly City[]> {
   const payload = await serverApi.request<unknown>({
     path: "/regions",
@@ -58,20 +67,26 @@ export const resolveLocationByCityId = cache(async function resolveLocationByCit
   const city = parseRecord(data.city, "response.data.city");
   const region = parseRecord(data.region, "response.data.region");
 
+  const inCoverage = parseBoolean(
+    data.in_coverage,
+    "response.data.in_coverage",
+  );
+
   return {
     city: {
       id: positiveInteger(city.id, "response.data.city.id"),
       name: parseString(city.name, "response.data.city.name"),
       regionId: positiveInteger(region.id, "response.data.region.id"),
     },
-    inCoverage: parseBoolean(data.in_coverage, "response.data.in_coverage"),
+    inCoverage,
     message: parseNullableString(data.message, "response.data.message"),
     region: {
       id: positiveInteger(region.id, "response.data.region.id"),
       name: parseString(region.name, "response.data.region.name"),
     },
-    warehouseId: positiveInteger(
+    warehouseId: resolvedWarehouseId(
       data.warehouse_id,
+      inCoverage,
       "response.data.warehouse_id",
     ),
   };

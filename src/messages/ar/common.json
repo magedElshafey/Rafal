@@ -113,7 +113,8 @@
       "outOfStock": "نفد من المخزون",
       "purchaseUnavailable": "شراء هذا المنتج غير متاح مؤقتًا",
       "unavailableAtLocation": "غير متوفر في موقع التوصيل المحدد",
-      "unavailableAtLocationNamed": "غير متوفر حاليًا في {city}"
+      "unavailableAtLocationNamed": "غير متوفر حاليًا في {city}",
+      "deliveryUnavailableAtLocationNamed": "التوصيل غير متاح حاليًا إلى {city}"
     },
     "addToCart": "أضف إلى السلة",
     "purchase": {
@@ -147,7 +148,8 @@
       "title": "الكمية",
       "label": "الكمية: {value}",
       "increase": "زيادة الكمية",
-      "decrease": "تقليل الكمية"
+      "decrease": "تقليل الكمية",
+      "remainingHint": "يمكنك إضافة {max} كحد أقصى."
     },
     "options": {
       "size": "المقاس",
