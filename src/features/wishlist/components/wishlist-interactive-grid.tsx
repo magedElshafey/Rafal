@@ -1,26 +1,37 @@
 "use client";
 
-import { useOptimistic, useRef, useState, useTransition } from "react";
-import { useTranslations, type Locale } from "next-intl";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { buttonVariants } from "@/components/ui/button";
-import { ProductGrid } from "@/features/products/components/listing/product-grid";
-import type { ListingProduct } from "@/features/products/types/product-listing.types";
-import { setWishlistState } from "@/features/wishlist/actions/set-wishlist-state";
 import {
-  updateWishlistMembership,
-  wishlistMembershipQueryKey,
-} from "@/features/wishlist/api/wishlist-membership";
-import type { WishlistMembership } from "@/features/wishlist/types/wishlist.types";
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+} from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { useTranslations, type Locale } from "next-intl";
+
+import { Button, buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { LoadMoreButton } from "@/components/ui/load-more-button";
+import {
+  ProductGrid,
+  ProductGridSkeleton,
+} from "@/features/products/components/listing/product-grid";
+import { setWishlistState } from "@/features/wishlist/actions/set-wishlist-state";
+import { wishlistQueryKeys } from "@/features/wishlist/api/wishlist-query-keys";
+import { wishlistInfiniteQueryOptions } from "@/features/wishlist/api/wishlist-query";
+import type {
+  WishlistCount,
+  WishlistPage,
+} from "@/features/wishlist/types/wishlist.types";
 import { Link } from "@/i18n/navigation";
 import { rafalToast } from "@/lib/rafal-toast";
 
 export type WishlistInteractiveGridCopy = {
   actions: {
-    add: string;
     pending: string;
     remove: string;
+    removeProduct: string;
   };
   badges: Record<"discount" | "new" | "personalization", string>;
   empty: {
@@ -28,46 +39,59 @@ export type WishlistInteractiveGridCopy = {
     description: string;
     title: string;
   };
+  error: {
+    description: string;
+    retry: string;
+    title: string;
+  };
+  loadMore: string;
+  loading: string;
+  loadingMore: string;
   mutationError: string;
+  nextPageError: string;
+  resultCount: string;
   unavailable: string;
 };
 
 type WishlistInteractiveGridProps = {
   copy: WishlistInteractiveGridCopy;
+  initialPage: WishlistPage | null;
   locale: Locale;
-  products: readonly ListingProduct[];
 };
 
-type OptimisticWishlistUpdate = {
-  productId: string;
-  wishlisted: boolean;
+type RemoveContext = {
+  countWasCached: boolean;
+  previousCount: WishlistCount | undefined;
+  previousData: InfiniteData<WishlistPage, number> | undefined;
 };
+
+function formatTemplate(template: string, values: Record<string, string | number>) {
+  return Object.entries(values).reduce(
+    (message, [key, value]) => message.replace(`{${key}}`, String(value)),
+    template,
+  );
+}
 
 export function WishlistInteractiveGrid({
   copy,
+  initialPage,
   locale,
-  products,
 }: WishlistInteractiveGridProps) {
   const t = useTranslations("Account.wishlist");
   const queryClient = useQueryClient();
   const pendingProductIdsRef = useRef(new Set<string>());
-  const mutationQueueRef = useRef<Promise<void>>(Promise.resolve());
-  const [pendingProductIds, setPendingProductIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  );
-  const [, startTransition] = useTransition();
-  const [optimisticProducts, updateOptimisticProducts] = useOptimistic(
-    products,
-    (
-      currentProducts: readonly ListingProduct[],
-      update: OptimisticWishlistUpdate,
-    ) =>
-      update.wishlisted
-        ? currentProducts
-        : currentProducts.filter(
-            (product) => product.id !== update.productId,
-          ),
-  );
+  const [pendingProductIds, setPendingProductIds] = useState<
+    ReadonlySet<string>
+  >(() => new Set());
+  const queryOptions = wishlistInfiniteQueryOptions(locale);
+  const query = useInfiniteQuery({
+    ...queryOptions,
+    initialData: initialPage
+      ? { pages: [initialPage], pageParams: [1] }
+      : undefined,
+  });
+  const listQueryKey = wishlistQueryKeys.list(locale);
+  const countQueryKey = wishlistQueryKeys.count(locale);
 
   const setPending = (productId: string, pending: boolean) => {
     if (pending) pendingProductIdsRef.current.add(productId);
@@ -75,107 +99,180 @@ export function WishlistInteractiveGrid({
     setPendingProductIds(new Set(pendingProductIdsRef.current));
   };
 
-  const updateWishlist = (productId: string, wishlisted: boolean) => {
-    if (pendingProductIdsRef.current.has(productId)) return;
-
-    setPending(productId, true);
-    startTransition(async () => {
-      updateOptimisticProducts({ productId, wishlisted });
-      const membership = queryClient.getQueryData<WishlistMembership>(
-        wishlistMembershipQueryKey,
+  const removeMutation = useMutation<void, Error, string, RemoveContext>({
+    mutationKey: wishlistQueryKeys.mutation("remove"),
+    scope: { id: "wishlist-removals" },
+    mutationFn: async (productId) => {
+      const result = await setWishlistState({
+        locale,
+        productId,
+        wishlisted: false,
+      });
+      if (!result.ok) throw new Error(result.error.code);
+    },
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: listQueryKey, exact: true });
+      const previousData = queryClient.getQueryData<
+        InfiniteData<WishlistPage, number>
+      >(listQueryKey);
+      const countWasCached =
+        queryClient.getQueryState(countQueryKey) !== undefined;
+      const previousCount = queryClient.getQueryData<WishlistCount>(
+        countQueryKey,
       );
-      const previousWishlisted =
-        membership?.productIds.includes(productId) ?? true;
 
-      if (membership?.authenticated) {
-        queryClient.setQueryData(
-          wishlistMembershipQueryKey,
-          updateWishlistMembership(membership, productId, wishlisted),
-        );
-      }
-
-      const rollbackMembership = () => {
-        const currentMembership = queryClient.getQueryData<WishlistMembership>(
-          wishlistMembershipQueryKey,
-        );
-        if (currentMembership?.authenticated) {
-          queryClient.setQueryData(
-            wishlistMembershipQueryKey,
-            updateWishlistMembership(
-              currentMembership,
-              productId,
-              previousWishlisted,
-            ),
+      queryClient.setQueryData<InfiniteData<WishlistPage, number>>(
+        listQueryKey,
+        (current) => {
+          if (!current) return current;
+          const containsProduct = current.pages.some((page) =>
+            page.items.some((product) => product.id === productId),
           );
-        }
-      };
+          if (!containsProduct) return current;
 
-      try {
-        // Temporary mock-storage constraint: cookie-backed read-modify-write
-        // operations are serialized to avoid lost updates while each product
-        // still receives an immediate, independent optimistic UI. Review this
-        // queue when Laravel provides atomic Wishlist persistence.
-        const mutation = mutationQueueRef.current.then(
-          () => setWishlistState({ locale, productId, wishlisted }),
-          () => setWishlistState({ locale, productId, wishlisted }),
-        );
-        mutationQueueRef.current = mutation.then(
-          () => undefined,
-          () => undefined,
-        );
-        const result = await mutation;
-        if (!result.ok) {
-          rollbackMembership();
-          rafalToast.error(copy.mutationError);
-        }
-      } catch {
-        rollbackMembership();
-        rafalToast.error(copy.mutationError);
-      } finally {
-        setPending(productId, false);
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              items: page.items.filter((product) => product.id !== productId),
+              pagination: {
+                ...page.pagination,
+                total: Math.max(0, page.pagination.total - 1),
+              },
+            })),
+          };
+        },
+      );
+
+      if (countWasCached && previousCount) {
+        queryClient.setQueryData<WishlistCount>(countQueryKey, {
+          count: Math.max(0, previousCount.count - 1),
+        });
       }
-    });
+
+      return { countWasCached, previousCount, previousData };
+    },
+    onError: (_error, _productId, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(listQueryKey, context.previousData);
+      }
+      if (context?.countWasCached && context.previousCount) {
+        queryClient.setQueryData(countQueryKey, context.previousCount);
+      }
+      rafalToast.error(copy.mutationError);
+    },
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: listQueryKey,
+        exact: true,
+        type: "active",
+      });
+    },
+    onSettled: (_data, _error, productId) => setPending(productId, false),
+  });
+
+  const removeProduct = (productId: string) => {
+    if (pendingProductIdsRef.current.has(productId)) return;
+    setPending(productId, true);
+    removeMutation.mutate(productId);
   };
 
-  if (optimisticProducts.length === 0) {
+  if (query.isPending) {
     return (
-      <section className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-        <div role="status">
-          <h2 className="text-h4 font-medium text-gray-1000">
-            {copy.empty.title}
-          </h2>
-          <p className="mt-2 type-body text-gray-600">
-            {copy.empty.description}
-          </p>
-        </div>
-        <div className="mt-5 flex justify-center">
-          <Link href="/categories" className={buttonVariants()}>
-            {copy.empty.cta}
-          </Link>
-        </div>
-      </section>
+      <div aria-busy="true" aria-label={copy.loading}>
+        <ProductGridSkeleton />
+      </div>
+    );
+  }
+
+  if (query.isError && !query.data) {
+    return (
+      <ErrorState
+        role="alert"
+        title={copy.error.title}
+        description={copy.error.description}
+        action={
+          <Button onClick={() => void query.refetch()}>
+            {copy.error.retry}
+          </Button>
+        }
+      />
+    );
+  }
+
+  const pages = query.data?.pages ?? [];
+  const products = Array.from(
+    new Map(
+      pages
+        .flatMap((page) => page.items)
+        .map((product) => [product.id, product]),
+    ).values(),
+  );
+  const total = pages[0]?.pagination.total ?? 0;
+
+  if (products.length === 0) {
+    return (
+      <EmptyState
+        role="status"
+        title={copy.empty.title}
+        description={copy.empty.description}
+      >
+        <Link href="/products" className={`${buttonVariants()} mt-5`}>
+          {copy.empty.cta}
+        </Link>
+      </EmptyState>
     );
   }
 
   return (
-    <ProductGrid
-      badgeLabels={copy.badges}
-      getWishlistAction={(product) => {
-        const pending = pendingProductIds.has(product.id);
-
-        return {
-          "aria-busy": pending || undefined,
-          "aria-pressed": true,
-          disabled: pending,
-          label: pending ? copy.actions.pending : copy.actions.remove,
-          onClick: () => updateWishlist(product.id, false),
-        };
-      }}
-      locale={locale}
-      products={optimisticProducts}
-      ratingLabel={(value) => t("rating", { value })}
-      reviewsLabel={(count) => t("reviews", { count })}
-      unavailableLabel={copy.unavailable}
-    />
+    <div>
+      <p className="mb-5 type-body-sm text-gray-500">
+        {formatTemplate(copy.resultCount, { count: total })}
+      </p>
+      <ProductGrid
+        badgeLabels={copy.badges}
+        getWishlistAction={(product) => {
+          const pending = pendingProductIds.has(product.id);
+          return {
+            "aria-busy": pending || undefined,
+            "aria-pressed": true,
+            disabled: pending,
+            label: pending
+              ? copy.actions.pending
+              : formatTemplate(copy.actions.removeProduct, {
+                  name: product.name,
+                }),
+            onClick: () => removeProduct(product.id),
+          };
+        }}
+        locale={locale}
+        products={products}
+        ratingLabel={(value) => t("rating", { value })}
+        reviewsLabel={(count) => t("reviews", { count })}
+        unavailableLabel={copy.unavailable}
+      />
+      {query.isFetchingNextPage ? (
+        <div aria-busy="true" aria-label={copy.loadingMore} className="mt-8">
+          <ProductGridSkeleton count={4} />
+        </div>
+      ) : null}
+      {query.isFetchNextPageError ? (
+        <p className="mt-6 text-center type-body text-destructive" role="alert">
+          {copy.nextPageError}
+        </p>
+      ) : null}
+      <div className="mt-10 flex justify-center">
+        <LoadMoreButton
+          disabled={pendingProductIds.size > 0}
+          hasNextPage={query.hasNextPage === true}
+          isLoading={query.isFetchingNextPage}
+          label={query.isFetchNextPageError ? copy.error.retry : copy.loadMore}
+          loadingLabel={copy.loadingMore}
+          onClick={() => {
+            if (!query.isFetchingNextPage) void query.fetchNextPage();
+          }}
+        />
+      </div>
+    </div>
   );
 }

@@ -166,6 +166,16 @@
   "wishlist": {
     "title": "Wishlist",
     "description": "Products you have saved to revisit later.",
+    "resultCount": "{count} saved products",
+    "loading": "Loading your wishlist",
+    "loadMore": "Load more products",
+    "loadingMore": "Loading more products",
+    "nextPageError": "More wishlist products could not be loaded. Please try again.",
+    "error": {
+      "title": "Your wishlist could not be loaded",
+      "description": "There was a temporary problem loading your wishlist. Please try again.",
+      "retry": "Try again"
+    },
     "empty": {
       "title": "Your wishlist is empty",
       "description": "Save products you love so you can easily find them again.",
@@ -174,6 +184,7 @@
     "actions": {
       "add": "Add to wishlist",
       "remove": "Remove from wishlist",
+      "removeProduct": "Remove {name} from wishlist",
       "pending": "Updating wishlist"
     },
     "mutationError": "Your wishlist could not be updated. Please try again.",

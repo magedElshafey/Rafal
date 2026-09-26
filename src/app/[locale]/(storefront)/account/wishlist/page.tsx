@@ -1,22 +1,36 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { requireUser } from "@/features/auth/server/auth-boundary";
 import {
   WishlistInteractiveGrid,
   type WishlistInteractiveGridCopy,
 } from "@/features/wishlist/components/wishlist-interactive-grid";
-import { getWishlistProducts } from "@/features/wishlist/server/wishlist-boundary";
+import { getWishlistPage } from "@/features/wishlist/server/wishlist-boundary";
+import type { WishlistPage as WishlistPageData } from "@/features/wishlist/types/wishlist.types";
+
+async function getInitialWishlistPage(
+  locale: Awaited<ReturnType<typeof getLocale>>,
+): Promise<WishlistPageData | null> {
+  try {
+    return await getWishlistPage(locale, 1);
+  } catch {
+    return null;
+  }
+}
 
 export default async function WishlistPage() {
   const locale = await getLocale();
-  const [products, t] = await Promise.all([
-    getWishlistProducts(locale),
+  await requireUser("/account/wishlist", locale);
+
+  const [initialPage, t] = await Promise.all([
+    getInitialWishlistPage(locale),
     getTranslations("Account.wishlist"),
   ]);
   const copy: WishlistInteractiveGridCopy = {
     actions: {
-      add: t("actions.add"),
       pending: t("actions.pending"),
       remove: t("actions.remove"),
+      removeProduct: t.raw("actions.removeProduct") as string,
     },
     badges: {
       discount: t("badges.discount"),
@@ -28,7 +42,17 @@ export default async function WishlistPage() {
       description: t("empty.description"),
       title: t("empty.title"),
     },
+    error: {
+      description: t("error.description"),
+      retry: t("error.retry"),
+      title: t("error.title"),
+    },
+    loadMore: t("loadMore"),
+    loading: t("loading"),
+    loadingMore: t("loadingMore"),
     mutationError: t("mutationError"),
+    nextPageError: t("nextPageError"),
+    resultCount: t.raw("resultCount") as string,
     unavailable: t("unavailable"),
   };
 
@@ -39,8 +63,8 @@ export default async function WishlistPage() {
       <div className="mt-6">
         <WishlistInteractiveGrid
           copy={copy}
+          initialPage={initialPage}
           locale={locale}
-          products={products}
         />
       </div>
     </div>

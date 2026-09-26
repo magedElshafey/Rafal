@@ -2,53 +2,65 @@ import "server-only";
 
 import type { Locale } from "next-intl";
 
-import { serverEnv } from "@/config/server-env";
+import { getAccessToken } from "@/features/auth/server/auth-session";
+import { mapProductListResponse } from "@/features/products/api/product-mappers";
 import {
-  getCurrentUser,
-  requireUser,
-} from "@/features/auth/server/auth-boundary";
-import { getListingProductById } from "@/features/products/server/mock-product-catalog";
-import type { ListingProduct } from "@/features/products/types/product-listing.types";
-import { readMockWishlistEntries } from "@/features/wishlist/server/mock-wishlist-store";
-import type { WishlistMembership } from "@/features/wishlist/types/wishlist.types";
+  addWishlistProductDto,
+  getWishlistCountDto,
+  getWishlistPageDto,
+  removeWishlistProductDto,
+} from "@/features/wishlist/api/wishlist-api.server";
+import type {
+  WishlistCount,
+  WishlistPage,
+} from "@/features/wishlist/types/wishlist.types";
 
-function assertWishlistSourceAvailable() {
-  if (!serverEnv.useMockApi) {
-    throw new Error("The Wishlist API contract is not configured.");
+export class WishlistAuthenticationError extends Error {
+  constructor() {
+    super("An authenticated session is required for Wishlist access.");
+    this.name = "WishlistAuthenticationError";
   }
 }
 
-export async function getWishlistProductIds(): Promise<string[]> {
-  const user = await requireUser("/account/wishlist");
-  assertWishlistSourceAvailable();
-
-  const entries = await readMockWishlistEntries(user);
-  return entries.map((entry) => entry.productId);
+async function requireAccessToken(): Promise<string> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new WishlistAuthenticationError();
+  return accessToken;
 }
 
-export async function getWishlistProducts(
+function assertSuccessfulResponse(response: { success: boolean }): void {
+  if (!response.success) {
+    throw new Error("The Wishlist API returned an unsuccessful response.");
+  }
+}
+
+export async function getWishlistPage(
   locale: Locale,
-): Promise<ListingProduct[]> {
-  const user = await requireUser("/account/wishlist");
-  assertWishlistSourceAvailable();
-
-  const entries = await readMockWishlistEntries(user);
-
-  return entries.flatMap((entry) => {
-    const product = getListingProductById(entry.productId, locale);
-    return product ? [product] : [];
-  });
+  page: number,
+): Promise<WishlistPage> {
+  const accessToken = await requireAccessToken();
+  const response = await getWishlistPageDto(accessToken, locale, page);
+  assertSuccessfulResponse(response);
+  return mapProductListResponse(response);
 }
 
-export async function getWishlistMembership(): Promise<WishlistMembership> {
-  const user = await getCurrentUser();
-  if (!user) return { authenticated: false, productIds: [] };
+export async function setWishlistProductState(
+  locale: Locale,
+  productId: number,
+  wishlisted: boolean,
+): Promise<void> {
+  const accessToken = await requireAccessToken();
+  const response = wishlisted
+    ? await addWishlistProductDto(accessToken, locale, productId)
+    : await removeWishlistProductDto(accessToken, locale, productId);
+  assertSuccessfulResponse(response);
+}
 
-  assertWishlistSourceAvailable();
-  const entries = await readMockWishlistEntries(user);
-
-  return {
-    authenticated: true,
-    productIds: entries.map((entry) => entry.productId),
-  };
+export async function getWishlistCount(
+  locale: Locale,
+): Promise<WishlistCount> {
+  const accessToken = await requireAccessToken();
+  const response = await getWishlistCountDto(accessToken, locale);
+  assertSuccessfulResponse(response);
+  return response.data;
 }
