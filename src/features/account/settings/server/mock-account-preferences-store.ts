@@ -3,7 +3,6 @@ import "server-only";
 import { cookies } from "next/headers";
 
 import { serverEnv } from "@/config/server-env";
-import { mockAuthenticatedUser } from "@/features/auth/server/mock-auth-user";
 import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user.types";
 import type { AccountPreferences } from "@/features/account/settings/types/account-preferences.types";
 
@@ -19,19 +18,9 @@ type StoredAccountPreferences = AccountPreferences & {
   customerId: string;
 };
 
-function assertMockPreferencesOwner(user: AuthenticatedUser) {
-  if (
-    !serverEnv.useMockApi ||
-    !serverEnv.useMockAuth ||
-    process.env.NODE_ENV === "production"
-  ) {
+function assertMockPreferencesAvailable() {
+  if (!serverEnv.useMockApi || process.env.NODE_ENV === "production") {
     throw new Error("The mock Account Preferences store is unavailable.");
-  }
-
-  if (user.id !== mockAuthenticatedUser.id) {
-    throw new Error(
-      "The mock Account Preferences store supports one configured customer.",
-    );
   }
 }
 
@@ -72,7 +61,7 @@ function parseStoredPreferences(
 export async function readMockAccountPreferences(
   user: AuthenticatedUser,
 ): Promise<AccountPreferences> {
-  assertMockPreferencesOwner(user);
+  assertMockPreferencesAvailable();
 
   const cookieStore = await cookies();
   const storedPreferences = parseStoredPreferences(
@@ -93,7 +82,7 @@ export async function writeMockAccountPreferences(
   user: AuthenticatedUser,
   preferences: AccountPreferences,
 ): Promise<void> {
-  assertMockPreferencesOwner(user);
+  assertMockPreferencesAvailable();
 
   const storedPreferences: StoredAccountPreferences = {
     customerId: user.id,

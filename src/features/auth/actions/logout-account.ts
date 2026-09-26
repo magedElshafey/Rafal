@@ -1,10 +1,11 @@
 "use server";
 
 import { hasLocale } from "next-intl";
-import { cookies } from "next/headers";
 
-import { serverEnv } from "@/config/server-env";
-import { MOCK_AUTH_GUEST_COOKIE_NAME } from "@/features/auth/server/auth-boundary";
+import {
+  clearAccessToken,
+  clearPendingOtpEmail,
+} from "@/features/auth/server/auth-session";
 import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
@@ -14,15 +15,8 @@ export async function logoutAccount(formData: FormData): Promise<never> {
     throw new Error("Invalid logout locale.");
   }
 
-  if (serverEnv.useMockAuth) {
-    const cookieStore = await cookies();
-    cookieStore.set(MOCK_AUTH_GUEST_COOKIE_NAME, "1", {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
-  }
+  await clearAccessToken();
+  await clearPendingOtpEmail();
 
   return redirect({ href: "/login", locale });
 }

@@ -3,7 +3,6 @@ import "server-only";
 import { cookies } from "next/headers";
 
 import { serverEnv } from "@/config/server-env";
-import { mockAuthenticatedUser } from "@/features/auth/server/mock-auth-user";
 import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user.types";
 import {
   isKnownProductId,
@@ -15,17 +14,9 @@ const MOCK_WISHLIST_COOKIE_NAME = "rafal_mock_wishlist";
 const defaultEntries: readonly WishlistEntry[] =
   mockCatalogProductIds.slice(0, 4).map((productId) => ({ productId }));
 
-function assertMockWishlistOwner(user: AuthenticatedUser) {
-  if (
-    !serverEnv.useMockApi ||
-    !serverEnv.useMockAuth ||
-    process.env.NODE_ENV === "production"
-  ) {
+function assertMockWishlistAvailable() {
+  if (!serverEnv.useMockApi || process.env.NODE_ENV === "production") {
     throw new Error("The mock Wishlist store is unavailable.");
-  }
-
-  if (user.id !== mockAuthenticatedUser.id) {
-    throw new Error("The mock Wishlist store supports one configured customer.");
   }
 }
 
@@ -55,7 +46,8 @@ function parseEntries(value: string | undefined): WishlistEntry[] | null {
 export async function readMockWishlistEntries(
   user: AuthenticatedUser,
 ): Promise<WishlistEntry[]> {
-  assertMockWishlistOwner(user);
+  assertMockWishlistAvailable();
+  void user;
 
   const cookieStore = await cookies();
   const storedEntries = parseEntries(
@@ -69,7 +61,8 @@ export async function writeMockWishlistEntries(
   user: AuthenticatedUser,
   entries: readonly WishlistEntry[],
 ): Promise<void> {
-  assertMockWishlistOwner(user);
+  assertMockWishlistAvailable();
+  void user;
 
   const productIds = Array.from(
     new Set(
