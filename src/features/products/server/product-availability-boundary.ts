@@ -7,10 +7,10 @@ import type { ProductVariant } from "@/features/products/types/product-details.t
 
 type ResolveVariantAvailabilityInput =
   | {
-      hasAuthoritativeStockContext: boolean;
       maxOrderQuantity: number;
       source: "laravel";
       variants: readonly ProductVariant[];
+      warehouseId: number;
     }
   | {
       locationId: string | null;
@@ -29,14 +29,23 @@ export async function getResolvedVariantAvailability(
 ): Promise<VariantAvailabilityById> {
   if (input.source === "laravel") {
     return Object.fromEntries(
-      input.variants.map((variant) => [
-        variant.id,
-        !input.hasAuthoritativeStockContext
-          ? { status: "purchase_unavailable" as const }
-          : variant.inStock
-            ? { status: "available" as const, maxOrderQuantity: input.maxOrderQuantity }
-            : { status: "out_of_stock" as const },
-      ]),
+      input.variants.map((variant) => {
+        const stock = variant.warehouseStocks.find(
+          (candidate) => candidate.warehouseId === input.warehouseId,
+        );
+
+        return [
+          variant.id,
+          !stock
+            ? { status: "unavailable_at_location" as const }
+            : stock.quantity > 0
+              ? {
+                  status: "available" as const,
+                  maxOrderQuantity: input.maxOrderQuantity,
+                }
+              : { status: "out_of_stock" as const },
+        ];
+      }),
     );
   }
 

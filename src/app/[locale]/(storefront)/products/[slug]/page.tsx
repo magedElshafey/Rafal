@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { serverEnv } from "@/config/server-env";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
+import { resolveLocationByCityId } from "@/features/location/api/location-api.server";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { getCanonicalBackendCityId } from "@/features/location/types";
 import { ComplementaryProducts } from "@/features/products/components/product-details/complementary-products";
@@ -61,9 +62,14 @@ function createShareDescription(html: string): string {
 async function getProductPageData(slug: string, locale: Locale) {
   const city = await resolveCurrentLocation(locale);
   const cityId = getCanonicalBackendCityId(city) ?? undefined;
-  const readResult = await getProductDetailsBySlug(slug, locale, cityId);
+  const [readResult, resolvedLocation] = await Promise.all([
+    getProductDetailsBySlug(slug, locale, cityId),
+    serverEnv.useMockApi || cityId === undefined
+      ? Promise.resolve(null)
+      : resolveLocationByCityId(cityId, locale),
+  ]);
 
-  return { city, cityId, readResult };
+  return { city, cityId, readResult, resolvedLocation };
 }
 
 export async function generateMetadata({
@@ -112,7 +118,12 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const [{ city, cityId, readResult }, t, listingT, publicSettings] =
+  const [
+    { city, cityId, readResult, resolvedLocation },
+    t,
+    listingT,
+    publicSettings,
+  ] =
     await Promise.all([
       getProductPageData(slug, locale),
       getTranslations({
@@ -125,16 +136,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
       }),
       getPublicSettings(),
     ]);
-  const { hasAuthoritativeStockContext, product, source } = readResult;
+  const { product, source } = readResult;
 
   if (!product) notFound();
 
   assertProductConfiguration(product);
-  const allowUnverifiedPurchase =
-    process.env.NODE_ENV === "development" &&
-    source === "laravel" &&
-    cityId !== undefined &&
-    hasAuthoritativeStockContext === false;
   const usesMockProductSource = source === "mock";
   const [
     availabilityByVariantId,
@@ -143,12 +149,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
     reviewReadResult,
   ] = await Promise.all([
     source === "laravel"
-      ? getResolvedVariantAvailability({
-          hasAuthoritativeStockContext,
-          maxOrderQuantity: publicSettings.maxCartItemQuantity,
-          source,
-          variants: product.variants,
-        })
+      ? resolvedLocation
+        ? getResolvedVariantAvailability({
+            maxOrderQuantity: publicSettings.maxCartItemQuantity,
+            source,
+            variants: product.variants,
+            warehouseId: resolvedLocation.warehouseId,
+          })
+        : Promise.resolve(
+            Object.fromEntries(
+              product.variants.map((variant) => [
+                variant.id,
+                { status: "purchase_unavailable" as const },
+              ]),
+            ),
+          )
       : getResolvedVariantAvailability({
           locationId: null,
           source,
@@ -229,7 +244,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductPurchaseExperience
         key={`${product.id}:${cityId ?? "no-city"}`}
-        allowUnverifiedPurchase={allowUnverifiedPurchase}
         availabilityByVariantId={availabilityByVariantId}
         bnplInformation={
           <ProductBnplInformation
@@ -240,9 +254,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         }
         locale={locale}
-        locationName={
-          hasAuthoritativeStockContext ? (city?.name ?? null) : null
-        }
+        locationName={resolvedLocation?.city.name ?? city?.name ?? null}
         product={purchaseProduct}
         renderedAt={renderedAt}
         shareActions={

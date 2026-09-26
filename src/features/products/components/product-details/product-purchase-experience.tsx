@@ -88,7 +88,6 @@ export type ProductPurchaseExperienceCopy = {
 };
 
 type ProductPurchaseExperienceProps = {
-  allowUnverifiedPurchase: boolean;
   availabilityByVariantId: VariantAvailabilityById;
   bnplInformation: ReactNode;
   copy: ProductPurchaseExperienceCopy;
@@ -163,7 +162,6 @@ function getAddToCartErrorMessage(
 }
 
 export function ProductPurchaseExperience({
-  allowUnverifiedPurchase,
   availabilityByVariantId,
   bnplInformation,
   copy,
@@ -229,16 +227,15 @@ export function ProductPurchaseExperience({
     ? personalizationValidation?.valid === true
     : true;
   const hasVerifiedAvailability = availability?.status === "available";
-  const canSubmitUnverifiedPurchase =
-    allowUnverifiedPurchase &&
-    availability?.status === "purchase_unavailable" &&
-    quantity === 1;
+  const productIsAvailable = Object.values(availabilityByVariantId).some(
+    (variantAvailability) => variantAvailability.status === "available",
+  );
   const canAddToCart =
+    productIsAvailable &&
     selectedVariant !== null &&
     quantity >= 1 &&
-    ((hasVerifiedAvailability &&
-      quantity <= availability.maxOrderQuantity) ||
-      canSubmitUnverifiedPurchase) &&
+    hasVerifiedAvailability &&
+    quantity <= availability.maxOrderQuantity &&
     personalizationIsValid;
   const configurationFingerprint = JSON.stringify([
     selectedVariant?.id,

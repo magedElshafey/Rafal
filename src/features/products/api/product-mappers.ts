@@ -72,6 +72,10 @@ function mapVariant(
       product.discount_end_at,
     ),
     imageIds,
+    warehouseStocks: variant.warehouse_stocks.map((stock) => ({
+      warehouseId: stock.warehouse_id,
+      quantity: stock.quantity,
+    })),
   };
 }
 

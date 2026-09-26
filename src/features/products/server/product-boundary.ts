@@ -16,19 +16,9 @@ import { ApiError } from "@/lib/api/api-error";
 export type ProductDetailsSource = "laravel" | "mock";
 
 export type ProductDetailsReadResult = {
-  hasAuthoritativeStockContext: boolean;
   product: ProductDetails | null;
   source: ProductDetailsSource;
 };
-
-function hasAuthoritativeStockContext(cityId?: number): boolean {
-  if (cityId === undefined) return false;
-
-  // The current endpoint accepts city_id but still returns the same unscoped
-  // warehouse_stocks payload for every city. Keep purchase availability
-  // unresolved until Laravel returns a city-authoritative stock context.
-  return false;
-}
 
 function assertMockProductSourceAvailable() {
   if (!serverEnv.useMockApi || process.env.NODE_ENV === "production") {
@@ -44,7 +34,6 @@ export const getProductDetailsBySlug = cache(async function getProductDetailsByS
   if (serverEnv.useMockApi) {
     assertMockProductSourceAvailable();
     return {
-      hasAuthoritativeStockContext: false,
       product: getMockProductDetailsBySlug(slug, locale),
       source: "mock",
     };
@@ -59,14 +48,12 @@ export const getProductDetailsBySlug = cache(async function getProductDetailsByS
     }
 
     return {
-      hasAuthoritativeStockContext: hasAuthoritativeStockContext(cityId),
       product,
       source: "laravel",
     };
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return {
-        hasAuthoritativeStockContext: hasAuthoritativeStockContext(cityId),
         product: null,
         source: "laravel",
       };

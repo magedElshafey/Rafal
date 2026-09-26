@@ -47,6 +47,11 @@ export type ProductVariantOptionValue = {
   valueId: string;
 };
 
+export type ProductWarehouseStock = {
+  warehouseId: number;
+  quantity: number;
+};
+
 export type ProductVariant = {
   id: string;
   sku: string;
@@ -55,6 +60,7 @@ export type ProductVariant = {
   optionValues: readonly ProductVariantOptionValue[];
   pricing: ProductVariantPricing;
   imageIds: readonly string[];
+  warehouseStocks: readonly ProductWarehouseStock[];
 };
 
 export type ProductRatingSummary = {
