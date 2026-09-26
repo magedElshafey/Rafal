@@ -25,6 +25,10 @@ function string(value: unknown, path: string): string {
   return value;
 }
 
+function optionalString(value: unknown, path: string): string | undefined {
+  return value === undefined ? undefined : string(value, path);
+}
+
 function nullableString(value: unknown, path: string): string | null {
   return value === null ? null : string(value, path);
 }
@@ -63,6 +67,10 @@ function array(value: unknown, path: string): unknown[] {
 
 function attributes(value: unknown, path: string): Readonly<Record<string, CartAttributeDto>> | null {
   if (value === null) return null;
+  if (Array.isArray(value)) {
+    if (value.length === 0) return {};
+    throw new CartContractError(path, "an object, null, or an empty array");
+  }
   const source = record(value, path);
   return Object.fromEntries(
     Object.entries(source).map(([key, item]) => {
@@ -138,7 +146,7 @@ function parseTotalsLine(value: unknown, path: string): CartTotalsLineDto {
 
 function parseData(value: unknown, path: string): CartDataDto {
   const source = record(value, path);
-  const city = source.city === null ? null : record(source.city, `${path}.city`);
+  const city = source.city === undefined ? undefined : record(source.city, `${path}.city`);
   const totals = record(source.totals, `${path}.totals`);
   const freeShipping = record(totals.free_shipping, `${path}.totals.free_shipping`);
   const vat = record(totals.vat, `${path}.totals.vat`);
@@ -146,10 +154,10 @@ function parseData(value: unknown, path: string): CartDataDto {
   const gift = record(source.gift, `${path}.gift`);
 
   return {
-    token: nullableString(source.token, `${path}.token`),
+    token: optionalString(source.token, `${path}.token`),
     city: city
       ? { id: positiveInteger(city.id, `${path}.city.id`), name: string(city.name, `${path}.city.name`) }
-      : null,
+      : undefined,
     items_count: nonNegativeInteger(source.items_count, `${path}.items_count`),
     lines_count: nonNegativeInteger(source.lines_count, `${path}.lines_count`),
     items: array(source.items, `${path}.items`).map((item, index) => parseLine(item, `${path}.items[${index}]`)),
@@ -165,14 +173,20 @@ function parseData(value: unknown, path: string): CartDataDto {
       shipping_fee: totals.shipping_fee === null ? null : decimalString(totals.shipping_fee, `${path}.totals.shipping_fee`),
       free_shipping: {
         enabled: boolean(freeShipping.enabled, `${path}.totals.free_shipping.enabled`),
-        threshold: decimalString(freeShipping.threshold, `${path}.totals.free_shipping.threshold`),
+        threshold:
+          freeShipping.threshold === null
+            ? null
+            : decimalString(freeShipping.threshold, `${path}.totals.free_shipping.threshold`),
         qualifies: boolean(freeShipping.qualifies, `${path}.totals.free_shipping.qualifies`),
-        remaining: decimalString(freeShipping.remaining, `${path}.totals.free_shipping.remaining`),
+        remaining:
+          freeShipping.remaining === null
+            ? null
+            : decimalString(freeShipping.remaining, `${path}.totals.free_shipping.remaining`),
       },
       total: decimalString(totals.total, `${path}.totals.total`),
       vat: {
         rate: decimalString(vat.rate, `${path}.totals.vat.rate`),
-        included_amount: decimalString(vat.included_amount, `${path}.totals.vat.included_amount`),
+        amount: decimalString(vat.amount, `${path}.totals.vat.amount`),
       },
       currency: string(totals.currency, `${path}.totals.currency`),
     },

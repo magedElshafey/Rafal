@@ -39,10 +39,9 @@ type ProductPageProps = {
 const SHARE_DESCRIPTION_MAX_LENGTH = 140;
 
 function createShareDescription(html: string): string {
-  const plainText = sanitizeHtmlToText(
-    html,
-    "product-rich-text",
-  ).replace(/\s+/g, " ").trim();
+  const plainText = sanitizeHtmlToText(html, "product-rich-text")
+    .replace(/\s+/g, " ")
+    .trim();
   if (plainText.length <= SHARE_DESCRIPTION_MAX_LENGTH) return plainText;
 
   const candidate = plainText.slice(0, SHARE_DESCRIPTION_MAX_LENGTH + 1);
@@ -62,11 +61,7 @@ function createShareDescription(html: string): string {
 async function getProductPageData(slug: string, locale: Locale) {
   const city = await resolveCurrentLocation(locale);
   const cityId = getCanonicalBackendCityId(city) ?? undefined;
-  const readResult = await getProductDetailsBySlug(
-    slug,
-    locale,
-    cityId,
-  );
+  const readResult = await getProductDetailsBySlug(slug, locale, cityId);
 
   return { city, cityId, readResult };
 }
@@ -135,6 +130,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   assertProductConfiguration(product);
+  const allowUnverifiedPurchase =
+    process.env.NODE_ENV === "development" &&
+    source === "laravel" &&
+    cityId !== undefined &&
+    hasAuthoritativeStockContext === false;
   const usesMockProductSource = source === "mock";
   const [
     availabilityByVariantId,
@@ -207,7 +207,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <Container className="main-content-spacing lg:px-[3.75rem]">
+    <Container className="main-content-spacing lg:px-15">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -229,6 +229,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductPurchaseExperience
         key={`${product.id}:${cityId ?? "no-city"}`}
+        allowUnverifiedPurchase={allowUnverifiedPurchase}
         availabilityByVariantId={availabilityByVariantId}
         bnplInformation={
           <ProductBnplInformation
@@ -260,12 +261,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         copy={{
           gallery: {
             closeLightbox: t("gallery.closeLightbox"),
-            imagePositionTemplate: t.raw(
-              "gallery.imagePosition",
-            ) as string,
-            lightboxTitleTemplate: t.raw(
-              "gallery.lightboxTitle",
-            ) as string,
+            imagePositionTemplate: t.raw("gallery.imagePosition") as string,
+            lightboxTitleTemplate: t.raw("gallery.lightboxTitle") as string,
             nextImage: t("gallery.nextImage"),
             openImageTemplate: t.raw("gallery.openImage") as string,
             previousImage: t("gallery.previousImage"),
@@ -435,19 +432,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               submission: {
                 commentLabel: t("reviews.submission.commentLabel"),
                 commentOptional: t("reviews.submission.commentOptional"),
-                commentPlaceholder: t(
-                  "reviews.submission.commentPlaceholder",
-                ),
+                commentPlaceholder: t("reviews.submission.commentPlaceholder"),
                 errors: {
-                  "auth-required": t(
-                    "reviews.submission.errors.authRequired",
-                  ),
-                  "invalid-input": t(
-                    "reviews.submission.errors.invalidInput",
-                  ),
-                  "not-eligible": t(
-                    "reviews.submission.errors.notEligible",
-                  ),
+                  "auth-required": t("reviews.submission.errors.authRequired"),
+                  "invalid-input": t("reviews.submission.errors.invalidInput"),
+                  "not-eligible": t("reviews.submission.errors.notEligible"),
                   "product-unavailable": t(
                     "reviews.submission.errors.productUnavailable",
                   ),

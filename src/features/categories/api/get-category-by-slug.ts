@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Locale } from "next-intl";
+
 import { serverEnv } from "@/config/server-env";
 import { mapCategoryDto } from "@/features/categories/api/category-mapper";
 import type {
@@ -9,7 +11,10 @@ import type {
 import { ApiError } from "@/lib/api/api-error";
 import { serverApi } from "@/lib/api/server-api";
 
-export async function getCategoryBySlug(slug: string): Promise<Category> {
+export async function getCategoryBySlug(
+  slug: string,
+  locale: Locale,
+): Promise<Category> {
   if (serverEnv.useMockApi) {
     const { categoriesFixture } = await import("./category-fixture");
     const category = categoriesFixture.data.find((item) => item.slug === slug);
@@ -23,6 +28,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category> {
 
   const response = await serverApi.request<CategoryResponseDto>({
     path: `/categories/${encodeURIComponent(slug)}`,
+    headers: { "Accept-Language": locale },
   });
 
   return mapCategoryDto(response.data);

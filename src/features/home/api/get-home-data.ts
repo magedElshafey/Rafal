@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Locale } from "next-intl";
+
 import { mapCategoryDto } from "@/features/categories/api/category-mapper";
 import type {
   Category,
@@ -267,7 +269,10 @@ function mapProducts(
   });
 }
 
-export async function getHomeData(cityId: number | null): Promise<HomeData> {
+export async function getHomeData(
+  cityId: number | null,
+  locale: Locale,
+): Promise<HomeData> {
   if (cityId !== null && (!Number.isSafeInteger(cityId) || cityId <= 0)) {
     throw new TypeError("Invalid Home city ID");
   }
@@ -275,6 +280,7 @@ export async function getHomeData(cityId: number | null): Promise<HomeData> {
   const response = parseHomeResponse(
     await serverApi.request<unknown>({
       path: "/home",
+      headers: { "Accept-Language": locale },
       query: cityId === null ? undefined : { city_id: cityId },
     }),
   );

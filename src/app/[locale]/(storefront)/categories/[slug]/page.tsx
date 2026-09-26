@@ -32,7 +32,7 @@ export default async function CategoryPage({
 
   let category;
   try {
-    category = await getCategoryBySlug(slug);
+    category = await getCategoryBySlug(slug, locale);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
@@ -55,6 +55,7 @@ export default async function CategoryPage({
         categoryId: selectedChild?.id ?? category.id,
         cityId: city?.id ?? null,
         filters,
+        locale,
         page: 1,
         sort,
       })

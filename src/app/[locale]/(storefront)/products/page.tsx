@@ -42,6 +42,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     ? await getCatalogueProducts({
         cityId: city?.id ?? null,
         filters,
+        locale,
         page: 1,
         sort,
       })

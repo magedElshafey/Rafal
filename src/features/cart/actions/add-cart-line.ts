@@ -3,6 +3,7 @@
 import { hasLocale } from "next-intl";
 
 import { mapCartActionError } from "@/features/cart/actions/cart-action-errors";
+import { createCartAddDiagnostics } from "@/features/cart/server/cart-add-diagnostics";
 import { addLineToCurrentCart } from "@/features/cart/server/cart-boundary";
 import type {
   AddCartLineInput,
@@ -106,9 +107,12 @@ export async function addCartLine(
     return { ok: false, error: { code: "invalid-input" } };
   }
 
+  const diagnostics = createCartAddDiagnostics();
+
   try {
-    return await addLineToCurrentCart(parsedInput, locale);
+    return await addLineToCurrentCart(parsedInput, locale, diagnostics);
   } catch (error) {
+    diagnostics.failure(error);
     return { ok: false, error: mapCartActionError(error) };
   }
 }

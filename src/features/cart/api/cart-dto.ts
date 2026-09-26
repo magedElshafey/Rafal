@@ -1,5 +1,6 @@
 export type CartAttributeDto = string | number | boolean;
 export type CartImageDto = { id: number; url: string };
+export type CartCityDto = { id: number; name: string };
 
 export type CartLineDto = {
   id: number;
@@ -37,8 +38,8 @@ export type CartTotalsLineDto = {
 };
 
 export type CartDataDto = {
-  token: string | null;
-  city: { id: number; name: string } | null;
+  token: string | undefined;
+  city: CartCityDto | undefined;
   items_count: number;
   lines_count: number;
   items: readonly CartLineDto[];
@@ -54,12 +55,12 @@ export type CartDataDto = {
     shipping_fee: string | null;
     free_shipping: {
       enabled: boolean;
-      threshold: string;
+      threshold: string | null;
       qualifies: boolean;
-      remaining: string;
+      remaining: string | null;
     };
     total: string;
-    vat: { rate: string; included_amount: string };
+    vat: { rate: string; amount: string };
     currency: string;
   };
   coupon: {

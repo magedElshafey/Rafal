@@ -38,7 +38,7 @@ export default async function CategoriesPage() {
   let firstPage: PaginatedCategories;
 
   try {
-    firstPage = await getCategoriesPage();
+    firstPage = await getCategoriesPage(locale);
   } catch {
     return (
       <Container className="main-content-spacing">

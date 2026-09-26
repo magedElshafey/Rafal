@@ -13,6 +13,7 @@ import {
 } from "@/features/cart/api/cart-api.server";
 import { mapCartData } from "@/features/cart/api/cart-mapper";
 import type { CartResponseDto } from "@/features/cart/api/cart-dto";
+import type { CartAddDiagnostics } from "@/features/cart/server/cart-add-diagnostics";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import {
   createMockGuestCartSessionId,
@@ -39,8 +40,7 @@ import type {
   CartSnapshot,
 } from "@/features/cart/types/cart.types";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
-import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
-import { getCanonicalBackendCityId } from "@/features/location/types";
+import { readGuestCityId } from "@/features/location/server/guest-city-session";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsById } from "@/features/products/server/product-boundary";
 import type { ProductDetails, ProductVariant } from "@/features/products/types/product-details.types";
@@ -204,10 +204,16 @@ function assertSuccessfulResponse(response: CartResponseDto): CartResponseDto {
   return response;
 }
 
-async function syncGuestToken(identity: CartTransportIdentity, response: CartResponseDto) {
+async function syncGuestToken(
+  identity: CartTransportIdentity,
+  response: CartResponseDto,
+  diagnostics?: CartAddDiagnostics,
+) {
   if (identity.kind !== "guest" || !response.data.token) return;
   if (!identity.token) {
+    diagnostics?.stage("token-persist-start");
     await persistGuestCartToken(response.data.token);
+    diagnostics?.stage("token-persist-complete");
   } else if (response.data.token !== identity.token) {
     throw new Error("The Cart API unexpectedly rotated the guest token.");
   }
@@ -228,14 +234,23 @@ export async function getCurrentCart(locale: Locale): Promise<CartSnapshot> {
   return mapCartData(assertSuccessfulResponse(await getCartDto(identity, locale)).data);
 }
 
-export async function addLineToCurrentCart(input: AddCartLineInput, locale: Locale): Promise<AddCartLineResult> {
+export async function addLineToCurrentCart(
+  input: AddCartLineInput,
+  locale: Locale,
+  diagnostics?: CartAddDiagnostics,
+): Promise<AddCartLineResult> {
   if (serverEnv.useMockApi) return addMockLine(input, locale);
-  const location = await resolveCurrentLocation(locale);
-  const cityId = getCanonicalBackendCityId(location);
+  const cityId = await readGuestCityId();
+  diagnostics?.stage("city", { cityIdPresent: cityId !== null });
   if (!cityId) return { ok: false, error: { code: "location-required" } };
   const variantId = positiveBackendId(input.variantId);
   if (!variantId) return { ok: false, error: { code: "variant-invalid" } };
+  diagnostics?.stage("identity-start");
   const identity = await resolveCartTransportIdentity();
+  diagnostics?.stage("identity", {
+    kind: identity.kind,
+    hasExistingGuestToken: identity.kind === "guest" && identity.token !== null,
+  });
   const response = assertSuccessfulResponse(await addCartItemDto(identity, locale, {
     product_variant_id: variantId,
     city_id: cityId,
@@ -246,9 +261,16 @@ export async function addLineToCurrentCart(input: AddCartLineInput, locale: Loca
           personalization_language: input.personalization.language === "arabic" ? "ar" : "en",
         }
       : {}),
-  }));
-  await syncGuestToken(identity, response);
-  return { ok: true, cart: mapCartData(response.data) };
+  }, diagnostics));
+  if (identity.kind === 'guest' && !identity.token && !response.data.token) {
+    throw new Error(
+      'Invalid Cart API payload: a newly created guest Cart must return a non-empty data.token.',
+    );
+  }
+  await syncGuestToken(identity, response, diagnostics);
+  const cart = mapCartData(response.data);
+  diagnostics?.stage("success");
+  return { ok: true, cart };
 }
 
 async function addMockLine(input: AddCartLineInput, locale: Locale): Promise<AddCartLineResult> {

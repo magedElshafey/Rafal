@@ -16,7 +16,7 @@ export default async function CartRoute() {
     getPublicSettings(),
     getTranslations({ locale, namespace: "Common.cartPage" }),
   ]);
-
+console.log('data from current cart')
   return (
     <Container className="main-content-spacing pb-12 lg:px-[3.75rem]">
       <Breadcrumbs className="mb-6" label={t("breadcrumbs.label")} items={[{ label: t("breadcrumbs.home"), href: "/" }, { label: t("title") }]} />

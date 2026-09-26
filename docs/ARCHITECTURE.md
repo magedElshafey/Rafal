@@ -346,7 +346,8 @@ Runtime-specific values are injected by `server-api.ts` or `client-api.ts`.
 
 The standard locale request header is `Accept-Language`.
 
-- Server API configuration resolves locale through the established `next-intl` server API such as `getLocale()`.
+- Server feature boundaries resolve or receive locale through the established `next-intl` server API and pass `Accept-Language` explicitly when an endpoint needs it.
+- `server-api.ts` must remain independent of route context and must not resolve locale implicitly.
 - Client code resolves locale through `useLocale()` and passes that locale into the client API factory/configuration.
 - Do not hard-code `ar` inside the shared HTTP client.
 - Do not create feature-specific locale unions; supported locales have one source of truth in the i18n configuration.

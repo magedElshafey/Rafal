@@ -29,7 +29,7 @@ function mapPersonalization(value: unknown | null): CartLinePersonalization | nu
 export function mapCartData(data: CartDataDto): CartSnapshot {
   const currency = data.totals.currency;
   return {
-    city: data.city,
+    city: data.city ?? null,
     lines: data.items.map((line) => ({
       id: String(line.id),
       product: {
@@ -66,14 +66,20 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
       shippingFee: data.totals.shipping_fee === null ? null : money(data.totals.shipping_fee, currency),
       freeShipping: {
         enabled: data.totals.free_shipping.enabled,
-        threshold: money(data.totals.free_shipping.threshold, currency),
+        threshold:
+          data.totals.free_shipping.threshold === null
+            ? null
+            : money(data.totals.free_shipping.threshold, currency),
         qualifies: data.totals.free_shipping.qualifies,
-        remaining: money(data.totals.free_shipping.remaining, currency),
+        remaining:
+          data.totals.free_shipping.remaining === null
+            ? null
+            : money(data.totals.free_shipping.remaining, currency),
       },
       total: money(data.totals.total, currency),
       vat: {
         rate: data.totals.vat.rate,
-        includedAmount: money(data.totals.vat.included_amount, currency),
+        includedAmount: money(data.totals.vat.amount, currency),
       },
     },
     coupon: data.coupon

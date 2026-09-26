@@ -51,7 +51,7 @@ export const getProductDetailsBySlug = cache(async function getProductDetailsByS
   }
 
   try {
-    const response = await getProductBySlugDto({ cityId, slug });
+    const response = await getProductBySlugDto({ cityId, locale, slug });
     const product = mapProductDetailsResponse(response);
 
     if (!product) {

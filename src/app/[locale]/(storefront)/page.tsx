@@ -21,7 +21,7 @@ import { resolveCurrentLocation } from "@/features/location/server/resolve-curre
 const HomePage = async () => {
   const locale = await getLocale();
   const city = await resolveCurrentLocation(locale);
-  const home = await getHomeData(city?.id ?? null);
+  const home = await getHomeData(city?.id ?? null, locale);
 
   return (
     <div className="main-content-spacing section-spacing">

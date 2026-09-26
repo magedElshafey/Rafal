@@ -52,9 +52,9 @@ export type CartSummary = {
   shippingFee: CartMoney | null;
   freeShipping: {
     enabled: boolean;
-    threshold: CartMoney;
+    threshold: CartMoney | null;
     qualifies: boolean;
-    remaining: CartMoney;
+    remaining: CartMoney | null;
   };
   total: CartMoney;
   vat: { rate: string; includedAmount: CartMoney };

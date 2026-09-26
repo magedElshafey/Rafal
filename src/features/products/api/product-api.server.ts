@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Locale } from "next-intl";
+
 import type {
   ProductDetailsResponseDto,
   ProductListResponseDto,
@@ -15,12 +17,14 @@ import {
 import { serverApi } from "@/lib/api/server-api";
 
 export type GetProductsRequest = ProductListQueryInput & {
+  locale: Locale;
   signal?: AbortSignal;
 };
 
 export async function getProductsDto({
   categoryId,
   cityId,
+  locale,
   maxPrice,
   minPrice,
   newArrival,
@@ -31,9 +35,10 @@ export async function getProductsDto({
   search,
   signal,
   sort,
-}: GetProductsRequest = {}): Promise<ProductListResponseDto> {
+}: GetProductsRequest): Promise<ProductListResponseDto> {
   const payload = await serverApi.request<unknown>({
     path: "/products",
+    headers: { "Accept-Language": locale },
     query: createProductListQuery({
       categoryId,
       cityId,
@@ -55,15 +60,18 @@ export async function getProductsDto({
 
 export async function getProductBySlugDto({
   cityId,
+  locale,
   signal,
   slug,
 }: {
   cityId?: number;
+  locale: Locale;
   signal?: AbortSignal;
   slug: string;
 }): Promise<ProductDetailsResponseDto> {
   const payload = await serverApi.request<unknown>({
     path: `/products/${encodeURIComponent(slug)}`,
+    headers: { "Accept-Language": locale },
     query: { city_id: cityId },
     signal,
   });

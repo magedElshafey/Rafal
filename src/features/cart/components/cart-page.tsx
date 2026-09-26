@@ -220,7 +220,8 @@ export function CartPage({ copy, initialCart, locale, maxQuantity }: CartPagePro
           <SummaryRow label={copy.vatIncluded} value={formatMoney(locale, cart.summary.vat.includedAmount)} />
         </dl>
 
-        {cart.summary.freeShipping.enabled ? (
+        {cart.summary.freeShipping.enabled &&
+        cart.summary.freeShipping.remaining !== null ? (
           <p className="mt-4 rounded-md bg-gold-50 px-3 py-2 type-body-sm text-gold-700">
             {cart.summary.freeShipping.qualifies
               ? copy.freeShippingQualified
