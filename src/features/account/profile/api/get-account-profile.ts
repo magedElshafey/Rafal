@@ -10,6 +10,6 @@ export async function getAccountProfile(): Promise<AccountProfile> {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    phone: "0501234567",
+    phone: user.phone ?? "",
   };
 }

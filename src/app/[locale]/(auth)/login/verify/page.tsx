@@ -4,6 +4,7 @@ import { OtpVerificationScreen } from "@/features/auth/components/OtpVerificatio
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getPendingOtpEmail } from "@/features/auth/server/auth-session";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
+import { getGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { redirect } from "@/i18n/navigation";
 
 type OtpVerificationPageProps = {
@@ -19,15 +20,24 @@ export default async function OtpVerificationPage({
   params,
   searchParams,
 }: OtpVerificationPageProps) {
-  const [{ locale }, query, user, pendingEmail] = await Promise.all([
+  const [{ locale }, query, user, pendingEmail, guestCartToken] =
+    await Promise.all([
     params,
     searchParams,
     getCurrentUser(),
     getPendingOtpEmail(),
+    getGuestCartToken(),
   ]);
   const returnTo = getSafeInternalReturnTo(firstValue(query.returnTo), "/");
 
-  if (user?.profileComplete) redirect({ href: returnTo, locale });
+  if (user?.profileComplete) {
+    redirect({
+      href: guestCartToken
+        ? { pathname: "/auth/cart-recovery", query: { returnTo } }
+        : returnTo,
+      locale,
+    });
+  }
   if (user) {
     redirect({ href: { pathname: "/register", query: { returnTo } }, locale });
   }

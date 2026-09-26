@@ -459,6 +459,10 @@
       "missingPendingEmail": "Your verification session is no longer available. Enter your email to request a new code.",
       "signInRequired": "Sign in again to continue."
     },
+    "cartMerge": {
+      "retry": "Retry cart recovery",
+      "retrying": "Recovering your cart"
+    },
     "errors": {
       "invalidEmail": "Enter a valid email address.",
       "invalidCode": "Enter the 6-digit verification code.",
@@ -466,6 +470,7 @@
       "invalidField": "Check this field and try again.",
       "invalidPhone": "Enter a valid Saudi mobile number.",
       "termsRequired": "You must accept the terms and privacy policy to continue.",
+      "cartMergeUnavailable": "You are signed in, but we could not recover your guest cart. Your cart is safe. Please retry.",
       "serviceUnavailable": "We could not complete this request. Please try again."
     }
   }

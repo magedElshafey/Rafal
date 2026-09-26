@@ -5,6 +5,7 @@ import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { verifyOtp } from "@/features/auth/actions/verify-otp";
+import { usePostAuthCartMerge } from "@/features/auth/hooks/use-post-auth-cart-merge";
 import { useRouter } from "@/i18n/navigation";
 
 import { OtpInput } from "./OtpInput";
@@ -32,6 +33,7 @@ export function OtpVerificationForm({
   const [code, setCode] = useState("");
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
+  const { mergeAndContinue } = usePostAuthCartMerge(locale, returnTo);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,7 +64,7 @@ export function OtpVerificationForm({
         }
 
         if (result.profileComplete) {
-          router.replace(returnTo);
+          await mergeAndContinue();
           return;
         }
         router.replace({ pathname: "/register", query: { returnTo } });

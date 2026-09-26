@@ -106,6 +106,7 @@ export type UpdateCartGiftDto = {
 export const cartContractEndpoints = {
   current: "/cart",
   items: "/cart/items",
+  merge: "/cart/merge",
   coupon: "/cart/coupon",
   coupons: "/cart/coupons",
   gift: "/cart/gift",

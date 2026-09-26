@@ -3,6 +3,7 @@ import type { Locale } from "next-intl";
 import { CompleteProfileScreen } from "@/features/auth/components/CompleteProfileScreen";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
+import { getGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { redirect } from "@/i18n/navigation";
 
 type RegisterPageProps = {
@@ -18,10 +19,11 @@ export default async function RegisterPage({
   params,
   searchParams,
 }: RegisterPageProps) {
-  const [{ locale }, query, user] = await Promise.all([
+  const [{ locale }, query, user, guestCartToken] = await Promise.all([
     params,
     searchParams,
     getCurrentUser(),
+    getGuestCartToken(),
   ]);
   const returnTo = getSafeInternalReturnTo(firstValue(query.returnTo), "/");
 
@@ -34,7 +36,14 @@ export default async function RegisterPage({
       locale,
     });
   }
-  if (user.profileComplete) redirect({ href: returnTo, locale });
+  if (user.profileComplete) {
+    redirect({
+      href: guestCartToken
+        ? { pathname: "/auth/cart-recovery", query: { returnTo } }
+        : returnTo,
+      locale,
+    });
+  }
 
   return <CompleteProfileScreen locale={locale} returnTo={returnTo} />;
 }

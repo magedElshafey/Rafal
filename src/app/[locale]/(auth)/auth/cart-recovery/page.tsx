@@ -1,13 +1,13 @@
 import type { Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-import { EmailEntryScreen } from "@/features/auth/components/EmailEntryScreen";
+import { PostAuthCartMergeRecovery } from "@/features/auth/components/PostAuthCartMergeRecovery";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { getGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { redirect } from "@/i18n/navigation";
 
-type LoginPageProps = {
+type CartRecoveryPageProps = {
   params: Promise<{ locale: Locale }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
@@ -16,10 +16,10 @@ function firstValue(value: string | string[] | undefined): string {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 }
 
-export default async function LoginPage({
+export default async function CartRecoveryPage({
   params,
   searchParams,
-}: LoginPageProps) {
+}: CartRecoveryPageProps) {
   const [{ locale }, query, user, guestCartToken] = await Promise.all([
     params,
     searchParams,
@@ -28,28 +28,33 @@ export default async function LoginPage({
   ]);
   const returnTo = getSafeInternalReturnTo(firstValue(query.returnTo), "/");
 
-  if (user?.profileComplete) {
-    redirect({
-      href: guestCartToken
-        ? { pathname: "/auth/cart-recovery", query: { returnTo } }
-        : returnTo,
+  if (!user) {
+    return redirect({
+      href: {
+        pathname: "/login",
+        query: { returnTo, state: "authentication-required" },
+      },
       locale,
     });
   }
-  if (user) {
-    redirect({ href: { pathname: "/register", query: { returnTo } }, locale });
+  if (!user.profileComplete) {
+    return redirect({
+      href: { pathname: "/register", query: { returnTo } },
+      locale,
+    });
   }
+  if (!guestCartToken) redirect({ href: returnTo, locale });
 
-  const state = firstValue(query.state);
-  const t = await getTranslations("Common.auth.recovery");
-  const notice =
-    state === "missing-pending-email"
-      ? t("missingPendingEmail")
-      : state === "session-expired" || state === "authentication-required"
-        ? t("signInRequired")
-        : undefined;
-
+  const t = await getTranslations("Common.auth");
   return (
-    <EmailEntryScreen locale={locale} notice={notice} returnTo={returnTo} />
+    <PostAuthCartMergeRecovery
+      locale={locale}
+      returnTo={returnTo}
+      copy={{
+        error: t("errors.cartMergeUnavailable"),
+        retry: t("cartMerge.retry"),
+        retrying: t("cartMerge.retrying"),
+      }}
+    />
   );
 }

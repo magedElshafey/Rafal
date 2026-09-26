@@ -8,7 +8,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SaudiFlagIcon } from "@/components/ui/icons";
 import { InputField, PhoneInputField } from "@/components/ui/input";
 import { completeProfile } from "@/features/auth/actions/complete-profile";
+import { usePostAuthCartMerge } from "@/features/auth/hooks/use-post-auth-cart-merge";
 import { useRouter } from "@/i18n/navigation";
+
 
 export type CompleteProfileFormCopy = {
   firstName: string;
@@ -53,6 +55,7 @@ export function CompleteProfileForm({
   const [errors, setErrors] = useState<ProfileErrors>({});
   const [formError, setFormError] = useState<string>();
   const [pending, startTransition] = useTransition();
+  const { mergeAndContinue } = usePostAuthCartMerge(locale, returnTo);
 
   const updateValue = (field: keyof ProfileValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -108,7 +111,7 @@ export function CompleteProfileForm({
           );
           return;
         }
-        router.replace(returnTo);
+        await mergeAndContinue();
       } catch {
         setFormError(copy.unavailable);
       }

@@ -74,3 +74,20 @@ export function removeCartItemDto(identity: CartTransportIdentity, locale: Local
 export function clearCartDto(identity: CartTransportIdentity, locale: Locale) {
   return cartRequest({ identity, locale, path: cartContractEndpoints.current, method: "DELETE" });
 }
+
+export async function mergeGuestCartDto(
+  bearerToken: string,
+  guestCartToken: string,
+  locale: Locale,
+): Promise<CartResponseDto> {
+  const payload = await serverApi.request<unknown>({
+    path: cartContractEndpoints.merge,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "X-Cart-Token": guestCartToken,
+      "Accept-Language": locale,
+    },
+  });
+  return parseCartResponse(payload);
+}

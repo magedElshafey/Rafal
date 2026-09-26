@@ -99,3 +99,11 @@ export type CartMutationResult =
 
 export type AddCartLineError = CartMutationError;
 export type AddCartLineResult = CartMutationResult;
+
+export type CartMergeResult =
+  | { ok: true; merged: false }
+  | { ok: true; merged: true; cart: CartSnapshot }
+  | {
+      ok: false;
+      error: { code: "unauthorized" | "service-unavailable" };
+    };

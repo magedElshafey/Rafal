@@ -5,19 +5,19 @@ import {
   ProfileForm,
   type ProfileFormCopy,
 } from "@/features/account/profile/components/profile-form";
-import { ProfileLoyaltySummary } from "@/features/account/profile/components/profile-loyalty-summary";
-import { getLoyaltyAccount } from "@/features/loyalty/server/loyalty-boundary";
+// import { ProfileLoyaltySummary } from "@/features/account/profile/components/profile-loyalty-summary";
+// import { getLoyaltyAccount } from "@/features/loyalty/server/loyalty-boundary";
 
 export default async function AccountProfilePage() {
-  const [profile, loyaltyAccount, locale, t] = await Promise.all([
+  const [profile, t] = await Promise.all([
     getAccountProfile(),
-    getLoyaltyAccount(),
-    getLocale(),
+    // getLoyaltyAccount(),
+    // getLocale(),
     getTranslations("Account.profile"),
   ]);
-  const numberFormatter = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 0,
-  });
+  // const numberFormatter = new Intl.NumberFormat(locale, {
+  //   maximumFractionDigits: 0,
+  // });
   const formCopy: ProfileFormCopy = {
     title: t("title"),
     firstName: t("fields.firstName"),
@@ -38,12 +38,12 @@ export default async function AccountProfilePage() {
   return (
     <div className="space-y-6">
       <ProfileForm copy={formCopy} profile={profile} />
-      <ProfileLoyaltySummary
+      {/* <ProfileLoyaltySummary
         title={t("loyalty.title", {
           points: numberFormatter.format(loyaltyAccount.pointsBalance),
         })}
         description={t("loyalty.description")}
-      />
+      /> */}
     </div>
   );
 }
