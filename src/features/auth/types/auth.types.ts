@@ -8,6 +8,7 @@ export type CompleteProfileInput = {
   phone: string;
   termsAccepted: boolean;
 };
+export type CompleteProfileField = keyof CompleteProfileInput;
 
 export type AuthActionErrorCode =
   | "invalid-input"
@@ -15,7 +16,10 @@ export type AuthActionErrorCode =
   | "unauthorized"
   | "service-unavailable";
 
-export type AuthActionError = { code: AuthActionErrorCode };
+export type AuthActionError = {
+  code: AuthActionErrorCode;
+  fields?: readonly CompleteProfileField[];
+};
 export type AuthActionFailure = { ok: false; error: AuthActionError };
 export type RequestOtpResult = { ok: true } | AuthActionFailure;
 export type AuthenticatedActionResult =

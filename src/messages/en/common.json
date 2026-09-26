@@ -433,21 +433,14 @@
       "label": "Email address",
       "placeholder": "example@email.com",
       "continue": "Continue",
-      "or": "or",
-      "social": {
-        "apple": "Continue with Apple",
-        "google": "Continue with Google",
-        "facebook": "Continue with Facebook"
-      }
+      "submitting": "Sending verification code"
     },
     "otp": {
       "title": "Verify your email",
-      "description": "We sent a verification code to",
-      "demoEmail": "example@email.com",
+      "description": "Enter the verification code sent to your email address.",
       "label": "6-digit verification code",
-      "resendCountdown": "Resend in",
-      "resend": "Resend code",
-      "verify": "Verify"
+      "verify": "Verify",
+      "submitting": "Verifying code"
     },
     "profile": {
       "title": "Complete your profile",
@@ -459,8 +452,21 @@
       "mobile": "Mobile number",
       "mobilePlaceholder": "5X XXX XXXX",
       "terms": "I agree to the terms and conditions and privacy policy",
-      "marketing": "I would like to receive marketing messages and offers",
-      "createAccount": "Create account"
+      "createAccount": "Create account",
+      "submitting": "Saving profile"
+    },
+    "recovery": {
+      "missingPendingEmail": "Your verification session is no longer available. Enter your email to request a new code.",
+      "signInRequired": "Sign in again to continue."
+    },
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "invalidCode": "Enter the 6-digit verification code.",
+      "required": "This field is required.",
+      "invalidField": "Check this field and try again.",
+      "invalidPhone": "Enter a valid Saudi mobile number.",
+      "termsRequired": "You must accept the terms and privacy policy to continue.",
+      "serviceUnavailable": "We could not complete this request. Please try again."
     }
   }
 }

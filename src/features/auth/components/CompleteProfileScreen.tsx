@@ -1,18 +1,18 @@
 import { getTranslations } from "next-intl/server";
+import type { Locale } from "next-intl";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { SaudiFlagIcon } from "@/components/ui/icons";
-import { InputField, PhoneInputField } from "@/components/ui/input";
+import { CompleteProfileForm } from "./CompleteProfileForm";
 
-import { AuthBackLink } from "./AuthBackLink";
+type CompleteProfileScreenProps = { locale: Locale; returnTo: string };
 
-export async function CompleteProfileScreen() {
+export async function CompleteProfileScreen({
+  locale,
+  returnTo,
+}: CompleteProfileScreenProps) {
   const t = await getTranslations("Common.auth");
 
   return (
     <div className="flex flex-col">
-      <AuthBackLink href="/login/verify" label={t("backToOtp")} />
       <header className="mt-5 mb-5 text-center">
         <h1 className="text-h2 font-bold text-gray-1000">
           {t("profile.title")}
@@ -22,59 +22,26 @@ export async function CompleteProfileScreen() {
         </p>
       </header>
 
-      <form className="flex flex-col gap-4">
-        <InputField
-          id="first-name"
-          name="firstName"
-          autoComplete="given-name"
-          required
-          label={t("profile.firstName")}
-          placeholder={t("profile.firstNamePlaceholder")}
-        />
-        <InputField
-          id="last-name"
-          name="lastName"
-          autoComplete="family-name"
-          required
-          label={t("profile.lastName")}
-          placeholder={t("profile.lastNamePlaceholder")}
-        />
-        <PhoneInputField
-          id="mobile-number"
-          name="phone"
-          autoComplete="tel-national"
-          required
-          label={t("profile.mobile")}
-          countryCode="+966"
-          countryFlag={<SaudiFlagIcon className="size-full" />}
-          placeholder={t("profile.mobilePlaceholder")}
-        />
-
-        <div className="mt-1 flex flex-col gap-3">
-          <div className="flex items-start gap-3">
-            <Checkbox id="accept-terms" name="acceptTerms" required />
-            <label
-              htmlFor="accept-terms"
-              className="cursor-pointer type-body-sm text-gray-600"
-            >
-              {t("profile.terms")}
-            </label>
-          </div>
-          <div className="flex items-start gap-3">
-            <Checkbox id="marketing-opt-in" name="marketingOptIn" />
-            <label
-              htmlFor="marketing-opt-in"
-              className="cursor-pointer type-body-sm text-gray-600"
-            >
-              {t("profile.marketing")}
-            </label>
-          </div>
-        </div>
-
-        <Button type="button" size="lg" className="mt-5 w-full">
-          {t("profile.createAccount")}
-        </Button>
-      </form>
+      <CompleteProfileForm
+        locale={locale}
+        returnTo={returnTo}
+        copy={{
+          firstName: t("profile.firstName"),
+          firstNamePlaceholder: t("profile.firstNamePlaceholder"),
+          lastName: t("profile.lastName"),
+          lastNamePlaceholder: t("profile.lastNamePlaceholder"),
+          phone: t("profile.mobile"),
+          phonePlaceholder: t("profile.mobilePlaceholder"),
+          terms: t("profile.terms"),
+          submit: t("profile.createAccount"),
+          submitting: t("profile.submitting"),
+          required: t("errors.required"),
+          invalidField: t("errors.invalidField"),
+          invalidPhone: t("errors.invalidPhone"),
+          termsRequired: t("errors.termsRequired"),
+          unavailable: t("errors.serviceUnavailable"),
+        }}
+      />
     </div>
   );
 }

@@ -33,7 +33,7 @@ export async function verifyOtp(
   }
 
   try {
-    const response = await verifyOtpDto(locale, { email, code });
+    const response = await verifyOtpDto(locale, { email, otp: code });
     if (!response.success) {
       return { ok: false, error: { code: "service-unavailable" } };
     }

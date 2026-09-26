@@ -20,26 +20,46 @@ function assertMockWishlistAvailable() {
   }
 }
 
-function parseEntries(value: string | undefined): WishlistEntry[] | null {
-  if (value === undefined) return null;
+function parseStoredEntries(
+  value: string | undefined,
+): Readonly<Record<string, WishlistEntry[]>> {
+  if (value === undefined) return {};
 
   try {
-    const productIds: unknown = JSON.parse(value);
+    const candidate: unknown = JSON.parse(value);
     if (
-      !Array.isArray(productIds) ||
-      productIds.length > 100 ||
-      !productIds.every((productId) => typeof productId === "string")
+      typeof candidate !== "object" ||
+      candidate === null ||
+      Array.isArray(candidate)
     ) {
-      return null;
+      return {};
     }
 
-    const validatedProductIds = productIds as string[];
+    const entries = Object.entries(candidate);
+    if (entries.length > 20) return {};
 
-    return Array.from(new Set(validatedProductIds))
-      .filter(isKnownProductId)
-      .map((productId) => ({ productId }));
+    return Object.fromEntries(
+      entries.flatMap(([customerId, productIds]) => {
+        if (
+          !Array.isArray(productIds) ||
+          productIds.length > 100 ||
+          !productIds.every((productId) => typeof productId === "string")
+        ) {
+          return [];
+        }
+
+        return [
+          [
+            customerId,
+            Array.from(new Set(productIds))
+              .filter(isKnownProductId)
+              .map((productId) => ({ productId })),
+          ],
+        ];
+      }),
+    );
   } catch {
-    return null;
+    return {};
   }
 }
 
@@ -47,14 +67,13 @@ export async function readMockWishlistEntries(
   user: AuthenticatedUser,
 ): Promise<WishlistEntry[]> {
   assertMockWishlistAvailable();
-  void user;
 
   const cookieStore = await cookies();
-  const storedEntries = parseEntries(
+  const storedEntries = parseStoredEntries(
     cookieStore.get(MOCK_WISHLIST_COOKIE_NAME)?.value,
   );
 
-  return storedEntries ?? [...defaultEntries];
+  return storedEntries[user.id] ?? [...defaultEntries];
 }
 
 export async function writeMockWishlistEntries(
@@ -62,7 +81,6 @@ export async function writeMockWishlistEntries(
   entries: readonly WishlistEntry[],
 ): Promise<void> {
   assertMockWishlistAvailable();
-  void user;
 
   const productIds = Array.from(
     new Set(
@@ -72,11 +90,24 @@ export async function writeMockWishlistEntries(
     ),
   );
   const cookieStore = await cookies();
+  const storedEntries = parseStoredEntries(
+    cookieStore.get(MOCK_WISHLIST_COOKIE_NAME)?.value,
+  );
+  const nextStoredEntries = Object.fromEntries([
+    ...Object.entries(storedEntries).filter(
+      ([customerId]) => customerId !== user.id,
+    ),
+    [user.id, productIds],
+  ]);
 
-  cookieStore.set(MOCK_WISHLIST_COOKIE_NAME, JSON.stringify(productIds), {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  cookieStore.set(
+    MOCK_WISHLIST_COOKIE_NAME,
+    JSON.stringify(nextStoredEntries),
+    {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
+  );
 }

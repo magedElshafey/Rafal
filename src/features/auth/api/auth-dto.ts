@@ -16,7 +16,7 @@ export type AuthUserDto = {
 };
 
 export type RequestOtpDto = { email: string };
-export type VerifyOtpDto = { email: string; code: string };
+export type VerifyOtpDto = { email: string; otp: string };
 export type CompleteProfileDto = {
   first_name: string;
   last_name: string;

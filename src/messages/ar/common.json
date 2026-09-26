@@ -429,21 +429,14 @@
       "label": "البريد الإلكتروني",
       "placeholder": "example@email.com",
       "continue": "متابعة",
-      "or": "أو",
-      "social": {
-        "apple": "المتابعة عبر Apple",
-        "google": "المتابعة عبر Google",
-        "facebook": "المتابعة عبر Facebook"
-      }
+      "submitting": "جارٍ إرسال رمز التحقق"
     },
     "otp": {
       "title": "تحقق من بريدك الإلكتروني",
-      "description": "أرسلنا رمز التحقق إلى",
-      "demoEmail": "example@email.com",
+      "description": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني.",
       "label": "رمز التحقق المكون من 6 أرقام",
-      "resendCountdown": "إعادة الإرسال خلال",
-      "resend": "إعادة إرسال الرمز",
-      "verify": "تحقق"
+      "verify": "تحقق",
+      "submitting": "جارٍ التحقق من الرمز"
     },
     "profile": {
       "title": "استكمال البيانات",
@@ -455,8 +448,21 @@
       "mobile": "رقم الجوال",
       "mobilePlaceholder": "5X XXX XXXX",
       "terms": "أوافق على الشروط والأحكام وسياسة الخصوصية",
-      "marketing": "أرغب في استقبال الرسائل والعروض التسويقية",
-      "createAccount": "إنشاء الحساب"
+      "createAccount": "إنشاء الحساب",
+      "submitting": "جارٍ حفظ البيانات"
+    },
+    "recovery": {
+      "missingPendingEmail": "لم تعد جلسة التحقق متاحة. أدخل بريدك الإلكتروني لطلب رمز جديد.",
+      "signInRequired": "سجّل الدخول مرة أخرى للمتابعة."
+    },
+    "errors": {
+      "invalidEmail": "أدخل بريدًا إلكترونيًا صحيحًا.",
+      "invalidCode": "أدخل رمز التحقق المكون من 6 أرقام.",
+      "required": "هذا الحقل مطلوب.",
+      "invalidField": "تحقق من هذا الحقل ثم حاول مرة أخرى.",
+      "invalidPhone": "أدخل رقم جوال سعودي صحيحًا.",
+      "termsRequired": "يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة.",
+      "serviceUnavailable": "تعذر إكمال الطلب. حاول مرة أخرى."
     }
   }
 }

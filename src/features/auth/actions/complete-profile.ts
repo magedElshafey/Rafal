@@ -8,7 +8,32 @@ import {
 import { completeProfileDto } from "@/features/auth/api/auth-api.server";
 import { mapAuthUser } from "@/features/auth/api/parse-auth-dto";
 import { getAccessToken } from "@/features/auth/server/auth-session";
-import type { AuthenticatedActionResult } from "@/features/auth/types/auth.types";
+import type {
+  AuthenticatedActionResult,
+  CompleteProfileField,
+} from "@/features/auth/types/auth.types";
+import { normalizeSaudiPhoneForSubmission } from "@/features/auth/utils/normalize-saudi-phone";
+import { ApiError } from "@/lib/api/api-error";
+
+const completeProfileFieldMap = {
+  first_name: "firstName",
+  last_name: "lastName",
+  phone: "phone",
+  terms_accepted: "termsAccepted",
+} as const satisfies Record<string, CompleteProfileField>;
+
+function getValidationFields(details: unknown): readonly CompleteProfileField[] {
+  if (typeof details !== "object" || details === null || Array.isArray(details)) {
+    return [];
+  }
+
+  return Object.keys(details).flatMap((field) => {
+    const mappedField = completeProfileFieldMap[
+      field as keyof typeof completeProfileFieldMap
+    ];
+    return mappedField ? [mappedField] : [];
+  });
+}
 
 export async function completeProfile(
   input: unknown,
@@ -38,7 +63,7 @@ export async function completeProfile(
     const response = await completeProfileDto(locale, accessToken, {
       first_name: input.firstName.trim(),
       last_name: input.lastName.trim(),
-      phone: input.phone.trim(),
+      phone: normalizeSaudiPhoneForSubmission(input.phone),
       terms_accepted: true,
     });
     if (!response.success) {
@@ -47,6 +72,15 @@ export async function completeProfile(
     const user = mapAuthUser(response.data);
     return { ok: true, user, profileComplete: user.profileComplete };
   } catch (error) {
+    if (error instanceof ApiError && error.status === 422) {
+      return {
+        ok: false,
+        error: {
+          code: "invalid-input",
+          fields: getValidationFields(error.details),
+        },
+      };
+    }
     return mapProtectedAuthActionError(error);
   }
 }
