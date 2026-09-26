@@ -224,9 +224,7 @@
       "offers": {
         "label": "Offers and discounts",
         "description": "Promotional offer and discount notifications"
-      },
-      "pending": "Updating notification preferences",
-      "mutationError": "Your preferences could not be updated. Please try again."
+      }
     },
     "security": {
       "title": "Security",

@@ -9,12 +9,10 @@ import {
   AccountPreferencesSection,
   type AccountPreferencesSectionCopy,
 } from "@/features/account/settings/components/account-preferences-section";
-import { getAccountPreferences } from "@/features/account/settings/server/account-preferences-boundary";
 
 export default async function AccountSettingsPage() {
-  const [locale, preferences, t] = await Promise.all([
+  const [locale, t] = await Promise.all([
     getLocale(),
-    getAccountPreferences(),
     getTranslations("Account.settings"),
   ]);
   const preferencesCopy: AccountPreferencesSectionCopy = {
@@ -27,8 +25,6 @@ export default async function AccountSettingsPage() {
       label: t("notifications.offers.label"),
       description: t("notifications.offers.description"),
     },
-    pending: t("notifications.pending"),
-    mutationError: t("notifications.mutationError"),
   };
 
   return (
@@ -36,11 +32,7 @@ export default async function AccountSettingsPage() {
       <h1 className="text-h2 font-bold text-gray-1000">{t("title")}</h1>
 
       <div className="mt-6 space-y-5">
-        <AccountPreferencesSection
-          copy={preferencesCopy}
-          locale={locale}
-          preferences={preferences}
-        />
+        <AccountPreferencesSection copy={preferencesCopy} />
 
         <section
           aria-labelledby="account-security-title"

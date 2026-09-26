@@ -1,18 +1,5 @@
-"use client";
-
-import { useOptimistic, useTransition } from "react";
-import type { Locale } from "next-intl";
-
 import { Switch } from "@/components/ui/switch";
-import {
-  setOrderNotificationsPreference,
-  setReceiveOffersPreference,
-} from "@/features/account/settings/actions/set-account-preferences";
-import type { AccountPreferences } from "@/features/account/settings/types/account-preferences.types";
-import { rafalToast } from "@/lib/rafal-toast";
 import { cn } from "@/lib/utils";
-
-type PreferenceKey = keyof AccountPreferences;
 
 type PreferenceCopy = {
   description: string;
@@ -20,55 +7,18 @@ type PreferenceCopy = {
 };
 
 export type AccountPreferencesSectionCopy = {
-  mutationError: string;
   offers: PreferenceCopy;
   orderUpdates: PreferenceCopy;
-  pending: string;
   title: string;
 };
 
 type AccountPreferencesSectionProps = {
   copy: AccountPreferencesSectionCopy;
-  locale: Locale;
-  preferences: AccountPreferences;
-};
-
-type OptimisticUpdate = {
-  enabled: boolean;
-  preference: PreferenceKey;
 };
 
 export function AccountPreferencesSection({
   copy,
-  locale,
-  preferences,
 }: AccountPreferencesSectionProps) {
-  const [pending, startTransition] = useTransition();
-  const [optimisticPreferences, setOptimisticPreference] = useOptimistic(
-    preferences,
-    (current: AccountPreferences, update: OptimisticUpdate) => ({
-      ...current,
-      [update.preference]: update.enabled,
-    }),
-  );
-
-  const updatePreference = (preference: PreferenceKey, enabled: boolean) => {
-    startTransition(async () => {
-      setOptimisticPreference({ preference, enabled });
-
-      try {
-        const result =
-          preference === "receiveOrderUpdates"
-            ? await setOrderNotificationsPreference({ locale, enabled })
-            : await setReceiveOffersPreference({ locale, enabled });
-
-        if (!result.ok) rafalToast.error(copy.mutationError);
-      } catch {
-        rafalToast.error(copy.mutationError);
-      }
-    });
-  };
-
   return (
     <section
       aria-labelledby="account-notifications-title"
@@ -81,44 +31,32 @@ export function AccountPreferencesSection({
         {copy.title}
       </h2>
 
-      <fieldset disabled={pending} aria-busy={pending || undefined}>
+      <fieldset disabled>
         <legend className="sr-only">{copy.title}</legend>
         <PreferenceRow
           copy={copy.orderUpdates}
-          checked={optimisticPreferences.receiveOrderUpdates}
-          onCheckedChange={(enabled) =>
-            updatePreference("receiveOrderUpdates", enabled)
-          }
+          descriptionId="order-notifications-description"
         />
         <PreferenceRow
           copy={copy.offers}
-          checked={optimisticPreferences.receiveOffers}
-          onCheckedChange={(enabled) =>
-            updatePreference("receiveOffers", enabled)
-          }
+          descriptionId="offers-notifications-description"
           className="border-t border-gray-200"
         />
       </fieldset>
-
-      <span className="sr-only" aria-live="polite">
-        {pending ? copy.pending : ""}
-      </span>
     </section>
   );
 }
 
 type PreferenceRowProps = {
-  checked: boolean;
   className?: string;
   copy: PreferenceCopy;
-  onCheckedChange: (checked: boolean) => void;
+  descriptionId: string;
 };
 
 function PreferenceRow({
-  checked,
   className,
   copy,
-  onCheckedChange,
+  descriptionId,
 }: PreferenceRowProps) {
   return (
     <div
@@ -129,12 +67,18 @@ function PreferenceRow({
     >
       <div className="min-w-0 py-4">
         <p className="type-body font-medium text-gray-1000">{copy.label}</p>
-        <p className="mt-1 type-body-sm text-gray-400">{copy.description}</p>
+        <p
+          id={descriptionId}
+          className="mt-1 type-body-sm text-gray-400"
+        >
+          {copy.description}
+        </p>
       </div>
       <Switch
-        checked={checked}
-        onCheckedChange={onCheckedChange}
+        checked={false}
+        disabled
         aria-label={copy.label}
+        aria-describedby={descriptionId}
       />
     </div>
   );
