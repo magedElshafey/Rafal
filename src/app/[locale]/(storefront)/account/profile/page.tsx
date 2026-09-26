@@ -1,4 +1,5 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import type { Locale } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { getAccountProfile } from "@/features/account/profile/api/get-account-profile";
 import {
@@ -8,8 +9,15 @@ import {
 // import { ProfileLoyaltySummary } from "@/features/account/profile/components/profile-loyalty-summary";
 // import { getLoyaltyAccount } from "@/features/loyalty/server/loyalty-boundary";
 
-export default async function AccountProfilePage() {
-  const [profile, t] = await Promise.all([
+type AccountProfilePageProps = {
+  params: Promise<{ locale: Locale }>;
+};
+
+export default async function AccountProfilePage({
+  params,
+}: AccountProfilePageProps) {
+  const [{ locale }, profile, t] = await Promise.all([
+    params,
     getAccountProfile(),
     // getLoyaltyAccount(),
     // getLocale(),
@@ -30,14 +38,14 @@ export default async function AccountProfilePage() {
     saveError: t("saveError"),
     validation: {
       required: t("validation.required"),
-      email: t("validation.email"),
       phone: t("validation.phone"),
+      invalid: t("validation.invalid"),
     },
   };
 
   return (
     <div className="space-y-6">
-      <ProfileForm copy={formCopy} profile={profile} />
+      <ProfileForm copy={formCopy} locale={locale} profile={profile} />
       {/* <ProfileLoyaltySummary
         title={t("loyalty.title", {
           points: numberFormatter.format(loyaltyAccount.pointsBalance),

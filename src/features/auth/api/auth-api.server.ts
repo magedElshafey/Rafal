@@ -6,6 +6,7 @@ import {
   authEndpoints,
   type CompleteProfileDto,
   type RequestOtpDto,
+  type UpdateProfileDto,
   type VerifyOtpDto,
 } from "@/features/auth/api/auth-dto";
 import {
@@ -48,6 +49,20 @@ export async function completeProfileDto(
   body: CompleteProfileDto,
 ) {
   const payload = await serverApi.request<unknown, CompleteProfileDto>({
+    path: authEndpoints.completeProfile,
+    method: "POST",
+    headers: authHeaders(locale, accessToken),
+    body,
+  });
+  return parseAuthUserResponse(payload);
+}
+
+export async function updateProfileDto(
+  locale: Locale,
+  accessToken: string,
+  body: UpdateProfileDto,
+) {
+  const payload = await serverApi.request<unknown, UpdateProfileDto>({
     path: authEndpoints.completeProfile,
     method: "POST",
     headers: authHeaders(locale, accessToken),

@@ -20,12 +20,12 @@
     },
     "save": "Save changes",
     "saving": "Saving changes",
-    "saved": "Changes applied to this preview only; they reset after refresh.",
+    "saved": "Your changes were saved successfully.",
     "saveError": "Your changes could not be saved. Please try again.",
     "validation": {
       "required": "This field is required.",
-      "email": "Enter a valid email address.",
-      "phone": "Enter a valid phone number."
+      "phone": "Enter a valid phone number.",
+      "invalid": "Enter a valid value."
     },
     "loyalty": {
       "title": "{points} loyalty points",

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
+import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/ui/input";
 import { updateAccountProfile } from "@/features/account/profile/actions/update-account-profile";
 import type {
+  AccountProfile,
   AccountProfileField,
   AccountProfileInput,
   AccountProfileValidationError,
@@ -29,11 +31,16 @@ export type ProfileFormCopy = {
 
 type ProfileFormProps = {
   copy: ProfileFormCopy;
-  profile: AccountProfileInput;
+  locale: Locale;
+  profile: AccountProfile;
 };
 
-export function ProfileForm({ copy, profile }: ProfileFormProps) {
-  const [values, setValues] = useState(profile);
+export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
+  const [values, setValues] = useState<AccountProfileInput>({
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    phone: profile.phone,
+  });
   const [errors, setErrors] = useState<AccountProfileValidationErrors>({});
   const [pending, startTransition] = useTransition();
 
@@ -56,11 +63,20 @@ export function ProfileForm({ copy, profile }: ProfileFormProps) {
 
     startTransition(async () => {
       try {
-        const result = await updateAccountProfile(values);
+        const result = await updateAccountProfile({ locale, ...values });
         if (!result.ok) {
-          setErrors(result.errors);
+          if (result.error.code === "invalid-input") {
+            if (Object.keys(result.error.fields).length > 0) {
+              setErrors(result.error.fields);
+            } else {
+              rafalToast.error(copy.saveError);
+            }
+          } else {
+            rafalToast.error(copy.saveError);
+          }
           return;
         }
+        setValues(result.profile);
         rafalToast.success(copy.saved);
       } catch {
         rafalToast.error(copy.saveError);
@@ -112,9 +128,8 @@ export function ProfileForm({ copy, profile }: ProfileFormProps) {
               dir="ltr"
               className="text-start"
               label={copy.email}
-              value={values.email}
-              error={fieldError("email")}
-              onChange={(event) => updateField("email", event.target.value)}
+              value={profile.email}
+              readOnly
             />
           </div>
           <div className="sm:col-span-2">

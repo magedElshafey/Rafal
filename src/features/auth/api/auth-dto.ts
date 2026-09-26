@@ -23,6 +23,11 @@ export type CompleteProfileDto = {
   phone: string;
   terms_accepted: boolean;
 };
+export type UpdateProfileDto = {
+  first_name: string;
+  last_name: string;
+  phone: string;
+};
 
 export type AuthMessageResponseDto = { success: boolean; message: string };
 export type AuthUserResponseDto = {

@@ -3,7 +3,6 @@ import type {
   AccountProfileValidationErrors,
 } from "@/features/account/profile/types/account-profile.types";
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^\+?[\d\s()-]+$/;
 
 export function validateAccountProfile(
@@ -13,8 +12,6 @@ export function validateAccountProfile(
 
   if (!profile.firstName.trim()) errors.firstName = "required";
   if (!profile.lastName.trim()) errors.lastName = "required";
-  if (!profile.email.trim()) errors.email = "required";
-  else if (!emailPattern.test(profile.email.trim())) errors.email = "email";
 
   const phone = profile.phone.trim();
   const phoneDigits = phone.replace(/\D/g, "");
