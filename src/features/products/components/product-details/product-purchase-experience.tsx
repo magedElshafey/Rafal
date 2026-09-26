@@ -192,15 +192,16 @@ export function ProductPurchaseExperience({
   const [selectedOptions, setSelectedOptions] = useState(() =>
     getSelectedOptionsFromVariant(initialVariant),
   );
-  const [selectedImageId, setSelectedImageId] = useState(() =>
-    initialImageId,
-  );
+  const [selectedImageId, setSelectedImageId] = useState(() => initialImageId);
   const [quantity, setQuantity] = useState(1);
   const [personalizationInput, setPersonalizationInput] = useState(() =>
     getInitialPersonalizationInput(product),
   );
-  const [submittedConfigurationFingerprint, setSubmittedConfigurationFingerprint] =
-    useState<string | null>(null);
+  const [personalizationResetKey, setPersonalizationResetKey] = useState(0);
+  const [
+    submittedConfigurationFingerprint,
+    setSubmittedConfigurationFingerprint,
+  ] = useState<string | null>(null);
   const {
     data: addToCartResult,
     isError: isAddToCartError,
@@ -216,6 +217,7 @@ export function ProductPurchaseExperience({
       setCurrentCartQueryData(queryClient, locale, result.cart);
       setQuantity(1);
       setPersonalizationInput(getInitialPersonalizationInput(product));
+      setPersonalizationResetKey((currentKey) => currentKey + 1);
       setSelectedOptions(getSelectedOptionsFromVariant(initialVariant));
       setSelectedImageId(getPreferredImageId(product, initialVariant));
       setIsSuccessSheetOpen(true);
@@ -276,9 +278,7 @@ export function ProductPurchaseExperience({
     personalizationInput?.language,
     personalizationInput?.text,
     availability?.status,
-    availability?.status === "available"
-      ? availability.maxOrderQuantity
-      : null,
+    availability?.status === "available" ? availability.maxOrderQuantity : null,
     heldForVariant,
     remainingAddable,
   ]);
@@ -286,9 +286,9 @@ export function ProductPurchaseExperience({
   const previousAvailabilityContextRef = useRef(availabilityByVariantId);
   const mutationFailure = isAddToCartError
     ? ({ code: "service-unavailable" } satisfies AddCartLineError)
-      : addToCartResult && !addToCartResult.ok
-        ? addToCartResult.error
-        : null;
+    : addToCartResult && !addToCartResult.ok
+      ? addToCartResult.error
+      : null;
   const hasAddToCartFailure = mutationFailure !== null;
   const addToCartErrorMessage =
     mutationFailure &&
@@ -297,9 +297,7 @@ export function ProductPurchaseExperience({
       : null;
   const purchaseErrorMessage = addToCartErrorMessage;
   const successfulCart =
-    addToCartResult?.ok === true
-      ? addToCartResult.cart
-      : undefined;
+    addToCartResult?.ok === true ? addToCartResult.cart : undefined;
 
   useEffect(() => {
     const target = purchaseActionRef.current;
@@ -482,6 +480,7 @@ export function ProductPurchaseExperience({
             }
             onSelectOption={handleSelectOption}
             personalizationInput={personalizationInput}
+            personalizationResetKey={personalizationResetKey}
             personalizationValidation={personalizationValidation}
             product={product}
             purchaseActionRef={purchaseActionRef}

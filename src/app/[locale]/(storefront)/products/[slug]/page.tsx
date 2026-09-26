@@ -7,29 +7,20 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { StorefrontLocationController } from "@/components/shell/storefront/quick-acess/StorefrontLocationController";
 import { serverEnv } from "@/config/server-env";
-import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { resolveLocationByCityId } from "@/features/location/api/location-api.server";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { getCanonicalBackendCityId } from "@/features/location/types";
-import { ComplementaryProducts } from "@/features/products/components/product-details/complementary-products";
 import { ProductBnplInformation } from "@/features/products/components/product-details/product-bnpl-information";
 import { ProductDescription } from "@/features/products/components/product-details/product-description";
 import { ProductPurchaseExperience } from "@/features/products/components/product-details/product-purchase-experience";
 import { ProductShareActions } from "@/features/products/components/product-details/product-share-actions";
-import { RelatedProducts } from "@/features/products/components/product-details/related-products";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsBySlug } from "@/features/products/server/product-boundary";
-import {
-  getComplementaryProducts,
-  getRelatedProducts,
-} from "@/features/products/server/product-discovery-boundary";
 import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
 import {
   createProductStructuredData,
   serializeStructuredData,
 } from "@/features/products/utils/create-product-structured-data";
-import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
-import { getPublishedProductReviews } from "@/features/reviews/server/product-review-boundary";
 import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
@@ -63,22 +54,21 @@ function createShareDescription(html: string): string {
 async function getProductPageData(slug: string, locale: Locale) {
   const city = await resolveCurrentLocation(locale);
   const cityId = getCanonicalBackendCityId(city) ?? undefined;
-  const [readResult, resolvedLocation] = await Promise.all([
+  const [product, resolvedLocation] = await Promise.all([
     getProductDetailsBySlug(slug, locale, cityId),
-    serverEnv.useMockApi || cityId === undefined
+    cityId === undefined
       ? Promise.resolve(null)
       : resolveLocationByCityId(cityId, locale),
   ]);
 
-  return { city, cityId, readResult, resolvedLocation };
+  return { city, cityId, product, resolvedLocation };
 }
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
-  const { readResult } = await getProductPageData(slug, locale);
-  const { product } = readResult;
+  const { product } = await getProductPageData(slug, locale);
 
   if (!product) return {};
 
@@ -120,9 +110,8 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: ProductPageProps) {
   const [{ slug }, locale] = await Promise.all([params, getLocale()]);
   const [
-    { city, cityId, readResult, resolvedLocation },
+    { city, cityId, product, resolvedLocation },
     t,
-    listingT,
     locationT,
     publicSettings,
   ] =
@@ -134,70 +123,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
       }),
       getTranslations({
         locale,
-        namespace: "Common.productListing",
-      }),
-      getTranslations({
-        locale,
         namespace: "Common.headerUtility",
       }),
       getPublicSettings(),
     ]);
-  const { product, source } = readResult;
-
   if (!product) notFound();
 
   assertProductConfiguration(product);
-  const usesMockProductSource = source === "mock";
-  const [
-    availabilityByVariantId,
-    relatedProducts,
-    complementaryProducts,
-    reviewReadResult,
-  ] = await Promise.all([
-    source === "laravel"
-      ? resolvedLocation?.inCoverage &&
-        resolvedLocation.warehouseId !== null
-        ? getResolvedVariantAvailability({
-            maxOrderQuantity: publicSettings.maxCartItemQuantity,
-            source,
-            variants: product.variants,
-            warehouseId: resolvedLocation.warehouseId,
-          })
-        : Promise.resolve(
-            Object.fromEntries(
-              product.variants.map((variant) => [
-                variant.id,
-                {
-                  status: resolvedLocation
-                    ? ("unavailable_at_location" as const)
-                    : ("purchase_unavailable" as const),
-                },
-              ]),
-            ),
-          )
-      : getResolvedVariantAvailability({
-          locationId: null,
-          source,
+  const availabilityByVariantId =
+    resolvedLocation?.inCoverage && resolvedLocation.warehouseId !== null
+      ? await getResolvedVariantAvailability({
+          maxOrderQuantity: publicSettings.maxCartItemQuantity,
           variants: product.variants,
-        }),
-    usesMockProductSource
-      ? getRelatedProducts({
-          categoryId: product.category.id,
-          currentProductId: product.id,
-          locale,
+          warehouseId: resolvedLocation.warehouseId,
         })
-      : Promise.resolve([]),
-    usesMockProductSource
-      ? getComplementaryProducts({
-          currentProductId: product.id,
-          locale,
-          locationId: null,
-        })
-      : Promise.resolve([]),
-    usesMockProductSource
-      ? getPublishedProductReviews(product.id, locale)
-      : Promise.resolve(null),
-  ]);
+      : Object.fromEntries(
+          product.variants.map((variant) => [
+            variant.id,
+            {
+              status: resolvedLocation
+                ? ("unavailable_at_location" as const)
+                : ("purchase_unavailable" as const),
+            },
+          ]),
+        );
   const purchaseProduct = {
     id: product.id,
     images: product.images,
@@ -219,19 +168,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     canonicalProductUrl,
     serverEnv.siteUrl,
   );
-  const productPathname = `/products/${product.slug}`;
-  const safeLoginReturnTo = getSafeInternalReturnTo(productPathname, "/");
-  const listingCopy = {
-    badgeLabels: {
-      discount: listingT("badges.discount"),
-      new: listingT("badges.new"),
-      personalization: listingT("badges.personalization"),
-    },
-    ratingLabel: (value: string) => listingT("rating", { value }),
-    reviewsLabel: (count: number) => listingT("reviews", { count }),
-    unavailableLabel: listingT("unavailable"),
-  };
-
   return (
     <Container className="main-content-spacing lg:px-15">
       <script
@@ -435,7 +371,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             },
           },
         }}
-        wishlistEnabled={usesMockProductSource}
+        wishlistEnabled={false}
       />
 
       <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
@@ -445,86 +381,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
       </div>
 
-      {relatedProducts.length > 0 ? (
-        <div className="mt-10 lg:mt-12">
-          <RelatedProducts
-            {...listingCopy}
-            locale={locale}
-            products={relatedProducts}
-            title={t("discovery.relatedTitle")}
-          />
-        </div>
-      ) : null}
-
-      {complementaryProducts.length > 0 ? (
-        <div className="mt-10 pb-10 lg:mt-12 lg:pb-14">
-          <ComplementaryProducts
-            {...listingCopy}
-            carouselLabel={t("discovery.complementaryCarouselLabel")}
-            locale={locale}
-            nextLabel={t("discovery.next")}
-            previousLabel={t("discovery.previous")}
-            products={complementaryProducts}
-            title={t("discovery.complementaryTitle")}
-          />
-        </div>
-      ) : null}
-
-      {reviewReadResult ? (
-        <div className="mt-10 lg:mt-12">
-          <ProductReviewsSection
-            copy={{
-              aggregateTemplate: t.raw("reviews.aggregate") as string,
-              empty: t("reviews.empty"),
-              ratingLabelTemplate: t.raw("rating.label") as string,
-              readErrorDescription: t("reviews.readError.description"),
-              readErrorTitle: t("reviews.readError.title"),
-              retry: t("reviews.readError.retry"),
-              submission: {
-                commentLabel: t("reviews.submission.commentLabel"),
-                commentOptional: t("reviews.submission.commentOptional"),
-                commentPlaceholder: t("reviews.submission.commentPlaceholder"),
-                errors: {
-                  "auth-required": t("reviews.submission.errors.authRequired"),
-                  "invalid-input": t("reviews.submission.errors.invalidInput"),
-                  "not-eligible": t("reviews.submission.errors.notEligible"),
-                  "product-unavailable": t(
-                    "reviews.submission.errors.productUnavailable",
-                  ),
-                  "rating-required": t(
-                    "reviews.submission.errors.ratingRequired",
-                  ),
-                  "service-unavailable": t(
-                    "reviews.submission.errors.serviceUnavailable",
-                  ),
-                },
-                guestDescription: t("reviews.submission.guestDescription"),
-                login: t("reviews.submission.login"),
-                loading: t("reviews.submission.loading"),
-                notVerified: t("reviews.submission.notVerified"),
-                ratingLabel: t("reviews.submission.ratingLabel"),
-                ratingOptionTemplate: t.raw(
-                  "reviews.submission.ratingOption",
-                ) as string,
-                retry: t("reviews.submission.retry"),
-                retrying: t("reviews.submission.retrying"),
-                submit: t("reviews.submission.submit"),
-                submitting: t("reviews.submission.submitting"),
-                success: t("reviews.submission.success"),
-                title: t("reviews.submission.title"),
-                unavailable: t("reviews.submission.unavailable"),
-              },
-              titleTemplate: t.raw("reviews.title") as string,
-            }}
-            locale={locale}
-            loginReturnTo={safeLoginReturnTo}
-            productId={product.id}
-            ratingSummary={product.ratingSummary}
-            readResult={reviewReadResult}
-            retryHref={productPathname}
-          />
-        </div>
-      ) : null}
     </Container>
   );
 }

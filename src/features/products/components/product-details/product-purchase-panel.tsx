@@ -117,11 +117,10 @@ type ProductPurchasePanelProps = {
   onChangePersonalizationText: (text: string) => void;
   onDecreaseQuantity: () => void;
   onIncreaseQuantity: () => void;
-  onSelectPersonalizationLanguage: (
-    language: PersonalizationLanguage,
-  ) => void;
+  onSelectPersonalizationLanguage: (language: PersonalizationLanguage) => void;
   onSelectOption: (optionId: string, valueId: string) => void;
   personalizationInput: ProductPersonalizationInput | null;
+  personalizationResetKey: number;
   personalizationValidation: ProductPersonalizationValidationResult | null;
   product: Pick<
     ProductDetails,
@@ -342,10 +341,7 @@ function ProductPersonalizationSummary({
     (hasInteracted || personalizationInput.text.length > 0);
   const errorMessage = personalizationValidation.valid
     ? null
-    : getPersonalizationErrorMessage(
-        personalizationValidation.error,
-        copy,
-      );
+    : getPersonalizationErrorMessage(personalizationValidation.error, copy);
   const describedBy = [policyId, counterId, showError ? errorId : null]
     .filter(Boolean)
     .join(" ");
@@ -380,10 +376,7 @@ function ProductPersonalizationSummary({
         </legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {product.personalization.allowedLanguages.map((language) => (
-            <label
-              key={language}
-              className="relative cursor-pointer"
-            >
+            <label key={language} className="relative cursor-pointer">
               <input
                 type="radio"
                 name={`${inputId}-language`}
@@ -463,10 +456,9 @@ function getPersonalizationErrorMessage(
     case "invalid-characters":
       return copy.errors.invalidCharacters;
     case "language-script-mismatch":
-      return formatProductMessage(
-        copy.errors.languageScriptMismatchTemplate,
-        { language: copy.languages[error.language] },
-      );
+      return formatProductMessage(copy.errors.languageScriptMismatchTemplate, {
+        language: copy.languages[error.language],
+      });
   }
 }
 
@@ -555,10 +547,7 @@ function ProductSocialProofSummary({
   return (
     <dl className="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-gray-200 py-3">
       {items.map(({ icon: Icon, label, value }) => (
-        <div
-          key={label}
-          className="flex min-w-0 items-center gap-2.5"
-        >
+        <div key={label} className="flex min-w-0 items-center gap-2.5">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-50 text-gold-700">
             <Icon aria-hidden="true" className="size-4" />
           </span>
@@ -583,7 +572,6 @@ export function ProductPurchasePanel({
   copy,
   isAddingToCart,
   locale,
-  locationAction,
   locationInCoverage,
   locationName,
   bnplInformation,
@@ -594,6 +582,7 @@ export function ProductPurchasePanel({
   onSelectPersonalizationLanguage,
   onSelectOption,
   personalizationInput,
+  personalizationResetKey,
   personalizationValidation,
   product,
   quantity,
@@ -607,9 +596,7 @@ export function ProductPurchasePanel({
   const available = availability.status === "available";
   const canDecrease = available && quantity > 1;
   const canIncrease =
-    available &&
-    remainingAddable !== null &&
-    quantity < remainingAddable;
+    available && remainingAddable !== null && quantity < remainingAddable;
 
   return (
     <section className="min-w-0 space-y-6" aria-labelledby="product-title">
@@ -666,7 +653,6 @@ export function ProductPurchasePanel({
         locationInCoverage={locationInCoverage}
         locationName={locationName}
       />
-      {locationInCoverage === false ? locationAction : null}
 
       <ProductOptions
         copy={copy.options}
@@ -678,6 +664,7 @@ export function ProductPurchasePanel({
       />
 
       <ProductPersonalizationSummary
+        key={personalizationResetKey}
         copy={copy.personalization}
         locale={locale}
         onChangeText={onChangePersonalizationText}
