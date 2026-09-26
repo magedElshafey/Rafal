@@ -1,4 +1,6 @@
 import { headerActionItems } from "@/components/shell/storefront/navigation-config";
+import { buttonVariants } from "@/components/ui/button";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
@@ -7,7 +9,20 @@ const actionLinkClassName =
   "inline-flex size-8 md:size-11 items-center justify-center rounded-full text-foreground transition-colors hover:text-gold-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 const HeaderActions = async () => {
-  const t = await getTranslations("Common.nav");
+  const [t, currentUser] = await Promise.all([
+    getTranslations("Common.nav"),
+    getCurrentUser(),
+  ]);
+
+  if (!currentUser) {
+    return (
+      <nav aria-label={t("user_navigation")}>
+        <Link href="/login" className={buttonVariants({ size: "sm" })}>
+          {t("login")}
+        </Link>
+      </nav>
+    );
+  }
 
   return (
     <nav aria-label={t("user_navigation")}>
