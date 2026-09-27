@@ -79,5 +79,7 @@ export type CatalogueProductsRequest = {
   cityId: number | null;
   filters: CatalogueProductFilters;
   page: number;
+  perPage?: number;
+  search?: string;
   sort: CatalogueListingSort;
 };

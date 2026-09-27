@@ -44,6 +44,8 @@ export default async function StoreFontLayout({
           clear: t("search.clear"),
           loading: t("search.loading"),
           noResults: t("search.noResults"),
+          error: t("search.error"),
+          retry: t("search.retry"),
           suggestions: t("search.suggestions"),
         }}
       />

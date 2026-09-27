@@ -5,7 +5,7 @@ export type CategoryChildDto = {
   name: string;
   slug: string;
   description: string | null;
-  image_url: string;
+  image_url: string | null;
   sort_order: number;
 };
 
@@ -30,7 +30,7 @@ export type CategoryChild = {
   name: string;
   slug: string;
   description: string | null;
-  imageUrl: string;
+  imageUrl: string | null;
   sortOrder: number;
 };
 

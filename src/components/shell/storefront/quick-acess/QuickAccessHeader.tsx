@@ -34,7 +34,11 @@ function QuickAccessHeader({
         </div>
 
         <div className="flex w-full items-center md:w-auto">
-          <SearchController copy={searchCopy} locale={locale} />
+          <SearchController
+            cityId={initialCity?.id ?? null}
+            copy={searchCopy}
+            locale={locale}
+          />
         </div>
       </Container>
     </div>

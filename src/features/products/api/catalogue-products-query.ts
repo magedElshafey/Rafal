@@ -13,18 +13,20 @@ export const catalogueProductsQuery = {
     cityId,
     filters,
     locale,
+    search,
     sort,
   }: {
     categoryId?: number;
     cityId: number | null;
     filters: CatalogueProductFilters;
     locale: Locale;
+    search?: string;
     sort: CatalogueListingSort;
   }) =>
     [
       "products",
       "catalogue",
-      { categoryId, cityId, filters, locale, sort },
+      { categoryId, cityId, filters, locale, search, sort },
     ] as const,
   getNextPageParam: (lastPage: PaginatedListingProducts) =>
     getNextPageParam(lastPage.pagination),

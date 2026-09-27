@@ -16,7 +16,16 @@ type GetCatalogueProductsServerRequest = CatalogueProductsRequest & {
 export async function getCatalogueProducts(
   request: GetCatalogueProductsServerRequest,
 ): Promise<PaginatedListingProducts> {
-  const { categoryId, cityId, filters, locale, page, sort } = request;
+  const {
+    categoryId,
+    cityId,
+    filters,
+    locale,
+    page,
+    perPage,
+    search,
+    sort,
+  } = request;
   const response = await getProductsDto({
     categoryId,
     cityId,
@@ -26,7 +35,9 @@ export async function getCatalogueProducts(
     newArrival: filters.newArrival,
     onDiscount: filters.onDiscount,
     page,
+    perPage,
     personalizable: filters.personalizable,
+    search,
     sort,
   });
 

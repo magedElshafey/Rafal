@@ -77,6 +77,7 @@ type Props = {
   filters: CatalogueProductFilters;
   listing: PaginatedListingProducts | null;
   locale: Locale;
+  search?: string;
   sort: CatalogueListingSort;
   subcategoryOptions?: readonly CatalogueSubcategoryOption[];
 };
@@ -363,6 +364,7 @@ export function CatalogueProductListing({
   filters,
   listing,
   locale,
+  search,
   sort,
   subcategoryOptions,
 }: Props) {
@@ -407,6 +409,7 @@ export function CatalogueProductListing({
       cityId,
       filters,
       locale,
+      search,
       sort,
     }),
     queryFn: ({ pageParam, signal }) =>
@@ -416,6 +419,7 @@ export function CatalogueProductListing({
         filters,
         locale,
         page: pageParam,
+        search,
         signal,
         sort,
       }),
@@ -440,6 +444,7 @@ export function CatalogueProductListing({
     categoryId ?? null,
     cityId,
     locale,
+    search ?? null,
     sort,
     filters.subcategory ?? null,
     filters.minPrice ?? null,

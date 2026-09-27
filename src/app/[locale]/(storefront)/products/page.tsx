@@ -28,13 +28,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const [rawSearchParams, locale, t] = await Promise.all([
+  const [rawSearchParams, locale, t, tSearch] = await Promise.all([
     searchParams,
     getLocale(),
     getTranslations("Common.productListing"),
+    getTranslations("Common.searchResults"),
   ]);
   const city = await resolveCurrentLocation(locale);
-  const { filters: parsedFilters, sort } =
+  const { filters: parsedFilters, search, sort } =
     parseCatalogueListingSearchParams(toUrlSearchParams(rawSearchParams));
   const filters = { ...parsedFilters, subcategory: undefined };
   const priceRangeIsValid = isListingPriceRangeValid(filters);
@@ -44,6 +45,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         filters,
         locale,
         page: 1,
+        search,
         sort,
       })
     : null;
@@ -58,10 +60,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         ]}
       />
       <div className="mt-5">
-        <h1 className="text-h1 font-bold text-foreground">{t("title")}</h1>
+        <h1 className="text-h1 font-bold text-foreground">
+          {search ? tSearch("title") : t("title")}
+        </h1>
         {listing ? (
           <p className="mt-1 type-body-sm text-muted-foreground">
-            {t("resultCount", { count: listing.pagination.total })}
+            {search
+              ? tSearch("summary", {
+                  count: listing.pagination.total,
+                  query: search,
+                })
+              : t("resultCount", { count: listing.pagination.total })}
           </p>
         ) : null}
       </div>
@@ -75,8 +84,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               personalization: t("badges.personalization"),
             },
             closeFilters: t("closeFilters"),
-            emptyDescription: t("emptyDescription"),
-            emptyTitle: t("emptyTitle"),
+            emptyDescription: search
+              ? tSearch("noResultsDescription", { query: search })
+              : t("emptyDescription"),
+            emptyTitle: search
+              ? tSearch("noResultsTitle")
+              : t("emptyTitle"),
             filterButton: t("filterButton"),
             loading: t("loading"),
             loadingMore: t("loadingMore"),
@@ -107,6 +120,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           filters={filters}
           listing={listing}
           locale={locale}
+          search={search}
           sort={sort}
         />
       </div>

@@ -318,68 +318,10 @@ export const mockStorefrontProductRecords: readonly {
   },
 ];
 
-export const mockSearchProductRecords = [
-  {
-    product: createProduct({
-      id: "silver-name-necklace",
-      transportId: 3001,
-      names: { ar: "سلسلة فضة بالاسم", en: "Silver name necklace" },
-      imageUrl: "/ds-product-preview.svg",
-      personalizable: true,
-      price: 150,
-      primaryCategory: categories.personalized,
-    }),
-    keywords: {
-      ar: ["سلسلة", "فضة", "اسم"],
-      en: ["silver", "name", "necklace"],
-    },
-  },
-  {
-    product: createProduct({
-      id: "mens-bracelet",
-      transportId: 3002,
-      names: { ar: "سوار رجالي", en: "Men's bracelet" },
-      imageUrl: "/ds-product-preview.svg",
-      price: 120,
-      primaryCategory: categories.mensGifts,
-    }),
-    keywords: { ar: ["سوار", "رجالي"], en: ["men", "bracelet"] },
-  },
-  {
-    product: createProduct({
-      id: "personalized-incense-burner",
-      transportId: 3003,
-      names: { ar: "مبخرة شخصية", en: "Personalized incense burner" },
-      imageUrl: "/ds-product-preview.svg",
-      personalizable: true,
-      price: 185,
-      primaryCategory: categories.personalized,
-    }),
-    keywords: {
-      ar: ["مبخرة", "شخصية", "هدية"],
-      en: ["personalized", "incense", "gift"],
-    },
-  },
-  {
-    product: createProduct({
-      id: "graduation-gift",
-      transportId: 3004,
-      names: { ar: "هدية تخرج", en: "Graduation gift" },
-      imageUrl: "/ds-product-preview.svg",
-      price: 210,
-      primaryCategory: categories.personalized,
-    }),
-    keywords: {
-      ar: ["هدية", "تخرج"],
-      en: ["graduation", "gift"],
-    },
-  },
-] as const;
 
 const catalogRecords = [
   ...mockCategoryProductRecords.map(({ product }) => product),
   ...mockStorefrontProductRecords.map(({ product }) => product),
-  ...mockSearchProductRecords.map(({ product }) => product),
 ];
 
 function assertUniqueCatalogIdentity(

@@ -20,6 +20,8 @@ export async function getCatalogueProductsClient({
   filters,
   locale,
   page,
+  perPage,
+  search,
   signal,
   sort,
 }: GetCatalogueProductsClientRequest): Promise<PaginatedListingProducts> {
@@ -33,7 +35,9 @@ export async function getCatalogueProductsClient({
       newArrival: filters.newArrival,
       onDiscount: filters.onDiscount,
       page,
+      perPage,
       personalizable: filters.personalizable,
+      search,
       sort,
     }),
     signal,

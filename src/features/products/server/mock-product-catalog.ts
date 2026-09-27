@@ -11,7 +11,6 @@ import { parseProductDetailsResponse } from "@/features/products/api/parse-produ
 import {
   mockCategoryProductRecords,
   mockProductCatalogRecords,
-  mockSearchProductRecords,
   mockStorefrontProductRecords,
   type MockProductCatalogRecord,
 } from "@/features/products/data/mock-product-catalog";
@@ -55,16 +54,7 @@ function createListingSources(
       },
     }),
   );
-  const searchSources = mockSearchProductRecords.map(({ product }, index) => ({
-    payload: createMockProductPayload(product, locale),
-    compatibility: {
-      createdOrder:
-        categorySources.length + storefrontSources.length + index + 1,
-      subcategory: product.primaryCategory.slug,
-    },
-  }));
-
-  return [...categorySources, ...storefrontSources, ...searchSources];
+  return [...categorySources, ...storefrontSources];
 }
 
 function mapDetails(

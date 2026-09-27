@@ -110,6 +110,10 @@ function nullableString(value: unknown, path: string): string | null {
   return value === null ? null : string(value, path);
 }
 
+function nullableNonEmptyString(value: unknown, path: string): string | null {
+  return value === null ? null : nonEmptyString(value, path);
+}
+
 function boolean(value: unknown, path: string): boolean {
   if (typeof value !== "boolean") {
     throw new HomeContractError(path, "a boolean");
@@ -180,7 +184,7 @@ function parseCategoryChild(
     name: string(source.name, path + ".name"),
     slug: string(source.slug, path + ".slug"),
     description: nullableString(source.description, path + ".description"),
-    image_url: nonEmptyString(source.image_url, path + ".image_url"),
+    image_url: nullableNonEmptyString(source.image_url, path + ".image_url"),
     sort_order: nonNegativeInteger(source.sort_order, path + ".sort_order"),
   };
 }

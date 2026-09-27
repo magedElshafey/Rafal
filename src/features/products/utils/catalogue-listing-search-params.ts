@@ -8,6 +8,7 @@ export const defaultCatalogueListingSort: CatalogueListingSort = "relevance";
 
 export type CatalogueListingSearchState = {
   filters: CatalogueProductFilters;
+  search?: string;
   sort: CatalogueListingSort;
 };
 
@@ -19,6 +20,13 @@ function parsePrice(value: string | null): number | undefined {
   if (!value || value.trim() === "") return undefined;
   const price = Number(value);
   return Number.isFinite(price) && price >= 0 ? price : undefined;
+}
+
+export function normalizeProductSearchQuery(
+  value: string | null | undefined,
+): string | undefined {
+  const search = value?.trim().replace(/\s+/g, " ");
+  return search || undefined;
 }
 
 export function parseCatalogueListingSearchParams(
@@ -38,6 +46,7 @@ export function parseCatalogueListingSearchParams(
       personalizable: searchParams.get("personalizable") === "true",
       subcategory: searchParams.get("subcategory")?.trim() || undefined,
     },
+    search: normalizeProductSearchQuery(searchParams.get("search")),
     sort,
   };
 }
