@@ -1,36 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rafal — E-Commerce Storefront for Gifts & Jewelry
 
-## Getting Started
+<p align="center">
+  <strong>A modern customer-facing e-commerce storefront for a Saudi gifts, jewelry, and accessories brand.</strong>
+</p>
 
-First, run the development server:
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Status-In_Development-orange" alt="Status: In Development" />
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Rafal** is an independent e-commerce platform currently being developed for a Saudi gifts, jewelry, and accessories brand.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The storefront is built with **Next.js, React, and TypeScript** and is designed to replace a marketplace-style setup with a scalable, brand-owned commerce experience.
 
-## Learn More
+The customer experience focuses on product discovery, personalization, gifting, checkout, account flows, order tracking, Arabic-first usability, and warehouse-aware inventory behavior.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Current Product Scope
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Product Discovery
 
-## Deploy on Vercel
+- Homepage merchandising and promotional content
+- Categories and product browsing
+- Filtering and sorting
+- Live search suggestions
+- Product detail experiences
+- Variant, price, discount, and availability states
+- Related product discovery
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Personalization & Gifting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Rafal includes product and gifting workflows tailored to the brand's use case, including:
+
+- Product personalization
+- Engraving / name customization
+- Sending an order as a gift
+- Recipient information
+- Gift messages
+- Sender-visibility preferences
+- Paid gift wrapping
+
+### Cart & Checkout
+
+- Cart management
+- Coupon flows
+- Guest checkout
+- Customer address flows
+- Order creation and follow-up
+
+### Customer Experience
+
+- Passwordless email OTP authentication
+- Wishlist
+- Reviews
+- Saved addresses
+- Customer orders
+- Guest order tracking
+
+### Location & Inventory
+
+The storefront supports location-aware product availability, where city/location selection can influence the relevant warehouse and displayed inventory.
+
+---
+
+## Architecture & Frontend Approach
+
+### Next.js Storefront
+
+The customer-facing application uses **Next.js** with TypeScript to support a modern commerce architecture and scalable page structure.
+
+### Server State
+
+**TanStack Query** is used where client-side server state and asynchronous product data need consistent caching and lifecycle handling.
+
+### Internationalization
+
+The project uses **next-intl** for locale-aware experiences, with Arabic-first product requirements and support for RTL/LTR behavior.
+
+### Design System Foundations
+
+Reusable components and primitives are built with Tailwind CSS and Radix UI-based patterns to maintain consistency across commerce flows.
+
+---
+
+## Tech Stack
+
+| Area | Technologies |
+| --- | --- |
+| Framework | Next.js 16, React 19 |
+| Language | TypeScript |
+| Server State | TanStack Query |
+| Internationalization | next-intl |
+| UI | Tailwind CSS 4, Radix UI |
+| Components | class-variance-authority |
+| Carousel | Embla Carousel |
+| Tooling | ESLint, Next.js tooling |
+
+---
+
+## Planned Integrations
+
+The wider platform roadmap includes integration work for:
+
+- **Odoo ERP**
+- Payment services
+- Shipping providers
+- Email / OTP providers
+- Additional commerce services
+
+These integrations are part of the planned platform scope and should not be interpreted as completed functionality unless explicitly marked otherwise.
+
+---
+
+## Future Product Direction
+
+The platform is being designed with room for future expansion such as:
+
+- Multiple countries / stores
+- Multiple currencies
+- Additional languages
+- Multiple warehouse scenarios
+- Loyalty and affiliate capabilities
+- Analytics and marketing integrations
+
+---
+
+## What This Project Demonstrates
+
+- Next.js + TypeScript commerce development
+- Frontend ownership of a complex customer journey
+- Product personalization and gifting UX
+- Arabic / RTL product requirements
+- Warehouse-aware e-commerce behavior
+- Reusable component architecture
+- Scalable storefront foundations
+- Integration-heavy product planning
+
+---
+
+## Project Status
+
+**Currently in development.**
+
+This repository represents the customer-facing storefront of the Rafal commerce platform.
+
+---
+
+## About Me
+
+I'm **Maged Elshafey**, a Frontend Engineer focused on production web applications built with React, TypeScript, and Next.js.
+
+- LinkedIn: https://www.linkedin.com/in/maged-elshafey/
+- GitHub: https://github.com/magedElshafey
