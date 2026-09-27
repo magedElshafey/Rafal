@@ -97,7 +97,11 @@ export type CartDataDto = {
   };
 };
 
-export type CartResponseDto = { success: boolean; message: string; data: CartDataDto };
+export type CartResponseDto = {
+  success: boolean;
+  message: string;
+  data: CartDataDto;
+};
 export type CartCouponsResponseDto = {
   success: boolean;
   message: string;
@@ -114,17 +118,17 @@ export type AddCartItemDto = {
 export type UpdateCartItemDto = { quantity: number };
 export type ApplyCartCouponDto = { code: string };
 export type UpdateCartGiftDto = {
-  is_gift: boolean;
-  gift_wrap: boolean;
-  is_anonymous: boolean;
-  gift_message: string | null;
-  recipient: {
+  is_gift?: boolean;
+  gift_wrap?: boolean;
+  is_anonymous?: boolean;
+  gift_message?: string | null;
+  recipient?: {
     name: string;
     phone: string;
     city_id: number;
     district: string;
     street_details: string;
-  } | null;
+  };
 };
 
 export const cartContractEndpoints = {

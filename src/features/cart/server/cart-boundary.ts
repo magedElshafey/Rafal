@@ -11,6 +11,7 @@ import {
   getCartDto,
   removeCartCouponDto,
   removeCartItemDto,
+  updateCartGiftDto,
   updateCartItemDto,
   type CartTransportIdentity,
 } from "@/features/cart/api/cart-api.server";
@@ -34,6 +35,7 @@ import type {
   CartCouponOption,
   CartMutationResult,
   CartSnapshot,
+  UpdateCartGiftInput,
 } from "@/features/cart/types/cart.types";
 import { readGuestCityId } from "@/features/location/server/guest-city-session";
 
@@ -176,11 +178,43 @@ export async function clearCurrentCart(
   locale: Locale,
 ): Promise<CartMutationResult> {
   const identity = await resolveCartTransportIdentity();
-  const response = assertSuccessfulResponse(await clearCartDto(identity, locale));
+  const response = assertSuccessfulResponse(
+    await clearCartDto(identity, locale),
+  );
   if (identity.kind === "guest" && identity.token) {
     await deleteGuestCartToken();
   }
   return { ok: true, cart: mapCartData(response.data) };
+}
+
+export async function updateCurrentCartGift(
+  input: UpdateCartGiftInput,
+  locale: Locale,
+): Promise<CartSnapshot> {
+  const identity = await resolveCartTransportIdentity();
+  const response = assertSuccessfulResponse(
+    await updateCartGiftDto(identity, locale, {
+      ...(input.isGift !== undefined ? { is_gift: input.isGift } : {}),
+      ...(input.giftWrap !== undefined ? { gift_wrap: input.giftWrap } : {}),
+      ...(input.isAnonymous !== undefined
+        ? { is_anonymous: input.isAnonymous }
+        : {}),
+      ...(input.message !== undefined ? { gift_message: input.message } : {}),
+      ...(input.recipient
+        ? {
+            recipient: {
+              name: input.recipient.name,
+              phone: input.recipient.phone,
+              city_id: input.recipient.cityId,
+              district: input.recipient.district,
+              street_details: input.recipient.streetDetails,
+            },
+          }
+        : {}),
+    }),
+  );
+  await syncGuestToken(identity, response);
+  return mapCartData(response.data);
 }
 
 export async function getAvailableCartCoupons(

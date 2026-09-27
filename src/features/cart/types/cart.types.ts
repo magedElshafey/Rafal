@@ -22,6 +22,29 @@ export type CartGiftRecipient = {
   streetDetails: string;
 };
 
+export type CartGiftRecipientInput = {
+  name: string;
+  phone: string;
+  cityId: number;
+  district: string;
+  streetDetails: string;
+};
+
+type CartGiftUpdateFields = {
+  isGift: boolean;
+  giftWrap: boolean;
+  isAnonymous: boolean;
+  message: string | null;
+  recipient: CartGiftRecipientInput;
+};
+
+export type UpdateCartGiftInput = {
+  [Field in keyof CartGiftUpdateFields]: Required<
+    Pick<CartGiftUpdateFields, Field>
+  > &
+    Partial<Omit<CartGiftUpdateFields, Field>>;
+}[keyof CartGiftUpdateFields];
+
 export type AddCartLineInput = {
   productId: string;
   variantId: string;
@@ -114,8 +137,7 @@ export type CartMutationError =
   | { code: "service-unavailable" };
 
 export type CartMutationResult =
-  | { ok: true; cart: CartSnapshot }
-  | { ok: false; error: CartMutationError };
+  { ok: true; cart: CartSnapshot } | { ok: false; error: CartMutationError };
 
 export type AddCartLineError = CartMutationError;
 export type AddCartLineResult = CartMutationResult;
@@ -128,17 +150,22 @@ export type CartMergeResult =
       error: { code: "unauthorized" | "service-unavailable" };
     };
 export type CartCouponError = {
-  code:
-    | "invalid-input"
-    | "rejected"
-    | "unauthorized"
-    | "service-unavailable";
+  code: "invalid-input" | "rejected" | "unauthorized" | "service-unavailable";
 };
 
 export type CartCouponMutationResult =
-  | { ok: true; cart: CartSnapshot }
-  | { ok: false; error: CartCouponError };
+  { ok: true; cart: CartSnapshot } | { ok: false; error: CartCouponError };
 
 export type CartCouponListResult =
   | { ok: true; coupons: readonly CartCouponOption[] }
   | { ok: false; error: CartCouponError };
+
+export type CartGiftError =
+  | { code: "invalid-input" }
+  | { code: "validation-rejected"; fields: readonly string[] }
+  | { code: "unauthorized" }
+  | { code: "cart-session-failure" }
+  | { code: "service-unavailable" };
+
+export type CartGiftMutationResult =
+  { ok: true; cart: CartSnapshot } | { ok: false; error: CartGiftError };

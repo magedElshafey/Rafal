@@ -16,6 +16,10 @@ import {
   CartCoupon,
   type CartCouponCopy,
 } from "@/features/cart/components/cart-coupon";
+import {
+  CartGift,
+  type CartGiftCopy,
+} from "@/features/cart/components/cart-gift";
 import { clearCart } from "@/features/cart/actions/clear-cart";
 import { removeCartLine } from "@/features/cart/actions/remove-cart-line";
 import { updateCartLine } from "@/features/cart/actions/update-cart-line";
@@ -65,6 +69,7 @@ export type CartPageCopy = {
   freeShippingQualified: string;
   freeShippingRemaining: string;
   coupon: CartCouponCopy;
+  gift: CartGiftCopy;
   errors: {
     generic: string;
     validation: string;
@@ -76,6 +81,7 @@ export type CartPageCopy = {
 type CartPageProps = {
   canUseCoupons: boolean;
   copy: CartPageCopy;
+  giftWrapEnabled: boolean;
   initialCart: CartSnapshot;
   locale: Locale;
   maxQuantity: number;
@@ -117,24 +123,34 @@ function CartPageSkeleton({ label }: { label: string }) {
         <Skeleton className="mt-3 h-1.5 w-full rounded-full" />
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0">
-          {Array.from({ length: 3 }, (_, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-4 border-b border-gray-200 p-4 last:border-b-0 sm:grid-cols-[6rem_minmax(0,1fr)_10rem] sm:p-5"
-            >
-              <Skeleton className="aspect-square w-full" />
-              <div>
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="mt-3 h-4 w-1/2" />
-                <Skeleton className="mt-3 h-4 w-1/3" />
+        <div className="min-w-0">
+          <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0">
+            {Array.from({ length: 3 }, (_, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-4 border-b border-gray-200 p-4 last:border-b-0 sm:grid-cols-[6rem_minmax(0,1fr)_10rem] sm:p-5"
+              >
+                <Skeleton className="aspect-square w-full" />
+                <div>
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="mt-3 h-4 w-1/2" />
+                  <Skeleton className="mt-3 h-4 w-1/3" />
+                </div>
+                <div className="col-span-2 flex items-end justify-between sm:col-span-1 sm:flex-col">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-11 w-32" />
+                </div>
               </div>
-              <div className="col-span-2 flex items-end justify-between sm:col-span-1 sm:flex-col">
-                <Skeleton className="h-5 w-20" />
-                <Skeleton className="h-11 w-32" />
-              </div>
+            ))}
+          </div>
+          <div className="mt-6 rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-5">
+            <Skeleton className="h-7 w-32" />
+            <Skeleton className="mt-2 h-4 w-72 max-w-full" />
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
             </div>
-          ))}
+          </div>
         </div>
         <div className="rounded-lg bg-gray-50 p-5 sm:p-6">
           <Skeleton className="h-7 w-36" />
@@ -210,6 +226,7 @@ function FreeShippingStatus({
 export function CartPage({
   canUseCoupons,
   copy,
+  giftWrapEnabled,
   initialCart,
   locale,
   maxQuantity,
@@ -344,7 +361,7 @@ export function CartPage({
           size="sm"
           loading={clearMutation.isPending}
           loadingLabel={copy.clearing}
-          disabled={activeLineId !== null}
+          disabled={busy}
           onClick={() => {
             setMutationError(null);
             clearMutation.mutate();
@@ -420,7 +437,7 @@ export function CartPage({
                   ) : null}
                   {line.personalization?.text ? (
                     <p className="mt-2 type-body-sm text-gold-700">
-                      {copy.personalization}: {" "}
+                      {copy.personalization}:{" "}
                       <bdi>{line.personalization.text}</bdi>
                     </p>
                   ) : null}
@@ -452,10 +469,12 @@ export function CartPage({
                         <bdi>{formatMoney(locale, line.lineTotal)}</bdi>
                       </strong>
                       <span className="mt-1 block type-caption text-gray-400">
-                        {copy.unitPrice}: {" "}
+                        {copy.unitPrice}:{" "}
                         {line.discountActive ? (
                           <del className="me-1">
-                            <bdi>{formatMoney(locale, line.unitRegularPrice)}</bdi>
+                            <bdi>
+                              {formatMoney(locale, line.unitRegularPrice)}
+                            </bdi>
                           </del>
                         ) : null}
                         <bdi>{formatMoney(locale, line.unitPrice)}</bdi>
@@ -481,9 +500,7 @@ export function CartPage({
                       type="button"
                       aria-label={copy.decrease}
                       disabled={busy || line.quantity <= 1}
-                      onClick={() =>
-                        mutateQuantity(line.id, line.quantity - 1)
-                      }
+                      onClick={() => mutateQuantity(line.id, line.quantity - 1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       {"\u2212"}
@@ -499,9 +516,7 @@ export function CartPage({
                       type="button"
                       aria-label={copy.increase}
                       disabled={busy || line.quantity >= maxQuantity}
-                      onClick={() =>
-                        mutateQuantity(line.id, line.quantity + 1)
-                      }
+                      onClick={() => mutateQuantity(line.id, line.quantity + 1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       +
@@ -524,6 +539,12 @@ export function CartPage({
           );
         })}
       </ul>
+      <CartGift
+        copy={copy.gift}
+        gift={cart.gift}
+        giftWrapEnabled={giftWrapEnabled}
+        locale={locale}
+      />
     </section>
   );
 

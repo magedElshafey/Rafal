@@ -7,6 +7,7 @@ import type {
   ApplyCartCouponDto,
   CartCouponsResponseDto,
   CartResponseDto,
+  UpdateCartGiftDto,
   UpdateCartItemDto,
 } from "@/features/cart/api/cart-dto";
 import { cartContractEndpoints } from "@/features/cart/api/cart-dto";
@@ -41,7 +42,7 @@ async function cartRequest<TBody = unknown>({
 }: {
   body?: TBody;
   identity: CartTransportIdentity;
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   locale: Locale;
   diagnostics?: CartAddDiagnostics;
@@ -69,19 +70,65 @@ export function addCartItemDto(
   body: AddCartItemDto,
   diagnostics?: CartAddDiagnostics,
 ) {
-  return cartRequest({ identity, locale, path: cartContractEndpoints.items, method: "POST", body, diagnostics });
+  return cartRequest({
+    identity,
+    locale,
+    path: cartContractEndpoints.items,
+    method: "POST",
+    body,
+    diagnostics,
+  });
 }
 
-export function updateCartItemDto(identity: CartTransportIdentity, locale: Locale, lineId: number, body: UpdateCartItemDto) {
-  return cartRequest({ identity, locale, path: `${cartContractEndpoints.items}/${lineId}`, method: "PATCH", body });
+export function updateCartItemDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  lineId: number,
+  body: UpdateCartItemDto,
+) {
+  return cartRequest({
+    identity,
+    locale,
+    path: `${cartContractEndpoints.items}/${lineId}`,
+    method: "PATCH",
+    body,
+  });
 }
 
-export function removeCartItemDto(identity: CartTransportIdentity, locale: Locale, lineId: number) {
-  return cartRequest({ identity, locale, path: `${cartContractEndpoints.items}/${lineId}`, method: "DELETE" });
+export function removeCartItemDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  lineId: number,
+) {
+  return cartRequest({
+    identity,
+    locale,
+    path: `${cartContractEndpoints.items}/${lineId}`,
+    method: "DELETE",
+  });
 }
 
 export function clearCartDto(identity: CartTransportIdentity, locale: Locale) {
-  return cartRequest({ identity, locale, path: cartContractEndpoints.current, method: "DELETE" });
+  return cartRequest({
+    identity,
+    locale,
+    path: cartContractEndpoints.current,
+    method: "DELETE",
+  });
+}
+
+export function updateCartGiftDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  body: UpdateCartGiftDto,
+) {
+  return cartRequest({
+    identity,
+    locale,
+    path: cartContractEndpoints.gift,
+    method: "PUT",
+    body,
+  });
 }
 
 export async function getCartCouponsDto(
@@ -112,10 +159,7 @@ export function applyCartCouponDto(
   });
 }
 
-export function removeCartCouponDto(
-  bearerToken: string,
-  locale: Locale,
-) {
+export function removeCartCouponDto(bearerToken: string, locale: Locale) {
   return cartRequest({
     identity: { kind: "authenticated", bearerToken },
     locale,

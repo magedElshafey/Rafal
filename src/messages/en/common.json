@@ -34,9 +34,22 @@
       "remove": "Remove item",
       "removing": "Removing item..."
     },
-    "quantity": { "label": "Quantity", "increase": "Increase quantity", "decrease": "Decrease quantity" },
-    "line": { "unitPrice": "Unit price", "total": "Line total", "personalization": "Personalization", "sku": "Product code" },
-    "stock": { "ok": "In stock", "low": "Low stock", "outOfStock": "Out of stock" },
+    "quantity": {
+      "label": "Quantity",
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity"
+    },
+    "line": {
+      "unitPrice": "Unit price",
+      "total": "Line total",
+      "personalization": "Personalization",
+      "sku": "Product code"
+    },
+    "stock": {
+      "ok": "In stock",
+      "low": "Low stock",
+      "outOfStock": "Out of stock"
+    },
     "summary": {
       "title": "Order summary",
       "subtotal": "Subtotal",
@@ -71,6 +84,43 @@
       "applied": "Applied coupon",
       "estimatedDiscount": "Estimated discount",
       "minimumOrder": "Minimum order"
+    },
+    "gift": {
+      "title": "Gift options",
+      "description": "Gift wrapping and sending this order as a gift are independent options.",
+      "giftWrap": "Gift wrapping",
+      "giftWrapDescription": "Add gift wrapping to this order.",
+      "giftWrapUnavailable": "Gift wrapping is currently unavailable.",
+      "sendAsGift": "Send as a gift",
+      "sendAsGiftDescription": "Use a different recipient and delivery address.",
+      "updating": "Updating gift options...",
+      "recipientTitle": "Recipient details",
+      "name": "Recipient name",
+      "phone": "Recipient phone",
+      "city": "City",
+      "district": "District",
+      "streetDetails": "Street details",
+      "selectCity": "Select city",
+      "changeCity": "Change recipient city",
+      "save": "Save gift details",
+      "update": "Update recipient",
+      "saving": "Saving gift details",
+      "cancel": "Cancel",
+      "required": "This field is required.",
+      "validationError": "Review the recipient details and try again.",
+      "serviceError": "Gift options are temporarily unavailable. Please try again.",
+      "sessionError": "Your cart session could not be updated. Refresh the page and try again.",
+      "cityDialog": {
+        "title": "Choose the recipient city",
+        "description": "Select the city where this gift will be delivered.",
+        "loading": "Loading cities...",
+        "empty": "No cities are currently available.",
+        "unavailable": "Cities could not be loaded. Close this window and try again.",
+        "close": "Close city selection",
+        "searchLabel": "Search recipient cities",
+        "searchPlaceholder": "Search for a city...",
+        "searchNoResults": "No city matches your search."
+      }
     },
     "errors": {
       "generic": "Your cart could not be updated. Please try again.",
