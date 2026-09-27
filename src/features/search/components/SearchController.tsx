@@ -177,7 +177,8 @@ function SearchControllerState({
       return;
     }
 
-    if (products.length === 0 || showLoading || suggestionsQuery.isError) return;
+    if (products.length === 0 || showLoading || suggestionsQuery.isError)
+      return;
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
