@@ -30,8 +30,7 @@ export default async function CartRoute() {
           increase: t("quantity.increase"), decrease: t("quantity.decrease"), quantity: t("quantity.label"), unitPrice: t("line.unitPrice"), lineTotal: t("line.total"), personalization: t("line.personalization"), sku: t("line.sku"),
           stock: { ok: t("stock.ok"), low: t("stock.low"), outOfStock: t("stock.outOfStock") },
           summary: t("summary.title"), subtotal: t("summary.subtotal"), productDiscount: t("summary.productDiscount"), personalizationTotal: t("summary.personalization"), giftWrap: t("summary.giftWrap"), shipping: t("summary.shipping"), couponDiscount: t("summary.couponDiscount"), vatIncluded: t("summary.vatIncluded"), total: t("summary.total"), checkout: t("summary.checkout"), freeShippingQualified: t("summary.freeShippingQualified"), freeShippingRemaining: t("summary.freeShippingRemaining"),
-          couponGuestTitle: t("coupon.guestTitle"), couponGuestDescription: t("coupon.guestDescription"), login: t("coupon.login"),
-          errors: { generic: t("errors.generic"), validation: t("errors.validation"), notFound: t("errors.notFound") },
+          errors: { generic: t("errors.generic"), validation: t("errors.validation"), notFound: t("errors.notFound"), retry: t("errors.retry") },
         }}
       />
     </Container>

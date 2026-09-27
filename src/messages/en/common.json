@@ -59,7 +59,8 @@
     "errors": {
       "generic": "Your cart could not be updated. Please try again.",
       "validation": "That quantity is not available. Your cart has not changed.",
-      "notFound": "This cart item is no longer available. Refresh the cart and try again."
+      "notFound": "This cart item is no longer available. Refresh the cart and try again.",
+      "retry": "Try again"
     }
   },
   "productDetails": {
