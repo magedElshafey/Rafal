@@ -53,10 +53,17 @@ function assertSuccessfulCouponsResponse(
   return response;
 }
 
+export class CartCouponAuthenticationError extends Error {
+  constructor() {
+    super("An authenticated session is required for Cart coupons.");
+    this.name = "CartCouponAuthenticationError";
+  }
+}
+
 async function requireAuthenticatedCartToken(): Promise<string> {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    throw new Error("An authenticated session is required for Cart coupons.");
+    throw new CartCouponAuthenticationError();
   }
   return accessToken;
 }

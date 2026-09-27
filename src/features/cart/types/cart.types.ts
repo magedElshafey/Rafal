@@ -127,3 +127,18 @@ export type CartMergeResult =
       ok: false;
       error: { code: "unauthorized" | "service-unavailable" };
     };
+export type CartCouponError = {
+  code:
+    | "invalid-input"
+    | "rejected"
+    | "unauthorized"
+    | "service-unavailable";
+};
+
+export type CartCouponMutationResult =
+  | { ok: true; cart: CartSnapshot }
+  | { ok: false; error: CartCouponError };
+
+export type CartCouponListResult =
+  | { ok: true; coupons: readonly CartCouponOption[] }
+  | { ok: false; error: CartCouponError };

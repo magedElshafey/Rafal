@@ -52,9 +52,25 @@
       "freeShippingRemaining": "Remaining for free shipping"
     },
     "coupon": {
-      "guestTitle": "Have a coupon?",
-      "guestDescription": "Sign in or create an account to use available coupons.",
-      "login": "Sign in or register"
+      "label": "Coupon",
+      "codeLabel": "Coupon code",
+      "codePlaceholder": "Enter coupon code",
+      "apply": "Apply",
+      "applyAction": "Apply coupon",
+      "applying": "Applying coupon",
+      "remove": "Remove coupon",
+      "removeAction": "Remove coupon",
+      "removing": "Removing coupon",
+      "available": "Available coupons",
+      "loading": "Loading available coupons",
+      "empty": "No coupons are currently available.",
+      "retry": "Try again",
+      "invalid": "This coupon is invalid or not available for this cart.",
+      "serviceError": "Coupons are temporarily unavailable. Please try again.",
+      "sessionExpired": "Your session has expired. Sign in again to use coupons.",
+      "applied": "Applied coupon",
+      "estimatedDiscount": "Estimated discount",
+      "minimumOrder": "Minimum order"
     },
     "errors": {
       "generic": "Your cart could not be updated. Please try again.",

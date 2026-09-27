@@ -1,6 +1,10 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import Image from "next/image";
 import type { Locale } from "next-intl";
 import { useState } from "react";
@@ -8,9 +12,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TruckIcon, XIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  CartCoupon,
+  type CartCouponCopy,
+} from "@/features/cart/components/cart-coupon";
 import { clearCart } from "@/features/cart/actions/clear-cart";
 import { removeCartLine } from "@/features/cart/actions/remove-cart-line";
 import { updateCartLine } from "@/features/cart/actions/update-cart-line";
+import { syncAvailableCartCouponsAfterCartChange } from "@/features/cart/api/cart-coupons-query";
+import {
+  cartMutationFilters,
+  cartMutationKey,
+  cartMutationScope,
+} from "@/features/cart/api/cart-mutation";
 import { setCurrentCartQueryData } from "@/features/cart/api/cart-query";
 import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
 import type {
@@ -50,6 +64,7 @@ export type CartPageCopy = {
   checkout: string;
   freeShippingQualified: string;
   freeShippingRemaining: string;
+  coupon: CartCouponCopy;
   errors: {
     generic: string;
     validation: string;
@@ -59,6 +74,7 @@ export type CartPageCopy = {
 };
 
 type CartPageProps = {
+  canUseCoupons: boolean;
   copy: CartPageCopy;
   initialCart: CartSnapshot;
   locale: Locale;
@@ -192,6 +208,7 @@ function FreeShippingStatus({
 }
 
 export function CartPage({
+  canUseCoupons,
   copy,
   initialCart,
   locale,
@@ -199,6 +216,7 @@ export function CartPage({
 }: CartPageProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const cartMutationPending = useIsMutating(cartMutationFilters) > 0;
   const {
     data: cart,
     isError,
@@ -209,37 +227,61 @@ export function CartPage({
   const [mutationError, setMutationError] = useState<string | null>(null);
 
   const updateMutation = useMutation({
+    mutationKey: cartMutationKey,
+    scope: cartMutationScope,
     mutationFn: ({ lineId, quantity }: { lineId: string; quantity: number }) =>
       updateCartLine(lineId, quantity, locale),
     retry: false,
     onSuccess: (result) => {
-      if (result.ok) setCurrentCartQueryData(queryClient, locale, result.cart);
-      else setMutationError(errorMessage(result.error, copy.errors));
+      if (result.ok) {
+        setCurrentCartQueryData(queryClient, locale, result.cart);
+        void syncAvailableCartCouponsAfterCartChange(
+          queryClient,
+          locale,
+          result.cart,
+        );
+      } else setMutationError(errorMessage(result.error, copy.errors));
     },
     onError: () => setMutationError(copy.errors.generic),
     onSettled: () => setActiveLineId(null),
   });
   const removeMutation = useMutation({
+    mutationKey: cartMutationKey,
+    scope: cartMutationScope,
     mutationFn: (lineId: string) => removeCartLine(lineId, locale),
     retry: false,
     onSuccess: (result) => {
-      if (result.ok) setCurrentCartQueryData(queryClient, locale, result.cart);
-      else setMutationError(errorMessage(result.error, copy.errors));
+      if (result.ok) {
+        setCurrentCartQueryData(queryClient, locale, result.cart);
+        void syncAvailableCartCouponsAfterCartChange(
+          queryClient,
+          locale,
+          result.cart,
+        );
+      } else setMutationError(errorMessage(result.error, copy.errors));
     },
     onError: () => setMutationError(copy.errors.generic),
     onSettled: () => setActiveLineId(null),
   });
   const clearMutation = useMutation({
+    mutationKey: cartMutationKey,
+    scope: cartMutationScope,
     mutationFn: () => clearCart(locale),
     retry: false,
     onSuccess: (result) => {
-      if (result.ok) setCurrentCartQueryData(queryClient, locale, result.cart);
-      else setMutationError(errorMessage(result.error, copy.errors));
+      if (result.ok) {
+        setCurrentCartQueryData(queryClient, locale, result.cart);
+        void syncAvailableCartCouponsAfterCartChange(
+          queryClient,
+          locale,
+          result.cart,
+        );
+      } else setMutationError(errorMessage(result.error, copy.errors));
     },
     onError: () => setMutationError(copy.errors.generic),
   });
 
-  const busy = activeLineId !== null || clearMutation.isPending;
+  const busy = cartMutationPending;
   const mutateQuantity = (lineId: string, quantity: number) => {
     if (busy || quantity < 1 || quantity > maxQuantity) return;
     setMutationError(null);
@@ -494,6 +536,14 @@ export function CartPage({
       <h2 id="cart-summary-title" className="text-h3 font-bold text-gray-1000">
         {copy.summary}
       </h2>
+      {canUseCoupons ? (
+        <CartCoupon
+          coupon={cart.coupon}
+          copy={copy.coupon}
+          currency={cart.summary.total.currency}
+          locale={locale}
+        />
+      ) : null}
       <dl className="mt-6 space-y-4 type-body text-gray-600">
         <SummaryRow
           label={copy.subtotal}
