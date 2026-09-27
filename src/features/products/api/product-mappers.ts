@@ -31,6 +31,45 @@ function attributeValueId(value: ProductAttributeValue): string {
   return `${typeof value}:${String(value)}`;
 }
 
+export class ProductConfigurationUnavailableError extends Error {
+  constructor(productId: number) {
+    super(`Product "${productId}" has no valid selectable variant configuration.`);
+    this.name = "ProductConfigurationUnavailableError";
+  }
+}
+
+export function normalizeProductDetailVariants(
+  variants: readonly ProductVariantDto[],
+): readonly ProductVariantDto[] {
+  const optionKeys = new Set(
+    variants.flatMap((variant) => Object.keys(variant.attributes)),
+  );
+  const seenConfigurations = new Set<string>();
+
+  return variants.filter((variant) => {
+    const attributes = Object.entries(variant.attributes);
+    if (
+      attributes.length !== optionKeys.size ||
+      [...optionKeys].some(
+        (optionKey) =>
+          !Object.prototype.hasOwnProperty.call(variant.attributes, optionKey),
+      )
+    ) {
+      return false;
+    }
+
+    const configuration = attributes
+      .map(([key, value]) => [key, attributeValueId(value)] as const)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, valueId]) => `${key}:${valueId}`)
+      .join("|");
+    if (seenConfigurations.has(configuration)) return false;
+
+    seenConfigurations.add(configuration);
+    return true;
+  });
+}
+
 function deriveOptions(variants: readonly ProductVariantDto[]): ProductOption[] {
   const valuesByKey = new Map<string, Map<string, ProductAttributeValue>>();
 
@@ -177,8 +216,14 @@ export function mapProductDtoToProductDetails(
 ): ProductDetails | null {
   if (!product.category || product.variants.length === 0) return null;
 
-  const personalization = mapPersonalization(product);
-  const mappedImages = mapProductImages(product);
+  const variants = normalizeProductDetailVariants(product.variants);
+  if (variants.length === 0) {
+    throw new ProductConfigurationUnavailableError(product.id);
+  }
+
+  const normalizedProduct = { ...product, variants };
+  const personalization = mapPersonalization(normalizedProduct);
+  const mappedImages = mapProductImages(normalizedProduct);
   if (!personalization) return null;
 
   return {
@@ -192,11 +237,11 @@ export function mapProductDtoToProductDetails(
       slug: product.category.slug,
     },
     images: mappedImages.images,
-    options: deriveOptions(product.variants),
-    variants: product.variants.map((variant) =>
+    options: deriveOptions(variants),
+    variants: variants.map((variant) =>
       mapVariant(
         variant,
-        product,
+        normalizedProduct,
         mappedImages.imageIdsByVariantId[String(variant.id)] ?? [],
       ),
     ),
