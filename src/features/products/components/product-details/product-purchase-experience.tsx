@@ -99,7 +99,6 @@ type ProductPurchaseExperienceProps = {
   product: ProductPurchaseData;
   renderedAt: number;
   shareActions: ReactNode;
-  wishlistEnabled: boolean;
 };
 
 function getPreferredImageId(
@@ -175,7 +174,6 @@ export function ProductPurchaseExperience({
   product,
   renderedAt,
   shareActions,
-  wishlistEnabled,
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -455,7 +453,6 @@ export function ProductPurchaseExperience({
             productId={product.id}
             productName={product.name}
             selectedImageId={selectedImageId}
-            wishlistEnabled={wishlistEnabled}
           />
         </div>
         <div className="min-w-0 flex-1">

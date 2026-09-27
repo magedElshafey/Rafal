@@ -1,76 +1,76 @@
 "use server";
 
 import { hasLocale } from "next-intl";
-import { revalidatePath } from "next/cache";
 
-import { requireUser } from "@/features/auth/server/auth-boundary";
-import { isKnownProductId } from "@/features/products/server/mock-product-catalog";
+import { mapProtectedAuthActionError } from "@/features/auth/actions/auth-action-utils";
 import {
-  readMockWishlistEntries,
-  writeMockWishlistEntries,
-} from "@/features/wishlist/server/mock-wishlist-store";
+  setWishlistProductState,
+  WishlistAuthenticationError,
+} from "@/features/wishlist/server/wishlist-boundary";
 import type {
   SetWishlistStateInput,
   WishlistMutationResult,
 } from "@/features/wishlist/types/wishlist.types";
 import { routing } from "@/i18n/routing";
 
-function parseInput(input: unknown): SetWishlistStateInput | null {
-  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+function parsePositiveBackendId(value: unknown): string | null {
+  if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? value : null;
+}
+
+function parseInput(value: unknown): SetWishlistStateInput | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return null;
   }
 
-  const candidate = input as Record<string, unknown>;
+  const input = value as Record<string, unknown>;
+  const productId = parsePositiveBackendId(input.productId);
   if (
-    typeof candidate.locale !== "string" ||
-    !hasLocale(routing.locales, candidate.locale) ||
-    typeof candidate.productId !== "string" ||
-    !isKnownProductId(candidate.productId) ||
-    typeof candidate.wishlisted !== "boolean"
+    typeof input.locale !== "string" ||
+    !hasLocale(routing.locales, input.locale) ||
+    !productId ||
+    typeof input.wishlisted !== "boolean"
   ) {
     return null;
   }
 
   return {
-    locale: candidate.locale,
-    productId: candidate.productId,
-    wishlisted: candidate.wishlisted,
+    locale: input.locale,
+    productId,
+    wishlisted: input.wishlisted,
   };
 }
 
 export async function setWishlistState(
   input: unknown,
 ): Promise<WishlistMutationResult> {
-  const user = await requireUser("/account/wishlist");
-
   const parsedInput = parseInput(input);
-  if (!parsedInput) return { ok: false };
+  if (!parsedInput) {
+    return { ok: false, error: { code: "invalid-input" } };
+  }
 
   try {
-    const entries = await readMockWishlistEntries(user);
-    const withoutProduct = entries.filter(
-      (entry) => entry.productId !== parsedInput.productId,
+    await setWishlistProductState(
+      parsedInput.locale,
+      Number(parsedInput.productId),
+      parsedInput.wishlisted,
     );
-    const nextEntries = parsedInput.wishlisted
-      ? [...withoutProduct, { productId: parsedInput.productId }]
-      : withoutProduct;
-
-    await writeMockWishlistEntries(user, nextEntries);
-    revalidatePath(`/${parsedInput.locale}/account/wishlist`);
-
     return { ok: true };
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      const errorMessage =
-        error instanceof Error
-          ? `${error.name}: ${error.message}`
-          : String(error);
-
-      console.error(
-        `[wishlist:set-state] Unexpected mutation failure for product "${parsedInput.productId}": ${errorMessage}`,
-      );
+    if (error instanceof WishlistAuthenticationError) {
+      return { ok: false, error: { code: "unauthorized" } };
     }
 
-    return { ok: false };
+    const failure = await mapProtectedAuthActionError(error);
+    return {
+      ok: false,
+      error: {
+        code:
+          failure.error.code === "unauthorized"
+            ? "unauthorized"
+            : "service-unavailable",
+      },
+    };
   }
 }

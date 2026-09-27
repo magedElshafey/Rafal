@@ -1,7 +1,13 @@
 import type { Locale } from "next-intl";
 
-export type WishlistEntry = {
-  productId: string;
+import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
+
+export const WISHLIST_PAGE_SIZE = 15;
+
+export type WishlistPage = PaginatedListingProducts;
+
+export type WishlistCount = {
+  count: number;
 };
 
 export type SetWishlistStateInput = {
@@ -10,11 +16,10 @@ export type SetWishlistStateInput = {
   wishlisted: boolean;
 };
 
+export type WishlistMutationError = {
+  code: "invalid-input" | "service-unavailable" | "unauthorized";
+};
+
 export type WishlistMutationResult =
   | { ok: true }
-  | { ok: false };
-
-export type WishlistMembership = {
-  authenticated: boolean;
-  productIds: string[];
-};
+  | { ok: false; error: WishlistMutationError };

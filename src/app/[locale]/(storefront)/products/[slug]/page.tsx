@@ -371,7 +371,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             },
           },
         }}
-        wishlistEnabled={false}
       />
 
       <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
