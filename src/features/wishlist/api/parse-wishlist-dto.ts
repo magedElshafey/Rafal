@@ -5,6 +5,7 @@ import type {
   WishlistPageResponseDto,
 } from "@/features/wishlist/api/wishlist-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
+import { WISHLIST_PAGE_SIZE } from "@/features/wishlist/types/wishlist.types";
 
 export class WishlistContractError extends Error {
   constructor(path: string, expected: string) {
@@ -27,7 +28,14 @@ function nonNegativeInteger(value: unknown, path: string): number {
 export function parseWishlistPageResponse(
   value: unknown,
 ): WishlistPageResponseDto {
-  return parseProductListResponse(value);
+  const response = parseProductListResponse(value);
+  if (response.meta.per_page !== WISHLIST_PAGE_SIZE) {
+    throw new WishlistContractError(
+      "response.meta.per_page",
+      String(WISHLIST_PAGE_SIZE),
+    );
+  }
+  return response;
 }
 
 export function parseWishlistMutationResponse(

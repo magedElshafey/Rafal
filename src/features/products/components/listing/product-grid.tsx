@@ -6,7 +6,6 @@ import {
   type ProductCardAction,
 } from "@/features/products/components/product-card";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
-import { ProductWishlistAction } from "@/features/wishlist/components/product-wishlist-action";
 import { cn } from "@/lib/utils";
 
 type ProductGridProps = {
@@ -58,9 +57,6 @@ export function ListingProductCard({
     },
     title: name,
     wishlistAction: getWishlistAction?.(product),
-    wishlistControl: getWishlistAction ? undefined : (
-      <ProductWishlistAction productId={product.id} />
-    ),
   };
 
   return product.inStock ? (

@@ -13,7 +13,6 @@ import {
 import { RafalModal } from "@/components/ui/rafal-modal";
 import type { ProductImage } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
-import { ProductWishlistAction } from "@/features/wishlist/components/product-wishlist-action";
 
 type ProductGalleryProps = {
   copy: {
@@ -32,7 +31,6 @@ type ProductGalleryProps = {
   productId: string;
   productName: string;
   selectedImageId: string | null;
-  wishlistEnabled: boolean;
 };
 
 export function ProductGallery({
@@ -44,7 +42,6 @@ export function ProductGallery({
   productId,
   productName,
   selectedImageId,
-  wishlistEnabled,
 }: ProductGalleryProps) {
   const lightboxTriggerRef = useRef<HTMLButtonElement>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -102,12 +99,6 @@ export function ProductGallery({
           >
             <ImageIcon className="size-14" />
           </div>
-          {wishlistEnabled ? (
-            <ProductWishlistAction
-              productId={productId}
-              className="start-4 top-4 size-12 [&_svg]:size-6"
-            />
-          ) : null}
         </div>
       </section>
     );
@@ -147,12 +138,6 @@ export function ProductGallery({
             <EyeIcon aria-hidden="true" className="size-5" />
           </span>
         </button>
-        {wishlistEnabled ? (
-          <ProductWishlistAction
-            productId={productId}
-            className="start-4 top-4 size-12 [&_svg]:size-6"
-          />
-        ) : null}
       </div>
 
       {images.length > 1 ? (
