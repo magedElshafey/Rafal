@@ -1,5 +1,4 @@
 export type CartAttributeDto = string | number | boolean;
-export type CartImageDto = { id: number; url: string };
 export type CartCityDto = { id: number; name: string };
 export type CartGiftRecipientDto = {
   name: string;
@@ -21,16 +20,23 @@ export type CartCouponOptionDto = {
   estimated_discount: string;
 };
 
+export type CartLineAvailabilityDto = {
+  city_id: number;
+  available: number;
+  in_stock: boolean;
+};
+
 export type CartLineDto = {
   id: number;
   quantity: number;
   personalization: unknown | null;
   stock: { status: "ok" | "low" | "out_of_stock"; available: number };
+  availability?: CartLineAvailabilityDto;
   product: {
     id: number;
     name: string;
     slug: string;
-    image: CartImageDto | null;
+    image: string | null;
     personalizable: boolean;
   };
   variant: {

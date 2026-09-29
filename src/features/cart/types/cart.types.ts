@@ -37,13 +37,19 @@ export type CartLinePersonalization = {
   text: string | null;
 };
 
+export type CartLineAvailability = {
+  cityId: number;
+  available: number;
+  inStock: boolean;
+};
+
 export type CartLine = {
   id: string;
   product: {
     id: string;
     slug: string;
     name: string;
-    image: { id: string; src: string } | null;
+    image: { src: string } | null;
     personalizable: boolean;
   };
   variant: {
@@ -54,6 +60,7 @@ export type CartLine = {
   personalization: CartLinePersonalization | null;
   quantity: number;
   stock: { status: "ok" | "low" | "out_of_stock"; available: number };
+  availability?: CartLineAvailability;
   unitRegularPrice: CartMoney;
   unitPrice: CartMoney;
   discountActive: boolean;

@@ -37,6 +37,7 @@ async function cartRequest<TBody = unknown>({
   method,
   path,
   locale,
+  query,
   diagnostics,
 }: {
   body?: TBody;
@@ -44,6 +45,7 @@ async function cartRequest<TBody = unknown>({
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   path: string;
   locale: Locale;
+  query?: { city_id: number };
   diagnostics?: CartAddDiagnostics;
 }): Promise<CartResponseDto> {
   diagnostics?.stage("laravel-request-start");
@@ -52,6 +54,7 @@ async function cartRequest<TBody = unknown>({
     method,
     headers: { ...getIdentityHeaders(identity), "Accept-Language": locale },
     body,
+    query,
   });
   diagnostics?.stage("laravel-response", getCartAddResponseFacts(payload));
   const response = parseCartResponse(payload);
@@ -59,8 +62,17 @@ async function cartRequest<TBody = unknown>({
   return response;
 }
 
-export function getCartDto(identity: CartTransportIdentity, locale: Locale) {
-  return cartRequest({ identity, locale, path: cartContractEndpoints.current });
+export function getCartDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  cityId?: number,
+) {
+  return cartRequest({
+    identity,
+    locale,
+    path: cartContractEndpoints.current,
+    query: cityId === undefined ? undefined : { city_id: cityId },
+  });
 }
 
 export function addCartItemDto(

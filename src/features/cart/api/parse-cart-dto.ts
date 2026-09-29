@@ -98,25 +98,48 @@ function nullableFiniteNumber(value: unknown, path: string): number | null {
   return value === null ? null : finiteNumber(value, path);
 }
 
+function normalizedDecimal(value: string): string {
+  const [integer, fraction = ""] = value.split(".");
+  const normalizedInteger = integer.replace(/^0+(?=\d)/, "");
+  const normalizedFraction = fraction.replace(/0+$/, "");
+  return normalizedFraction
+    ? `${normalizedInteger}.${normalizedFraction}`
+    : normalizedInteger;
+}
+
 function vatIncludedAmount(
   value: Record<string, unknown>,
   path: string,
 ): string {
-  if (Object.hasOwn(value, "included_amount")) {
-    return decimalString(
-      value.included_amount,
-      `${path}.included_amount`,
+  const hasAmount = Object.hasOwn(value, "amount");
+  const hasIncludedAmount = Object.hasOwn(value, "included_amount");
+
+  if (!hasAmount && !hasIncludedAmount) {
+    throw new CartContractError(
+      path,
+      'an object containing "amount" or "included_amount"',
     );
   }
 
-  if (Object.hasOwn(value, "amount")) {
-    return decimalString(value.amount, `${path}.amount`);
+  const amount = hasAmount
+    ? decimalString(value.amount, `${path}.amount`)
+    : undefined;
+  const includedAmount = hasIncludedAmount
+    ? decimalString(value.included_amount, `${path}.included_amount`)
+    : undefined;
+
+  if (
+    amount !== undefined &&
+    includedAmount !== undefined &&
+    normalizedDecimal(amount) !== normalizedDecimal(includedAmount)
+  ) {
+    throw new CartContractError(
+      path,
+      'matching "amount" and "included_amount" values',
+    );
   }
 
-  throw new CartContractError(
-    path,
-    'an object containing "included_amount" or "amount"',
-  );
+  return includedAmount ?? amount!;
 }
 
 function array(value: unknown, path: string): unknown[] {
@@ -148,12 +171,15 @@ function attributes(value: unknown, path: string): Readonly<Record<string, CartA
 function parseLine(value: unknown, path: string): CartLineDto {
   const source = record(value, path);
   const stock = record(source.stock, `${path}.stock`);
+  const availability =
+    source.availability === undefined
+      ? undefined
+      : record(source.availability, `${path}.availability`);
   const status = string(stock.status, `${path}.stock.status`);
   if (status !== "ok" && status !== "low" && status !== "out_of_stock") {
     throw new CartContractError(`${path}.stock.status`, "a supported stock status");
   }
   const product = record(source.product, `${path}.product`);
-  const image = product.image === null ? null : record(product.image, `${path}.product.image`);
   const variant = record(source.variant, `${path}.variant`);
 
   return {
@@ -164,16 +190,29 @@ function parseLine(value: unknown, path: string): CartLineDto {
       status,
       available: nonNegativeInteger(stock.available, `${path}.stock.available`),
     },
+    ...(availability
+      ? {
+          availability: {
+            city_id: positiveInteger(
+              availability.city_id,
+              `${path}.availability.city_id`,
+            ),
+            available: nonNegativeInteger(
+              availability.available,
+              `${path}.availability.available`,
+            ),
+            in_stock: boolean(
+              availability.in_stock,
+              `${path}.availability.in_stock`,
+            ),
+          },
+        }
+      : {}),
     product: {
       id: positiveInteger(product.id, `${path}.product.id`),
       name: string(product.name, `${path}.product.name`),
       slug: string(product.slug, `${path}.product.slug`),
-      image: image
-        ? {
-            id: positiveInteger(image.id, `${path}.product.image.id`),
-            url: string(image.url, `${path}.product.image.url`),
-          }
-        : null,
+      image: nullableString(product.image, `${path}.product.image`),
       personalizable: boolean(product.personalizable, `${path}.product.personalizable`),
     },
     variant: {

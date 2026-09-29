@@ -60,9 +60,7 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
         id: String(line.product.id),
         slug: line.product.slug,
         name: line.product.name,
-        image: line.product.image
-          ? { id: String(line.product.image.id), src: line.product.image.url }
-          : null,
+        image: line.product.image ? { src: line.product.image } : null,
         personalizable: line.product.personalizable,
       },
       variant: {
@@ -73,6 +71,15 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
       personalization: mapPersonalization(line.personalization),
       quantity: line.quantity,
       stock: line.stock,
+      ...(line.availability
+        ? {
+            availability: {
+              cityId: line.availability.city_id,
+              available: line.availability.available,
+              inStock: line.availability.in_stock,
+            },
+          }
+        : {}),
       unitRegularPrice: money(line.unit_regular_price, currency),
       unitPrice: money(line.unit_price, currency),
       discountActive: line.discount_active,
