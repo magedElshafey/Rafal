@@ -1,77 +1,100 @@
-import {
-  addressTypeValues,
-  type AddressValidationErrors,
-} from "@/features/addresses/types/saved-address.types";
+import type {
+  AddressInputField,
+  AddressValidationErrors,
+  CreateAddressInput,
+  UpdateAddressInput,
+} from "@/features/addresses/types/address.types";
 
-const phonePattern = /^\+?[\d\s()-]+$/;
-const postalCodePattern = /^\d[\d\s-]{1,10}\d$/;
+const inputFields = [
+  "label",
+  "recipientName",
+  "recipientPhone",
+  "cityId",
+  "district",
+  "streetDetails",
+  "isDefault",
+] as const satisfies readonly AddressInputField[];
 
-export function validateAddress(value: unknown): AddressValidationErrors {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return {
-      fullName: "required",
-      phone: "required",
-      city: "required",
-      district: "required",
-      street: "required",
-      additionalDetails: "invalid",
-      postalCode: "postalCode",
-      type: "type",
-      isDefault: "invalid",
-    };
-  }
+type ParseResult<T> =
+  | { ok: true; input: T }
+  | { ok: false; errors: AddressValidationErrors };
 
-  const address = value as Record<string, unknown>;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function hasOnlyInputFields(value: Record<string, unknown>) {
+  return Object.keys(value).every((key) =>
+    inputFields.some((field) => field === key),
+  );
+}
+
+function parseFields(
+  value: Record<string, unknown>,
+  required: boolean,
+): { input: Partial<CreateAddressInput>; errors: AddressValidationErrors } {
+  const input: Partial<CreateAddressInput> = {};
   const errors: AddressValidationErrors = {};
 
-  const fullName =
-    typeof address.fullName === "string" ? address.fullName.trim() : "";
-  if (!fullName) errors.fullName = "required";
+  for (const field of inputFields) {
+    if (!(field in value)) {
+      if (required) errors[field] = "required";
+      continue;
+    }
 
-  const phone = typeof address.phone === "string" ? address.phone.trim() : "";
-  const phoneDigits = phone.replace(/\D/g, "");
-  if (!phone) errors.phone = "required";
-  else if (
-    !phonePattern.test(phone) ||
-    phoneDigits.length < 8 ||
-    phoneDigits.length > 15
-  ) {
-    errors.phone = "phone";
+    if (field === "cityId") {
+      if (
+        typeof value.cityId !== "number" ||
+        !Number.isSafeInteger(value.cityId) ||
+        value.cityId <= 0
+      ) {
+        errors.cityId = "required";
+      } else {
+        input.cityId = value.cityId;
+      }
+      continue;
+    }
+
+    if (field === "isDefault") {
+      if (typeof value.isDefault !== "boolean") {
+        errors.isDefault = "rejected";
+      } else {
+        input.isDefault = value.isDefault;
+      }
+      continue;
+    }
+
+    const raw = value[field];
+    const normalized = typeof raw === "string" ? raw.trim() : "";
+    if (!normalized) errors[field] = "required";
+    else input[field] = normalized;
   }
 
-  if (typeof address.city !== "string" || !address.city.trim()) {
-    errors.city = "required";
-  }
-  if (typeof address.district !== "string" || !address.district.trim()) {
-    errors.district = "required";
-  }
-  if (typeof address.street !== "string" || !address.street.trim()) {
-    errors.street = "required";
-  }
+  return { input, errors };
+}
 
-  const postalCode =
-    typeof address.postalCode === "string" ? address.postalCode.trim() : "";
+export function parseCreateAddressInput(value: unknown): ParseResult<CreateAddressInput> {
+  if (!isRecord(value) || !hasOnlyInputFields(value)) {
+    return { ok: false, errors: { label: "required" } };
+  }
+  const parsed = parseFields(value, true);
+  if (Object.keys(parsed.errors).length > 0) {
+    return { ok: false, errors: parsed.errors };
+  }
+  return { ok: true, input: parsed.input as CreateAddressInput };
+}
+
+export function parseUpdateAddressInput(value: unknown): ParseResult<UpdateAddressInput> {
   if (
-    typeof address.postalCode !== "string" ||
-    (postalCode && !postalCodePattern.test(postalCode))
+    !isRecord(value) ||
+    !hasOnlyInputFields(value) ||
+    Object.keys(value).length === 0
   ) {
-    errors.postalCode = "postalCode";
+    return { ok: false, errors: {} };
   }
-
-  if (typeof address.additionalDetails !== "string") {
-    errors.additionalDetails = "invalid";
+  const parsed = parseFields(value, false);
+  if (Object.keys(parsed.errors).length > 0) {
+    return { ok: false, errors: parsed.errors };
   }
-
-  if (
-    typeof address.type !== "string" ||
-    !addressTypeValues.some((type) => type === address.type)
-  ) {
-    errors.type = "type";
-  }
-
-  if (typeof address.isDefault !== "boolean") {
-    errors.isDefault = "invalid";
-  }
-
-  return errors;
+  return { ok: true, input: parsed.input as UpdateAddressInput };
 }

@@ -109,6 +109,11 @@ function parseWarehouseStock(
 }
 
 function parseImage(value: unknown, path: string): ProductImageDto {
+  if (typeof value === "string") {
+    const url = parseNonEmptyString(value, path);
+    return { id: `url:${url}`, url };
+  }
+
   const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),

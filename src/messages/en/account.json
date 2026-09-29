@@ -35,67 +35,74 @@
   "addresses": {
     "title": "My addresses",
     "helper": "You have {count} saved addresses (maximum {maximum}).",
-    "maximumReached": "Address limit reached",
+    "maximumReached": "You have reached the maximum number of saved addresses.",
     "add": "Add new address",
-    "edit": "Edit",
-    "defaultLabel": "Default",
-    "types": {
-      "home": "Home",
-      "work": "Work"
-    },
+    "loadMore": "Load more addresses",
+    "loading": "Loading your addresses",
+    "loadingMore": "Loading more addresses",
+    "nextPageError": "More addresses could not be loaded. Please try again.",
+    "retry": "Try again",
     "empty": {
       "title": "No saved addresses",
       "description": "Add an address to make future checkout details easier."
     },
-    "newTitle": "Add a new address",
-    "editTitle": "Edit address",
+    "error": {
+      "title": "Your addresses could not be loaded",
+      "description": "There was a temporary problem loading your addresses. Please try again."
+    },
+    "card": {
+      "defaultLabel": "Default",
+      "recipient": "Recipient",
+      "serviceable": "Delivery available",
+      "notServiceable": "Delivery unavailable",
+      "edit": "Edit",
+      "editLabel": "Edit address {label}",
+      "delete": "Delete",
+      "deleteLabel": "Delete address {label}"
+    },
     "form": {
-      "sectionTitle": "Address details",
+      "addTitle": "Add a new address",
+      "editTitle": "Edit address",
+      "close": "Close address form",
       "fields": {
-        "fullName": "Full name",
-        "phone": "Mobile number",
+        "label": "Address label",
+        "recipientName": "Recipient name",
+        "recipientPhone": "Recipient phone",
         "city": "City",
         "district": "District",
-        "street": "Street",
-        "additionalDetails": "Additional description or landmark",
-        "postalCode": "Postal code",
-        "postalCodeOptional": "Optional"
+        "streetDetails": "Street details"
       },
-      "type": {
-        "label": "Address type"
+      "cityOptions": {
+        "select": "Select city",
+        "loading": "Loading cities...",
+        "empty": "No cities are available.",
+        "unavailable": "Cities could not be loaded.",
+        "unavailableCurrent": "currently unavailable",
+        "retry": "Retry"
       },
-      "isDefault": "Set as default address",
+      "defaultAddress": {
+        "label": "Set as default address",
+        "helper": "Use this address as the default for future orders."
+      },
       "save": "Save address",
       "saving": "Saving address",
-      "cancel": "Cancel"
-    },
-    "validation": {
       "required": "This field is required.",
-      "phone": "Enter a valid phone number.",
-      "postalCode": "Enter a valid postal code.",
-      "type": "Choose a valid address type.",
-      "invalid": "Enter a valid value."
+      "rejected": "Review this value and try again.",
+      "validationError": "Review the address details and try again.",
+      "serviceError": "The address could not be saved. Please try again.",
+      "notFound": "This address is no longer available.",
+      "created": "Address added successfully.",
+      "updated": "Address updated successfully.",
+      "cancel": "Cancel"
     },
     "delete": {
-      "trigger": "Delete address",
       "title": "Delete this address?",
-      "description": "This is a destructive action. Confirm that you want to delete this saved address.",
+      "description": "Address {label} will be removed from your account.",
       "confirm": "Delete",
       "confirming": "Deleting address",
-      "cancel": "Cancel"
-    },
-    "feedback": {
-      "savedPreview": "Address accepted for this preview only. It will reset because persistence is not connected yet.",
-      "deletedPreview": "Delete accepted for this preview only. The address remains until persistence is connected.",
-      "saveError": "The address could not be saved. Please try again.",
-      "deleteError": "The address could not be deleted. Please try again.",
-      "maximumReached": "You have reached the maximum number of saved addresses.",
-      "defaultDeleteUnsupported": "Deleting the default address requires a confirmed replacement rule and is not available yet."
-    },
-    "location": {
-      "title": "Choose the location on the map",
-      "description": "Map selection will be connected here when a location provider is approved.",
-      "unavailable": "Map search, current location, and pin selection are not available yet."
+      "cancel": "Cancel",
+      "success": "Address deleted successfully.",
+      "error": "The address could not be deleted. Please try again."
     }
   },
   "orders": {

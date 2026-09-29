@@ -13,7 +13,7 @@ export type ProductWarehouseStockDto = {
 };
 
 export type ProductImageDto = {
-  id: number;
+  id: number | string;
   url: string;
 };
 

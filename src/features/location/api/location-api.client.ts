@@ -4,7 +4,13 @@ import { mapCityDto, parseRegionsResponse } from "@/features/location/api/region
 import type { City } from "@/features/location/types";
 import { createClientApi } from "@/lib/api/client-api";
 
-export async function getCitiesClient(locale: Locale): Promise<readonly City[]> {
-  const payload = await createClientApi(locale).request<unknown>({ path: "/regions" });
+export async function getCitiesClient(
+  locale: Locale,
+  signal?: AbortSignal,
+): Promise<readonly City[]> {
+  const payload = await createClientApi(locale).request<unknown>({
+    path: "/regions",
+    signal,
+  });
   return parseRegionsResponse(payload).data.flatMap((region) => region.cities.map(mapCityDto));
 }
