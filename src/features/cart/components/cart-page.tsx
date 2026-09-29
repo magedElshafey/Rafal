@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TruckIcon, XIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CartGift } from "@/features/cart/components/cart-gift";
 import {
   CartCoupon,
   type CartCouponCopy,
@@ -344,8 +345,9 @@ export function CartPage({
           size="sm"
           loading={clearMutation.isPending}
           loadingLabel={copy.clearing}
-          disabled={activeLineId !== null}
+          disabled={busy}
           onClick={() => {
+            if (queryClient.isMutating(cartMutationFilters) > 0) return;
             setMutationError(null);
             clearMutation.mutate();
           }}
@@ -524,6 +526,7 @@ export function CartPage({
           );
         })}
       </ul>
+      <CartGift gift={cart.gift} locale={locale} />
     </section>
   );
 

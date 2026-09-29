@@ -22,6 +22,36 @@ export type CartGiftRecipient = {
   streetDetails: string;
 };
 
+export type CartGiftRecipientInput = {
+  name: string;
+  phone: string;
+  cityId: number;
+  district: string;
+  streetDetails: string;
+};
+
+// User intent, not the Laravel request DTO. The server preserves companion state.
+export type UpdateCartGiftInput =
+  | { kind: "wrap"; enabled: boolean }
+  | { kind: "disable-gift" }
+  | {
+      kind: "recipient";
+      recipient: CartGiftRecipientInput;
+      isAnonymous: boolean;
+      message: string | null;
+    };
+
+export type CartGiftError =
+  | { code: "invalid-input" }
+  | { code: "validation-rejected"; fields: readonly string[] }
+  | { code: "unauthorized" }
+  | { code: "cart-session-failure" }
+  | { code: "service-unavailable" };
+
+export type CartGiftMutationResult =
+  | { ok: true; cart: CartSnapshot }
+  | { ok: false; error: CartGiftError };
+
 export type AddCartLineInput = {
   productId: string;
   variantId: string;

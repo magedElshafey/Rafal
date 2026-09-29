@@ -7,6 +7,7 @@ import type {
   ApplyCartCouponDto,
   CartCouponsResponseDto,
   CartResponseDto,
+  UpdateCartGiftDto,
   UpdateCartItemDto,
 } from "@/features/cart/api/cart-dto";
 import { cartContractEndpoints } from "@/features/cart/api/cart-dto";
@@ -42,7 +43,7 @@ async function cartRequest<TBody = unknown>({
 }: {
   body?: TBody;
   identity: CartTransportIdentity;
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   locale: Locale;
   query?: { city_id: number };
@@ -94,6 +95,14 @@ export function removeCartItemDto(identity: CartTransportIdentity, locale: Local
 
 export function clearCartDto(identity: CartTransportIdentity, locale: Locale) {
   return cartRequest({ identity, locale, path: cartContractEndpoints.current, method: "DELETE" });
+}
+
+export function updateCartGiftDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  body: UpdateCartGiftDto,
+) {
+  return cartRequest({ identity, locale, path: cartContractEndpoints.gift, method: "PUT", body });
 }
 
 export async function getCartCouponsDto(

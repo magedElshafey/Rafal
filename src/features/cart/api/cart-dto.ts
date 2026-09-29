@@ -124,13 +124,13 @@ export type UpdateCartGiftDto = {
   gift_wrap: boolean;
   is_anonymous: boolean;
   gift_message: string | null;
-  recipient: {
+  recipient?: {
     name: string;
     phone: string;
     city_id: number;
     district: string;
     street_details: string;
-  } | null;
+  };
 };
 
 export const cartContractEndpoints = {

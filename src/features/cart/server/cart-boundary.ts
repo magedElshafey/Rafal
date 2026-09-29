@@ -12,6 +12,7 @@ import {
   removeCartCouponDto,
   removeCartItemDto,
   updateCartItemDto,
+  updateCartGiftDto,
   type CartTransportIdentity,
 } from "@/features/cart/api/cart-api.server";
 import type {
@@ -34,6 +35,7 @@ import type {
   CartCouponOption,
   CartMutationResult,
   CartSnapshot,
+  UpdateCartGiftInput,
 } from "@/features/cart/types/cart.types";
 import { readGuestCityId } from "@/features/location/server/guest-city-session";
 
@@ -181,6 +183,39 @@ export async function clearCurrentCart(
     await deleteGuestCartToken();
   }
   return { ok: true, cart: mapCartData(response.data) };
+}
+
+export async function updateCurrentCartGift(
+  input: UpdateCartGiftInput,
+  locale: Locale,
+): Promise<CartSnapshot> {
+  const identity = await resolveCartTransportIdentity();
+  const current = assertSuccessfulResponse(await getCartDto(identity, locale));
+  const gift = current.data.gift;
+  const response = assertSuccessfulResponse(
+    await updateCartGiftDto(identity, locale, {
+      is_gift: input.kind === "recipient"
+        ? true
+        : input.kind === "disable-gift" ? false : gift.is_gift,
+      gift_wrap: input.kind === "wrap" ? input.enabled : gift.gift_wrap,
+      is_anonymous: input.kind === "recipient" ? input.isAnonymous : gift.is_anonymous,
+      gift_message: input.kind === "recipient" ? input.message : gift.gift_message,
+      ...(input.kind === "recipient" ? {
+        recipient: {
+          name: input.recipient.name,
+          phone: input.recipient.phone,
+          city_id: input.recipient.cityId,
+          district: input.recipient.district,
+          street_details: input.recipient.streetDetails,
+        },
+      } : {}),
+    }),
+  );
+  if (identity.kind === "guest" && !identity.token && !response.data.token) {
+    throw new Error("A newly created guest Cart must return a token.");
+  }
+  await syncGuestToken(identity, response);
+  return mapCartData(response.data);
 }
 
 export async function getAvailableCartCoupons(
