@@ -20,6 +20,9 @@
     "retry": "Try again",
     "retrying": "Retrying"
   },
+  "checkoutPage": {
+    "loading": "Loading checkout..."
+  },
   "cartPage": {
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },
     "title": "Shopping cart",
