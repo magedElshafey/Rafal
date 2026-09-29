@@ -1,12 +1,13 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { LocationSelector } from "@/components/shared/LocationSelector";
+import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
 import { setGuestCityId } from "@/features/location/actions/set-guest-city";
-import { getCitiesClient } from "@/features/location/api/location-api.client";
-import { CitySelectionDialog } from "@/features/location/components/CitySelectionDialog";
+import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
 import type { City } from "@/features/location/types";
 import { useRouter } from "@/i18n/navigation";
 
@@ -31,56 +32,20 @@ type LocationControllerProps = {
   onLocationPersisted?: () => void | Promise<void>;
 };
 
-const cityCatalogRequests = new Map<Locale, Promise<readonly City[]>>();
-
-async function loadCityCatalog(locale: Locale) {
-  const cachedRequest = cityCatalogRequests.get(locale);
-  if (cachedRequest) return cachedRequest;
-
-  const request = getCitiesClient(locale);
-  cityCatalogRequests.set(locale, request);
-
-  try {
-    return await request;
-  } catch (error) {
-    cityCatalogRequests.delete(locale);
-    throw error;
-  }
-}
-
 export function LocationController({
   copy,
   initialCity,
   locale,
   onLocationPersisted,
 }: LocationControllerProps) {
-  const [cities, setCities] = useState<readonly City[] | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
   const [isOpen, setIsOpen] = useState(initialCity === null);
-  const [cityLoadFailed, setCityLoadFailed] = useState(false);
   const [, startTransition] = useTransition();
   const router = useRouter();
-  const mountedRef = useRef(true);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen || cities !== null || cityLoadFailed) return;
-
-    loadCityCatalog(locale).then(
-      (nextCities) => {
-        if (mountedRef.current) setCities(nextCities);
-      },
-      () => {
-        if (mountedRef.current) setCityLoadFailed(true);
-      },
-    );
-  }, [cities, cityLoadFailed, isOpen, locale]);
+  const citiesQuery = useQuery({
+    ...cityCatalogQueryOptions(locale),
+    enabled: isOpen,
+  });
 
   const handleSelect = (city: City) => {
     setSelectedCity(city);
@@ -93,7 +58,6 @@ export function LocationController({
   };
 
   const handleOpen = () => {
-    setCityLoadFailed(false);
     setIsOpen(true);
   };
 
@@ -108,8 +72,8 @@ export function LocationController({
         onClick={handleOpen}
       />
       {isOpen ? (
-        <CitySelectionDialog
-          cities={cities ?? []}
+        <CityPickerDialog
+          cities={citiesQuery.data ?? []}
           copy={{
             title: copy.dialogTitle,
             description: copy.dialogDescription,
@@ -120,7 +84,7 @@ export function LocationController({
             searchPlaceholder: copy.searchPlaceholder,
             searchNoResults: copy.searchNoResults,
           }}
-          isLoading={cities === null && !cityLoadFailed}
+          isLoading={citiesQuery.isPending}
           isOpen
           selectedCityId={selectedCity?.id}
           onClose={() => setIsOpen(false)}

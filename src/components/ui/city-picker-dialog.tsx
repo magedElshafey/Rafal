@@ -16,11 +16,15 @@ import {
   SearchIcon,
   XIcon,
 } from "@/components/ui/icons";
-import type { City } from "@/features/location/types";
 import { cn } from "@/lib/utils";
 
-type CitySelectionDialogProps = {
-  cities: readonly City[];
+type CityPickerOption = {
+  id: number;
+  name: string;
+};
+
+type CityPickerDialogProps<Option extends CityPickerOption> = {
+  cities: readonly Option[];
   copy: {
     title: string;
     description: string;
@@ -35,7 +39,7 @@ type CitySelectionDialogProps = {
   isOpen: boolean;
   selectedCityId?: number;
   onClose: () => void;
-  onSelect: (city: City) => void;
+  onSelect: (city: Option) => void;
 };
 
 const FOCUSABLE_SELECTOR = [
@@ -47,7 +51,7 @@ const FOCUSABLE_SELECTOR = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
-export function CitySelectionDialog({
+export function CityPickerDialog<Option extends CityPickerOption>({
   cities,
   copy,
   isLoading,
@@ -55,7 +59,7 @@ export function CitySelectionDialog({
   onClose,
   onSelect,
   selectedCityId,
-}: CitySelectionDialogProps) {
+}: CityPickerDialogProps<Option>) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
