@@ -99,6 +99,10 @@ function isAbortOrTimeoutError(error: unknown): boolean {
   );
 }
 
+function isFormData(value: unknown): value is FormData {
+  return typeof FormData !== "undefined" && value instanceof FormData;
+}
+
 export function createHttpClient({
   baseUrl,
   timeoutMs: defaultTimeoutMs = 10_000,
@@ -126,17 +130,24 @@ export function createHttpClient({
       ? AbortSignal.any([signal, timeoutSignal])
       : timeoutSignal;
 
+    const formDataBody = isFormData(body);
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const response = await fetch(url, {
           method,
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json",
+            ...(formDataBody ? {} : { "Content-Type": "application/json" }),
             ...dynamicHeaders,
             ...headers,
           },
-          body: body !== undefined ? JSON.stringify(body) : undefined,
+          body:
+            body === undefined
+              ? undefined
+              : formDataBody
+                ? body
+                : JSON.stringify(body),
           signal: requestSignal,
         });
 
