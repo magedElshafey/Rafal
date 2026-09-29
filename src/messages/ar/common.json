@@ -21,7 +21,67 @@
     "retrying": "جارٍ إعادة المحاولة"
   },
   "checkoutPage": {
-    "loading": "جارٍ تحميل صفحة إتمام الشراء..."
+    "loading": "جارٍ تحميل صفحة إتمام الشراء...",
+    "breadcrumbs": { "label": "مسار التنقل", "home": "الرئيسية" },
+    "title": "إتمام الشراء",
+    "steps": {
+      "address": "عنوان التوصيل",
+      "shipping": "طريقة الشحن",
+      "payment": "طريقة الدفع",
+      "inactive": "أكمل خطوة عنوان التوصيل للمتابعة."
+    },
+    "destination": {
+      "selectedLabel": "محدد",
+      "defaultLabel": "افتراضي",
+      "giftLabel": "مستلم الهدية",
+      "oneTimeLabel": "عنوان التوصيل",
+      "addNew": "استخدام عنوان مختلف",
+      "editAddress": "تعديل العنوان",
+      "savedUnavailable": "العناوين المحفوظة غير متاحة مؤقتًا. يمكنك إدخال عنوان توصيل أدناه.",
+      "giftMissingTitle": "بيانات مستلم الهدية غير مكتملة",
+      "giftMissingDescription": "عُد إلى سلة التسوق وأضف بيانات توصيل المستلم قبل المتابعة.",
+      "editGift": "تعديل بيانات الهدية",
+      "feedback": {
+        "pending": "جارٍ تحديث بيانات التوصيل...",
+        "coverageTitle": "هذا العنوان خارج نطاق التوصيل",
+        "coverageDescription": "اختر عنوانًا آخر أو حدّث بيانات مستلم الهدية.",
+        "changeAddress": "استخدام عنوان آخر",
+        "unfulfillableTitle": "يتعذر توصيل بعض منتجات السلة",
+        "unfulfillableDescription": "راجع سلة التسوق قبل متابعة إتمام الشراء.",
+        "returnToCart": "العودة إلى السلة",
+        "quoteError": "تعذر تحديث إجمالي الطلب. حاول مرة أخرى.",
+        "sessionError": "جلسة سلة التسوق غير متاحة. حدّث الصفحة وحاول مرة أخرى.",
+        "validationError": "راجع بيانات التوصيل وحاول مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      },
+      "form": {
+        "fields": {
+          "recipientName": "اسم المستلم",
+          "recipientPhone": "رقم جوال المستلم",
+          "city": "المدينة",
+          "district": "الحي",
+          "streetDetails": "تفاصيل الشارع"
+        },
+        "cityPicker": {
+          "select": "اختر المدينة",
+          "title": "اختر مدينة التوصيل",
+          "description": "حدد المدينة الخاصة بعنوان التوصيل.",
+          "loading": "جارٍ تحميل المدن...",
+          "empty": "لا توجد مدن متاحة حاليًا.",
+          "unavailable": "تعذر تحميل المدن.",
+          "retry": "إعادة المحاولة",
+          "close": "إغلاق اختيار المدينة",
+          "searchLabel": "البحث عن مدينة",
+          "searchPlaceholder": "ابحث عن مدينة...",
+          "searchNoResults": "لا توجد مدينة مطابقة لبحثك."
+        },
+        "useAddress": "استخدام هذا العنوان",
+        "usingAddress": "جارٍ تحديث العنوان...",
+        "cancel": "إلغاء",
+        "required": "هذا الحقل مطلوب.",
+        "validationError": "راجع بيانات التوصيل المطلوبة."
+      }
+    }
   },
   "cartPage": {
     "breadcrumbs": { "label": "مسار التنقل", "home": "الرئيسية" },

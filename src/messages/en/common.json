@@ -21,7 +21,67 @@
     "retrying": "Retrying"
   },
   "checkoutPage": {
-    "loading": "Loading checkout..."
+    "loading": "Loading checkout...",
+    "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },
+    "title": "Checkout",
+    "steps": {
+      "address": "Delivery address",
+      "shipping": "Shipping method",
+      "payment": "Payment method",
+      "inactive": "Complete the delivery address step to continue."
+    },
+    "destination": {
+      "selectedLabel": "Selected",
+      "defaultLabel": "Default",
+      "giftLabel": "Gift recipient",
+      "oneTimeLabel": "Delivery address",
+      "addNew": "Use a different address",
+      "editAddress": "Edit address",
+      "savedUnavailable": "Saved addresses are temporarily unavailable. You can enter a delivery address below.",
+      "giftMissingTitle": "Gift recipient details are incomplete",
+      "giftMissingDescription": "Return to your cart and add the recipient's delivery details before continuing.",
+      "editGift": "Edit gift details",
+      "feedback": {
+        "pending": "Updating delivery details...",
+        "coverageTitle": "This address is outside our delivery coverage",
+        "coverageDescription": "Choose another address or update the gift recipient details.",
+        "changeAddress": "Use another address",
+        "unfulfillableTitle": "Some cart items cannot be delivered",
+        "unfulfillableDescription": "Review your cart before continuing with checkout.",
+        "returnToCart": "Return to cart",
+        "quoteError": "We could not update the order totals. Please try again.",
+        "sessionError": "Your cart session is unavailable. Refresh the page and try again.",
+        "validationError": "Review the delivery details and try again.",
+        "retry": "Try again"
+      },
+      "form": {
+        "fields": {
+          "recipientName": "Recipient name",
+          "recipientPhone": "Recipient phone",
+          "city": "City",
+          "district": "District",
+          "streetDetails": "Street details"
+        },
+        "cityPicker": {
+          "select": "Select a city",
+          "title": "Choose the delivery city",
+          "description": "Select the city for this delivery address.",
+          "loading": "Loading cities...",
+          "empty": "No cities are currently available.",
+          "unavailable": "Cities could not be loaded.",
+          "retry": "Try again",
+          "close": "Close city selection",
+          "searchLabel": "Search cities",
+          "searchPlaceholder": "Search for a city...",
+          "searchNoResults": "No city matches your search."
+        },
+        "useAddress": "Use this address",
+        "usingAddress": "Updating address...",
+        "cancel": "Cancel",
+        "required": "This field is required.",
+        "validationError": "Review the required delivery details."
+      }
+    }
   },
   "cartPage": {
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },

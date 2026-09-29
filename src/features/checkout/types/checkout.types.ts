@@ -106,3 +106,20 @@ export type CheckoutQuote = {
   coupon: CheckoutQuoteCoupon | null;
   location: CheckoutQuoteLocation;
 };
+export type CheckoutQuoteInputField =
+  | "cityId"
+  | "addressId"
+  | "recipientName"
+  | "recipientPhone"
+  | "district"
+  | "streetDetails";
+
+export type CheckoutQuoteError =
+  | { code: "invalid-input"; fields: readonly CheckoutQuoteInputField[] }
+  | { code: "unauthorized" }
+  | { code: "cart-session-unavailable" }
+  | { code: "service-unavailable" };
+
+export type CheckoutQuoteResult =
+  | { ok: true; quote: CheckoutQuote }
+  | { ok: false; error: CheckoutQuoteError };
