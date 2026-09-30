@@ -1,4 +1,5 @@
 import { hasLocale } from "next-intl";
+import { clearAccessToken } from "@/features/auth/server/auth-session";
 
 import {
   getWishlistCount,
@@ -28,6 +29,7 @@ export async function GET(request: Request) {
     const unauthorized =
       error instanceof WishlistAuthenticationError ||
       (error instanceof ApiError && error.status === 401);
+    if (unauthorized) await clearAccessToken();
     return Response.json(
       { code: unauthorized ? "unauthorized" : "service-unavailable" },
       { status: unauthorized ? 401 : 503, headers: privateNoStoreHeaders },

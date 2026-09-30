@@ -20,7 +20,7 @@ async function getInitialWishlistPage(
 
 export default async function WishlistPage() {
   const locale = await getLocale();
-  await requireUser("/account/wishlist", locale);
+  const user = await requireUser("/account/wishlist", locale);
 
   const [initialPage, t] = await Promise.all([
     getInitialWishlistPage(locale),
@@ -62,6 +62,8 @@ export default async function WishlistPage() {
       <p className="mt-3 type-body text-gray-400">{t("description")}</p>
       <div className="mt-6">
         <WishlistInteractiveGrid
+          key={user.id}
+          accountId={user.id}
           copy={copy}
           initialPage={initialPage}
           locale={locale}
