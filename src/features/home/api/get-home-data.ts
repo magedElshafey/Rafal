@@ -8,8 +8,8 @@ import type {
   CategoryChildDto,
   CategoryDto,
 } from "@/features/categories/types";
-import { mapBannerDto } from "@/features/home/api/banner-mapper";
-import type { Banner, BannerDto } from "@/features/home/types";
+import { resolveBannerSlots } from "@/features/home/api/banner-mapper";
+import type { BannerDto, BannerPosition, BannerSlots } from "@/features/home/types";
 import type { ProductDto } from "@/features/products/api/product-dto";
 import { mapProductDtoToListingProduct } from "@/features/products/api/product-mappers";
 import { parseProductDto } from "@/features/products/api/parse-product-dto";
@@ -37,6 +37,7 @@ type HomeDataDto = {
   on_discount: readonly ProductDto[];
   personalizable: readonly ProductDto[];
   featured: readonly ProductDto[];
+  best_sellers: readonly ProductDto[];
 };
 
 type HomeResponseDto = {
@@ -60,12 +61,13 @@ export type HomeLocation = {
 
 export type HomeData = {
   location: HomeLocation;
-  banners: readonly Banner[];
+  banners: BannerSlots;
   categories: readonly Category[];
   newArrivals: readonly ListingProduct[];
   onDiscount: readonly ListingProduct[];
   personalizable: readonly ListingProduct[];
   featured: readonly ListingProduct[];
+  bestSellers: readonly ListingProduct[];
 };
 
 class HomeContractError extends Error {
@@ -163,6 +165,19 @@ function parseLocationEntity(
   };
 }
 
+function parseBannerPosition(value: unknown, path: string): BannerPosition | null {
+  if (
+    value === null ||
+    value === "hero" ||
+    value === "men" ||
+    value === "gifts" ||
+    value === "loyalty"
+  ) {
+    return value;
+  }
+  throw new HomeContractError(path, '"hero", "men", "gifts", "loyalty", or null');
+}
+
 function parseBanner(value: unknown, path: string): BannerDto {
   const source = record(value, path);
   return {
@@ -171,6 +186,7 @@ function parseBanner(value: unknown, path: string): BannerDto {
     image_url: nonEmptyString(source.image_url, path + ".image_url"),
     link_url: nullableString(source.link_url, path + ".link_url"),
     sort_order: nonNegativeInteger(source.sort_order, path + ".sort_order"),
+    position: parseBannerPosition(source.position, path + ".position"),
   };
 }
 
@@ -260,6 +276,7 @@ function parseHomeResponse(value: unknown): HomeResponseDto {
         "response.data.personalizable",
       ),
       featured: parseProducts(data.featured, "response.data.featured"),
+      best_sellers: parseProducts(data.best_sellers, "response.data.best_sellers"),
     },
   };
 }
@@ -301,11 +318,12 @@ export async function getHomeData(
       warehouseId: response.data.location.warehouse_id,
       message: response.data.location.message,
     },
-    banners: response.data.banners.map(mapBannerDto),
+    banners: resolveBannerSlots(response.data.banners),
     categories: response.data.categories.map(mapCategoryDto),
     newArrivals: mapProducts(response.data.new_arrivals),
     onDiscount: mapProducts(response.data.on_discount),
     personalizable: mapProducts(response.data.personalizable),
     featured: mapProducts(response.data.featured),
+    bestSellers: mapProducts(response.data.best_sellers),
   };
 }

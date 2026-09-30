@@ -14,7 +14,7 @@ export async function BestSellersSection({
   ]);
   return (
     <ProductShelf
-      carouselLabel={t("featured.carouselLabel")}
+      carouselLabel={t("bestSellers.carouselLabel")}
       labels={{
         discount: t("badges.discount"),
         new: t("badges.new"),
@@ -24,7 +24,7 @@ export async function BestSellersSection({
       }}
       locale={locale}
       products={products}
-      title={t("featured.title")}
+      title={t("bestSellers.title")}
       viewAllHref="/products"
       viewAllLabel={t("viewAll")}
     />

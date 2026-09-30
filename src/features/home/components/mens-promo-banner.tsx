@@ -1,16 +1,15 @@
-import { getTranslations } from "next-intl/server";
-
 import { HomePromoBanner } from "@/features/home/components/home-promo-banner";
+import type { Banner } from "@/features/home/types";
 
-export async function MensPromoBanner() {
-  const t = await getTranslations("Home.promoBanners");
+export function MensPromoBanner({ banner }: { banner: Banner | null }) {
+  if (!banner) return null;
 
   return (
     <HomePromoBanner
-      alt={t("menAlt")}
+      alt={banner.title}
       aspectRatio="1320 / 403"
-      href="/products"
-      imageUrl="/images/home/mens-banner.png"
+      href={banner.href ?? undefined}
+      imageUrl={banner.imageUrl}
     />
   );
 }

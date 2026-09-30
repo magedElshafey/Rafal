@@ -26,10 +26,10 @@ export function HomeProductCard({
     style: "currency",
     currency: "SAR",
   });
-  const badge = product.badge
+  const badge = product.badges?.[0]
     ? {
-        variant: product.badge,
-        label: labels[product.badge],
+        variant: "primary" as const,
+        label: product.badges[0],
       }
     : undefined;
 

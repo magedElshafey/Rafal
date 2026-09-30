@@ -35,7 +35,15 @@ export function HomePromoBanner({
   return (
     <Section spacing="none">
       <Container>
-        {href ? (
+        {href && !href.startsWith("/") ? (
+          <a
+            href={href}
+            className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            style={{ aspectRatio }}
+          >
+            <PromoImage alt={alt} imageUrl={imageUrl} />
+          </a>
+        ) : href ? (
           <Link
             href={href}
             className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

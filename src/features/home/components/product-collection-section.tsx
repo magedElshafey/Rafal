@@ -4,7 +4,7 @@ import { ProductShelf } from "@/features/home/components/product-shelf";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
 type ProductCollectionSectionProps = {
-  kind: "onDiscount" | "personalizable";
+  kind: "onDiscount" | "personalizable" | "featured";
   products: readonly HomeProduct[];
 };
 
@@ -16,16 +16,10 @@ export async function ProductCollectionSection({
     getLocale(),
     getTranslations("Home.productSections"),
   ]);
-  const copy =
-    kind === "onDiscount"
-      ? {
-          carouselLabel: t("onDiscount.carouselLabel"),
-          title: t("onDiscount.title"),
-        }
-      : {
-          carouselLabel: t("personalizable.carouselLabel"),
-          title: t("personalizable.title"),
-        };
+  const copy = {
+    carouselLabel: t(`${kind}.carouselLabel`),
+    title: t(`${kind}.title`),
+  };
 
   return (
     <ProductShelf
