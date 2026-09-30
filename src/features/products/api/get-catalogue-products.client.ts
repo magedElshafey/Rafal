@@ -1,13 +1,11 @@
 import type { Locale } from "next-intl";
 
 import { createProductListQuery } from "@/features/products/api/product-api-query";
-import { mapProductListResponse } from "@/features/products/api/product-mappers";
-import { parseProductListResponse } from "@/features/products/api/parse-product-dto";
 import type {
   CatalogueProductsRequest,
   PaginatedListingProducts,
 } from "@/features/products/types/product-listing.types";
-import { createClientApi } from "@/lib/api/client-api";
+import { createHttpClient } from "@/lib/api/http-client";
 
 type GetCatalogueProductsClientRequest = CatalogueProductsRequest & {
   locale: Locale;
@@ -25,7 +23,11 @@ export async function getCatalogueProductsClient({
   signal,
   sort,
 }: GetCatalogueProductsClientRequest): Promise<PaginatedListingProducts> {
-  const payload = await createClientApi(locale).request<unknown>({
+  const api = createHttpClient({
+    baseUrl: new URL("/api/", window.location.origin),
+    getDefaultHeaders: () => ({ "Accept-Language": locale }),
+  });
+  return api.request<PaginatedListingProducts>({
     path: "/products",
     query: createProductListQuery({
       categoryId,
@@ -42,6 +44,4 @@ export async function getCatalogueProductsClient({
     }),
     signal,
   });
-
-  return mapProductListResponse(parseProductListResponse(payload));
 }

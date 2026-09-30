@@ -149,6 +149,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         );
   const purchaseProduct = {
     id: product.id,
+    isWishlisted: product.isWishlisted,
     images: product.images,
     name: product.name,
     options: product.options,

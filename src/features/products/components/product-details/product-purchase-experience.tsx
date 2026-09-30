@@ -46,6 +46,7 @@ import { useRouter } from "@/i18n/navigation";
 export type ProductPurchaseData = Pick<
   ProductDetails,
   | "id"
+  | "isWishlisted"
   | "images"
   | "name"
   | "options"

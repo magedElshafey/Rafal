@@ -11,11 +11,11 @@ import type {
 import { resolveBannerSlots } from "@/features/home/api/banner-mapper";
 import type { BannerDto, BannerPosition, BannerSlots } from "@/features/home/types";
 import type { ProductDto } from "@/features/products/api/product-dto";
+import { optionalAuthProductRead } from "@/features/products/api/optional-auth-product-read";
 import { mapProductDtoToListingProduct } from "@/features/products/api/product-mappers";
 import { parseProductDto } from "@/features/products/api/parse-product-dto";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
 import { routing } from "@/i18n/routing";
-import { serverApi } from "@/lib/api/server-api";
 
 type TestimonialDto = {
   id: number;
@@ -391,9 +391,8 @@ export async function getHomeData(
   }
 
   const response = parseHomeResponse(
-    await serverApi.request<unknown>({
+    await optionalAuthProductRead(locale, {
       path: "/home",
-      headers: { "Accept-Language": locale },
       query: cityId === null ? undefined : { city_id: cityId },
     }),
   );

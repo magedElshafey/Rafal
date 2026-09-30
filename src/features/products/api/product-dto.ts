@@ -40,6 +40,7 @@ export type ProductDto = {
   discount_end_at: string | null;
   badges: readonly string[];
   is_personalizable: boolean;
+  is_wishlist: boolean;
   personalization_max_length: number | null;
   personalization_fee: string | null;
   viewers_now: number;

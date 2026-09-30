@@ -192,6 +192,7 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.is_personalizable,
       `${path}.is_personalizable`,
     ),
+    is_wishlist: parseBoolean(source.is_wishlist, `${path}.is_wishlist`),
     personalization_max_length: nullablePositiveInteger(
       source.personalization_max_length,
       `${path}.personalization_max_length`,

@@ -195,6 +195,7 @@ export function mapProductDtoToListingProduct(
   const price = getVariantPricePresentation(priceVariant);
   return {
     badges: product.badges,
+    isWishlisted: product.is_wishlist,
     categoryId: product.category.id,
     id: String(product.id),
     imageUrl,
@@ -231,6 +232,7 @@ export function mapProductDtoToProductDetails(
     slug: product.slug,
     name: product.name,
     description: { html: product.description ?? "" },
+    isWishlisted: product.is_wishlist,
     category: {
       id: String(product.category.id),
       name: product.category.name,

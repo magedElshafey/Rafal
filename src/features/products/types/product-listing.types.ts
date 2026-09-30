@@ -39,6 +39,7 @@ export type CatalogueSubcategoryOption = {
 };
 
 export type ListingProduct = {
+  isWishlisted: boolean;
   badge?: "discount" | "new" | "personalization";
   /** Request-localized display labels from Laravel. Never inspect for logic. */
   badges?: readonly string[];

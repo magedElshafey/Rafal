@@ -102,6 +102,7 @@ export type EnabledProductPersonalizationConfig = Extract<
 // availability. Initial variant selection is presentation behavior and uses
 // the first valid variant; it is not a backend/domain identity field.
 export type ProductDetails = {
+  isWishlisted: boolean;
   id: string;
   slug: string;
   name: string;

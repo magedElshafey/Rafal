@@ -14,7 +14,7 @@ import {
   createProductListQuery,
   type ProductListQueryInput,
 } from "@/features/products/api/product-api-query";
-import { serverApi } from "@/lib/api/server-api";
+import { optionalAuthProductRead } from "@/features/products/api/optional-auth-product-read";
 
 export type GetProductsRequest = ProductListQueryInput & {
   locale: Locale;
@@ -36,9 +36,8 @@ export async function getProductsDto({
   signal,
   sort,
 }: GetProductsRequest): Promise<ProductListResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await optionalAuthProductRead(locale, {
     path: "/products",
-    headers: { "Accept-Language": locale },
     query: createProductListQuery({
       categoryId,
       cityId,
@@ -69,9 +68,8 @@ export async function getProductBySlugDto({
   signal?: AbortSignal;
   slug: string;
 }): Promise<ProductDetailsResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await optionalAuthProductRead(locale, {
     path: `/products/${encodeURIComponent(slug)}`,
-    headers: { "Accept-Language": locale },
     query: { city_id: cityId },
     signal,
   });
