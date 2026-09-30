@@ -70,42 +70,11 @@
     "loyaltyAlt": "Rafal Rewards, earn points with every purchase"
   },
   "whyRafal": {
-    "title": "Why Rafal?",
-    "items": {
-      "support": {
-        "title": "24/7 support",
-        "description": "Our team is ready to help and answer your questions"
-      },
-      "guarantee": {
-        "title": "Money-back guarantee",
-        "description": "Shop confidently with a clear and simple return policy"
-      },
-      "loyalty": {
-        "title": "Loyalty benefits",
-        "description": "Special rewards and benefits for our loyal customers"
-      },
-      "delivery": {
-        "title": "Fast delivery",
-        "description": "Your order is delivered carefully and as quickly as possible"
-      }
-    }
+    "title": "Why Rafal?"
   },
   "testimonials": {
     "title": "Customer reviews",
-    "items": {
-      "noura": {
-        "author": "Noura Ali",
-        "quote": "Wonderful products and excellent quality. A distinctive shopping experience I will repeat."
-      },
-      "mohammed": {
-        "author": "Mohammed Alqahtani",
-        "quote": "Fast delivery and elegant packaging. The gift arrived on time and delighted someone special."
-      },
-      "reem": {
-        "author": "Reem Almousa",
-        "quote": "Excellent service and the product details matched the photos. Thank you, Rafal team."
-      }
-    }
+    "rating": "Rated {value} out of 5"
   },
   "departments": {
     "title": "Shop by department",

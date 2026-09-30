@@ -45,8 +45,8 @@ const HomePage = async () => {
         products={home.personalizable}
       />
       <GiftsPromoBanner banner={home.banners.gifts} />
-      <WhyRafalSection />
-      <TestimonialsSection />
+      <WhyRafalSection items={home.whyRafal} />
+      <TestimonialsSection testimonials={home.testimonials} />
       <ShopByDepartmentSection categories={home.categories} />
       <LoyaltyPromoBanner banner={home.banners.loyalty} />
     </div>

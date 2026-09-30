@@ -2,10 +2,15 @@ import { getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
+import type { HomeTestimonial } from "@/features/home/api/get-home-data";
 import { TestimonialCard } from "@/features/home/components/testimonial-card";
-import { testimonials } from "@/features/home/data/home-content";
 
-export async function TestimonialsSection() {
+export async function TestimonialsSection({
+  testimonials,
+}: {
+  testimonials: readonly HomeTestimonial[];
+}) {
+  if (testimonials.length === 0) return null;
   const t = await getTranslations("Home.testimonials");
 
   return (
@@ -21,9 +26,12 @@ export async function TestimonialsSection() {
           {testimonials.map((testimonial) => (
             <TestimonialCard
               key={testimonial.id}
-              author={t(`items.${testimonial.id}.author`)}
-              quote={t(`items.${testimonial.id}.quote`)}
+              author={testimonial.name}
+              title={testimonial.title}
+              quote={testimonial.comment}
+              avatarUrl={testimonial.avatarUrl}
               rating={testimonial.rating}
+              ratingLabel={t("rating", { value: testimonial.rating })}
             />
           ))}
         </div>

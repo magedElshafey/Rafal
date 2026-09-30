@@ -14,7 +14,44 @@ import type { ProductDto } from "@/features/products/api/product-dto";
 import { mapProductDtoToListingProduct } from "@/features/products/api/product-mappers";
 import { parseProductDto } from "@/features/products/api/parse-product-dto";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
+import { routing } from "@/i18n/routing";
 import { serverApi } from "@/lib/api/server-api";
+
+type TestimonialDto = {
+  id: number;
+  name: string;
+  title: string;
+  comment: string;
+  rating: number;
+  avatar_url: string | null;
+  created_at: string;
+};
+
+type LocalizedTextDto = Partial<Record<Locale, string | null>>;
+
+type WhyRafalDto = {
+  key: string;
+  title: LocalizedTextDto;
+  subtitle: LocalizedTextDto;
+  icon_url: string | null;
+};
+
+export type HomeTestimonial = {
+  id: number;
+  name: string;
+  title: string;
+  comment: string;
+  rating: number;
+  avatarUrl: string | null;
+  createdAt: string;
+};
+
+export type WhyRafalItem = {
+  key: string;
+  title: string;
+  subtitle: string;
+  iconUrl: string | null;
+};
 
 type HomeLocationEntityDto = {
   id: number;
@@ -38,6 +75,8 @@ type HomeDataDto = {
   personalizable: readonly ProductDto[];
   featured: readonly ProductDto[];
   best_sellers: readonly ProductDto[];
+  testimonials: readonly TestimonialDto[];
+  why_rafal: readonly WhyRafalDto[];
 };
 
 type HomeResponseDto = {
@@ -68,6 +107,8 @@ export type HomeData = {
   personalizable: readonly ListingProduct[];
   featured: readonly ListingProduct[];
   bestSellers: readonly ListingProduct[];
+  testimonials: readonly HomeTestimonial[];
+  whyRafal: readonly WhyRafalItem[];
 };
 
 class HomeContractError extends Error {
@@ -224,6 +265,50 @@ function parseProducts(
   );
 }
 
+function parseTestimonial(value: unknown, path: string): TestimonialDto {
+  const source = record(value, path);
+  const rating = positiveInteger(source.rating, path + ".rating");
+  if (rating > 5) {
+    throw new HomeContractError(path + ".rating", "an integer from 1 to 5");
+  }
+  return {
+    id: positiveInteger(source.id, path + ".id"),
+    name: nonEmptyString(source.name, path + ".name"),
+    title: string(source.title, path + ".title"),
+    comment: nonEmptyString(source.comment, path + ".comment"),
+    rating,
+    avatar_url: nullableString(source.avatar_url, path + ".avatar_url"),
+    created_at: string(source.created_at, path + ".created_at"),
+  };
+}
+
+function parseLocalizedText(value: unknown, path: string): LocalizedTextDto {
+  const source = record(value, path);
+  const localized: LocalizedTextDto = {};
+  for (const locale of routing.locales) {
+    if (Object.prototype.hasOwnProperty.call(source, locale)) {
+      localized[locale] = nullableString(source[locale], path + "." + locale);
+    }
+  }
+  return localized;
+}
+
+function parseWhyRafal(value: unknown, path: string): WhyRafalDto {
+  const source = record(value, path);
+  return {
+    key: nonEmptyString(source.key, path + ".key"),
+    title: parseLocalizedText(source.title, path + ".title"),
+    subtitle: parseLocalizedText(source.subtitle, path + ".subtitle"),
+    icon_url: nullableString(source.icon_url, path + ".icon_url"),
+  };
+}
+
+function resolveLocalizedText(value: LocalizedTextDto, locale: Locale): string {
+  const requested = value[locale];
+  if (requested?.trim()) return requested;
+  return value.ar?.trim() ? value.ar : "";
+}
+
 function parseHomeResponse(value: unknown): HomeResponseDto {
   const response = record(value, "response");
   const data = record(response.data, "response.data");
@@ -277,6 +362,13 @@ function parseHomeResponse(value: unknown): HomeResponseDto {
       ),
       featured: parseProducts(data.featured, "response.data.featured"),
       best_sellers: parseProducts(data.best_sellers, "response.data.best_sellers"),
+      testimonials: array(data.testimonials, "response.data.testimonials").map(
+        (item, index) =>
+          parseTestimonial(item, `response.data.testimonials[${index}]`),
+      ),
+      why_rafal: array(data.why_rafal, "response.data.why_rafal").map(
+        (item, index) => parseWhyRafal(item, `response.data.why_rafal[${index}]`),
+      ),
     },
   };
 }
@@ -325,5 +417,21 @@ export async function getHomeData(
     personalizable: mapProducts(response.data.personalizable),
     featured: mapProducts(response.data.featured),
     bestSellers: mapProducts(response.data.best_sellers),
+    testimonials: response.data.testimonials.map((item) => ({
+      id: item.id,
+      name: item.name,
+      title: item.title,
+      comment: item.comment,
+      rating: item.rating,
+      avatarUrl: item.avatar_url,
+      createdAt: item.created_at,
+    })),
+    whyRafal: response.data.why_rafal.flatMap((item) => {
+      const title = resolveLocalizedText(item.title, locale);
+      const subtitle = resolveLocalizedText(item.subtitle, locale);
+      return title || subtitle
+        ? [{ key: item.key, title, subtitle, iconUrl: item.icon_url }]
+        : [];
+    }),
   };
 }

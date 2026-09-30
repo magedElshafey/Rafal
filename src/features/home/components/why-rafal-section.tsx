@@ -1,28 +1,16 @@
-import type { ComponentType } from "react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
-import {
-  CrownIcon,
-  HeadsetIcon,
-  ShieldCheckIcon,
-  TruckIcon,
-  type RafalIconProps,
-} from "@/components/ui/icons";
 import { Section } from "@/components/ui/section";
-import { whyRafalItems } from "@/features/home/data/home-content";
+import type { WhyRafalItem } from "@/features/home/api/get-home-data";
 
-const icons: Record<
-  (typeof whyRafalItems)[number]["icon"],
-  ComponentType<RafalIconProps>
-> = {
-  support: HeadsetIcon,
-  guarantee: ShieldCheckIcon,
-  loyalty: CrownIcon,
-  delivery: TruckIcon,
-};
-
-export async function WhyRafalSection() {
+export async function WhyRafalSection({
+  items,
+}: {
+  items: readonly WhyRafalItem[];
+}) {
+  if (items.length === 0) return null;
   const t = await getTranslations("Home.whyRafal");
 
   return (
@@ -35,26 +23,34 @@ export async function WhyRafalSection() {
           {t("title")}
         </h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {whyRafalItems.map((item) => {
-            const Icon = icons[item.icon];
-
-            return (
-              <li
-                key={item.id}
-                className="flex flex-col items-center text-center"
-              >
+          {items.map((item) => (
+            <li
+              key={item.key}
+              className="flex flex-col items-center text-center"
+            >
+              {item.iconUrl ? (
                 <span className="flex size-12 items-center justify-center rounded-full bg-gold-50 text-gold-500">
-                  <Icon size={24} />
+                  <Image
+                    src={item.iconUrl}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="size-6 object-contain"
+                  />
                 </span>
+              ) : null}
+              {item.title ? (
                 <h3 className="mt-3 type-body font-medium text-foreground">
-                  {t(`items.${item.id}.title`)}
+                  {item.title}
                 </h3>
+              ) : null}
+              {item.subtitle ? (
                 <p className="mt-1 max-w-56 type-body-sm text-muted-foreground">
-                  {t(`items.${item.id}.description`)}
+                  {item.subtitle}
                 </p>
-              </li>
-            );
-          })}
+              ) : null}
+            </li>
+          ))}
         </ul>
       </Container>
     </Section>
