@@ -438,9 +438,10 @@ Laravel Product DTO
 
 - UI modules must not consume Laravel Product DTOs or snake_case fields.
 - Initial PDP Product reads are server-side and use one Product-owned source
-  boundary. `USE_MOCK_API=true` selects the development mock; otherwise the
-  boundary calls Laravel and both sources converge on `ProductDetails` through
-  the production parser and mapper. Laravel failures never fall back to mocks.
+  boundary that calls Laravel and maps responses to `ProductDetails` through
+  the production parser and mapper. The obsolete Product mock implementation
+  has been removed; `USE_MOCK_API` does not select a mock Product source.
+  Laravel failures never fall back to mock Products.
 - PDP metadata and page rendering share the request-memoized Product read.
   A Laravel `404` becomes the Product not-found state; network, HTTP contract,
   parsing, and mapping failures remain errors for the route error boundary.
@@ -450,7 +451,10 @@ Laravel Product DTO
   authoritative for availability only when that canonical Backend location
   context was supplied with the Product request; without it, stock is unresolved
   and must not be presented as out of stock.
-- Wishlist, Reviews, Related Products, and Complementary Products remain
+- Reviews is a planned backend-backed feature; frontend integration is pending.
+  Only reusable review display code and its types remain. No mock Reviews
+  transport or storage is part of the current architecture.
+- Wishlist, Related Products, and Complementary Products remain
   source-isolated until their Laravel contracts are integrated. A
   Laravel-backed PDP does not pass its IDs to those development mock domains.
   With authoritative location context, physical `warehouse_stocks[].quantity`
@@ -481,21 +485,6 @@ Laravel Product DTO
   directly; mutation retry and optimistic money calculation remain disabled.
 - Guest coupons are currently unsupported. Gift request types are prepared,
   while coupon/gift UI and Checkout remain outside this slice.
-- Product mocks use the same boundary as Laravel responses:
-
-  ```text
-  mock authoring data
-    -> request-localized Laravel-shaped mock transport
-    -> production runtime parser
-    -> production Product mapper
-    -> ListingProduct / ProductDetails
-    -> UI
-  ```
-
-  Mock transport IDs are stable authoring metadata and are not derived from
-  fixture array order. Frontend-only mock compatibility metadata such as
-  semantic card badges, mock sorting/grouping values, search keywords, and
-  unresolved option labels/swatches remains outside `ProductDto`.
 - Laravel is authoritative for VAT, discounts, and location-to-warehouse stock.
   The frontend only projects server-calculated VAT-inclusive Variant prices and
   preserves the backend discount percentage for presentation.

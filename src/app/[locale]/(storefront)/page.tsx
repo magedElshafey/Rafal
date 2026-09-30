@@ -1,6 +1,7 @@
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
 
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { CategoriesCarouselSkeleton } from "@/features/categories/components/categories-carousel-skeleton";
 import { HomeCategories } from "@/features/categories/components/home-categories";
 import { getHomeData } from "@/features/home/api/get-home-data";

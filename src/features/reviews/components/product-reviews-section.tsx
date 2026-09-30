@@ -1,16 +1,10 @@
 import type { Locale } from "next-intl";
-import { Suspense } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { Rating } from "@/features/products/components/product-card/rating";
 import type { ProductRatingSummary } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
-import {
-  ProductReviewEligibility,
-  ProductReviewEligibilityLoading,
-} from "@/features/reviews/components/product-review-eligibility";
-import type { ProductReviewSubmissionCopy } from "@/features/reviews/components/product-review-submission";
 import type { ProductReviewReadResult } from "@/features/reviews/types/product-review.types";
 import { Link } from "@/i18n/navigation";
 
@@ -22,14 +16,11 @@ export type ProductReviewsSectionCopy = {
   readErrorTitle: string;
   readErrorDescription: string;
   retry: string;
-  submission: ProductReviewSubmissionCopy;
 };
 
 type ProductReviewsSectionProps = {
   copy: ProductReviewsSectionCopy;
   locale: Locale;
-  loginReturnTo: string;
-  productId: string;
   ratingSummary: ProductRatingSummary | null;
   readResult: ProductReviewReadResult;
   retryHref: string;
@@ -38,8 +29,6 @@ type ProductReviewsSectionProps = {
 export function ProductReviewsSection({
   copy,
   locale,
-  loginReturnTo,
-  productId,
   ratingSummary,
   readResult,
   retryHref,
@@ -151,17 +140,6 @@ export function ProductReviewsSection({
         />
       )}
 
-      <div className="mt-6">
-        <Suspense
-          fallback={<ProductReviewEligibilityLoading copy={copy.submission} />}
-        >
-          <ProductReviewEligibility
-            copy={copy.submission}
-            loginReturnTo={loginReturnTo}
-            productId={productId}
-          />
-        </Suspense>
-      </div>
     </section>
   );
 }
