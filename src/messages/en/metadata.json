@@ -11,5 +11,9 @@
   "OffersPage": {
     "title": "Offers and promotions",
     "description": "Explore coupons and discounted products from Rafal."
+  },
+  "AboutUsPage": {
+    "title": "About us",
+    "description": "Learn about Rafal, our story, vision, and mission."
   }
 }

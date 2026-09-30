@@ -8,7 +8,7 @@ import FooterLinksColumn from "./footer-links/FooterLinksColumn";
 import NewsLetter from "./news-letter/NewsLetter";
 
 const quickLinks = [
-  { href: "/about", key: "about" },
+  { href: "/about-us", key: "about" },
   { href: "/returns", key: "returns" },
   { href: "/shipping", key: "shipping" },
   { href: "/terms", key: "terms" },

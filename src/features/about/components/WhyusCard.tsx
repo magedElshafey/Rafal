@@ -1,23 +1,16 @@
-import type { ComponentType } from "react";
+import Image from "next/image";
+import type { AboutUsFeature } from "@/features/about/types/about-us.types";
 
-import type { RafalIconProps } from "@/components/ui/icons";
-
-type WhyusCardProps = {
-  title: string;
-  description: string;
-  Icon: ComponentType<RafalIconProps>;
-};
-
-const WhyusCard = ({ title, Icon, description }: WhyusCardProps) => {
+export default function WhyusCard({ feature }: { feature: AboutUsFeature }) {
   return (
     <article className="rounded-[12px] bg-gray-0 px-3 py-4 text-center space-y-2">
-      <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-[#F2E0BF] text-primary">
-        <Icon size={22} />
-      </span>
-      <h3 className="type-body font-bold text-foreground">{title}</h3>
-      <p className="type-body-sm text-[#666666]">{description}</p>
+      {feature.iconUrl ? (
+        <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-[#F2E0BF]">
+          <Image src={feature.iconUrl} alt="" width={22} height={22} className="size-[22px] object-contain" />
+        </span>
+      ) : null}
+      {feature.title ? <h3 className="whitespace-pre-line break-words type-body font-bold text-foreground">{feature.title}</h3> : null}
+      {feature.subtitle ? <p className="whitespace-pre-line break-words type-body-sm text-[#666666]">{feature.subtitle}</p> : null}
     </article>
   );
-};
-
-export default WhyusCard;
+}

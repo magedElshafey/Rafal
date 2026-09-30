@@ -40,7 +40,7 @@ const navigationDestinations = {
     match: "prefix",
   },
   about: {
-    href: "/about",
+    href: "/about-us",
     key: "about_us",
     match: "prefix",
   },

@@ -12,23 +12,29 @@
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home", "blog": "Blog" }
   },
   "about": {
-    "title": "Rafal",
-    "heroDescription": "Your destination for premium shopping in Saudi Arabia",
+    "title": "About us",
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home"
+    },
     "story": {
-      "title": "Our story",
-      "description": "Rafal began with a genuine passion for creating an exceptional shopping experience for customers in Saudi Arabia and the Gulf. We carefully select fine jewelry, accessories, and gifts while committing to quality and authenticity in every piece we offer."
+      "title": "Our story"
     },
-    "mission": { "title": "Our mission", "description": "To provide a seamless, trusted shopping experience with the highest standards of quality and service." },
-    "vision": { "title": "Our vision", "description": "To become the region's leading destination for premium online shopping." },
+    "mission": {
+      "title": "Our mission"
+    },
+    "vision": {
+      "title": "Our vision"
+    },
     "why": {
-      "title": "Why Rafal?",
-      "items": {
-        "shipping": { "title": "Fast, secure delivery", "description": "Delivery throughout Saudi Arabia within a few days." },
-        "quality": { "title": "Guaranteed quality", "description": "Authentic materials and high manufacturing standards in every product." },
-        "personalization": { "title": "Unique personalization", "description": "Names and messages engraved with care and precision." }
-      }
+      "title": "Why Rafal?"
     },
-    "rating": { "title": "Store rating", "starsLabel": "Five out of five stars", "description": "4.8 out of 5 — based on more than 120 reviews" }
+    "loading": "Loading About us",
+    "errorTitle": "About us could not be loaded",
+    "errorDescription": "There was a temporary problem loading this page. Please try again.",
+    "retry": "Try again",
+    "emptyTitle": "Content is not available yet",
+    "emptyDescription": "Please check back later."
   },
   "contact": {
     "title": "Contact us",
