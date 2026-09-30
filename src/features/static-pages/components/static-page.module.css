@@ -1,0 +1,44 @@
+@reference "../../../app/globals.css";
+
+.content {
+  @apply text-gray-600 text-body-lg;
+  line-height: 2;
+  overflow-wrap: anywhere;
+}
+.content > :first-child { margin-block-start: 0; }
+.content > :last-child { margin-block-end: 0; }
+.content h2 {
+  margin-block: 2rem 1rem;
+  @apply text-foreground text-h2 font-bold;
+}
+.content h3 {
+  margin-block: 1.5rem .75rem;
+  @apply text-foreground text-h3 font-medium;
+}
+.content p { margin-block: 0 1rem; }
+.content ul, .content ol {
+  margin-block: 1rem;
+  padding-inline-start: 1.5rem;
+}
+.content ul { list-style-type: disc; }
+.content ol { list-style-type: decimal; }
+.content li { margin-block: .5rem; }
+.content li > ul, .content li > ol { margin-block: .5rem; }
+.content strong { @apply text-foreground font-bold; }
+.content em { font-style: italic; }
+.content a {
+  @apply text-gold-700;
+  text-decoration: underline;
+  text-underline-offset: .25rem;
+}
+.content a:hover { @apply text-gold-900; }
+.content a:focus-visible {
+  @apply outline-2 outline-ring outline-offset-4 rounded-sm;
+  outline-style: solid;
+}
+.content blockquote {
+  margin-block: 1.5rem;
+  @apply border-s-4 border-gold-200 bg-gold-50;
+  padding-block: .5rem;
+  padding-inline: 1rem;
+}

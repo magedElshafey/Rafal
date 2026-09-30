@@ -70,5 +70,25 @@
     },
     "info": { "title": "Contact information", "phone": "Phone", "email": "Email", "hours": "Working hours", "hoursValue": "Daily, 9am–11pm" },
     "help": { "title": "Need quick help?", "description": "Browse frequently asked questions for immediate answers about orders, shipping, and returns." }
+  },
+  "staticPages": {
+    "breadcrumbs": "Breadcrumb",
+    "home": "Home",
+    "loading": "Loading policy",
+    "emptyTitle": "Content is not available yet",
+    "emptyDescription": "Please check again later.",
+    "errorTitle": "This page could not be loaded",
+    "errorStateTitle": "Please try again",
+    "errorDescription": "There was a temporary problem loading this page.",
+    "retry": "Try again",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "This page is currently unavailable.",
+    "backHome": "Back to home",
+    "metadata": {
+      "privacy": "Read Rafal’s privacy policy and information about the handling of personal data.",
+      "terms": "Read the terms and conditions for using and shopping at Rafal.",
+      "returns": "Read Rafal’s return and exchange policy.",
+      "shipping": "Read Rafal’s shipping and delivery policy."
+    }
   }
 }

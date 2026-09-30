@@ -2,9 +2,24 @@ import "server-only";
 
 import sanitizeHtmlLibrary from "sanitize-html";
 
-export type SafeHtmlPolicy = "product-rich-text";
+export type SafeHtmlPolicy = "product-rich-text" | "static-page";
 
 const policies = {
+  "static-page": {
+    allowedTags: ["h2", "h3", "p", "ul", "ol", "li", "strong", "em", "a", "blockquote", "br"],
+    allowedAttributes: { a: ["href", "title", "target", "rel"] },
+    allowedSchemes: ["http", "https", "mailto"],
+    allowedSchemesAppliedToAttributes: ["href"],
+    allowProtocolRelative: false,
+    transformTags: {
+      a: (tagName, attributes) => ({
+        tagName,
+        attribs: attributes.target?.toLowerCase() === "_blank"
+          ? { ...attributes, rel: "noopener noreferrer" }
+          : attributes,
+      }),
+    },
+  },
   "product-rich-text": {
     allowedTags: [
       "p",
