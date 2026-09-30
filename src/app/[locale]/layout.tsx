@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Tajawal } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -12,10 +12,14 @@ import { RafalToaster } from "@/components/ui/rafal-toaster";
 import { serverEnv } from "@/config/server-env";
 import "../globals.css";
 
-const tajawal = Tajawal({
-  subsets: ["arabic", "latin"],
+const tajawal = localFont({
+  src: [
+    { path: "../fonts/Tajawal-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/Tajawal-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/Tajawal-Bold.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-tajawal",
-  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 type LocaleLayoutProps = {
