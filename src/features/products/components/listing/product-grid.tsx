@@ -42,9 +42,11 @@ export function ListingProductCard({
   });
   const name = product.name;
   const cardProps = {
-    badge: product.badge
-      ? { variant: product.badge, label: badgeLabels[product.badge] }
-      : undefined,
+    badge: product.badges?.[0]
+      ? { variant: "primary" as const, label: product.badges[0] }
+      : product.badge
+        ? { variant: product.badge, label: badgeLabels[product.badge] }
+        : undefined,
     href: `/products/${product.slug}`,
     image: product.imageUrl,
     imageAlt: name,

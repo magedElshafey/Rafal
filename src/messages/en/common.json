@@ -357,19 +357,26 @@
       "offers": "Offers"
     },
     "title": "Offers and promotions",
-    "bannerAlt": "Rafal gifts promotion for special occasions",
-    "filterLabel": "Filter offers",
-    "filters": {
-      "all": "All",
-      "new": "New",
-      "personalizedDiscounts": "Discounted personalized products",
-      "weekend": "Weekend offers",
-      "upTo30": "Discounts up to 30%"
-    },
-    "emptyTitle": "No offers found",
-    "emptyDescription": "There are no products in this promotion right now.",
+    "description": "Explore coupons and discounted products from Rafal.",
+    "couponsTitle": "Coupons",
+    "productsTitle": "Discounted products",
+    "percentDiscount": "{value} off",
+    "fixedDiscount": "Fixed discount",
+    "minimumOrder": "Minimum order amount",
+    "maximumDiscount": "Maximum discount amount",
+    "expires": "Expires (UTC)",
+    "couponCode": "Coupon code",
+    "copy": "Copy code",
+    "copyCode": "Copy coupon code {code}",
+    "copied": "Coupon code copied.",
+    "copyFailed": "Could not copy. Select and copy the code manually.",
+    "emptyTitle": "No offers available right now",
+    "emptyDescription": "Browse our products and check back for new offers.",
+    "emptyCta": "Browse products",
     "errorTitle": "Offers could not be loaded",
-    "errorDescription": "There was a temporary problem loading the offers. Please try again."
+    "errorDescription": "There was a temporary problem loading offers. Please try again.",
+    "retry": "Try again",
+    "loading": "Loading offers"
   },
   "nav": {
     "home": "Home",

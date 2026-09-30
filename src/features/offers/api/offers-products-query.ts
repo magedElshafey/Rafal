@@ -1,12 +1,13 @@
 import type { Locale } from "next-intl";
 
-import type { OfferType } from "@/features/offers/types/offers.types";
 import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
 import { getNextPageParam } from "@/lib/api/pagination";
 
 export const offersProductsQuery = {
-  key: (locale: Locale, offer: OfferType) =>
-    ["products", "offers", { locale, offer }] as const,
+  account: (accountId: string | null) =>
+    ["offers", "discounted-products", accountId] as const,
+  key: (accountId: string | null, locale: Locale, cityId: number | null) =>
+    ["offers", "discounted-products", accountId, locale, cityId] as const,
   getNextPageParam: (lastPage: PaginatedListingProducts) =>
     getNextPageParam(lastPage.pagination),
 };

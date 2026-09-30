@@ -9,6 +9,7 @@ import {
 import { useRef } from "react";
 import type { Locale } from "next-intl";
 
+import { offersProductsQuery } from "@/features/offers/api/offers-products-query";
 import { catalogueProductsQuery } from "@/features/products/api/catalogue-products-query";
 import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
 import { setWishlistState } from "@/features/wishlist/actions/set-wishlist-state";
@@ -126,8 +127,11 @@ export function useWishlistMutation({
       onFailure();
     },
     onSuccess: async ({ productId, wishlisted }) => {
-      const catalogueQueries = queryClient.getQueryCache().findAll({
-        queryKey: catalogueProductsQuery.account(accountId),
+      const listingQueries = [
+        catalogueProductsQuery.account(accountId),
+        offersProductsQuery.account(accountId),
+      ].flatMap((queryKey) => queryClient.getQueryCache().findAll({
+        queryKey,
         predicate: (query) => {
           const data = query.state.data as
             | InfiniteData<PaginatedListingProducts, number>
@@ -136,9 +140,9 @@ export function useWishlistMutation({
             page.items.some((product) => product.id === productId),
           ) ?? false;
         },
-      });
+      }));
       await Promise.all(
-        catalogueQueries.map(async ({ queryKey }) => {
+        listingQueries.map(async ({ queryKey }) => {
           // Prevent an older in-flight page response from overwriting the patch.
           await queryClient.cancelQueries({ queryKey, exact: true });
           queryClient.setQueryData<InfiniteData<PaginatedListingProducts, number>>(

@@ -7,5 +7,9 @@
   },
   "CategoriesPage": {
     "title": "Categories"
+  },
+  "OffersPage": {
+    "title": "Offers and promotions",
+    "description": "Explore coupons and discounted products from Rafal."
   }
 }

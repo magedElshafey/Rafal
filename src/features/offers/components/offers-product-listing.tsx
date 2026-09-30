@@ -1,151 +1,89 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { Locale } from "next-intl";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useRef } from "react";
+import { useTranslations, type Locale } from "next-intl";
 
-import { Button } from "@/components/ui/button";
-import { ErrorState } from "@/components/ui/error-state";
 import { LoadMoreButton } from "@/components/ui/load-more-button";
-import { getOffersProducts } from "@/features/offers/api/get-offers-products";
+import { getOffersProductsClient } from "@/features/offers/api/get-offers-products.client";
 import { offersProductsQuery } from "@/features/offers/api/offers-products-query";
-import type { OfferOption } from "@/features/offers/types/offers.types";
-import {
-  parseOfferType,
-  updateOfferSearchParams,
-} from "@/features/offers/utils/offers-search-params";
-import {
-  ProductGrid,
-  ProductGridSkeleton,
-} from "@/features/products/components/listing/product-grid";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { ProductGrid } from "@/features/products/components/listing/product-grid";
+import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
 
-export type OffersProductListingCopy = {
-  badges: Record<"discount" | "new" | "personalization", string>;
-  emptyDescription: string;
-  emptyTitle: string;
-  errorDescription: string;
-  errorTitle: string;
-  filterLabel: string;
-  loading: string;
-  loadMore: string;
-  loadingMore: string;
-  nextPageError: string;
-  rating: string;
-  reviews: string;
-  retry: string;
-  unavailable: string;
-};
-
-type OffersProductListingProps = {
-  copy: OffersProductListingCopy;
+export function OffersProductListing({ listing, locale, cityId, accountId }: {
+  listing: PaginatedListingProducts;
   locale: Locale;
-  offerOptions: readonly OfferOption[];
-};
-
-export function OffersProductListing({
-  copy,
-  locale,
-  offerOptions,
-}: OffersProductListingProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const offer = parseOfferType(searchParams);
+  cityId: number | null;
+  accountId: string | null;
+}) {
+  const t = useTranslations("Common.offersPage");
+  const productsT = useTranslations("Common.productListing");
+  const loadingNext = useRef(false);
   const query = useInfiniteQuery({
-    queryKey: offersProductsQuery.key(locale, offer),
+    queryKey: offersProductsQuery.key(accountId, locale, cityId),
     queryFn: ({ pageParam, signal }) =>
-      getOffersProducts({ locale, offer, page: pageParam }, signal),
+      getOffersProductsClient({ locale, cityId, page: pageParam, signal }),
+    initialData: { pages: [listing], pageParams: [1] },
     initialPageParam: 1,
     getNextPageParam: offersProductsQuery.getNextPageParam,
+    // Match Catalogue: SSR supplies initial reads; only explicit Load More
+    // fetches additional pages. Wishlist success patches these cached pages.
+    staleTime: Infinity,
+    retry: false,
   });
-  const products = query.data?.pages.flatMap((page) => page.items) ?? [];
-
-  const replaceSearchParams = (next: URLSearchParams) => {
-    router.replace(next.size ? `${pathname}?${next.toString()}` : pathname, {
-      scroll: false,
+  const products = useMemo(() => {
+    const seen = new Set<string>();
+    return query.data.pages.flatMap((page) => page.items).filter((product) => {
+      if (seen.has(product.id)) return false;
+      seen.add(product.id);
+      return true;
     });
-  };
+  }, [query.data.pages]);
 
+  async function loadMore() {
+    if (loadingNext.current || query.isFetching || !query.hasNextPage) return;
+    loadingNext.current = true;
+    try {
+      await query.fetchNextPage({ cancelRefetch: false });
+    } finally {
+      loadingNext.current = false;
+    }
+  }
+
+  // Initial empty sections remain owned by Slice A; later empty pages do not
+  // discard already loaded products or override authoritative pagination meta.
+  if (listing.items.length === 0) return null;
   return (
-    <div>
-      <div
-        className="mb-6 flex max-w-full gap-2 overflow-x-auto pb-2"
-        role="group"
-        aria-label={copy.filterLabel}
-      >
-        {offerOptions.map((option) => {
-          const selected = offer === option.value;
-
-          return (
-            <Button
-              key={option.value}
-              aria-pressed={selected}
-              className="shrink-0"
-              size="sm"
-              variant={selected ? "primary" : "outline"}
-              onClick={() =>
-                replaceSearchParams(
-                  updateOfferSearchParams(
-                    new URLSearchParams(searchParams),
-                    option.value,
-                  ),
-                )
-              }
-            >
-              {option.label}
-            </Button>
-          );
-        })}
-      </div>
-
-      {query.isPending ? (
-        <div aria-busy="true" aria-label={copy.loading}>
-          <ProductGridSkeleton />
+    <section aria-labelledby="offers-products-title" className="space-y-5">
+      <h2 id="offers-products-title" className="text-h3 font-medium text-foreground">{t("productsTitle")}</h2>
+      <ProductGrid
+        products={products}
+        locale={locale}
+        wishlistAccountId={accountId}
+        badgeLabels={{
+          discount: productsT("badges.discount"),
+          new: productsT("badges.new"),
+          personalization: productsT("badges.personalization"),
+        }}
+        ratingLabel={(value) => productsT("rating", { value })}
+        reviewsLabel={(count) => productsT("reviews", { count })}
+        unavailableLabel={productsT("unavailable")}
+      />
+      {query.hasNextPage ? (
+        <div className="space-y-3 pt-5 text-center">
+          {query.isFetchNextPageError ? (
+            <p role="alert" className="type-body text-destructive">{productsT("nextPageError")}</p>
+          ) : null}
+          <LoadMoreButton
+            hasNextPage
+            disabled={query.isFetching}
+            isLoading={query.isFetchingNextPage}
+            label={productsT(query.isFetchNextPageError ? "retry" : "loadMore")}
+            loadingLabel={productsT("loadingMore")}
+            onClick={() => void loadMore()}
+          />
         </div>
-      ) : query.isError && !query.isFetchNextPageError ? (
-        <ErrorState
-          title={copy.errorTitle}
-          description={copy.errorDescription}
-          action={
-            <Button onClick={() => void query.refetch()}>{copy.retry}</Button>
-          }
-        />
-      ) : products.length === 0 ? (
-        <ErrorState
-          title={copy.emptyTitle}
-          description={copy.emptyDescription}
-        />
-      ) : (
-        <ProductGrid
-          badgeLabels={copy.badges}
-          locale={locale}
-          products={products}
-          ratingLabel={(value) =>
-            copy.rating.replace("{value}", String(value))
-          }
-          reviewsLabel={(count) =>
-            copy.reviews.replace("{count}", String(count))
-          }
-          unavailableLabel={copy.unavailable}
-        />
-      )}
-
-      {query.isFetchNextPageError ? (
-        <p className="mt-6 text-center type-body text-destructive" role="alert">
-          {copy.nextPageError}
-        </p>
       ) : null}
-
-      <div className="mt-10 flex justify-center">
-        <LoadMoreButton
-          hasNextPage={query.hasNextPage === true}
-          isLoading={query.isFetchingNextPage}
-          label={query.isFetchNextPageError ? copy.retry : copy.loadMore}
-          loadingLabel={copy.loadingMore}
-          onClick={() => void query.fetchNextPage()}
-        />
-      </div>
-    </div>
+    </section>
   );
 }

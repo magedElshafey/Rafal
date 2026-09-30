@@ -1,22 +1,17 @@
-import type { MockListingProductSource } from "@/features/products/api/mock-product-listing";
+import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
 
-export const offerValues = [
-  "all",
-  "new",
-  "personalized-discounts",
-  "weekend",
-  "up-to-30",
-] as const;
-
-export type OfferType = (typeof offerValues)[number];
-export type SpecificOfferType = Exclude<OfferType, "all">;
-
-export type OfferProductRecord = {
-  offers: readonly SpecificOfferType[];
-  source: MockListingProductSource;
+export type Coupon = {
+  code: string;
+  name: string;
+  description: string;
+  type: "percent" | "fixed";
+  value: number;
+  maxDiscountAmount: number | null;
+  minOrderAmount: number | null;
+  endsAt: string | null;
 };
 
-export type OfferOption = {
-  label: string;
-  value: OfferType;
+export type Offers = {
+  coupons: Coupon[];
+  discountedProducts: PaginatedListingProducts;
 };
