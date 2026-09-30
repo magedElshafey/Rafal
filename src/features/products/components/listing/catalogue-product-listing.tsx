@@ -71,6 +71,7 @@ export type CatalogueProductListingCopy = {
 };
 
 type Props = {
+  accountId: string | null;
   categoryId?: number;
   cityId: number | null;
   copy: CatalogueProductListingCopy;
@@ -358,6 +359,7 @@ function CatalogueFilters({
 }
 
 export function CatalogueProductListing({
+  accountId,
   categoryId,
   cityId,
   copy,
@@ -405,6 +407,7 @@ export function CatalogueProductListing({
 
   const query = useInfiniteQuery({
     queryKey: catalogueProductsQuery.key({
+      accountId,
       categoryId,
       cityId,
       filters,
@@ -500,6 +503,7 @@ export function CatalogueProductListing({
           />
         ) : (
           <ProductGrid
+            wishlistAccountId={accountId}
             badgeLabels={copy.badges}
             locale={locale}
             products={products}

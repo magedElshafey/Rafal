@@ -19,7 +19,8 @@ import { WhyRafalSection } from "@/features/home/components/why-rafal-section";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 
 const HomePage = async () => {
-  const locale = await getLocale();
+  const [locale, user] = await Promise.all([getLocale(), getCurrentUser()]);
+  const accountId = user?.id ?? null;
   const city = await resolveCurrentLocation(locale);
   const home = await getHomeData(city?.id ?? null, locale);
 
@@ -32,15 +33,25 @@ const HomePage = async () => {
         <HomeCategories categories={home.categories} />
       </Suspense>
       {home.location.city === null ? <HomeLocationNotice /> : null}
-      <BestSellersSection products={home.bestSellers} />
-      <ProductCollectionSection kind="featured" products={home.featured} />
+      <BestSellersSection accountId={accountId} products={home.bestSellers} />
+      <ProductCollectionSection
+        accountId={accountId}
+        kind="featured"
+        products={home.featured}
+      />
       <MensPromoBanner banner={home.banners.men} />
       <LatestProductsSection
+        accountId={accountId}
         categories={home.categories}
         products={home.newArrivals}
       />
-      <ProductCollectionSection kind="onDiscount" products={home.onDiscount} />
       <ProductCollectionSection
+        accountId={accountId}
+        kind="onDiscount"
+        products={home.onDiscount}
+      />
+      <ProductCollectionSection
+        accountId={accountId}
         kind="personalizable"
         products={home.personalizable}
       />

@@ -8,7 +8,9 @@ import type {
 import { getNextPageParam } from "@/lib/api/pagination";
 
 export const catalogueProductsQuery = {
+  account: (accountId: string | null) => ["products", "catalogue", accountId] as const,
   key: ({
+    accountId,
     categoryId,
     cityId,
     filters,
@@ -16,6 +18,7 @@ export const catalogueProductsQuery = {
     search,
     sort,
   }: {
+    accountId: string | null;
     categoryId?: number;
     cityId: number | null;
     filters: CatalogueProductFilters;
@@ -26,6 +29,7 @@ export const catalogueProductsQuery = {
     [
       "products",
       "catalogue",
+      accountId,
       { categoryId, cityId, filters, locale, search, sort },
     ] as const,
   getNextPageParam: (lastPage: PaginatedListingProducts) =>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useTranslations, type Locale } from "next-intl";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -13,10 +13,10 @@ import {
   ProductGridSkeleton,
 } from "@/features/products/components/listing/product-grid";
 import { useWishlistMutation } from "@/features/wishlist/hooks/use-wishlist-mutation";
-import { wishlistQueryKeys } from "@/features/wishlist/api/wishlist-query-keys";
+import { useWishlistSessionExpiry } from "@/features/wishlist/hooks/use-wishlist-session-expiry";
 import { wishlistInfiniteQueryOptions } from "@/features/wishlist/api/wishlist-query";
 import type { WishlistPage } from "@/features/wishlist/types/wishlist.types";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
 import { rafalToast } from "@/lib/rafal-toast";
 
@@ -67,23 +67,8 @@ export function WishlistInteractiveGrid({
   locale,
 }: WishlistInteractiveGridProps) {
   const t = useTranslations("Account.wishlist");
-  const queryClient = useQueryClient();
-  const router = useRouter();
-  const expiredRef = useRef(false);
-  const [expired, setExpired] = useState(false);
-  const handleUnauthorized = useCallback(() => {
-    if (expiredRef.current) return;
-    expiredRef.current = true;
-    setExpired(true);
-    const queryKey = wishlistQueryKeys.account(accountId);
-    void queryClient.cancelQueries({ queryKey }).then(() => {
-      queryClient.removeQueries({ queryKey });
-      router.replace({
-        pathname: "/login",
-        query: { returnTo: "/account/wishlist", state: "session-expired" },
-      });
-    });
-  }, [accountId, queryClient, router]);
+  const { expired, expiredRef, handleUnauthorized } =
+    useWishlistSessionExpiry(accountId);
   const mutation = useWishlistMutation({
     accountId,
     locale,

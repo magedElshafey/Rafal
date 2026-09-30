@@ -17,6 +17,7 @@ import type { HomeProduct } from "@/features/home/types/home-product.types";
 import { Link } from "@/i18n/navigation";
 
 type ProductShelfProps = {
+  accountId: string | null;
   carouselLabel: string;
   emptyContent?: ReactNode;
   headerContent?: ReactNode;
@@ -29,6 +30,7 @@ type ProductShelfProps = {
 };
 
 export function ProductShelf({
+  accountId,
   carouselLabel,
   emptyContent,
   headerContent,
@@ -75,6 +77,7 @@ export function ProductShelf({
                     label={product.name}
                   >
                     <HomeProductCard
+                      accountId={accountId}
                       labels={labels}
                       locale={locale}
                       product={product}

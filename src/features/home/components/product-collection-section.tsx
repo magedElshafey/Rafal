@@ -4,11 +4,13 @@ import { ProductShelf } from "@/features/home/components/product-shelf";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
 type ProductCollectionSectionProps = {
+  accountId: string | null;
   kind: "onDiscount" | "personalizable" | "featured";
   products: readonly HomeProduct[];
 };
 
 export async function ProductCollectionSection({
+  accountId,
   kind,
   products,
 }: ProductCollectionSectionProps) {
@@ -23,6 +25,7 @@ export async function ProductCollectionSection({
 
   return (
     <ProductShelf
+      accountId={accountId}
       carouselLabel={copy.carouselLabel}
       labels={{
         discount: t("badges.discount"),

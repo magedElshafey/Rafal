@@ -9,6 +9,8 @@ import {
 import { useRef } from "react";
 import type { Locale } from "next-intl";
 
+import { catalogueProductsQuery } from "@/features/products/api/catalogue-products-query";
+import type { PaginatedListingProducts } from "@/features/products/types/product-listing.types";
 import { setWishlistState } from "@/features/wishlist/actions/set-wishlist-state";
 import { wishlistQueryKeys } from "@/features/wishlist/api/wishlist-query-keys";
 import type {
@@ -17,7 +19,11 @@ import type {
 } from "@/features/wishlist/types/wishlist.types";
 import { ApiError } from "@/lib/api/api-error";
 
-type WishlistChange = { productId: string; wishlisted: boolean };
+export type WishlistChange = {
+  productId: string;
+  wishlisted: boolean;
+  previousWishlisted?: boolean;
+};
 type MutationSnapshot = {
   list: InfiniteData<WishlistPage, number> | undefined;
   count: WishlistCount | undefined;
@@ -51,7 +57,11 @@ export function useWishlistMutation({
     retry: false,
     mutationFn: async (change) => {
       try {
-        const result = await setWishlistState({ ...change, locale });
+        const result = await setWishlistState({
+          productId: change.productId,
+          wishlisted: change.wishlisted,
+          locale,
+        });
         if (!result.ok) {
           throw new ApiError({
             status:
@@ -115,13 +125,42 @@ export function useWishlistMutation({
       if (snapshot?.count) queryClient.setQueryData(countKey, snapshot.count);
       onFailure();
     },
-    onSuccess: async () => {
+    onSuccess: async ({ productId, wishlisted }) => {
+      const catalogueQueries = queryClient.getQueryCache().findAll({
+        queryKey: catalogueProductsQuery.account(accountId),
+        predicate: (query) => {
+          const data = query.state.data as
+            | InfiniteData<PaginatedListingProducts, number>
+            | undefined;
+          return data?.pages.some((page) =>
+            page.items.some((product) => product.id === productId),
+          ) ?? false;
+        },
+      });
+      await Promise.all(
+        catalogueQueries.map(async ({ queryKey }) => {
+          // Prevent an older in-flight page response from overwriting the patch.
+          await queryClient.cancelQueries({ queryKey, exact: true });
+          queryClient.setQueryData<InfiniteData<PaginatedListingProducts, number>>(
+            queryKey,
+            (data) => data && ({
+              ...data,
+              pages: data.pages.map((page) => ({
+                ...page,
+                items: page.items.map((product) => product.id === productId
+                  ? { ...product, isWishlisted: wishlisted }
+                  : product),
+              })),
+            }),
+          );
+        }),
+      );
       // The unused count query is marked stale without issuing a count request.
       await queryClient.invalidateQueries({
-        queryKey: countKey, exact: true, refetchType: "none",
+        queryKey: ["wishlist", accountId, "count"], refetchType: "none",
       });
       await queryClient.invalidateQueries({
-        queryKey: listKey, exact: true, refetchType: "active",
+        queryKey: ["wishlist", accountId, "list"], refetchType: "active",
       });
     },
     onSettled: () => {

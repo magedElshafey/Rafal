@@ -1,5 +1,6 @@
 import type { Locale } from "next-intl";
 
+import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
 import { ProductCard } from "@/features/products/components/product-card/product-card";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
@@ -12,12 +13,14 @@ type HomeProductCardLabels = {
 };
 
 type HomeProductCardProps = {
+  accountId: string | null;
   labels: HomeProductCardLabels;
   locale: Locale;
   product: HomeProduct;
 };
 
 export function HomeProductCard({
+  accountId,
   labels,
   locale,
   product,
@@ -35,6 +38,13 @@ export function HomeProductCard({
 
   return (
     <ProductCard
+      wishlistControl={
+        <WishlistHeart
+          accountId={accountId}
+          productId={product.id}
+          isWishlisted={product.isWishlisted}
+        />
+      }
       badge={badge}
       href={`/products/${product.slug}`}
       image={product.imageUrl}

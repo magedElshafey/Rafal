@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getCategoryBySlug } from "@/features/categories/api/get-category-by-slug";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { getCatalogueProducts } from "@/features/products/api/get-catalogue-products";
@@ -38,7 +39,10 @@ export default async function CategoryPage({
     throw error;
   }
 
-  const city = await resolveCurrentLocation(locale);
+  const [city, user] = await Promise.all([
+    resolveCurrentLocation(locale),
+    getCurrentUser(),
+  ]);
   const { filters: parsedFilters, sort } = parseCatalogueListingSearchParams(
     toUrlSearchParams(rawSearchParams),
   );
@@ -81,6 +85,7 @@ export default async function CategoryPage({
       </div>
       <div className="mt-6">
         <CatalogueProductListing
+          accountId={user?.id ?? null}
           categoryId={selectedChild?.id ?? category.id}
           cityId={city?.id ?? null}
           copy={{

@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 import { getCatalogueProducts } from "@/features/products/api/get-catalogue-products";
 import { CatalogueProductListing } from "@/features/products/components/listing/catalogue-product-listing";
@@ -34,7 +35,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     getTranslations("Common.productListing"),
     getTranslations("Common.searchResults"),
   ]);
-  const city = await resolveCurrentLocation(locale);
+  const [city, user] = await Promise.all([
+    resolveCurrentLocation(locale),
+    getCurrentUser(),
+  ]);
   const { filters: parsedFilters, search, sort } =
     parseCatalogueListingSearchParams(toUrlSearchParams(rawSearchParams));
   const filters = { ...parsedFilters, subcategory: undefined };
@@ -76,6 +80,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       </div>
       <div className="mt-6">
         <CatalogueProductListing
+          accountId={user?.id ?? null}
           cityId={city?.id ?? null}
           copy={{
             badges: {

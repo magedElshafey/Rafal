@@ -11,9 +11,11 @@ import { ProductShelf } from "@/features/home/components/product-shelf";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
 export function LatestProductsSection({
+  accountId,
   categories,
   products,
 }: {
+  accountId: string | null;
   categories: readonly Category[];
   products: readonly HomeProduct[];
 }) {
@@ -37,6 +39,7 @@ export function LatestProductsSection({
 
   return (
     <ProductShelf
+      accountId={accountId}
       carouselLabel={t("latest.carouselLabel")}
       emptyContent={
         products.length > 0 && visibleProducts.length === 0 ? (

@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
+import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { StorefrontLocationController } from "@/components/shell/storefront/quick-acess/StorefrontLocationController";
 import { serverEnv } from "@/config/server-env";
 import { resolveLocationByCityId } from "@/features/location/api/location-api.server";
@@ -114,6 +116,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     t,
     locationT,
     publicSettings,
+    user,
   ] =
     await Promise.all([
       getProductPageData(slug, locale),
@@ -126,6 +129,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         namespace: "Common.headerUtility",
       }),
       getPublicSettings(),
+      getCurrentUser(),
     ]);
   if (!product) notFound();
 
@@ -228,17 +232,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
         product={purchaseProduct}
         renderedAt={renderedAt}
         shareActions={
-          <ProductShareActions
-            copyFailedLabel={t("sharing.copyFailed")}
-            copyLabel={t("sharing.copyLink")}
-            copySuccessLabel={t("sharing.copySuccess")}
-            description={shareDescription}
-            productName={product.name}
-            title={t("sharing.title")}
-            twitterLabel={t("sharing.twitter")}
-            url={canonicalProductUrl}
-            whatsappLabel={t("sharing.whatsapp")}
-          />
+          <div className="space-y-4">
+            <WishlistHeart
+              accountId={user?.id ?? null}
+              productId={product.id}
+              isWishlisted={product.isWishlisted}
+              variant="action"
+            />
+            <ProductShareActions
+              copyFailedLabel={t("sharing.copyFailed")}
+              copyLabel={t("sharing.copyLink")}
+              copySuccessLabel={t("sharing.copySuccess")}
+              description={shareDescription}
+              productName={product.name}
+              title={t("sharing.title")}
+              twitterLabel={t("sharing.twitter")}
+              url={canonicalProductUrl}
+              whatsappLabel={t("sharing.whatsapp")}
+            />
+          </div>
         }
         copy={{
           gallery: {

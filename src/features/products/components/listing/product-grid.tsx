@@ -6,9 +6,11 @@ import {
   type ProductCardAction,
 } from "@/features/products/components/product-card";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
+import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
 import { cn } from "@/lib/utils";
 
 type ProductGridProps = {
+  wishlistAccountId?: string | null;
   className?: string;
   locale: Locale;
   products: readonly ListingProduct[];
@@ -25,6 +27,7 @@ const productGridClassName =
 export function ListingProductCard({
   badgeLabels,
   getWishlistAction,
+  wishlistAccountId,
   locale,
   product,
   ratingLabel,
@@ -57,6 +60,14 @@ export function ListingProductCard({
     },
     title: name,
     wishlistAction: getWishlistAction?.(product),
+    wishlistControl:
+      !getWishlistAction && wishlistAccountId !== undefined ? (
+        <WishlistHeart
+          accountId={wishlistAccountId}
+          productId={product.id}
+          isWishlisted={product.isWishlisted}
+        />
+      ) : undefined,
   };
 
   return product.inStock ? (
@@ -74,6 +85,7 @@ export function ProductGrid({
   badgeLabels,
   className,
   getWishlistAction,
+  wishlistAccountId,
   locale,
   products,
   ratingLabel,
@@ -87,6 +99,7 @@ export function ProductGrid({
           key={product.id}
           badgeLabels={badgeLabels}
           getWishlistAction={getWishlistAction}
+          wishlistAccountId={wishlistAccountId}
           locale={locale}
           product={product}
           ratingLabel={ratingLabel}

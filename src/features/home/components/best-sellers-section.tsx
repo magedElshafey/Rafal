@@ -4,8 +4,10 @@ import { ProductShelf } from "@/features/home/components/product-shelf";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
 export async function BestSellersSection({
+  accountId,
   products,
 }: {
+  accountId: string | null;
   products: readonly HomeProduct[];
 }) {
   const [locale, t] = await Promise.all([
@@ -14,6 +16,7 @@ export async function BestSellersSection({
   ]);
   return (
     <ProductShelf
+      accountId={accountId}
       carouselLabel={t("bestSellers.carouselLabel")}
       labels={{
         discount: t("badges.discount"),
