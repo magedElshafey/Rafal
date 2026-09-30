@@ -3,12 +3,12 @@ import type { Locale } from "next-intl";
 import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 
-import type { LocalizedBlogArticle } from "../types";
+import type { BlogSummary } from "../types";
 import { ArticleMeta } from "./ArticleMeta";
 import { Badge } from "@/components/ui/badge";
 
 type FeaturedArticleProps = {
-  article: LocalizedBlogArticle;
+  article: BlogSummary;
   featuredLabel: string;
   locale: Locale;
 };
@@ -25,7 +25,7 @@ export function FeaturedArticle({
 
         <h2 className="mt-4 text-h2 font-bold text-gray-1000">
           <Link
-            href={`/blog/${article.slug}`}
+            href={`/blog/${encodeURIComponent(article.slug)}`}
             className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-ring"
           >
             {article.title}
@@ -37,11 +37,11 @@ export function FeaturedArticle({
         </div>
       </div>
       <AppImage
-        src={article.image.src}
-        alt={article.image.alt}
+        src={article.coverUrl}
+        alt={article.coverUrl ? article.title : ""}
         aspectRatio="16 / 9"
         sizes="(max-width: 768px) 100vw, 50vw"
-        preload
+        preload={article.coverUrl !== null}
         frameClassName="h-full min-h-56 rounded-none"
       />
     </article>

@@ -4,11 +4,11 @@ import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-import type { LocalizedBlogArticle } from "../types";
+import type { BlogSummary } from "../types";
 import { ArticleMeta } from "./ArticleMeta";
 
 type BlogCardProps = {
-  article: LocalizedBlogArticle;
+  article: BlogSummary;
   locale: Locale;
   variant?: "default" | "compact";
 };
@@ -18,11 +18,12 @@ export function BlogCard({
   locale,
   variant = "default",
 }: BlogCardProps) {
+  const Heading = variant === "compact" ? "h3" : "h2";
   return (
     <article className="group relative overflow-hidden rounded-lg border border-gray-200 bg-background">
       <AppImage
-        src={article.image.src}
-        alt={article.image.alt}
+        src={article.coverUrl}
+        alt={article.coverUrl ? article.title : ""}
         aspectRatio={variant === "compact" ? "16 / 7" : "16 / 9"}
         sizes={
           variant === "compact"
@@ -32,20 +33,20 @@ export function BlogCard({
         frameClassName="rounded-none"
       />
       <div className={cn("p-4", variant === "compact" && "px-4 py-3")}>
-        <p className="text-xs font-medium text-success">{article.category}</p>
-        <h2
+        {article.category ? <p className="text-xs font-medium text-success">{article.category.name}</p> : null}
+        <Heading
           className={cn(
             "mt-1 font-bold text-foreground",
             variant === "compact" ? "text-base" : "text-lg",
           )}
         >
           <Link
-            href={`/blog/${article.slug}`}
+            href={`/blog/${encodeURIComponent(article.slug)}`}
             className="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-ring"
           >
             {article.title}
           </Link>
-        </h2>
+        </Heading>
         {variant === "default" ? (
           <p className="mt-1 line-clamp-2 text-sm text-gray-500">
             {article.excerpt}

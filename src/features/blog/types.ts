@@ -1,30 +1,23 @@
-import type { Locale } from "next-intl";
+import type { PaginationMeta } from "@/lib/api/pagination";
 
-export type LocalizedText = Record<Locale, string>;
-
-export type BlogArticle = {
-  id: string;
+export type BlogSummary = {
+  id: number;
   slug: string;
-  title: LocalizedText;
-  excerpt: LocalizedText;
-  content: Record<Locale, readonly string[]>;
-  category: LocalizedText;
+  title: string;
+  excerpt: string;
+  coverUrl: string | null;
+  category: { id: number; name: string; slug: string } | null;
+  authorName: string | null;
+  isFeatured: boolean;
+  readingTimeMinutes: number;
   publishedAt: string;
-  readingTime: number;
-  image: {
-    src: string | null;
-    alt: LocalizedText;
-  };
-  featured?: boolean;
+};
+export type BlogPage = {
+  items: BlogSummary[];
+  pagination: PaginationMeta;
 };
 
-export type LocalizedBlogArticle = Omit<
-  BlogArticle,
-  "category" | "content" | "excerpt" | "image" | "title"
-> & {
-  category: string;
-  content: readonly string[];
-  excerpt: string;
-  image: { src: string | null; alt: string };
-  title: string;
+export type BlogPost = BlogSummary & {
+  body: string;
+  related: BlogSummary[];
 };

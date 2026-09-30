@@ -6,10 +6,26 @@
     "allArticles": "All articles",
     "empty": "There are no published articles yet.",
     "viewMore": "View more articles",
-    "author": "Rafal team",
     "readingTime": "{minutes} min read",
     "related": "Related articles",
-    "breadcrumbs": { "label": "Breadcrumb", "home": "Home", "blog": "Blog" }
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home",
+      "blog": "Blog"
+    },
+    "emptyTitle": "No articles published yet",
+    "loading": "Loading articles",
+    "loadingArticle": "Loading article",
+    "loadingMore": "Loading more articles",
+    "nextPageError": "More articles could not be loaded. Please try again.",
+    "errorTitle": "The blog could not be loaded",
+    "errorDescription": "There was a temporary problem loading the blog. Please try again.",
+    "retry": "Try again",
+    "detailErrorTitle": "The article could not be loaded",
+    "detailErrorDescription": "There was a temporary problem loading this article. Please try again.",
+    "notFoundTitle": "Article not found",
+    "notFoundDescription": "This article is unavailable or is no longer published.",
+    "backToBlog": "Back to the blog"
   },
   "about": {
     "title": "About us",
