@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import type { ReactNode, RefObject } from "react";
+import { useRef, type ReactNode, type RefObject } from "react";
 
 import { Button } from "@/components/ui/button";
 import { XIcon } from "@/components/ui/icons";
@@ -36,6 +36,8 @@ export function RafalModal({
   title,
   variant = "modal",
 }: RafalModalProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen || dismissible) onOpenChange(nextOpen);
   };
@@ -43,13 +45,43 @@ export function RafalModal({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-gray-1000/45" />
+        <DialogPrimitive.Overlay className="motion-surface-overlay fixed inset-0 z-50 bg-gray-1000/45" />
         <DialogPrimitive.Content
+          ref={contentRef}
+          data-surface={variant}
+          onOpenAutoFocus={() => {
+            const activeElement = document.activeElement;
+            previousFocusRef.current =
+              activeElement instanceof HTMLElement ? activeElement : null;
+          }}
           onCloseAutoFocus={(event) => {
-            if (!returnFocusRef?.current) return;
+            const target = returnFocusRef?.current ?? previousFocusRef.current;
+            if (!target?.isConnected) return;
 
             event.preventDefault();
-            returnFocusRef.current.focus();
+            target.focus();
+          }}
+          // Radix releases its focus trap at open=false, before Presence unmounts.
+          // Keep focus inside the still-visible exit surface; restore it on unmount.
+          onFocusOutside={(event) => {
+            if (open) return;
+            event.preventDefault();
+            contentRef.current?.focus();
+          }}
+          onClickCapture={(event) => {
+            if (open) return;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onPointerDownCapture={(event) => {
+            if (open) return;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onKeyDownCapture={(event) => {
+            if (open || event.key === "Tab") return;
+            event.preventDefault();
+            event.stopPropagation();
           }}
           onEscapeKeyDown={(event) => {
             if (!dismissible) event.preventDefault();
@@ -58,7 +90,7 @@ export function RafalModal({
             if (!dismissible) event.preventDefault();
           }}
           className={cn(
-            "fixed inset-x-0 bottom-0 z-50 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)] outline-none",
+            "motion-surface fixed inset-x-0 bottom-0 z-50 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)] outline-none",
             variant === "bottom-sheet"
               ? "sm:inset-x-auto sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2"
               : "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",

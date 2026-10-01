@@ -2,7 +2,9 @@
 
 Phase 0 engineering handoff, inspected 2026-10-01 at `5ab4faf` on
 `style/rafal-animation`. This document records current code, approved policy,
-and future direction separately. Phase 0 changes documentation only.
+and future direction separately. Phase 0 changed documentation only. Phase 1B
+now adds shared Radix surface motion (section 9); City Context Transition remains
+paused pending the separate Cart/Checkout branch.
 Read [PROJECT.md](PROJECT.md), [ARCHITECTURE.md](ARCHITECTURE.md),
 [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), and [AGENTS.md](../AGENTS.md) alongside it.
 Future implementations still require their own approved scope and designs.
@@ -63,15 +65,17 @@ Source: [globals.css](../src/app/globals.css), `:root`.
 
 | Token | Actual value | Current role |
 | --- | --- | --- |
-| `--motion-duration-fast` | `140ms` | Available fast feedback token |
-| `--motion-duration-default` | `220ms` | Available default duration token |
+| `--motion-duration-fast` | `140ms` | Surface/overlay exit |
+| `--motion-duration-default` | `220ms` | Surface/overlay entrance |
 | `--motion-duration-reveal` | `420ms` | Reveal opacity and transform transitions |
 | `--motion-distance-reveal` | `1.5rem` | Reveal vertical offset (24px at a 16px root) |
 | `--motion-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | Reveal ease-out |
+| `--motion-distance-dialog` | `0.5rem` | Desktop dialog vertical offset |
 
-Fast/default are defined but currently have no consumers in `src`. Existing
-utility transitions do not all use these tokens. These are verified repository
-values, not a claim of additional Figma approval.
+Fast/default and the shared ease-out now drive surface motion. The dialog distance
+is the only new Phase 1B token, distinguishing dialog movement from section reveal.
+It is an engineering choice authorized by this task, not additional Figma approval.
+Older utility transitions do not all use these tokens.
 
 ## 5. Motion Categories
 
@@ -103,13 +107,13 @@ visible SSR content. No banner animation API or new timing is defined.
 
 ### Modal / Dialog
 
-Unified open/close motion is planned. Existing dialogs are functional; their
-presence is not evidence of an implemented global surface motion system.
+RafalModal now supplies shared CSS entrance/exit motion. Independent native/custom
+surfaces retain their existing lifecycle; see section 9.
 
 ### Drawer / Bottom Sheet
 
-Unified surface motion is planned. Preserve existing dismissal, focus,
-scroll containment, and responsive behavior; do not invent a replacement API.
+RafalModal bottom sheets now share surface motion. Side-drawer integration remains
+planned; preserve dismissal, focus, scrolling, and responsive behavior.
 
 ### Carousel Feedback
 
@@ -215,7 +219,8 @@ a grid. Do not count either as a carousel.
 
 ## 9. Modal / Surface Motion
 
-Global motion is **planned**, with no final new API defined. Current inventory:
+Phase 1B implements motion in RafalModal without changing its public API or layouts.
+Shared CSS vocabulary is separate from each surface's lifecycle. Current inventory:
 
 | Surface | Existing implementation |
 | --- | --- |
@@ -225,11 +230,81 @@ Global motion is **planned**, with no final new API defined. Current inventory:
 | CityPickerDialog | Custom dialog, focus loop/restoration, body scroll lock, Escape/backdrop dismissal |
 | Mobile More navigation | Native dialog/showModal, close/cancel handling, trigger focus restoration |
 
-These surfaces do not share an implemented entrance/exit animation system.
-Future work must preserve accessibility across these distinct lifecycles;
-unifying motion does not silently authorize replacing their architecture.
-Header is server-composed. Mobile navigation has a server translation wrapper
-and a client island for current-route state and its More dialog.
+### Motion vocabulary
+
+- Overlay: opacity 0 -> 1 on entry, reverse on exit.
+- Desktop modal: opacity plus translateY(0.5rem -> 0), reverse on exit.
+- Bottom sheet: opacity plus translateY(100% -> 0), reverse on exit.
+- Entry uses 220ms, exit 140ms, both using the existing ease-out. No scale or blur.
+- Default modals use sheet motion below the existing Tailwind sm boundary (40rem).
+  The explicit bottom-sheet variant remains bottom-aligned at every width.
+- Animated transform composes with Tailwind v4's individual translate centering
+  utilities; it does not replace the desktop -50% positioning.
+- Future drawers should use the same timing/opacity with horizontal travel toward
+  their physical edge: left -100%, right +100%. Resolve semantic start/end through
+  RTL direction. No drawer consumer exists, so no unused API/CSS is introduced.
+
+### Detailed lifecycle inventory
+
+All Radix consumers use a body portal, fixed overlay, Radix initial focus and Tab
+loop, modal background aria isolation, RemoveScroll, and Escape/outside dismissal
+unless non-dismissible. Their CSS open/closed animations now run in both directions.
+
+| Surface | Desktop / mobile | Opening and closing / restoration |
+| --- | --- | --- |
+| RafalModal | Centered desktop; mobile bottom sheet | Controlled open, Radix Presence exit; explicit returnFocusRef or captured opener |
+| InfoDialog | Inherits RafalModal | Action requests close; inherits presence, dismissal, and focus |
+| ConfirmDialog | Inherits RafalModal | Confirm callback/cancel; loading disables controls, caller owns dismissible policy |
+| ProductPurchaseSuccessSheet | Bottom-aligned at both sizes | Inherits Radix; purchase-trigger returnFocusRef; absent when cart missing |
+| ProductGallery lightbox | Wide desktop modal; mobile sheet | Controlled lightbox state; image-trigger returnFocusRef; existing arrow navigation unchanged |
+| CityPickerDialog | Centered desktop; bottom-aligned mobile | Custom inline div/backdrop, conditional immediate mount/unmount, no portal; manual focus loop, initial/search focus, previous-focus restoration, Escape/backdrop close, body overflow lock; aria-modal but no Radix background aria hiding |
+| Mobile More | Hidden desktop; mobile bottom sheet | Native dialog showModal/close, top layer and ::backdrop, no React portal; browser modal focus/isolation, cancel/Escape, backdrop-target click, trigger restoration; no authored body overflow lock |
+
+Before Phase 1B none had authored entrance/exit animation. Existing control hover
+transitions are separate. Listing filters and address deletion confirmation also
+inherit RafalModal motion without feature edits.
+
+**Parent-unmount limitation:** AddressPage removes AddressForm immediately on
+close, so its nested modal gets entry motion but cannot finish exit. Navigation,
+missing cart data, or removing gallery data can likewise remove entire consumers.
+Presence cannot retain a component whose parent unmounts it. These feature flows
+remain unchanged; fixing them requires separately scoped caller-lifecycle work.
+
+### Exit and accessibility
+
+`motion-surface` and `motion-surface-overlay` use distinct open/closed animation
+names. Installed Radix Presence retains each node until its exit animation ends
+or is cancelled. Both use identical durations. Keep the component mounted while
+toggling open; do not replace these keyframes with plain transitions or `open &&`.
+No timeout, delayed React open state, forceMount, or per-frame state is added.
+
+Installed Radix releases trapFocus and outside-pointer blocking at open=false.
+During exit, the retained full-screen overlay still intercepts background pointers
+and owns RemoveScroll; background aria hiding remains until content unmount.
+RafalModal redirects outside focus back to the closing content, retains Radix's
+Tab loop, and blocks pointer/click and non-Tab keyboard activation in that content.
+Restoration runs on unmount, preferring returnFocusRef, otherwise the captured
+opener when connected. Initial focus, names, dismissal policy, and touch scrolling
+remain owned by the existing primitive. These paths still require browser QA.
+
+Reduced motion sets animation:none for both states on both nodes. This removes
+decorative movement/fades and lets Radix unmount immediately without waiting for
+an exit. Preference changes during animation must also be checked manually.
+
+### Independent surfaces not migrated
+
+CityPickerDialog and Mobile More remain unchanged. Custom immediate unmount and
+native close/top-layer removal require different presence designs for safe exits.
+No entrance-only decoration, dependency, or forced shared lifecycle is added.
+
+### Phase 1B verification
+
+Only environment-free TypeScript, lint, and diff checks run on this machine.
+Browser tests remain pending: desktop/mobile positioning, rapid close/reopen,
+Escape/backdrop, Tab and outside focus during exit, nested surfaces, trigger
+restoration, non-dismissible dialogs, reduced-motion changes, background scroll/
+pointer isolation, and parent-unmount interruption. Do not run a production build
+or reconstruct runtime environment configuration for this phase.
 
 ## 10. Product Card Motion
 
@@ -277,8 +352,8 @@ control-state update; AnimatedProductMetric performs a one-shot 600ms DOM text
 count-up after intersection (threshold 0.4), with a stable screen-reader value.
 Neither is a scroll/pointer React-state loop. The metric checks reduced motion
 at setup, not continuously. Source search found no authored global scroll or
-pointermove animation listener, blanket will-change, or custom CSS keyframes.
-Tailwind spinner/skeleton animations still exist and use reduced-motion guards.
+pointermove animation listener or blanket will-change. Phase 1B adds only bounded
+surface CSS keyframes. Tailwind spinner/skeleton animations also use reduced-motion guards.
 
 ## 14. Manual QA Policy
 
@@ -340,7 +415,7 @@ the route. StorefrontLocationController invalidates current-cart queries in that
 callback. The transition pending flag is not consumed. This is existing behavior,
 not the completed future global pending/consistency flow. No change is made here.
 
-## 17. Repository Evidence and Contradiction Check
+## 17. Phase 0 Repository Evidence and Contradiction Check
 
 ### Confirmed
 
@@ -381,7 +456,8 @@ configuration agree with the intended decisions.
 
 - Measured before/after performance and real-device touch behavior were not
   established by this source audit; no performance improvement number is claimed.
-- Final global modal/sheet motion lifecycle, timings, and API are not designed.
+- At Phase 0, modal/sheet motion was not designed. Phase 1B now implements the
+  RafalModal lifecycle described in section 9; native/custom integration remains open.
 - City-change error/rollback, concurrent changes, reconciliation contracts, and
   checkout consistency need an approved feature task and backend evidence.
 - Banner/card/gallery effects, zoom/gesture details, and any future dependency
@@ -404,3 +480,10 @@ The Windows .cmd launchers were used because PowerShell blocked npm.ps1 and
 npx.ps1 under its execution policy. No alternative build mode, dependency,
 environment-file change, or production-code change was introduced. A complete
 build remains unverified until required environment configuration is supplied.
+
+## 19. Phase 1B Validation Record
+
+`npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `git diff --check` passed.
+No production build or browser/manual QA was run on the company machine.
+Files changed: globals.css, rafal-modal.tsx, and this reference. No feature,
+city-transition, cart, checkout, carousel, or Hero behavior was changed.

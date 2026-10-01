@@ -63,6 +63,62 @@
   --motion-duration-reveal: 420ms;
   --motion-distance-reveal: 1.5rem;
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-distance-dialog: 0.5rem;
+}
+
+/* Radix Presence waits for these distinct exit animation names before unmounting. */
+.motion-surface-overlay[data-state="open"] {
+  animation: surface-overlay-in var(--motion-duration-default) var(--motion-ease-out) both;
+}
+
+.motion-surface-overlay[data-state="closed"] {
+  animation: surface-overlay-out var(--motion-duration-fast) var(--motion-ease-out) both;
+}
+
+.motion-surface {
+  --surface-offset-y: 100%;
+}
+
+/* Match RafalModal's existing sm layout boundary, without replacing its translate. */
+@media (width >= 40rem) {
+  .motion-surface[data-surface="modal"] {
+    --surface-offset-y: var(--motion-distance-dialog);
+  }
+}
+
+.motion-surface[data-state="open"] {
+  animation: surface-in var(--motion-duration-default) var(--motion-ease-out) both;
+}
+
+.motion-surface[data-state="closed"] {
+  animation: surface-out var(--motion-duration-fast) var(--motion-ease-out) both;
+}
+
+@keyframes surface-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes surface-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes surface-in {
+  from { opacity: 0; transform: translateY(var(--surface-offset-y)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes surface-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(var(--surface-offset-y)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-surface-overlay[data-state],
+  .motion-surface[data-state] {
+    animation: none;
+  }
 }
 
 .motion-reveal {
