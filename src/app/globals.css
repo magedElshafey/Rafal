@@ -58,6 +58,201 @@
   --shadow-auth-card: 0 1.125rem 2rem rgb(0 0 0 / 10%);
   --shadow-modal: 0 1rem 2rem rgb(0 0 0 / 16%);
   --shadow-toast: 0 0.5rem 1rem rgb(0 0 0 / 20%);
+  --motion-duration-fast: 140ms;
+  --motion-duration-default: 220ms;
+  --motion-duration-reveal: 420ms;
+  --motion-distance-reveal: 1.5rem;
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-distance-dialog: 0.5rem;
+  --motion-scale-banner: 1.02;
+  --motion-scale-product-card: 1.02;
+}
+
+/* Non-modal navigation remains mounted for its exit, but is inert immediately. */
+.motion-category-panel {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--motion-distance-dialog)));
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-out),
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    visibility 0s var(--motion-duration-fast);
+}
+
+.motion-category-panel[data-open="true"] {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--motion-duration-default) var(--motion-ease-out),
+    transform var(--motion-duration-default) var(--motion-ease-out),
+    visibility 0s;
+}
+
+/* Native dialog owns dismissal; animate entrance only, never delay close(). */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-category-sheet[open] {
+    --surface-offset-y: 100%;
+    animation: surface-in var(--motion-duration-default) var(--motion-ease-out);
+  }
+
+  .motion-category-sheet[open]::backdrop {
+    animation: surface-overlay-in var(--motion-duration-default) var(--motion-ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-category-panel,
+  .motion-category-panel[data-open="true"] {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The stretched product link owns media feedback; sibling actions do not. */
+.product-card-secondary-image {
+  opacity: 0;
+}
+
+.product-card:has(.product-card-link:focus-visible)
+  [data-secondary-state="ready"] .product-card-secondary-image {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-card:has(.product-card-link:hover)
+    [data-secondary-state="ready"] .product-card-secondary-image {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .product-card-secondary-image {
+    transition: opacity var(--motion-duration-default) var(--motion-ease-out);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .product-card-image {
+    transition:
+      transform var(--motion-duration-default) var(--motion-ease-out),
+      opacity var(--motion-duration-default) var(--motion-ease-out);
+  }
+
+  .product-card:has(.product-card-link:hover) .product-card-image,
+  .product-card:has(.product-card-link:focus-visible) .product-card-image {
+    transform: scale(var(--motion-scale-product-card));
+  }
+}
+
+@media (width < 40rem), (pointer: coarse) {
+  :root {
+    --motion-scale-banner: 1.01;
+  }
+}
+
+/* Only the image moves inside its existing clipped, aspect-ratio frame. */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-banner-hero-image {
+    animation: banner-hero-settle var(--motion-duration-reveal) var(--motion-ease-out);
+  }
+
+  .motion-banner-promo[data-banner-motion="entered"] .motion-banner-promo-image {
+    animation: banner-promo-settle var(--motion-duration-reveal) var(--motion-ease-out);
+  }
+}
+
+@keyframes banner-hero-settle {
+  from { transform: scale(var(--motion-scale-banner)); }
+  to { transform: none; }
+}
+
+@keyframes banner-promo-settle {
+  from { opacity: 0.92; transform: scale(var(--motion-scale-banner)); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Radix Presence waits for these distinct exit animation names before unmounting. */
+.motion-surface-overlay[data-state="open"] {
+  animation: surface-overlay-in var(--motion-duration-default) var(--motion-ease-out) both;
+}
+
+.motion-surface-overlay[data-state="closed"] {
+  animation: surface-overlay-out var(--motion-duration-fast) var(--motion-ease-out) both;
+}
+
+.motion-surface {
+  --surface-offset-y: 100%;
+}
+
+/* Match RafalModal's existing sm layout boundary, without replacing its translate. */
+@media (width >= 40rem) {
+  .motion-surface[data-surface="modal"] {
+    --surface-offset-y: var(--motion-distance-dialog);
+  }
+}
+
+.motion-surface[data-state="open"] {
+  animation: surface-in var(--motion-duration-default) var(--motion-ease-out) both;
+}
+
+.motion-surface[data-state="closed"] {
+  animation: surface-out var(--motion-duration-fast) var(--motion-ease-out) both;
+}
+
+@keyframes surface-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes surface-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes surface-in {
+  from { opacity: 0; transform: translateY(var(--surface-offset-y)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes surface-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(var(--surface-offset-y)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-surface-overlay[data-state],
+  .motion-surface[data-state] {
+    animation: none;
+  }
+}
+
+.motion-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motion-reveal[data-reveal-state="prepared"] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-reveal));
+}
+
+.motion-reveal[data-reveal-state="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--motion-duration-reveal) var(--motion-ease-out),
+    transform var(--motion-duration-reveal) var(--motion-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-reveal[data-reveal-state] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 @theme inline {

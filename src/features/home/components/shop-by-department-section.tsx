@@ -3,6 +3,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import {
   AppCarousel,
   AppCarouselContent,
+  AppCarouselNext,
+  AppCarouselPrevious,
   AppCarouselSlide,
   AppCarouselViewport,
 } from "@/components/ui/app-carousel";
@@ -41,6 +43,10 @@ export async function ShopByDepartmentSection({
           label={t("carouselLabel")}
           slidesToScroll="auto"
         >
+          <div className="mb-3 hidden justify-end gap-3 p-1 md:flex">
+            <AppCarouselPrevious label={t("previous")} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+            <AppCarouselNext label={t("next")} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+          </div>
           <AppCarouselViewport>
             <AppCarouselContent className="-ms-4">
               {categories.map((category) => (

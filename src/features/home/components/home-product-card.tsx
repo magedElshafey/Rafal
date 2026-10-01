@@ -48,6 +48,7 @@ export function HomeProductCard({
       badge={badge}
       href={`/products/${product.slug}`}
       image={product.imageUrl}
+      secondaryImage={product.secondaryImageUrl}
       imageAlt={product.name}
       imageSizes="(max-width: 639px) 58vw, (max-width: 767px) 34vw, (max-width: 1023px) 25vw, 16vw"
       originalPrice={

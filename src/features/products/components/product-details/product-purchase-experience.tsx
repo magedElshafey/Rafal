@@ -35,6 +35,7 @@ import type {
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
+import { resolveGalleryImageId } from "@/features/products/utils/product-gallery";
 import {
   getSelectedOptionsFromVariant,
   resolveProductVariant,
@@ -227,6 +228,14 @@ export function ProductPurchaseExperience({
     product.variants,
     selectedOptions,
   );
+  // Reconcile removed media at the existing selection owner before children
+  // render. Do not keep a stale ID that could reappear on a later data update.
+  const validImageId = resolveGalleryImageId(
+    product.images,
+    selectedImageId,
+    selectedVariant?.imageIds,
+  );
+  if (validImageId !== selectedImageId) setSelectedImageId(validImageId);
   const availability = selectedVariant
     ? availabilityByVariantId[selectedVariant.id]
     : undefined;
@@ -451,9 +460,8 @@ export function ProductPurchaseExperience({
             images={product.images}
             initialImageId={initialImageId}
             onSelectImage={setSelectedImageId}
-            productId={product.id}
             productName={product.name}
-            selectedImageId={selectedImageId}
+            selectedImageId={validImageId}
           />
         </div>
         <div className="min-w-0 flex-1">

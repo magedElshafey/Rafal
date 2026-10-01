@@ -26,6 +26,8 @@ export async function ProductCollectionSection({
   return (
     <ProductShelf
       accountId={accountId}
+      previousLabel={t("previous")}
+      nextLabel={t("next")}
       carouselLabel={copy.carouselLabel}
       labels={{
         discount: t("badges.discount"),

@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type ContactFormCopy = {
   title: string;
@@ -24,17 +26,16 @@ export function ContactForm({ copy }: { copy: ContactFormCopy }) {
           <InputField id="contact-name" name="name" label={copy.nameLabel} placeholder={copy.namePlaceholder} autoComplete="name" required />
           <InputField id="contact-email" name="email" type="email" label={copy.emailLabel} placeholder={copy.emailPlaceholder} autoComplete="email" required />
           <InputField id="contact-subject" name="subject" label={copy.subjectLabel} placeholder={copy.subjectPlaceholder} required />
-          <div className="flex w-full flex-col gap-1.5">
-            <label htmlFor="contact-message" className="type-label text-gray-600">{copy.messageLabel}</label>
-            <textarea
+          <Field>
+            <FieldLabel htmlFor="contact-message">{copy.messageLabel}</FieldLabel>
+            <Textarea
               id="contact-message"
               name="message"
               rows={5}
               required
               placeholder={copy.messagePlaceholder}
-              className="min-h-30 w-full resize-y rounded-md border border-gray-200 bg-gray-0 px-3.5 py-3 type-body text-gray-1000 outline-none placeholder:text-gray-400 focus:border-[length:var(--border-width-emphasis)] focus:border-gold-500"
             />
-          </div>
+          </Field>
         </div>
       </fieldset>
       <Button type="button" size="lg" className="mt-5 w-full">{copy.submit}</Button>

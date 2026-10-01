@@ -2,6 +2,7 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import type { Locale } from "next-intl";
 import {
   createContext,
   forwardRef,
@@ -335,9 +336,17 @@ AppCarouselViewport.displayName = "AppCarousel.Viewport";
 const AppCarouselContent = forwardRef<
   HTMLDivElement,
   ComponentPropsWithoutRef<"div">
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex touch-pan-y", className)} {...props} />
-));
+>(({ className, ...props }, ref) => {
+  const { isActive } = useAppCarousel();
+
+  return (
+    <div
+      ref={ref}
+      className={cn("flex", isActive ? "touch-pan-y" : "touch-auto", className)}
+      {...props}
+    />
+  );
+});
 
 AppCarouselContent.displayName = "AppCarousel.Content";
 
@@ -413,6 +422,34 @@ type AppCarouselDotsProps = ComponentPropsWithoutRef<"div"> & {
   selectedDotClassName?: string;
 };
 
+type AppCarouselPositionProps = ComponentPropsWithoutRef<"div"> & {
+  label: string;
+  locale: Locale;
+};
+
+function AppCarouselPosition({
+  className,
+  label,
+  locale,
+  ...props
+}: AppCarouselPositionProps) {
+  const { selectedIndex, snapCount } = useAppCarousel();
+  const formatter = useMemo(() => new Intl.NumberFormat(locale), [locale]);
+
+  return (
+    <div
+      {...props}
+      role="group"
+      aria-label={label}
+      className={cn("flex min-h-11 items-center justify-center type-body-sm tabular-nums text-muted-foreground", className)}
+    >
+      {snapCount > 0 ? (
+        <bdi dir="ltr">{formatter.format(selectedIndex + 1)} / {formatter.format(snapCount)}</bdi>
+      ) : null}
+    </div>
+  );
+}
+
 function AppCarouselDots({
   className,
   dotClassName,
@@ -461,6 +498,7 @@ export {
   AppCarouselContent,
   AppCarouselDots,
   AppCarouselNext,
+  AppCarouselPosition,
   AppCarouselPrevious,
   AppCarouselSlide,
   AppCarouselViewport,
@@ -468,6 +506,7 @@ export {
 export type {
   AppCarouselDotsProps,
   AppCarouselProps,
+  AppCarouselPositionProps,
   AppCarouselSlideProps,
   AppCarouselViewportProps,
   CarouselButtonProps,

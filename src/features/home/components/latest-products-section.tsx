@@ -40,6 +40,8 @@ export function LatestProductsSection({
   return (
     <ProductShelf
       accountId={accountId}
+      previousLabel={t("previous")}
+      nextLabel={t("next")}
       carouselLabel={t("latest.carouselLabel")}
       emptyContent={
         products.length > 0 && visibleProducts.length === 0 ? (

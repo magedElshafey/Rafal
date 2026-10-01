@@ -47,6 +47,7 @@ export type ListingProduct = {
   createdOrder?: number;
   id: string;
   imageUrl: string | null;
+  secondaryImageUrl: string | null;
   inStock: boolean;
   name: string;
   originalPrice?: number;

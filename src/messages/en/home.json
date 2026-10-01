@@ -25,6 +25,8 @@
     "description": "Choose your city to see products available for your location."
   },
   "productSections": {
+    "previous": "Previous products",
+    "next": "Next products",
     "viewAll": "View all",
     "rating": "Rated {value} out of 5",
     "reviews": "{count, plural, one {# review} other {# reviews}}",
@@ -73,10 +75,17 @@
     "title": "Why Rafal?"
   },
   "testimonials": {
+    "carouselLabel": "Customer reviews",
+    "previous": "Previous reviews",
+    "next": "Next reviews",
+    "positionLabel": "Review carousel position",
+    "slideLabel": "Review {current} of {total}",
     "title": "Customer reviews",
     "rating": "Rated {value} out of 5"
   },
   "departments": {
+    "previous": "Previous departments",
+    "next": "Next departments",
     "title": "Shop by department",
     "carouselLabel": "Rafal departments"
   }

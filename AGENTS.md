@@ -493,3 +493,19 @@ _<!-- END\:nextjs-agent-rules -->_
 - Browser-provided values, including cookies, are untrusted inputs.
 
 - Do not call `router.refresh`, `revalidatePath`, or `revalidateTag` automatically after mutations; first verify that the current rendering/cache behavior requires it.
+
+# Rafal Motion & Interaction Engineering Rules
+
+Detailed reference and recorded implementation gaps: [docs/MOTION_SYSTEM.md](docs/MOTION_SYSTEM.md).
+
+- **Architecture:** Server Components remain the default. Use narrow client islands for browser interaction; never convert full sections/pages to client solely for animation.
+- **Implementation:** CSS first, then native browser APIs. Use IntersectionObserver for viewport entry; no global scroll listener for reveals and no React state updates on every scroll or pointermove frame. Motion/Framer Motion/GSAP require a concrete unmet requirement and architecture approval.
+- **Properties:** Prefer transform and opacity. Animating width, height, top, left, margin, or padding requires specific justification. Avoid large animated blur/filter surfaces, blanket will-change, and unnecessary compositor layers.
+- **Reveal:** Progressive enhancement, one-shot per mount, at section/group level by default. Do not replay on scroll-back or create an observer per product card without strong justification. SSR content stays visible.
+- **Hero:** Never hide LCP content behind JavaScript or delay core Hero paint for decorative animation.
+- **Reduced motion:** All non-essential motion must respect prefers-reduced-motion.
+- **Mobile/touch:** Functionality must never require hover. Coarse-pointer experiences may simplify decoration; desktop effects do not automatically belong on mobile.
+- **Accessibility:** Preserve keyboard navigation, focus order/restoration, semantic DOM order, screen-reader usability, and touch interaction through all motion states.
+- **Carousels:** AppCarousel owns Embla. Preserve RTL, keyboard, touch, reduced motion, and opt-in below-fold runtime deferral; Home Categories remains eager. Do not introduce competing sliders.
+- **Performance:** Prioritize correctness, performance, accessibility, UX quality, then polish. Accept only small, measured costs for meaningful UX improvements. Preserve CLS, avoid unnecessary hydration, and require before/after checks for performance-sensitive batches. No dependency without a concrete requirement.
+- **Manual QA reporting:** Every visual/interactive task must end with a `### Manual QA Needed` section listing exact outstanding manual tests (or explicitly none). Use the detailed reference's relevant device, input, RTL, reduced-motion, network, and performance groups.

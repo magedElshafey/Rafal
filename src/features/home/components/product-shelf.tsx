@@ -4,6 +4,8 @@ import type { Locale } from "next-intl";
 import {
   AppCarousel,
   AppCarouselContent,
+  AppCarouselNext,
+  AppCarouselPrevious,
   AppCarouselSlide,
   AppCarouselViewport,
 } from "@/components/ui/app-carousel";
@@ -19,6 +21,8 @@ import { Link } from "@/i18n/navigation";
 type ProductShelfProps = {
   accountId: string | null;
   carouselLabel: string;
+  nextLabel: string;
+  previousLabel: string;
   emptyContent?: ReactNode;
   headerContent?: ReactNode;
   labels: HomeProductCardLabels;
@@ -32,6 +36,8 @@ type ProductShelfProps = {
 export function ProductShelf({
   accountId,
   carouselLabel,
+  nextLabel,
+  previousLabel,
   emptyContent,
   headerContent,
   labels,
@@ -69,6 +75,10 @@ export function ProductShelf({
             label={carouselLabel}
             slidesToScroll="auto"
           >
+            <div className="mb-3 hidden justify-end gap-3 p-1 md:flex">
+              <AppCarouselPrevious label={previousLabel} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+              <AppCarouselNext label={nextLabel} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+            </div>
             <AppCarouselViewport>
               <AppCarouselContent className="-ms-4">
                 {products.map((product) => (

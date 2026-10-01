@@ -4,8 +4,10 @@ import Header from "@/components/shell/storefront/header/Header";
 import MobileBottomNavigation from "@/components/shell/storefront/mobile-navigation/MobileBottomNavigation";
 import QuickAccessHeader from "@/components/shell/storefront/quick-acess/QuickAccessHeader";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
+import { getCategoriesPage } from "@/features/categories/api/get-categories";
+import { mapCategoryNavigation } from "@/features/categories/utils/category-navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 type StoreFontLayoutProps = {
   children: ReactNode;
@@ -18,10 +20,14 @@ export default async function StoreFontLayout({
     getTranslations("Common.headerUtility"),
     getLocale(),
   ]);
+  const categories = getCategoriesPage(locale).then(
+    (page) => mapCategoryNavigation(page.items),
+    () => [], // The directory link remains usable when shell taxonomy fails.
+  );
   const initialCity = await resolveCurrentLocation(locale);
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header categories={categories} />
       <QuickAccessHeader
         initialCity={initialCity}
         locale={locale}
@@ -55,7 +61,9 @@ export default async function StoreFontLayout({
       />
       <main className="flex-1 mt-5">{children}</main>
       <Footer />
-      <MobileBottomNavigation />
+      <Suspense fallback={<MobileBottomNavigation categories={[]} />}>
+        <MobileBottomNavigation categories={categories} />
+      </Suspense>
     </div>
   );
 }

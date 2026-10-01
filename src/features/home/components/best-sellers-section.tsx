@@ -17,6 +17,8 @@ export async function BestSellersSection({
   return (
     <ProductShelf
       accountId={accountId}
+      previousLabel={t("previous")}
+      nextLabel={t("next")}
       carouselLabel={t("bestSellers.carouselLabel")}
       labels={{
         discount: t("badges.discount"),

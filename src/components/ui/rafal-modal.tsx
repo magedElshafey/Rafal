@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import type { ReactNode, RefObject } from "react";
+import { useRef, type ReactNode, type RefObject } from "react";
 
 import { Button } from "@/components/ui/button";
 import { XIcon } from "@/components/ui/icons";
@@ -19,7 +19,7 @@ type RafalModalProps = {
   showClose?: boolean;
   className?: string;
   returnFocusRef?: RefObject<HTMLElement | null>;
-  variant?: "modal" | "bottom-sheet";
+  variant?: "modal" | "bottom-sheet" | "image-viewer";
 };
 
 export function RafalModal({
@@ -36,6 +36,9 @@ export function RafalModal({
   title,
   variant = "modal",
 }: RafalModalProps) {
+  const isImageViewer = variant === "image-viewer";
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen || dismissible) onOpenChange(nextOpen);
   };
@@ -43,13 +46,49 @@ export function RafalModal({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-gray-1000/45" />
+        <DialogPrimitive.Overlay
+          className={cn(
+            "motion-surface-overlay fixed inset-0 z-50",
+            isImageViewer ? "bg-gray-1000/80" : "bg-gray-1000/45",
+          )}
+        />
         <DialogPrimitive.Content
+          ref={contentRef}
+          // The viewer reuses the existing responsive modal motion lifecycle.
+          data-surface={isImageViewer ? "modal" : variant}
+          onOpenAutoFocus={() => {
+            const activeElement = document.activeElement;
+            previousFocusRef.current =
+              activeElement instanceof HTMLElement ? activeElement : null;
+          }}
           onCloseAutoFocus={(event) => {
-            if (!returnFocusRef?.current) return;
+            const target = returnFocusRef?.current ?? previousFocusRef.current;
+            if (!target?.isConnected) return;
 
             event.preventDefault();
-            returnFocusRef.current.focus();
+            target.focus();
+          }}
+          // Radix releases its focus trap at open=false, before Presence unmounts.
+          // Keep focus inside the still-visible exit surface; restore it on unmount.
+          onFocusOutside={(event) => {
+            if (open) return;
+            event.preventDefault();
+            contentRef.current?.focus();
+          }}
+          onClickCapture={(event) => {
+            if (open) return;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onPointerDownCapture={(event) => {
+            if (open) return;
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onKeyDownCapture={(event) => {
+            if (open || event.key === "Tab") return;
+            event.preventDefault();
+            event.stopPropagation();
           }}
           onEscapeKeyDown={(event) => {
             if (!dismissible) event.preventDefault();
@@ -58,23 +97,44 @@ export function RafalModal({
             if (!dismissible) event.preventDefault();
           }}
           className={cn(
-            "fixed inset-x-0 bottom-0 z-50 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)] outline-none",
-            variant === "bottom-sheet"
-              ? "sm:inset-x-auto sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2"
-              : "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",
+            "motion-surface fixed z-50 outline-none",
+            isImageViewer
+              ? "inset-0 h-dvh overflow-hidden bg-gray-100 pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] sm:inset-4 sm:h-[calc(100dvh-2rem)] sm:rounded-lg"
+              : cn(
+                  "inset-x-0 bottom-0 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)]",
+                  variant === "bottom-sheet"
+                    ? "sm:inset-x-auto sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2"
+                    : "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",
+                ),
             className,
           )}
         >
           {showClose && dismissible ? (
             <DialogPrimitive.Close
               aria-label={closeLabel}
-              className="absolute top-4 end-4 inline-flex size-8 items-center justify-center rounded-md text-gray-600 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className={cn(
+                "absolute inline-flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                isImageViewer
+                  ? "top-[max(1rem,env(safe-area-inset-top))] end-[max(1rem,env(safe-area-inset-right))] z-10 size-12 rounded-full border border-gray-200 bg-gray-0 text-gray-1000 transition-opacity hover:opacity-90 motion-reduce:transition-none rtl:end-[max(1rem,env(safe-area-inset-left))]"
+                  : "top-4 end-4 size-8 rounded-md text-gray-600 hover:bg-gray-100",
+              )}
             >
-              <XIcon aria-hidden="true" className="size-4" />
+              <XIcon
+                aria-hidden="true"
+                className={
+                  isImageViewer ? "size-[var(--icon-button-art-lg)]" : "size-4"
+                }
+              />
             </DialogPrimitive.Close>
           ) : null}
-          <div className={cn("space-y-3", showClose && "pe-8")}>
-            <DialogPrimitive.Title className="text-h4 font-bold text-gray-1000">
+          <div
+            className={
+              isImageViewer ? "h-full min-h-0" : cn("space-y-3", showClose && "pe-8")
+            }
+          >
+            <DialogPrimitive.Title
+              className={isImageViewer ? "sr-only" : "text-h4 font-bold text-gray-1000"}
+            >
               {title}
             </DialogPrimitive.Title>
             {description ? (

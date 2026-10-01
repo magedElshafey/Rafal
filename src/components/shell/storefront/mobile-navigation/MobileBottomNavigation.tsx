@@ -1,11 +1,17 @@
 import { getTranslations } from "next-intl/server";
+import type { CategoryNavigationItem } from "@/features/categories/utils/category-navigation";
 
 import MobileBottomNavigationClient, {
   type MobileNavigationCopy,
 } from "./MobileBottomNavigationClient";
 
-export default async function MobileBottomNavigation() {
-  const t = await getTranslations("Common.nav");
+export default async function MobileBottomNavigation({ categories: categoryData }: {
+  categories: CategoryNavigationItem[] | Promise<CategoryNavigationItem[]>;
+}) {
+  const [t, categories] = await Promise.all([
+    getTranslations("Common.nav"),
+    categoryData,
+  ]);
   const copy: MobileNavigationCopy = {
     about_us: t("about_us"),
     blogs: t("blogs"),
@@ -19,7 +25,14 @@ export default async function MobileBottomNavigation() {
     navigation: t("mobile_navigation"),
     offers: t("offers"),
     wishlist: t("wishlist"),
+    categoryNavigation: {
+      title: t("categories"),
+      viewAll: t("category_navigation.view_all"),
+      viewProducts: t("category_navigation.view_products"),
+      back: t("category_navigation.back"),
+      close: t("category_navigation.close"),
+    },
   };
 
-  return <MobileBottomNavigationClient copy={copy} />;
+  return <MobileBottomNavigationClient copy={copy} categories={categories} />;
 }

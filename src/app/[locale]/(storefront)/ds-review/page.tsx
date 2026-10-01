@@ -1,8 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { IconButton } from "@/components/ui/icon-button";
 import { HeartIcon, SaudiFlagIcon, SearchIcon } from "@/components/ui/icons";
-import { InputField, PhoneInputField } from "@/components/ui/input";
+import { Input, InputField, PhoneInputField } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { ProductCard } from "@/features/products/components/product-card";
 
 export default function DesignSystemReviewPage() {
@@ -30,31 +33,75 @@ export default function DesignSystemReviewPage() {
             <HeartIcon />
           </IconButton>
         </section>
-        <section className="grid max-w-xl grid-cols-2 gap-6">
-          <InputField
-            id="review-default"
-            label="الاسم"
-            placeholder="أدخل الاسم"
-          />
-          <InputField
-            id="review-error"
-            label="البريد الإلكتروني"
-            defaultValue="name@example.com"
-            error="تحقق من البريد الإلكتروني"
-          />
-          <InputField
-            id="review-disabled"
-            label="الاسم"
-            disabled
-            placeholder="أدخل الاسم"
-          />
-          <PhoneInputField
-            id="review-phone"
-            label="رقم الجوال"
-            countryCode="+966"
-            countryFlag={<SaudiFlagIcon className="size-full" />}
-            placeholder="5X XXX XXXX"
-          />
+        <section aria-labelledby="review-forms-title" className="space-y-6">
+          <h2 id="review-forms-title" className="text-h3">حقول النماذج — بساطة راقية</h2>
+          <p className="type-body text-gray-600">استخدم لوحة المفاتيح لفحص التركيز. قوائم الاختيار تستخدم واجهة المتصفح الأصلية.</p>
+          <fieldset>
+            <legend className="mb-4 text-h4">الإدخال</legend>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField id="review-default" label="افتراضي" />
+              <InputField id="review-placeholder" label="نص توضيحي" placeholder="أدخل الاسم" />
+              <InputField id="review-filled" label="معبأ" defaultValue="رفال" />
+              <InputField id="review-disabled" label="معطل" disabled defaultValue="رفال" />
+              <InputField id="review-readonly" label="للقراءة فقط" readOnly defaultValue="رفال" helperText="يمكن تحديد النص ونسخه." />
+              <InputField id="review-error" label="مطلوب — مثال خطأ" required defaultValue="" error="يرجى إدخال الاسم." />
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend className="mb-4 text-h4">نص متعدد الأسطر</legend>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {[
+                { key: "default", label: "افتراضي", placeholder: "اكتب رسالتك" },
+                { key: "filled", label: "معبأ", defaultValue: "هدية مميزة من رفال." },
+                { key: "disabled", label: "معطل", defaultValue: "هدية مميزة من رفال.", disabled: true },
+                { key: "readonly", label: "للقراءة فقط", defaultValue: "يمكن تحديد هذه الرسالة ونسخها.", readOnly: true },
+                { key: "invalid", label: "مطلوب — مثال خطأ", invalid: true, required: true },
+              ].map(({ key, label, invalid, ...props }) => (
+                <Field key={key}>
+                  <FieldLabel htmlFor={`review-textarea-${key}`}>{label}</FieldLabel>
+                  <Textarea id={`review-textarea-${key}`} rows={3} invalid={invalid} aria-describedby={invalid ? "review-textarea-error" : undefined} {...props} />
+                  {invalid ? <FieldError id="review-textarea-error">يرجى كتابة الرسالة.</FieldError> : null}
+                </Field>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend className="mb-4 text-h4">اختيار أصلي</legend>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {[
+                { key: "selected", label: "قيمة محددة", defaultValue: "newest" },
+                { key: "placeholder", label: "اختر قيمة", defaultValue: "" },
+                { key: "disabled", label: "معطل", defaultValue: "newest", disabled: true },
+                { key: "invalid", label: "مطلوب — مثال خطأ", defaultValue: "", invalid: true, required: true },
+              ].map(({ key, label, invalid, ...props }) => (
+                <Field key={key}>
+                  <FieldLabel htmlFor={`review-select-${key}`}>{label}</FieldLabel>
+                  <NativeSelect id={`review-select-${key}`} invalid={invalid} aria-describedby={invalid ? "review-select-error" : undefined} {...props}>
+                    <option value="" disabled>اختر الترتيب</option>
+                    <option value="newest">الأحدث</option>
+                    <option value="price_asc">السعر من الأقل إلى الأعلى</option>
+                    <option value="price_desc">السعر من الأعلى إلى الأقل</option>
+                  </NativeSelect>
+                  {invalid ? <FieldError id="review-select-error">يرجى اختيار الترتيب.</FieldError> : null}
+                </Field>
+              ))}
+            </div>
+          </fieldset>
+          <Field>
+            <FieldLabel htmlFor="review-composed">تركيب الحقل — تعليمات وعدّاد وخطأ</FieldLabel>
+            <Input id="review-composed" invalid defaultValue="نص تجريبي" aria-describedby="review-policy review-count review-composed-error" />
+            <FieldDescription id="review-policy">مثال على تعليمات تبقى ظاهرة مع الخطأ.</FieldDescription>
+            <FieldDescription id="review-count">العدّاد: مثال وصفي ثابت.</FieldDescription>
+            <FieldError id="review-composed-error">مثال على رسالة خطأ مرتبطة بالحقل.</FieldError>
+          </Field>
+          <Field dir="ltr">
+            <FieldLabel htmlFor="review-select-ltr">اختبار اتجاه يسار إلى يمين</FieldLabel>
+            <NativeSelect id="review-select-ltr" defaultValue="newest">
+              <option value="newest">newest</option>
+              <option value="price_asc">price_asc</option>
+            </NativeSelect>
+          </Field>
+          <PhoneInputField id="review-phone" label="رقم الجوال — المكوّن المتخصص الحالي" countryCode="+966" countryFlag={<SaudiFlagIcon className="size-full" />} placeholder="5X XXX XXXX" />
         </section>
         <section className="flex flex-wrap gap-3">
           <Badge variant="discount">خصم 20٪</Badge>

@@ -336,9 +336,11 @@ target. Every IconButton requires an accessible `aria-label`.
 
 `Input` is the generic native text-input primitive. `InputField` composes it
 with a required label and optional helper/error message. The Figma-backed field
-height is 44px with 14px inline padding, an 8px radius, a 1px default border,
-and a 1.5px gold focused border. Default, filled, focused, error, and disabled
-states are supported. `InputField` owns `htmlFor`, `aria-invalid`, and
+height is 44px with 14px inline padding and an 8px radius. Phase 9A preserves
+the 1px border through focus, replacing the original 1.5px focused border with
+a gold border and visible 2px ring/offset for stable geometry. Default, filled,
+focused, error, disabled, and read-only states are supported. `InputField` owns
+`htmlFor`, `aria-invalid`, and
 `aria-describedby` wiring; callers provide a stable `id` and localized copy.
 Phone-specific business structure is intentionally not part of this generic API.
 
@@ -346,6 +348,55 @@ Phone-specific business structure is intentionally not part of this generic API.
 Components. It composes a 44px field, 78px country-prefix region, 22x16px flag,
 24px divider, country code, and native `tel` input. Its country data is supplied
 by the caller; it contains no authentication, validation, or formatting logic.
+
+### Phase 9A form-control foundation
+
+The approved direction is **Minimal Luxury**: white/soft-gray surfaces, quiet
+neutral borders, Tajawal typography, 44px standard single-line controls, 8px
+radii, and gold for meaningful focus/selection. No floating labels, pill-field
+redesign, gradients, decorative animation, or success field state. The documented
+success color and runtime token disagree; resolve that separately before adding
+success states.
+
+- `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` in
+  `src/components/ui/field.tsx` provide spacing and native label/message markup.
+  Callers own IDs, localized required/optional copy, validation timing, and
+  announcements; `FieldError` does not automatically become a live region.
+- `InputField` retains its existing API, ref, and single-message behavior
+  (`error ?? helperText`, default `${id}-description`, optional `descriptionId`).
+  Existing consumers do not need migration. For simultaneous policy/count/error
+  descriptions, compose `Field` with a native-control primitive and pass all
+  message IDs in its ordinary `aria-describedby` string. No context is needed.
+- `Input` and `Textarea` accept native props and refs plus `invalid`. Textarea
+  defaults to vertical resize, a 120px minimum height, and 12px block padding.
+  Shared styling is owned by `form-control-styles.ts`, not individual features.
+- `NativeSelect` is a real select in a relative shell with an aria-hidden,
+  pointer-transparent 16px chevron. `className` and the ref target the select.
+  It uses appearance-none and logical end padding/positioning. Native name,
+  value, required, disabled, options, keyboard, and mobile picker behavior remain
+  native. Option/placeholder logic belongs to the feature; no empty-value state
+  machine or popup/open-state JavaScript is added. Native multi-row/multiple
+  selects retain their listbox presentation without the decorative chevron.
+- Hover strengthens only editable, enabled, non-invalid, unfocused controls on
+  hover-capable devices. Focus retains a gold ring even with a destructive error
+  border. Forced colors has an outline fallback. Errors require associated text.
+  Read-only uses gray-50 with normal text contrast and remains copyable/focusable;
+  disabled uses gray-100 and muted text, including native fieldset disabling.
+- Ordinary controls inherit direction; use logical start/end for adornments.
+  PhoneInputField and OTP retain their specialized bidi behavior unchanged.
+- These primitives have no client directive, state, effects, context, listeners,
+  or portal. They remain server-compatible; imports into existing client features
+  add only their small rendering/style modules, not a new client boundary.
+
+Native controls are the default. A custom Select requires an approved concrete
+requirement that native selection cannot satisfy, an accessibility/mobile plan,
+and measured runtime/dependency trade-offs. Appearance alone does not authorize
+a custom popup. Searchable city selection, search, OTP, phone, and product-option
+radios remain specialized controls.
+
+Phase 9A pilots only ContactForm's textarea and ListingSortControl, with static
+states in `/ds-review`. The shared Input state polish also affects existing
+consumers visually; no transactional feature migration is part of this phase.
 
 ### Badge
 

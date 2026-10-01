@@ -14,7 +14,7 @@ export function HomeHero({ banner }: { banner: Banner | null }) {
     <Image
       fill
       alt={banner.title}
-      className="object-cover"
+      className="motion-banner-hero-image object-cover"
       preload
       sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1383px) calc(100vw - 64px), 1320px"
       src={banner.imageUrl}
