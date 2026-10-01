@@ -17,7 +17,7 @@ const HeaderActions = async () => {
   if (!currentUser) {
     return (
       <nav aria-label={t("user_navigation")}>
-        <Link href="/login" className={buttonVariants({ size: "sm" })}>
+        <Link href="/login" className="font-medium text-primary">
           {t("login")}
         </Link>
       </nav>
