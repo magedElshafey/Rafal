@@ -69,9 +69,33 @@
 }
 
 /* The stretched product link owns media feedback; sibling actions do not. */
+.product-card-secondary-image {
+  opacity: 0;
+}
+
+.product-card:has(.product-card-link:focus-visible)
+  [data-secondary-state="ready"] .product-card-secondary-image {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-card:has(.product-card-link:hover)
+    [data-secondary-state="ready"] .product-card-secondary-image {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .product-card-secondary-image {
+    transition: opacity var(--motion-duration-default) var(--motion-ease-out);
+  }
+}
+
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .product-card-image {
-    transition: transform var(--motion-duration-default) var(--motion-ease-out);
+    transition:
+      transform var(--motion-duration-default) var(--motion-ease-out),
+      opacity var(--motion-duration-default) var(--motion-ease-out);
   }
 
   .product-card:has(.product-card-link:hover) .product-card-image,

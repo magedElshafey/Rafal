@@ -396,10 +396,12 @@ or reconstruct runtime environment configuration for this phase.
 
 ## 10. Product Card Motion
 
-Phase 4 keeps ProductCard presentational and server-compatible. Existing client
-consumers still render it within their own client boundary; media adds no client
-island, React hover state, event handlers, or hydration work. No card entrance
-observer, continuous animation, tilt, parallax, blur, or blanket will-change.
+Phase 4B keeps ProductCard presentational and server-compatible. Only linked cards
+with a primary and distinct secondary image mount ProductSecondaryMedia, a narrow
+client island that receives the existing primary image as children. Cards without
+secondary media keep the static path. Existing client listing consumers still
+render cards within their own client boundary. No entrance observer, continuous
+animation, tilt, parallax, blur, or blanket will-change.
 
 **Single-image recipe:** only the product image scales to 1.02, using the scoped
 `--motion-scale-product-card` token, the existing 220ms default duration and
@@ -410,10 +412,11 @@ returns it to its normal transform; rapid re-entry uses the current transition
 position without timers or queued animations. The square overflow-hidden media
 frame, badges, controls and card layout never move.
 
-Decoration is enabled only for `(hover: hover) and (pointer: fine)` with
-`prefers-reduced-motion: no-preference`. Coarse/no-hover devices and reduced motion
-retain the complete static card and immediate focus/action feedback. Preference
-changes remove the decorative transform and transition through CSS.
+Scale is enabled only for `(hover: hover) and (pointer: fine)` with
+`prefers-reduced-motion: no-preference`. Coarse/no-hover devices retain the complete
+static card during touch browsing. Reduced motion removes scale and crossfade
+transitions; a ready secondary may switch immediately on qualifying hover or
+visible link focus. Preference changes apply through CSS without eager loading.
 
 The product link has a stretched hit area and owns the card focus ring. Wishlist
 remains a separate sibling button above it with its own label, pressed/busy/
@@ -431,30 +434,60 @@ The shared skeleton follows the same row order, logical start alignment and
 reserved price height. Parent-owned widths, square media and overlay positions
 stay fixed; exceptionally long prices can occupy more than one line.
 
-**Secondary media policy:** the ProductDto used by list responses has product
-and variant image arrays, but `mapProductDtoToListingProduct` projects only one
-`imageUrl` (first product image, otherwise first available variant image).
-`ListingProduct`, its Home alias and ProductCard consumers have no secondary/
-gallery field. Phase 4 therefore uses the single-image recipe even when the
-upstream product has a gallery. This is a current listing UI projection limit,
-not an assertion that the backend only supplies one image.
+**Listing projection:** `mapProductDtoToListingProduct` retains `imageUrl`: first
+product image, otherwise first available variant image. `secondaryImageUrl` is
+the first product-image URL distinct from primary, otherwise the first distinct
+variant-image URL, otherwise null. Preserve product, variant and image ordering;
+compare URLs rather than IDs. Home aliases and all ListingProductCard consumers
+share this projection. No gallery array, API contract change, PDP read or extra
+application request is introduced.
 
-Do not invent/duplicate a secondary image or fetch PDP data per card. Before a
-future swap, expose supported listing media deliberately and assess loading:
-an always-rendered lazy secondary can still download near the viewport, even
-when transparent or unused on touch; interaction-intent loading avoids that
-baseline cost but adds media state, readiness/error handling and hydration.
-Choose the fallback if the benefit does not justify those costs. Preserve the
-primary while a secondary loads/fails, and do not preload secondaries or whole
-shelves. This phase adds zero secondary elements or image requests on desktop
-and mobile, and preserves caller sizes, quality, lazy defaults and optional
-preload behavior (using Next Image's current `preload` prop).
+**Intent:** the primary link's stretched pseudo-element receives the hit, not
+the media behind it. Each media island locates its own card's primary link and
+attaches native pointerenter/leave/down/cancel and focus/blur listeners directly
+to that link. This is local ownership, not collection/global event delegation.
+Wishlist is a sibling and does not trigger intent. Images are pointer-transparent;
+no listener prevents default, captures pointers or stops event propagation.
 
-Do not add per-card IntersectionObservers or fetches. Keep any future necessary
-client boundary limited to media; do not convert ProductCard for decoration.
-Browser verification of clipping, keyboard/actions, RTL, narrow price wrapping,
-image requests, CLS and large-list smoothness remains necessary; CSS/source
-review does not establish measured runtime performance.
+Fine-pointer hover starts one 125ms timer only when no pointer button is held.
+Leaving, pointerdown (including carousel drag start), pointercancel, blur or
+unmount cancels it. At expiry, capability and actual link hover are rechecked.
+Touch pointer events never arm it, including on hybrid devices. Visible primary
+link focus requests immediately, including external keyboards on coarse-pointer
+devices and focus already present at hydration. Non-visible focus does nothing.
+No custom modality framework, pointermove listener or viewport trigger is used.
+
+**Lifecycle:** idle renders no secondary Image or resource hint. Accepted intent
+removes the link listeners and mounts one optimized Next Image with the same
+fill/object-cover/sizes contract, normal lazy loading, empty alt and aria-hidden.
+It has no preload/priority, and is absent from initial paint/LCP resource discovery.
+The primary remains fully visible underneath while loading and thereafter.
+Only successful onLoad changes loading to ready; CSS then fades the secondary
+over it for link hover (fine/hover devices) or visible link focus (any pointer).
+Leaving/blurring fades back to primary. Both transitions use the 220ms token.
+No React state tracks repeat hover/focus; there is no spinner.
+
+Failure removes the secondary and retains the primary without retrying during
+that mount. A loaded secondary stays mounted for repeat interaction, avoiding
+repeated source insertion. Unmount releases the element; browser HTTP/decoded
+image caches retain their normal browser-controlled lifetime. A changed secondary
+URL keys a fresh media island, so old readiness/failure state cannot leak to it.
+
+**Cost:** a six-card shelf with no secondary images has zero new media islands;
+with six eligible secondaries it has six, including on mobile. Each adds one
+wrapper/ref, a lifecycle state slot and a bounded effect with six local listeners
+while idle, plus the serialized secondary URL. The client module is shared, not
+downloaded six times. Accepted intent removes listeners; cleanup cancels timers.
+There are zero secondary image elements/requests before intent, one resource
+selection after dwelling on one card, and zero for sub-threshold passes or normal
+touch browsing. Cache reuse can reduce network transfers; resize/DPR changes can
+select another responsive resource. Repeat hover does not remount the image.
+
+Do not add per-card IntersectionObservers, eager secondaries, gallery-resolution
+overrides, global listeners, frame loops or dependencies. Primary loading and
+image sizes stay unchanged. Browser verification of hit testing, keyboard/actions,
+RTL, drag, image failures, requests, LCP/CLS, memory and large-list smoothness
+remains necessary; source checks do not establish measured runtime performance.
 
 ## 11. Mobile / Coarse Pointer Policy
 

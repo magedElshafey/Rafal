@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 import { PriceDisplay } from "./price-display";
 import { RatingMetadata } from "./rating-metadata";
+import { ProductSecondaryMedia } from "./product-secondary-media";
 
 export interface ProductCardBadge {
   variant: NonNullable<BadgeProps["variant"]>;
@@ -35,6 +36,7 @@ export interface ProductCardAction extends Omit<
 interface ProductCardBaseProps {
   title: string;
   image: ImageProps["src"] | null;
+  secondaryImage?: string | null;
   imageAlt: string;
   imageSizes: NonNullable<ImageProps["sizes"]>;
   price: ReactNode;
@@ -57,7 +59,7 @@ export type ProductCardProps = ProductCardBaseProps &
 
 interface ProductMediaProps extends Pick<
   ProductCardProps,
-  "badge" | "image" | "imageAlt" | "imagePriority" | "imageSizes"
+  "badge" | "image" | "imageAlt" | "imagePriority" | "imageSizes" | "secondaryImage"
 > {
   quickAddAction?: ProductCardAction;
   unavailable: boolean;
@@ -95,6 +97,7 @@ function ProductMedia({
   imageAlt,
   imagePriority,
   imageSizes,
+  secondaryImage,
   quickAddAction,
   unavailable,
   unavailableLabel,
@@ -109,18 +112,29 @@ function ProductMedia({
   const { label: quickAddLabel, ...quickAddButtonProps } = quickAddAction ?? {
     label: "",
   };
+  const primaryImage = image ? (
+    <Image
+      src={image}
+      alt={imageAlt}
+      fill
+      preload={imagePriority}
+      sizes={imageSizes}
+      className="product-card-image object-cover"
+    />
+  ) : null;
 
   return (
     <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-gray-0">
       {image ? (
-        <Image
-          src={image}
-          alt={imageAlt}
-          fill
-          preload={imagePriority}
-          sizes={imageSizes}
-          className="product-card-image object-cover"
-        />
+        secondaryImage && secondaryImage !== image ? (
+          <ProductSecondaryMedia
+            key={secondaryImage}
+            src={secondaryImage}
+            sizes={imageSizes}
+          >
+            {primaryImage}
+          </ProductSecondaryMedia>
+        ) : primaryImage
       ) : (
         <div
           aria-hidden="true"
@@ -203,6 +217,7 @@ export function ProductCard({
   imageAlt,
   imagePriority,
   imageSizes,
+  secondaryImage,
   originalPrice,
   price,
   quickAddAction,
@@ -226,6 +241,7 @@ export function ProductCard({
         imageAlt={imageAlt}
         imagePriority={imagePriority}
         imageSizes={imageSizes}
+        secondaryImage={href ? secondaryImage : null}
         quickAddAction={quickAddAction}
         unavailable={unavailable}
         unavailableLabel={unavailableLabel}

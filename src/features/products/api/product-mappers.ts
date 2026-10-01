@@ -158,6 +158,21 @@ function getListingImageUrl(product: ProductDto): string | null {
   return null;
 }
 
+function getListingSecondaryImageUrl(
+  product: ProductDto,
+  primaryUrl: string | null,
+): string | null {
+  const productImage = product.images.find((image) => image.url !== primaryUrl);
+  if (productImage) return productImage.url;
+
+  for (const variant of product.variants) {
+    const variantImage = variant.images.find((image) => image.url !== primaryUrl);
+    if (variantImage) return variantImage.url;
+  }
+
+  return null;
+}
+
 function mapProductImages(product: ProductDto): ProductImageMapping {
   const imagesById = new Map<string, ProductImage>();
   const addImage = (image: ProductDto["images"][number]) => {
@@ -199,6 +214,7 @@ export function mapProductDtoToListingProduct(
     categoryId: product.category.id,
     id: String(product.id),
     imageUrl,
+    secondaryImageUrl: getListingSecondaryImageUrl(product, imageUrl),
     inStock: product.variants.some(isVariantInStock),
     name: product.name,
     originalPrice: price.original ?? undefined,

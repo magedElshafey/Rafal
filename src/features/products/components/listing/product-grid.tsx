@@ -49,6 +49,7 @@ export function ListingProductCard({
         : undefined,
     href: `/products/${product.slug}`,
     image: product.imageUrl,
+    secondaryImage: product.secondaryImageUrl,
     imageAlt: name,
     imageSizes: "(max-width: 639px) 45vw, (max-width: 1023px) 30vw, 18vw",
     originalPrice: product.originalPrice
