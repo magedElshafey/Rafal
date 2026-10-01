@@ -1,5 +1,7 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
+import { formControlStyles } from "@/components/ui/form-control-styles";
 import { cn } from "@/lib/utils";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -13,10 +15,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       disabled={disabled}
       aria-invalid={invalid || undefined}
       className={cn(
-        "h-11 w-full rounded-md border border-gray-200 bg-gray-0 px-3.5 type-body text-gray-1000 outline-none placeholder:text-gray-400",
-        "focus:border-[length:var(--border-width-emphasis)] focus:border-gold-500",
-        "aria-invalid:border-destructive aria-invalid:focus:border-destructive",
-        "disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400",
+        formControlStyles,
+        "h-11",
         className,
       )}
       {...props}
@@ -45,16 +45,13 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       : undefined;
 
     return (
-      <div className="flex w-full flex-col gap-1.5">
-        <label
+      <Field>
+        <FieldLabel
           htmlFor={id}
-          className={cn(
-            "type-label text-gray-600",
-            error && "text-destructive",
-          )}
+          className={cn(error && "text-destructive")}
         >
           {label}
-        </label>
+        </FieldLabel>
         <Input
           ref={ref}
           id={id}
@@ -64,17 +61,13 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           {...props}
         />
         {message ? (
-          <p
-            id={messageId}
-            className={cn(
-              "type-caption text-gray-600",
-              error && "text-destructive",
-            )}
-          >
-            {message}
-          </p>
+          error ? (
+            <FieldError id={messageId}>{message}</FieldError>
+          ) : (
+            <FieldDescription id={messageId}>{message}</FieldDescription>
+          )
         ) : null}
-      </div>
+      </Field>
     );
   },
 );
