@@ -58,6 +58,37 @@
   --shadow-auth-card: 0 1.125rem 2rem rgb(0 0 0 / 10%);
   --shadow-modal: 0 1rem 2rem rgb(0 0 0 / 16%);
   --shadow-toast: 0 0.5rem 1rem rgb(0 0 0 / 20%);
+  --motion-duration-fast: 140ms;
+  --motion-duration-default: 220ms;
+  --motion-duration-reveal: 360ms;
+  --motion-distance-reveal: 1rem;
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motion-reveal[data-reveal-state="prepared"] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-reveal));
+}
+
+.motion-reveal[data-reveal-state="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--motion-duration-reveal) var(--motion-ease-out),
+    transform var(--motion-duration-reveal) var(--motion-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-reveal[data-reveal-state] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 @theme inline {
