@@ -34,7 +34,7 @@ export function Reveal({ children, className, ...props }: RevealProps) {
           element.dataset.revealState = "prepared";
         }
       },
-      { rootMargin: "160px 0px" },
+      { rootMargin: "0px", threshold: 0.12 },
     );
 
     observer.observe(element);

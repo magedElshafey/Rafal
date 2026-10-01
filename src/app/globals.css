@@ -60,8 +60,8 @@
   --shadow-toast: 0 0.5rem 1rem rgb(0 0 0 / 20%);
   --motion-duration-fast: 140ms;
   --motion-duration-default: 220ms;
-  --motion-duration-reveal: 360ms;
-  --motion-distance-reveal: 1rem;
+  --motion-duration-reveal: 420ms;
+  --motion-distance-reveal: 1.5rem;
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
