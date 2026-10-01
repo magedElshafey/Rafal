@@ -65,6 +65,19 @@
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-distance-dialog: 0.5rem;
   --motion-scale-banner: 1.02;
+  --motion-scale-product-card: 1.02;
+}
+
+/* The stretched product link owns media feedback; sibling actions do not. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .product-card-image {
+    transition: transform var(--motion-duration-default) var(--motion-ease-out);
+  }
+
+  .product-card:has(.product-card-link:hover) .product-card-image,
+  .product-card:has(.product-card-link:focus-visible) .product-card-image {
+    transform: scale(var(--motion-scale-product-card));
+  }
 }
 
 @media (width < 40rem), (pointer: coarse) {

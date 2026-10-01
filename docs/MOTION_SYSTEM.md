@@ -396,11 +396,65 @@ or reconstruct runtime environment configuration for this phase.
 
 ## 10. Product Card Motion
 
-Premium Product Card motion is **planned**. The current shared ProductCard is
-presentational, composes media/info and shared controls, and contains no reveal
-observer or dedicated card entrance/tilt system. Wishlist/quick-add slots do not
-establish a new Quick Add journey. Preserve dimensions, link semantics, focus,
-and action availability when a future approved task changes it.
+Phase 4 keeps ProductCard presentational and server-compatible. Existing client
+consumers still render it within their own client boundary; media adds no client
+island, React hover state, event handlers, or hydration work. No card entrance
+observer, continuous animation, tilt, parallax, blur, or blanket will-change.
+
+**Single-image recipe:** only the product image scales to 1.02, using the scoped
+`--motion-scale-product-card` token, the existing 220ms default duration and
+ease-out. This small scale is a Phase 4 engineering choice, not a new Figma token.
+The normal image is visible from SSR. Hovering the stretched primary link or
+focusing it with `:focus-visible` activates the same CSS transition. Moving away
+returns it to its normal transform; rapid re-entry uses the current transition
+position without timers or queued animations. The square overflow-hidden media
+frame, badges, controls and card layout never move.
+
+Decoration is enabled only for `(hover: hover) and (pointer: fine)` with
+`prefers-reduced-motion: no-preference`. Coarse/no-hover devices and reduced motion
+retain the complete static card and immediate focus/action feedback. Preference
+changes remove the decorative transform and transition through CSS.
+
+The product link has a stretched hit area and owns the card focus ring. Wishlist
+remains a separate sibling button above it with its own label, pressed/busy/
+disabled states, focus ring and existing 44px hit target. Focusing or hovering
+Wishlist alone does not trigger media feedback. Do not make the article a link
+or nest buttons inside the primary link. The pre-existing optional Quick Add
+slot does not establish or authorize a Quick Add journey.
+
+**Hierarchy and geometry:** title, current/original price, then rating/reviews
+in both visual and DOM order. Use existing typography/color tokens; retain
+localized backend badges and unavailable presentation without inventing data.
+Reserve the existing discounted-price line height for either price state and
+allow the original price to wrap on narrow cards without splitting an amount.
+The shared skeleton follows the same row order, logical start alignment and
+reserved price height. Parent-owned widths, square media and overlay positions
+stay fixed; exceptionally long prices can occupy more than one line.
+
+**Secondary media policy:** the ProductDto used by list responses has product
+and variant image arrays, but `mapProductDtoToListingProduct` projects only one
+`imageUrl` (first product image, otherwise first available variant image).
+`ListingProduct`, its Home alias and ProductCard consumers have no secondary/
+gallery field. Phase 4 therefore uses the single-image recipe even when the
+upstream product has a gallery. This is a current listing UI projection limit,
+not an assertion that the backend only supplies one image.
+
+Do not invent/duplicate a secondary image or fetch PDP data per card. Before a
+future swap, expose supported listing media deliberately and assess loading:
+an always-rendered lazy secondary can still download near the viewport, even
+when transparent or unused on touch; interaction-intent loading avoids that
+baseline cost but adds media state, readiness/error handling and hydration.
+Choose the fallback if the benefit does not justify those costs. Preserve the
+primary while a secondary loads/fails, and do not preload secondaries or whole
+shelves. This phase adds zero secondary elements or image requests on desktop
+and mobile, and preserves caller sizes, quality, lazy defaults and optional
+preload behavior (using Next Image's current `preload` prop).
+
+Do not add per-card IntersectionObservers or fetches. Keep any future necessary
+client boundary limited to media; do not convert ProductCard for decoration.
+Browser verification of clipping, keyboard/actions, RTL, narrow price wrapping,
+image requests, CLS and large-list smoothness remains necessary; CSS/source
+review does not establish measured runtime performance.
 
 ## 11. Mobile / Coarse Pointer Policy
 

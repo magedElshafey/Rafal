@@ -15,10 +15,14 @@ export function PriceDisplay({
 }: PriceDisplayProps) {
   return (
     <span
-      className={cn("flex items-baseline gap-1.5 whitespace-nowrap", className)}
+      className={cn(
+        "flex min-h-[var(--text-card-discount-price--line-height)] flex-wrap items-baseline gap-x-1.5 tabular-nums",
+        className,
+      )}
     >
       <span
         className={cn(
+          "whitespace-nowrap",
           originalPrice
             ? "type-card-discount-price text-destructive"
             : "type-card-price text-foreground",
@@ -27,7 +31,7 @@ export function PriceDisplay({
         {price}
       </span>
       {originalPrice ? (
-        <del className="type-card-original-price text-gray-400">
+        <del className="whitespace-nowrap type-card-original-price text-gray-500">
           {originalPrice}
         </del>
       ) : null}

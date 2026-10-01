@@ -117,9 +117,9 @@ function ProductMedia({
           src={image}
           alt={imageAlt}
           fill
-          priority={imagePriority}
+          preload={imagePriority}
           sizes={imageSizes}
-          className="object-cover"
+          className="product-card-image object-cover"
         />
       ) : (
         <div
@@ -176,12 +176,12 @@ function ProductInfo({
   "href" | "originalPrice" | "price" | "rating" | "title"
 >) {
   return (
-    <div className="flex flex-col  gap-1 px-1.5">
-      <h3 className="w-full truncate  type-ui-sm font-normal text-foreground">
+    <div className="flex flex-col gap-1 px-1.5">
+      <h3 className="w-full truncate type-ui-sm font-medium text-foreground">
         {href ? (
           <Link
             href={href}
-            className="after:absolute after:inset-0 focus-visible:outline-none"
+            className="product-card-link after:absolute after:inset-0 focus-visible:outline-none"
           >
             {title}
           </Link>
@@ -189,8 +189,8 @@ function ProductInfo({
           title
         )}
       </h3>
-      <RatingMetadata {...rating} />
       <PriceDisplay price={price} originalPrice={originalPrice} />
+      <RatingMetadata {...rating} />
     </div>
   );
 }
@@ -216,7 +216,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "relative flex w-full self-start flex-col gap-2 rounded-md bg-gray-0 pb-2.5 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+        "product-card relative flex w-full self-start flex-col gap-2 rounded-md bg-gray-0 pb-2.5 has-[.product-card-link:focus-visible]:ring-2 has-[.product-card-link:focus-visible]:ring-ring has-[.product-card-link:focus-visible]:ring-offset-2",
         className,
       )}
     >

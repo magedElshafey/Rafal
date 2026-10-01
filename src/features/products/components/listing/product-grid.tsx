@@ -117,14 +117,14 @@ export function ProductCardSkeleton() {
   return (
     <article className="relative flex w-full self-start flex-col gap-2 rounded-md bg-gray-0 pb-2.5">
       <Skeleton className="aspect-square w-full rounded-sm" />
-      <div className="flex flex-col items-end gap-1 px-1.5">
+      <div className="flex flex-col items-start gap-1 px-1.5">
         <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-[var(--text-card-discount-price--line-height)] w-3/5" />
         <div className="flex h-4 items-center gap-1">
           <Skeleton className="size-3.5 rounded-full" />
           <Skeleton className="h-3.5 w-6" />
           <Skeleton className="h-3.5 w-14" />
         </div>
-        <Skeleton className="h-[var(--text-card-price--line-height)] w-3/5" />
       </div>
     </article>
   );
