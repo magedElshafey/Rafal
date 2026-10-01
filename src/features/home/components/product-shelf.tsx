@@ -63,6 +63,7 @@ export function ProductShelf({
         {products.length > 0 ? (
           <AppCarousel
             className="mt-5"
+            deferUntilNearViewport
             direction={direction}
             dragFree
             label={carouselLabel}

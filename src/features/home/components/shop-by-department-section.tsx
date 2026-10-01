@@ -35,6 +35,7 @@ export async function ShopByDepartmentSection({
         </h2>
         <AppCarousel
           className="mt-5"
+          deferUntilNearViewport
           direction={direction}
           dragFree
           label={t("carouselLabel")}

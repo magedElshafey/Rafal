@@ -20,10 +20,14 @@ import { WhyRafalSection } from "@/features/home/components/why-rafal-section";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
 
 const HomePage = async () => {
-  const [locale, user] = await Promise.all([getLocale(), getCurrentUser()]);
-  const accountId = user?.id ?? null;
+  const userPromise = getCurrentUser();
+  const locale = await getLocale();
   const city = await resolveCurrentLocation(locale);
-  const home = await getHomeData(city?.id ?? null, locale);
+  const [home, user] = await Promise.all([
+    getHomeData(city?.id ?? null, locale),
+    userPromise,
+  ]);
+  const accountId = user?.id ?? null;
 
   return (
     <div className="main-content-spacing section-spacing">

@@ -9,6 +9,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ComponentPropsWithoutRef,
   type KeyboardEvent,
@@ -25,6 +26,7 @@ type AppCarouselContextValue = {
   canScrollNext: boolean;
   canScrollPrevious: boolean;
   direction: CarouselDirection;
+  isActive: boolean;
   reducedMotion: boolean;
   scrollNext: () => void;
   scrollPrevious: () => void;
@@ -46,10 +48,12 @@ function useAppCarousel() {
   return context;
 }
 
-function usePrefersReducedMotion() {
+function usePrefersReducedMotion(enabled: boolean) {
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updatePreference = () => setReducedMotion(mediaQuery.matches);
 
@@ -57,7 +61,7 @@ function usePrefersReducedMotion() {
     mediaQuery.addEventListener("change", updatePreference);
 
     return () => mediaQuery.removeEventListener("change", updatePreference);
-  }, []);
+  }, [enabled]);
 
   return reducedMotion;
 }
@@ -68,16 +72,48 @@ type AppCarouselProps = ComponentPropsWithoutRef<"section"> & {
   direction: CarouselDirection;
   dragFree?: boolean;
   draggable?: boolean;
+  deferUntilNearViewport?: boolean;
   label: string;
   loop?: boolean;
   slidesToScroll?: number | "auto";
 };
+
+function useCarouselActivation(deferUntilNearViewport: boolean) {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const [isActive, setIsActive] = useState(!deferUntilNearViewport);
+
+  useEffect(() => {
+    if (!deferUntilNearViewport || isActive) return;
+
+    const root = rootRef.current;
+    if (!root || typeof IntersectionObserver === "undefined") {
+      setIsActive(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+
+        setIsActive(true);
+        observer.disconnect();
+      },
+      { rootMargin: "300px 0px" },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [deferUntilNearViewport, isActive]);
+
+  return { isActive, rootRef };
+}
 
 function AppCarouselRoot({
   align = "start",
   autoplay = false,
   children,
   className,
+  deferUntilNearViewport = false,
   direction,
   dragFree = false,
   draggable = true,
@@ -87,6 +123,9 @@ function AppCarouselRoot({
   slidesToScroll = 1,
   ...props
 }: AppCarouselProps) {
+  const { isActive, rootRef } = useCarouselActivation(
+    deferUntilNearViewport,
+  );
   const options = useMemo(
     () => ({
       align,
@@ -122,7 +161,7 @@ function AppCarouselRoot({
   const [snapCount, setSnapCount] = useState(0);
   const [canScrollPrevious, setCanScrollPrevious] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const reducedMotion = usePrefersReducedMotion();
+  const reducedMotion = usePrefersReducedMotion(isActive);
   const shouldReduceMotion = reducedMotion ?? true;
 
   const updateAutoplay = useCallback(() => {
@@ -195,6 +234,7 @@ function AppCarouselRoot({
       canScrollNext,
       canScrollPrevious,
       direction,
+      isActive,
       reducedMotion: shouldReduceMotion,
       scrollNext,
       scrollPrevious,
@@ -207,6 +247,7 @@ function AppCarouselRoot({
       canScrollNext,
       canScrollPrevious,
       direction,
+      isActive,
       shouldReduceMotion,
       scrollNext,
       scrollPrevious,
@@ -219,7 +260,11 @@ function AppCarouselRoot({
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     onKeyDown?.(event);
-    if (event.defaultPrevented || event.target !== event.currentTarget) return;
+    if (
+      event.defaultPrevented ||
+      !isActive ||
+      event.target !== event.currentTarget
+    ) return;
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
@@ -238,6 +283,7 @@ function AppCarouselRoot({
         {...props}
         aria-label={label}
         aria-roledescription="carousel"
+        ref={rootRef}
         className={cn(
           "rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           className,
@@ -259,21 +305,26 @@ const AppCarouselViewport = forwardRef<
   HTMLDivElement,
   AppCarouselViewportProps
 >(({ className, ...props }, forwardedRef) => {
-  const { viewportRef } = useAppCarousel();
+  const { isActive, viewportRef } = useAppCarousel();
 
   const setRefs = useCallback(
     (node: HTMLDivElement | null) => {
-      viewportRef(node);
+      viewportRef(isActive ? node : null);
       if (typeof forwardedRef === "function") forwardedRef(node);
       else if (forwardedRef) forwardedRef.current = node;
     },
-    [forwardedRef, viewportRef],
+    [forwardedRef, isActive, viewportRef],
   );
 
   return (
     <div
       ref={setRefs}
-      className={cn("overflow-hidden", className)}
+      className={cn(
+        isActive
+          ? "overflow-hidden"
+          : "overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        className,
+      )}
       {...props}
     />
   );
