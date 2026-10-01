@@ -71,6 +71,7 @@ Source: [globals.css](../src/app/globals.css), `:root`.
 | `--motion-distance-reveal` | `1.5rem` | Reveal vertical offset (24px at a 16px root) |
 | `--motion-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | Reveal ease-out |
 | `--motion-distance-dialog` | `0.5rem` | Desktop dialog vertical offset |
+| `--motion-scale-banner` | `1.02`; `1.01` below 40rem or on coarse pointers | Image-only banner settle |
 
 Fast/default and the shared ease-out now drive surface motion. The dialog distance
 is the only new Phase 1B token, distinguishing dialog movement from section reveal.
@@ -101,9 +102,9 @@ No new press animation is approved or implemented here.
 
 ### Banner Motion
 
-Planned. Hero decoration must preserve immediate core image/content paint.
-Below-fold banner enhancements may use section-level viewport activation with
-visible SSR content. No banner animation API or new timing is defined.
+Phase 3 implements two explicit Home recipes: CSS-only Hero scale settle and
+one-shot below-fold image enhancement. Both reuse the 420ms reveal duration and
+ease-out; only a banner scale token is new. See section 7 for lifecycle and scope.
 
 ### Modal / Dialog
 
@@ -159,9 +160,11 @@ No global scroll listener or per-scroll React state is used.
 
 ## 7. Hero / LCP Rules
 
-[HomeHero](../src/features/home/components/home-hero.tsx) currently renders a
-static banner with a preloaded Next Image, stable frame geometry, and an optional
-link. It is not a carousel and is not wrapped in Reveal.
+[HomeHero](../src/features/home/components/home-hero.tsx) renders a banner with a
+preloaded Next Image, stable frame geometry, and an optional link. It remains a
+Server Component, is not a carousel, and is not wrapped in Reveal. Its image now
+has a CSS-only scale settle under prefers-reduced-motion:no-preference. No image
+opacity animation or hidden initial state is used.
 
 Never render core Hero/LCP content at opacity 0 pending animation JavaScript or
 hydration. Never require an animation library to paint it or defer its resource
@@ -171,6 +174,59 @@ Future safe candidates include progressively enhanced text/overlay reveals,
 decorative foreground motion, or subtle image settle/transforms, only while
 keeping the actual LCP candidate visible and immediately paintable. Text can
 also be an LCP candidate; an effect name alone does not make it safe.
+
+### Phase 3 banner inventory and recipes
+
+| Classification | Surface | Existing image/layout contract retained |
+| --- | --- | --- |
+| A: LCP-sensitive | HomeHero | One image; Next Image fill/preload, existing sizes, 22/7 aspect ratio, 1320px maximum frame, object-cover, clipped rounded frame |
+| B: Home promotional | Men / Gifts / Loyalty via HomePromoBanner | One image each; fill, default lazy loading, existing sizes, object-cover; ratios 1320/403, 1320/424, 1320/335 respectively |
+| C: excluded | Announcement strip, About hero, featured blog media, category/department cards, product/collection imagery and skeletons | No automatic banner-motion classes or wrappers |
+
+The Home API supplies image_url, title, link_url, sort_order and position. The
+existing mapper assigns hero/men/gifts/loyalty slots and validates links; no data
+contract changes are made. No distinct mobile/desktop image assets exist in this
+banner DTO. Responsive sizes/srcset remain unchanged; no duplicate images are
+introduced. Category/collection pages do not share HomePromoBanner.
+
+**Hero recipe:** scale from the banner token to identity over 420ms, once per CSS
+animation run, with no delay, loop, opacity change, IO, or hydration dependency.
+The image is paintable from SSR and remains visible if JavaScript never runs.
+The CSS animation may finish before a slow image arrives; do not delay image paint
+or add a load/hydration replay to make the effect visible. The browser can restart
+a CSS animation when the motion-preference media query becomes applicable again;
+this is not a scroll-triggered replay or continuous animation.
+
+**Promo recipe:** the narrow Home-owned BannerMotion client wrapper observes one
+banner/group and animates only its image: opacity 0.92 -> 1 and scale -> identity
+over 420ms. Its default state is fully visible; there is no prepared/hidden state.
+This intentionally differs from generic Reveal, which hides/translates the group
+and would also affect its interactive wrapper. HomePromoBanner still constructs
+its image and link on the server and passes them as children to BannerMotion.
+
+One IntersectionObserver per rendered promo (zero when reduced motion is enabled
+at setup or IO is unavailable), zero per child, at most three on a complete Home.
+An initial non-intersecting observation arms the enhancement; a later intersecting
+notification starts it and disconnects. Initially visible banners skip motion to
+avoid late-hydration movement under the reader. Threshold is configured as 0.12;
+the callback uses isIntersecting, not a strict 12% visibility gate. Animation end
+or cancellation marks the run complete. Focus entering the group also completes
+it immediately. Scrolling away/back does not replay it during the same mount;
+remounting creates a new lifecycle. Unmount disconnects and removes listeners.
+
+Both recipes are opt-in, scoped image classes under no-preference. Reduced motion
+leaves the normal visible, untransformed image with no staged delay. The scale is
+smaller (1.01) on coarse pointers or below 40rem. There is no gesture handling,
+translation of the link, pointer blocking, nested interactive element, or invented
+overlay text. The existing anchor/Link, alt text, focus styles and semantic order
+remain intact. Scaling stays inside existing overflow-hidden image frames, while
+the surrounding layout and aspect ratios stay fixed.
+
+After entrance, default transform:none/opacity:1 applies without animation fill
+retention. No new request, image priority/quality change, below-fold preload,
+will-change, blur/filter, canvas, animation dependency, scroll listener, or
+per-frame React state is introduced. Browser LCP/CLS and smoothness comparisons
+are still required; source-level paintability is not a measured performance claim.
 
 ## 8. Carousel Rules
 

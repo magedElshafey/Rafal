@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
+import { BannerMotion } from "@/features/home/components/banner-motion";
 import { Link } from "@/i18n/navigation";
 
 type HomePromoBannerProps = {
@@ -19,7 +20,7 @@ function PromoImage({
     <Image
       fill
       alt={alt}
-      className="object-cover"
+      className="motion-banner-promo-image object-cover"
       sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1439px) calc(100vw - 64px), 1376px"
       src={imageUrl}
     />
@@ -35,30 +36,32 @@ export function HomePromoBanner({
   return (
     <Section spacing="none">
       <Container>
-        {href && !href.startsWith("/") ? (
-          <a
-            href={href}
-            className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            style={{ aspectRatio }}
-          >
-            <PromoImage alt={alt} imageUrl={imageUrl} />
-          </a>
-        ) : href ? (
-          <Link
-            href={href}
-            className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            style={{ aspectRatio }}
-          >
-            <PromoImage alt={alt} imageUrl={imageUrl} />
-          </Link>
-        ) : (
-          <div
-            className="relative w-full overflow-hidden rounded-lg bg-gray-100"
-            style={{ aspectRatio }}
-          >
-            <PromoImage alt={alt} imageUrl={imageUrl} />
-          </div>
-        )}
+        <BannerMotion>
+          {href && !href.startsWith("/") ? (
+            <a
+              href={href}
+              className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              style={{ aspectRatio }}
+            >
+              <PromoImage alt={alt} imageUrl={imageUrl} />
+            </a>
+          ) : href ? (
+            <Link
+              href={href}
+              className="relative block w-full overflow-hidden rounded-lg bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              style={{ aspectRatio }}
+            >
+              <PromoImage alt={alt} imageUrl={imageUrl} />
+            </Link>
+          ) : (
+            <div
+              className="relative w-full overflow-hidden rounded-lg bg-gray-100"
+              style={{ aspectRatio }}
+            >
+              <PromoImage alt={alt} imageUrl={imageUrl} />
+            </div>
+          )}
+        </BannerMotion>
       </Container>
     </Section>
   );

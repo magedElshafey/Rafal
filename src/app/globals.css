@@ -64,6 +64,34 @@
   --motion-distance-reveal: 1.5rem;
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-distance-dialog: 0.5rem;
+  --motion-scale-banner: 1.02;
+}
+
+@media (width < 40rem), (pointer: coarse) {
+  :root {
+    --motion-scale-banner: 1.01;
+  }
+}
+
+/* Only the image moves inside its existing clipped, aspect-ratio frame. */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-banner-hero-image {
+    animation: banner-hero-settle var(--motion-duration-reveal) var(--motion-ease-out);
+  }
+
+  .motion-banner-promo[data-banner-motion="entered"] .motion-banner-promo-image {
+    animation: banner-promo-settle var(--motion-duration-reveal) var(--motion-ease-out);
+  }
+}
+
+@keyframes banner-hero-settle {
+  from { transform: scale(var(--motion-scale-banner)); }
+  to { transform: none; }
+}
+
+@keyframes banner-promo-settle {
+  from { opacity: 0.92; transform: scale(var(--motion-scale-banner)); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Radix Presence waits for these distinct exit animation names before unmounting. */
