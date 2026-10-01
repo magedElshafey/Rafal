@@ -25,6 +25,8 @@
     "description": "اختر مدينتك لعرض المنتجات المتاحة حسب موقعك."
   },
   "productSections": {
+    "previous": "المنتجات السابقة",
+    "next": "المنتجات التالية",
     "viewAll": "عرض الكل",
     "rating": "التقييم {value} من 5",
     "reviews": "{count} تقييم",
@@ -73,10 +75,17 @@
     "title": "لماذا رافال؟"
   },
   "testimonials": {
+    "carouselLabel": "آراء العملاء",
+    "previous": "الآراء السابقة",
+    "next": "الآراء التالية",
+    "positionLabel": "موضع عرض آراء العملاء",
+    "slideLabel": "الرأي {current} من {total}",
     "title": "آراء عملائنا",
     "rating": "التقييم {value} من 5"
   },
   "departments": {
+    "previous": "الأقسام السابقة",
+    "next": "الأقسام التالية",
     "title": "تسوق حسب القسم",
     "carouselLabel": "أقسام رافال"
   }

@@ -179,7 +179,9 @@ Source: [AppCarousel](../src/components/ui/app-carousel.tsx), Home composition,
 [ShopByDepartmentSection](../src/features/home/components/shop-by-department-section.tsx),
 and [HomeCategories](../src/features/categories/components/home-categories.tsx).
 
-Home has **seven possible rendered instances**, conditional on available data:
+Home now has **eight possible rendered instances**, conditional on available data.
+Phase 2 preserves the original eager Categories/six deferred shelves and adds
+deferred Testimonials:
 
 | Instance | Initialization |
 | --- | --- |
@@ -190,9 +192,9 @@ Home has **seven possible rendered instances**, conditional on available data:
 | On Discount | Deferred ProductShelf |
 | Personalizable | Deferred ProductShelf |
 | Shop by Department | Deferred |
+| Testimonials | Deferred; manual navigation only |
 
-Empty sections may omit their carousel. Hero is static; Testimonials is currently
-a grid. Do not count either as a carousel.
+Empty sections may omit their carousel. Hero remains static.
 
 - `deferUntilNearViewport` defaults to false, preserving eager consumers.
 - Deferred roots start inactive. IntersectionObserver with `300px 0px` root
@@ -203,11 +205,12 @@ a grid. Do not count either as a carousel.
   Activation attaches that ref and changes overflow to hidden.
 - This defers Embla DOM/runtime initialization, not module download or React
   hydration: Embla and autoplay are static imports and the hook still runs.
-- Native horizontal overflow exists before enhancement, but the content always
-  has `touch-pan-y`. Horizontal touch panning before activation is consequently
-  a known policy gap/risk, not a verified fallback on touch devices. Eager
-  carousels use overflow-hidden even before hydration; do not claim universal
-  no-JavaScript horizontal scrolling for every consumer.
+- Before deferred activation, content uses `touch-auto` with native horizontal
+  viewport overflow. After activation it uses `touch-pan-y`: the browser keeps
+  vertical page scrolling while Embla handles horizontal dragging. No custom touch
+  listeners are added. Actual device behavior still requires manual QA. Eager
+  consumers retain their existing overflow-hidden behavior before hydration;
+  this is not a universal no-JavaScript fallback for every carousel.
 - Active roots handle left/right arrows with RTL semantics only when the root
   itself is the event target. Preserve child controls and touch dragging.
 - Reduced-motion preference is subscribed to after activation; unknown preference
@@ -216,6 +219,35 @@ a grid. Do not count either as a carousel.
   autoplay plugin stops on focus and meaningful interaction.
 - Keep Embla and its plugins inside AppCarousel. Features own slide content and
   layout. No competing slider or direct feature-level Embla implementation.
+
+### Phase 2 affordance rules
+
+- Product and department shelves use the shared Previous/Next IconButtons above
+  the viewport on desktop (md and up). Controls never cover card content. Outline
+  states, focus rings, real disabled buttons, and fast-token opacity feedback
+  reuse the design system. The control row is present from SSR at desktop sizes;
+  availability changes do not change its dimensions.
+- On mobile, existing product (58% base) and department (60% base) slide widths
+  preserve a visible following-card peek. Do not narrow those cards for more
+  decoration. Product shelves have no dots, position counters, or autoplay.
+- Testimonials uses the same deferred primitive, no autoplay or loop, desktop
+  arrows, and a compact mobile `AppCarouselPosition`. Cards and their semantic
+  figure/blockquote/figcaption content stay unchanged and server-composed.
+  Slide basis is 85% on narrow screens, 60% from sm, and one third from md.
+- Position is the selected Embla snap out of the snap count, not a percentage or
+  an assumed item index. Numbers are locale-formatted; the caller supplies the
+  accessible label. No live region announces every movement. Space is reserved
+  while inactive and the counter stays blank until snaps are known.
+- Existing AppCarouselPrevious/Next remain disabled until Embla reports scroll
+  availability. Controls/indicator never activate Embla themselves. Categories
+  stays eager with its existing opt-in autoplay, focus/interaction stop behavior,
+  and reduced-motion handling; this is not the default for other content.
+- Keep selection updates on select/reInit events, not scroll or per-frame drag
+  updates. One activation observer per deferred carousel; no per-card observers,
+  new dependencies, eager image loading, or broad client boundaries.
+- Browser checks remain pending for touch fallback, RTL arrow semantics, keyboard
+  focus, peek/overflow, no-overflow/one-slide states, resize, filter changes, and
+  deferred activation. Type/lint checks do not establish visual performance.
 
 ## 9. Modal / Surface Motion
 
@@ -435,7 +467,8 @@ not the completed future global pending/consistency flow. No change is made here
   an explicit ratio comparison. Section 6 documents actual behavior.
 - **Native touch fallback:** overflow-x-auto exists while deferred, but unconditional
   touch-pan-y restricts horizontal touch panning. Device verification is outstanding;
-  do not claim the full intended touch fallback is confirmed.
+  Phase 2 replaces the inactive touch action with touch-auto (section 8). The
+  code conflict is addressed; device verification remains outstanding.
 - **Uniform reduced-motion compliance:** several existing color transitions in
   Checkbox, Header/navigation, and mobile navigation lack explicit motion-reduce
   overrides; account-sidebar's rotating disclosure indicator also lacks one.
