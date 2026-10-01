@@ -123,10 +123,10 @@ Home below-fold instances defer runtime initialization; see section 8.
 
 ### Product Media Interaction
 
-Premium redesign is planned. ProductGallery already has image selection,
-thumbnails, a RafalModal lightbox, RTL-aware arrow navigation, and trigger focus
-restoration. Zoom, mobile gestures, and restrained desktop pointer/3D effects
-belong to future work, not the verified current feature set.
+ProductGallery uses one selected image, numbered thumbnails, scoped RTL-aware
+keyboard navigation and an enlarged RafalModal view. Native thumbnail scrolling
+supports touch; primary-image swipe and decorative pointer effects are not
+implemented. See section 21 for media, loading and lifecycle rules.
 
 ## 6. Reveal Architecture
 
@@ -344,7 +344,7 @@ unless non-dismissible. Their CSS open/closed animations now run in both directi
 | InfoDialog | Inherits RafalModal | Action requests close; inherits presence, dismissal, and focus |
 | ConfirmDialog | Inherits RafalModal | Confirm callback/cancel; loading disables controls, caller owns dismissible policy |
 | ProductPurchaseSuccessSheet | Bottom-aligned at both sizes | Inherits Radix; purchase-trigger returnFocusRef; absent when cart missing |
-| ProductGallery lightbox | Wide desktop modal; mobile sheet | Controlled lightbox state; image-trigger returnFocusRef; existing arrow navigation unchanged |
+| ProductGallery lightbox | Wide desktop modal; mobile sheet | Controlled lightbox state; image-trigger returnFocusRef, gallery-section fallback for empty media; scoped arrow navigation (section 21) |
 | CityPickerDialog | Centered desktop; bottom-aligned mobile | Custom inline div/backdrop, conditional immediate mount/unmount, no portal; manual focus loop, initial/search focus, previous-focus restoration, Escape/backdrop close, body overflow lock; aria-modal but no Radix background aria hiding |
 | Mobile More / Categories | Hidden desktop; one mobile bottom sheet | Native dialog showModal/close, top layer and ::backdrop, no React portal; browser modal focus/isolation, cancel/Escape, backdrop-target click, trigger restoration; scoped body overflow restoration and breakpoint cleanup (section 20) |
 
@@ -353,10 +353,13 @@ transitions are separate. Listing filters and address deletion confirmation also
 inherit RafalModal motion without feature edits.
 
 **Parent-unmount limitation:** AddressPage removes AddressForm immediately on
-close, so its nested modal gets entry motion but cannot finish exit. Navigation,
-missing cart data, or removing gallery data can likewise remove entire consumers.
+close, so its nested modal gets entry motion but cannot finish exit. Navigation
+or missing cart data can likewise remove entire consumers.
 Presence cannot retain a component whose parent unmounts it. These feature flows
 remain unchanged; fixing them requires separately scoped caller-lifecycle work.
+
+Gallery media becoming empty keeps its modal owner mounted through exit and
+restores focus to the persistent gallery section (section 21).
 
 ### Exit and accessibility
 
@@ -730,3 +733,89 @@ requests. New category-panel links disable route prefetch to avoid fetching many
 destinations merely by exposing the taxonomy. No per-category observers, new
 dependencies or commerce mutations. Browser checks remain required for focus,
 native-dialog lifecycle, RTL, slow streaming, resize, layout stability and cost.
+
+## 21. PDP Gallery
+
+### Media and ownership
+
+The PDP mapper projects product images first, then images from the existing
+normalized selectable variants, preserving each collection's backend order.
+Keep the existing `{ id, src, alt }` projection. First occurrence of a source ID
+wins; identical URL strings collapse to the first image, with variant references
+rewritten to that canonical ID. Do not strip URL queries or infer equivalent
+assets. The API supplies IDs and URLs, but no per-image captions, distinct alt
+text or separate original URLs. Alt text remains the localized product name.
+
+ProductPurchaseExperience remains the single selection owner shared with variant
+selection. Initially, use the existing initial variant's first valid image, then
+the first gallery image. Choosing a variant selects its first valid image (or the
+first gallery image); it does not filter, prepend or reorder the gallery. Retain
+a valid selection across media updates. If removed, resolve the current variant's
+first valid image, then first gallery image, then null, and reconcile the stored
+ID before rendering children. Never persist a selected array index.
+
+### Layout, navigation and direction
+
+Use one square, contained primary image at all breakpoints. Multiple images add
+48px previous/next controls, a position cue and a bounded horizontal strip of
+numbered thumbnail buttons. Thumbnails reserve the same border width in both
+states; the selected number is underlined as a non-color cue. Buttons expose
+`aria-pressed`, position-qualified translated names, and visible keyboard focus.
+Duplicate thumbnail images have empty alt text. Zero images retain the square
+placeholder; one image has no thumbnail strip or sequence controls.
+
+The strip scrolls natively on touch. Selection reveals its thumbnail with one
+instant horizontal adjustment of the strip only; do not scroll page ancestors.
+No smooth scrolling, observers, gesture handlers or custom primary-image swipe.
+AppCarousel currently owns independent snap state without a controlled-selection
+API. A synchronized primary swipe carousel would require extending that ownership
+and its image mounting strategy; do not add a feature-owned Embla integration.
+
+Previous/next wrap through backend sequence order. RTL changes visual placement
+and chevrons, not the image array. Right advances in LTR and goes back in RTL;
+Left does the inverse. React key handling belongs to the gallery and its owned
+portal controls, including the lightbox Close button. Ignore modified arrows,
+unrelated controls and page-level input. Thumbnail arrows also move thumbnail
+focus. Up/Down retain native scrolling. No global key listener.
+
+### Lightbox and zoom
+
+Only the persistent primary-image button opens RafalModal. Keep its DOM identity
+while the displayed image changes, and return focus to it. Retain Radix Presence,
+Escape, focus trap, background isolation, scroll lock and the shared exit lifecycle.
+If media becomes empty, close without unmounting the modal owner and use the
+persistent, programmatically focusable gallery section as the return target.
+Navigation away can still remove the whole parent; it cannot preserve local focus.
+
+The enlarged contained image is the explicit inspection/zoom interaction. Use
+the same supported URL with responsive Next Image candidates; never invent an
+original endpoint. No custom pinch, panning, pointer tilt or pointer zoom. Keep a
+single polite position announcement inside the lightbox to identify navigation
+while focus remains on an arrow button; the inline position is not live.
+
+### Images, motion and cost
+
+The initial primary is SSR-visible, square and preloaded, without an entrance
+effect, hydration gate or carousel initialization. Freeze its source at mount so
+variant updates cannot promote additional resources to preloads. Primary `sizes`
+tracks the PDP's 1440px container cap, responsive padding and 44% desktop column.
+
+For N deduplicated images, initial gallery image elements are: zero for N=0,
+one for N=1, and N+1 for N>1 (primary plus N thumbnails). Thumbnails use native
+lazy loading and responsive 84/100/116px content widths. Browsers may request
+nearby offscreen thumbnails; lazy loading is not an interaction-only guarantee.
+Only the selected primary-size image exists, never hidden full-size siblings.
+
+Closed Radix Portal content is unmounted. Opening mounts one additional selected
+image with lightbox sizing (up to 75dvh within available width); navigation changes
+that source. The optimizer may request a larger candidate, or reuse cache. Presence
+retains this image until exit completes. No PDP API requests, speculative media
+prefetch or new dependencies. Image decode/cache memory and actual request counts
+remain browser-owned; many thumbnail DOM nodes still have a cost.
+
+Image selection is immediate for everyone. Reduced motion removes shared surface
+and control transitions without removing any controls; there is no gallery reveal,
+per-frame React state, requestAnimationFrame, continuous animation, global pointer
+listener or blanket will-change. Keep page/server boundaries intact. Runtime QA
+must measure LCP, CLS, decode/memory, large-gallery scrolling, RTL, keyboard/focus,
+touch scrolling and slow/failed images; source checks do not establish those results.
