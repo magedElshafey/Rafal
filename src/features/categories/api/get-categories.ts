@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Locale } from "next-intl";
+import { cache } from "react";
 
 import { serverEnv } from "@/config/server-env";
 import { mapCategoriesResponseDto } from "@/features/categories/api/category-mapper";
@@ -17,10 +18,19 @@ export async function getCategories(locale: Locale): Promise<Category[]> {
   return page.items;
 }
 
-export async function getCategoriesPage(
+export function getCategoriesPage(
   locale: Locale,
   page = 1,
 ): Promise<PaginatedCategories> {
+  return readCategoriesPage(locale, page);
+}
+
+// Share identical server reads between the shell and category directory.
+// React cache is render/request scoped, not a persistent taxonomy cache.
+const readCategoriesPage = cache(async (
+  locale: Locale,
+  page: number,
+): Promise<PaginatedCategories> => {
   const response = serverEnv.useMockApi
     ? (await import("./category-fixture")).categoriesFixture
     : await serverApi.request<CategoriesResponseDto>({
@@ -30,4 +40,4 @@ export async function getCategoriesPage(
       });
 
   return mapCategoriesResponseDto(response);
-}
+});

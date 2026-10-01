@@ -346,7 +346,7 @@ unless non-dismissible. Their CSS open/closed animations now run in both directi
 | ProductPurchaseSuccessSheet | Bottom-aligned at both sizes | Inherits Radix; purchase-trigger returnFocusRef; absent when cart missing |
 | ProductGallery lightbox | Wide desktop modal; mobile sheet | Controlled lightbox state; image-trigger returnFocusRef; existing arrow navigation unchanged |
 | CityPickerDialog | Centered desktop; bottom-aligned mobile | Custom inline div/backdrop, conditional immediate mount/unmount, no portal; manual focus loop, initial/search focus, previous-focus restoration, Escape/backdrop close, body overflow lock; aria-modal but no Radix background aria hiding |
-| Mobile More | Hidden desktop; mobile bottom sheet | Native dialog showModal/close, top layer and ::backdrop, no React portal; browser modal focus/isolation, cancel/Escape, backdrop-target click, trigger restoration; no authored body overflow lock |
+| Mobile More / Categories | Hidden desktop; one mobile bottom sheet | Native dialog showModal/close, top layer and ::backdrop, no React portal; browser modal focus/isolation, cancel/Escape, backdrop-target click, trigger restoration; scoped body overflow restoration and breakpoint cleanup (section 20) |
 
 Before Phase 1B none had authored entrance/exit animation. Existing control hover
 transitions are separate. Listing filters and address deletion confirmation also
@@ -381,7 +381,9 @@ an exit. Preference changes during animation must also be checked manually.
 
 ### Independent surfaces not migrated
 
-CityPickerDialog and Mobile More remain unchanged. Custom immediate unmount and
+CityPickerDialog retains its independent lifecycle. Mobile More retains native
+dialog ownership with the category-navigation additions described in section 20.
+Custom immediate unmount and
 native close/top-layer removal require different presence designs for safe exits.
 No entrance-only decoration, dependency, or forced shared lifecycle is added.
 
@@ -663,3 +665,68 @@ build remains unverified until required environment configuration is supplied.
 No production build or browser/manual QA was run on the company machine.
 Files changed: globals.css, rafal-modal.tsx, and this reference. No feature,
 city-transition, cart, checkout, carousel, or Hero behavior was changed.
+
+## 20. Categories Navigation
+
+The shell starts one locale-aware `/categories?page=1` server read. Header and
+mobile navigation share its promise and a projection containing only IDs, names,
+links and one child level. React cache memoizes identical locale/page reads for
+the render/request, including the category directory's initial read; defaults are
+normalized before memoization. There is no persistent taxonomy cache. Home's
+separate `/home` payload is unchanged and cannot supply data upward to the shell.
+
+Navigation streams inside local Suspense boundaries so the new category read
+does not block the storefront body or logo/actions. Pending, failed or empty
+taxonomy uses direct `/categories` links. The first page is intentionally bounded;
+View all categories reaches the existing paginated directory. Do not fetch every
+page, children individually, or taxonomy from client menu components. Parent
+links use `/categories/{slug}`; child links use that parent route with the existing
+`subcategory` query parameter. Preserve API ordering and encoded slugs.
+
+**Desktop:** a button toggles a compact, named navigation region with
+aria-expanded/aria-controls. Use regular links and category selector buttons,
+not application-menu roles or roving tabindex. Parents with children select one
+detail region on click/Enter/Space; leaf categories navigate directly. The detail
+region includes a parent-products link and child links. Shallow taxonomy uses a
+simple link grid. There is no hover opening or hover switching, no intent timers,
+and no pointermove work. Tab/Shift+Tab follow DOM order without a focus trap.
+
+Escape returns focus to the trigger. Tab leaving the disclosure, outside pointer
+interaction and normal link navigation close it. Next Link onNavigate preserves
+Ctrl/Cmd/middle-click behavior. Pathname changes remount closed navigation state;
+popstate handles history changes including same-path query changes. Closing
+immediately sets inert/aria-hidden and disables hit testing. The mounted panel
+fades/translates out over 140ms and becomes visibility:hidden after that duration;
+opening uses 220ms and the existing 0.5rem surface distance/ease-out. No JS exit
+timer or new presence library. Reduced motion removes transitions and travel.
+
+**Mobile:** Categories and More use one existing native modal dialog, with one
+active surface at a time. Keep showModal/close, native focus containment, Escape
+and backdrop dismissal. Category rows have at least 48px touch height; leaves
+navigate directly, parents drill into one child list with View all products.
+The heading receives focus on drill-in; Back restores focus to the originating
+parent row. Close restores the visible opener. A stale queued close event is
+ignored if the dialog has already reopened. Body overflow is saved while open
+and restored on close, navigation, breakpoint change or unmount.
+
+The native sheet reuses existing surface/backdrop entrance keyframes over 220ms.
+Dismissal is immediate: do not delay native close or introduce Radix Presence.
+Reduced motion disables entrance animation. Both surfaces use logical alignment,
+borders and padding; directional chevrons mirror in RTL, retaining one DOM order.
+
+At the existing md/48rem boundary, an open desktop disclosure closes when moving
+to mobile and hands contained focus to the mobile category control. An open
+mobile dialog closes on desktop, releases modal/scroll ownership and focuses the
+visible desktop category control (or desktop navigation for More). Never leave
+a hidden modal open. Each open surface owns one matchMedia change listener and
+one popstate listener; desktop additionally owns an outside pointerdown listener.
+All are removed on close/unmount. There are no continuous global input listeners.
+
+Header, its actions and layout remain server-composed. Desktop adds one client
+disclosure; mobile extends the existing client owner. The bounded navigation
+projection is passed to both consumers; hidden desktop markup still hydrates on
+mobile. No category images are rendered, so opening/switching adds zero image
+requests. New category-panel links disable route prefetch to avoid fetching many
+destinations merely by exposing the taxonomy. No per-category observers, new
+dependencies or commerce mutations. Browser checks remain required for focus,
+native-dialog lifecycle, RTL, slow streaming, resize, layout stability and cost.

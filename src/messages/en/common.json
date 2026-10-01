@@ -379,6 +379,12 @@
     "loading": "Loading offers"
   },
   "nav": {
+    "category_navigation": {
+      "view_all": "View all categories",
+      "view_products": "View all products",
+      "back": "Back to categories",
+      "close": "Close category navigation"
+    },
     "home": "Home",
     "categories": "Categories",
     "offers": "Offers",

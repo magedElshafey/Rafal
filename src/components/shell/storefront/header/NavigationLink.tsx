@@ -19,6 +19,7 @@ const NavigationLink = ({ href, label, match }: AppLinkProps) => {
 
   return (
     <Link
+      id={href === "/categories" ? "desktop-categories-trigger" : undefined}
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
