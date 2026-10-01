@@ -257,32 +257,69 @@ export function ProductGallery({
         closeLabel={copy.closeLightbox}
         showClose
         returnFocusRef={selectedImage ? lightboxTriggerRef : galleryRef}
-        className="sm:max-w-5xl"
+        variant="image-viewer"
         title={formatProductMessage(copy.lightboxTitleTemplate, {
           image: selectedImage?.alt ?? productName,
         })}
       >
-        {/* Extend media past the title's reserved Close-button gutter. */}
-        <div dir={direction} className="-me-8">
+        <div dir={direction} className="flex h-full min-h-0 flex-col">
+          {/* Reserve a toolbar row so Close and position never cover the media. */}
+          <div className="flex h-12 shrink-0 items-center pe-16">
+            {selectedImage && canNavigate ? (
+              <p
+                aria-live="polite"
+                aria-atomic="true"
+                className="rounded-full border border-gray-200 bg-gray-0 px-4 py-2 type-body-sm text-gray-900 tabular-nums"
+              >
+                <span className="sr-only">{position(selectedImageIndex)}</span>
+                <bdi dir="ltr" aria-hidden="true">
+                  {selectedImageIndex + 1} / {images.length}
+                </bdi>
+              </p>
+            ) : null}
+          </div>
           {selectedImage ? (
             <div
               data-gallery-control
               tabIndex={0}
               aria-label={position(selectedImageIndex)}
-              className="mt-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="relative mt-4 min-h-0 flex-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <AppImage
                 key={selectedImage.src}
                 src={selectedImage.src}
                 alt={selectedImage.alt}
-                aspectRatio="1 / 1"
+                aspectRatio="auto"
                 fit="contain"
-                sizes="(max-width: 639px) min(calc(100vw - 3rem), 75dvh), min(calc(100vw - 5rem), 75dvh, 976px)"
-                frameClassName="mx-auto w-full max-w-[min(75dvh,100%)] rounded-lg"
+                sizes="(max-width: 639px) calc(100vw - 2rem), calc(100vw - 4rem)"
+                frameClassName="h-full w-full rounded-lg"
               />
+              {canNavigate ? (
+                <>
+                  <IconButton
+                    data-gallery-control
+                    aria-label={copy.previousImage}
+                    onClick={() => selectRelativeImage(-1)}
+                    size="lg"
+                    variant="outline"
+                    className="absolute start-2 top-1/2 -translate-y-1/2 border-gray-300 bg-gray-0"
+                  >
+                    <PreviousIcon aria-hidden="true" />
+                  </IconButton>
+                  <IconButton
+                    data-gallery-control
+                    aria-label={copy.nextImage}
+                    onClick={() => selectRelativeImage(1)}
+                    size="lg"
+                    variant="outline"
+                    className="absolute end-2 top-1/2 -translate-y-1/2 border-gray-300 bg-gray-0"
+                  >
+                    <NextIcon aria-hidden="true" />
+                  </IconButton>
+                </>
+              ) : null}
             </div>
           ) : null}
-          {selectedImage ? navigation(true) : null}
         </div>
       </RafalModal>
     </section>

@@ -235,3 +235,74 @@ test("lightbox arrows work from portalled Close and restore the persistent opene
   harness.render({ images });
   assert.equal(harness.find((node) => "returnFocusRef" in node.props).props.open, false);
 });
+
+// Expose Portal children to SSR for markup assertions only. Actual Radix Root,
+// Content, Title, Close and the production RafalModal implementation are used.
+// This does not simulate browser focus, scroll locking or Presence animation.
+const { RafalModal: InspectableModal } = loadSource("src/components/ui/rafal-modal", {
+  "@radix-ui/react-dialog": {
+    ...require("@radix-ui/react-dialog"),
+    Portal: ({ children }) => children,
+  },
+});
+
+test("viewer is opt-in; default dialog and bottom sheet retain their chrome and motion modes", () => {
+  const markup = (variant) => renderToStaticMarkup(React.createElement(InspectableModal, {
+    open: true, onOpenChange() {}, title: "Named dialog", closeLabel: "Close viewer",
+    showClose: true, variant,
+  }, "Media"));
+  for (const variant of [undefined, "modal", "bottom-sheet"]) {
+    const html = markup(variant);
+    assert.match(html, /bg-gray-1000\/45/);
+    assert.match(html, /text-h4 font-bold text-gray-1000/);
+    assert.match(html, /size-8 rounded-md/);
+    assert.match(html, /space-y-3 pe-8/);
+    assert.ok(html.includes(`data-surface="${variant ?? "modal"}"`));
+    assert.equal(html.includes("h-dvh"), false);
+  }
+  const viewer = markup("image-viewer");
+  assert.match(viewer, /bg-gray-1000\/80/);
+  assert.match(viewer, /h-dvh/);
+  assert.match(viewer, /size-12 rounded-full/);
+  assert.match(viewer, /data-surface="modal"/);
+  assert.match(viewer, /<h2[^>]*class="sr-only"[^>]*>Named dialog<\/h2>/);
+  // This installed Radix version registers titlePresent in a layout effect,
+  // then sets aria-labelledby. SSR cannot exercise that browser registration.
+  assert.match(viewer, /<h2[^>]*id="radix-[^"]+"/);
+  assert.match(viewer, /<button[^>]*aria-label="Close viewer"/);
+});
+
+for (const count of [0, 1, 3, 50]) {
+  test(`viewer with ${count} media: only one selected image, no extra thumbnails/preloads`, () => {
+    const harness = galleryHarness();
+    const collection = Array.from({ length: count }, (_, index) => ({
+      id: String(index), src: `/images/${index}.jpg`, alt: "Product",
+    }));
+    harness.render({ images: collection, initialImageId: "0", selectedImageId: "0" });
+    const opener = harness.find((node) => node.props["aria-haspopup"] === "dialog");
+    if (count) {
+      opener.props.onClick();
+      harness.render();
+    } else {
+      assert.equal(opener, undefined);
+    }
+    const modal = harness.find((node) => "returnFocusRef" in node.props);
+    const html = renderToStaticMarkup(React.createElement(InspectableModal, modal.props));
+    assert.equal((html.match(/<img\b/g) ?? []).length, count ? 1 : 0);
+    assert.equal(html.includes('rel="preload"'), false);
+    assert.equal(html.includes('aria-pressed='), false);
+    assert.equal((html.match(/aria-live="polite"/g) ?? []).length, count > 1 ? 1 : 0);
+    assert.equal(html.includes('aria-label="Next"'), count > 1);
+    assert.equal(html.includes('aria-label="Previous"'), count > 1);
+    if (count) {
+      assert.match(html, /object-contain/);
+      assert.match(html, /aspect-ratio:auto/);
+      assert.match(html, /0.jpg/);
+    }
+    if (count > 1) {
+      assert.match(html, /<button[^>]*aria-label="Next"/);
+      assert.match(html, /<button[^>]*aria-label="Previous"/);
+      assert.match(html, /<bdi dir="ltr" aria-hidden="true">1 \/ /);
+    }
+  });
+}

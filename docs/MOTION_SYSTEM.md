@@ -344,7 +344,7 @@ unless non-dismissible. Their CSS open/closed animations now run in both directi
 | InfoDialog | Inherits RafalModal | Action requests close; inherits presence, dismissal, and focus |
 | ConfirmDialog | Inherits RafalModal | Confirm callback/cancel; loading disables controls, caller owns dismissible policy |
 | ProductPurchaseSuccessSheet | Bottom-aligned at both sizes | Inherits Radix; purchase-trigger returnFocusRef; absent when cart missing |
-| ProductGallery lightbox | Wide desktop modal; mobile sheet | Controlled lightbox state; image-trigger returnFocusRef, gallery-section fallback for empty media; scoped arrow navigation (section 21) |
+| ProductGallery lightbox | Near-fullscreen desktop viewer; fullscreen mobile | Opt-in RafalModal image-viewer visuals; existing modal motion and lifecycle; image-trigger returnFocusRef, gallery-section fallback for empty media; scoped arrows (section 21) |
 | CityPickerDialog | Centered desktop; bottom-aligned mobile | Custom inline div/backdrop, conditional immediate mount/unmount, no portal; manual focus loop, initial/search focus, previous-focus restoration, Escape/backdrop close, body overflow lock; aria-modal but no Radix background aria hiding |
 | Mobile More / Categories | Hidden desktop; one mobile bottom sheet | Native dialog showModal/close, top layer and ::backdrop, no React portal; browser modal focus/isolation, cancel/Escape, backdrop-target click, trigger restoration; scoped body overflow restoration and breakpoint cleanup (section 20) |
 
@@ -780,6 +780,30 @@ focus. Up/Down retain native scrolling. No global key listener.
 
 ### Lightbox and zoom
 
+ProductGallery owns the media, arrow and position composition. It explicitly opts
+into RafalModal's `image-viewer` visual variant; other callers retain the default
+modal or bottom-sheet appearance. The variant changes only the content/overlay
+classes, title visibility, body wrapper spacing and Close geometry. It uses the
+existing `data-surface="modal"` motion recipe and the same Radix primitives and
+handlers. Do not recreate a dialog or restyle all dialogs for product viewing.
+
+The viewer fills the dynamic viewport below sm/40rem, with no card radius. At sm
+and above, use a 1rem outer inset and the existing large radius, without a fixed
+maximum width. A quiet gray-100 surface sits over an 80% gray-1000 backdrop.
+Avoid decorative shadows, filters, gradients or blur. Safe-area-aware padding
+reserves at least 1rem on all sides. The fixed 48px toolbar and 1rem gap leave
+the remaining width AND height for a stable rectangular contained-image frame;
+the image preserves its own aspect ratio without cropping. Keep the frame's
+flex minimum height at zero so short viewports do not force page scrolling.
+
+Retain the Radix Title as screen-reader-only content. The 48px Close button sits
+at logical end of the safe toolbar, outside the media. A single compact counter
+sits at logical start for multiple images: isolate visual `current / total` in
+LTR and expose the existing localized position text to assistive technology.
+Previous/next are labeled 48px buttons at the media's logical edges, vertically
+centered, with solid light backgrounds, neutral borders and visible focus rings.
+They retain existing RTL sequence semantics. One image omits arrows and counter.
+
 Only the persistent primary-image button opens RafalModal. Keep its DOM identity
 while the displayed image changes, and return focus to it. Retain Radix Presence,
 Escape, focus trap, background isolation, scroll lock and the shared exit lifecycle.
@@ -792,6 +816,15 @@ the same supported URL with responsive Next Image candidates; never invent an
 original endpoint. No custom pinch, panning, pointer tilt or pointer zoom. Keep a
 single polite position announcement inside the lightbox to identify navigation
 while focus remains on an arrow button; the inline position is not live.
+
+Do not add a duplicate lightbox thumbnail collection without evidence of need.
+There is no representative production gallery-size distribution in the repository;
+the inline collection already mounts N lazy thumbnail consumers. A second rail
+would add N elements and possible candidate/decode/cache cost even when transfers
+are cached. Edge arrows and position suffice for the current viewer. Opening adds
+zero thumbnail elements or thumbnail requests attributable to a new collection.
+Primary-image swipe remains out of scope. Do not add pointer/3D effects or new
+motion; reduced motion continues to suppress shared surface/control transitions.
 
 ### Images, motion and cost
 
@@ -807,8 +840,15 @@ nearby offscreen thumbnails; lazy loading is not an interaction-only guarantee.
 Only the selected primary-size image exists, never hidden full-size siblings.
 
 Closed Radix Portal content is unmounted. Opening mounts one additional selected
-image with lightbox sizing (up to 75dvh within available width); navigation changes
-that source. The optimizer may request a larger candidate, or reuse cache. Presence
+image, with `sizes` matching viewport width minus 2rem on mobile / 4rem from sm.
+These are upper bounds when safe-area padding exceeds 1rem. There is no separate
+original URL or image-dimension metadata; the rectangular frame contains any
+aspect ratio, while width-based candidates can overestimate portrait display size.
+The larger viewer may request larger candidates than the former capped square.
+Never preload the viewer or adjacent images. With media present, full-size image
+elements total one when closed and two when open: inline primary plus viewer.
+The shared selection changes both sources, so navigation can request candidates
+for both rendered sizes. The optimizer may reuse cache. Presence
 retains this image until exit completes. No PDP API requests, speculative media
 prefetch or new dependencies. Image decode/cache memory and actual request counts
 remain browser-owned; many thumbnail DOM nodes still have a cost.
