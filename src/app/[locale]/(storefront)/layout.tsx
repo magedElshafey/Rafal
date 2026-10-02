@@ -20,14 +20,24 @@ export default async function StoreFontLayout({
     getTranslations("Common.headerUtility"),
     getLocale(),
   ]);
-  const categories = getCategoriesPage(locale).then(
+  const categoriesPagePromise = getCategoriesPage(locale);
+  const categoriesPromise = categoriesPagePromise.then(
     (page) => mapCategoryNavigation(page.items),
-    () => [], // The directory link remains usable when shell taxonomy fails.
+    () => [],
   );
+  const footerShoppingLinksPromise = categoriesPagePromise.then(
+    (page) =>
+      page.items.slice(0, 5).map((category) => ({
+        href: `/categories/${category.slug}`,
+        label: category.name,
+      })),
+    () => [],
+  );
+
   const initialCity = await resolveCurrentLocation(locale);
   return (
     <div className="flex min-h-screen flex-col">
-      <Header categories={categories} />
+      <Header categories={categoriesPromise} />
       <QuickAccessHeader
         initialCity={initialCity}
         locale={locale}
@@ -60,9 +70,9 @@ export default async function StoreFontLayout({
         dismissible={true}
       />
       <main className="flex-1 mt-5">{children}</main>
-      <Footer />
+      <Footer shoppingLinks={footerShoppingLinksPromise} />
       <Suspense fallback={<MobileBottomNavigation categories={[]} />}>
-        <MobileBottomNavigation categories={categories} />
+        <MobileBottomNavigation categories={categoriesPromise} />
       </Suspense>
     </div>
   );

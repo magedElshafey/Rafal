@@ -109,21 +109,22 @@ export async function CouponCard({ coupon, locale, action }: CouponCardProps) {
                 </dd>
               </div>
             ) : null}
-
             {expiry ? (
               <div
                 className="
-                  inline-flex items-center gap-1.5
-                  rounded-full
-                  border border-gray-200
-                  px-3 py-1.5
-                  type-body-sm
-                "
+      inline-flex items-center
+      rounded-full
+      border border-gray-200
+      px-3 py-1.5
+      type-body-sm
+    "
               >
-                <dt className="text-gray-600">{t("expires")}</dt>
-
-                <dd className="font-medium text-foreground">
-                  <time dateTime={expiry.toISOString()}>
+                <dd className="text-gray-600">
+                  {t("expires")}{" "}
+                  <time
+                    dateTime={expiry.toISOString()}
+                    className="font-medium text-foreground"
+                  >
                     {dateFormatter.format(expiry)}
                   </time>
                 </dd>
@@ -145,7 +146,7 @@ export async function CouponCard({ coupon, locale, action }: CouponCardProps) {
                 rounded-xl
                 border border-dashed border-gold-600/30
                 bg-gold-600/[0.04]
-              p-2
+                px-4 py-2.5
               "
             >
               <code

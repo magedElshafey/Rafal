@@ -16,30 +16,31 @@ const quickLinks = [
   { href: "/contact", key: "complaints" },
 ] as const;
 
-const shoppingLinks = [
-  { href: "/categories/womens-jewelry", key: "womensJewelry" },
-  { href: "/categories/mens-gifts", key: "mensGifts" },
-  { href: "/categories/car-accessories", key: "carAccessories" },
-  { href: "/categories/perfumes", key: "perfumes" },
-  { href: "/categories/personalized", key: "personalized" },
-] as const;
-
 const storeDestinations = {
   "app-store": "https://www.apple.com/app-store/",
   "google-play": "https://play.google.com/store",
 } as const;
 
-export default async function Footer() {
-  const t = await getTranslations("Common.footer");
+export type FooterShoppingLink = {
+  href: string;
+  label: string;
+};
+
+type FooterProps = {
+  shoppingLinks: Promise<FooterShoppingLink[]>;
+};
+
+export default async function Footer({ shoppingLinks }: FooterProps) {
+  const [t, resolvedShoppingLinks] = await Promise.all([
+    getTranslations("Common.footer"),
+    shoppingLinks,
+  ]);
 
   const translatedQuickLinks = quickLinks.map(({ href, key }) => ({
     href,
     label: t(`quickLinks.items.${key}`),
   }));
-  const translatedShoppingLinks = shoppingLinks.map(({ href, key }) => ({
-    href,
-    label: t(`shopping.items.${key}`),
-  }));
+
   const stores = (
     Object.keys(storeDestinations) as Array<keyof typeof storeDestinations>
   ).map((store) => ({
@@ -60,16 +61,19 @@ export default async function Footer() {
           logoLabel={t("brand.homeLabel")}
           stores={stores}
         />
+
         <FooterLinksColumn
           id="footer-quick-links"
           title={t("quickLinks.title")}
           links={translatedQuickLinks}
         />
+
         <FooterLinksColumn
           id="footer-shopping-links"
           title={t("shopping.title")}
-          links={translatedShoppingLinks}
+          links={resolvedShoppingLinks}
         />
+
         <NewsLetter
           title={t("newsletter.title")}
           description={t("newsletter.description")}
@@ -78,6 +82,7 @@ export default async function Footer() {
           submitLabel={t("newsletter.submit")}
         />
       </Container>
+
       <FooterBottom
         paymentMethods={t("bottom.paymentMethods")}
         copyright={t("bottom.copyright")}
