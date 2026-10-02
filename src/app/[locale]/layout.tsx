@@ -70,7 +70,7 @@ export default async function LocaleLayout({
   const direction = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={direction}>
+    <html className="overflow-x-hidden" lang={locale} dir={direction}>
       <body className={tajawal.variable}>
         <NextIntlClientProvider>
           <QueryProvider>{children}</QueryProvider>

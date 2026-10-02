@@ -104,6 +104,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .motion-category-panel,
   .motion-category-panel[data-open="true"] {
     transform: none;
@@ -116,14 +117,12 @@
   opacity: 0;
 }
 
-.product-card:has(.product-card-link:focus-visible)
-  [data-secondary-state="ready"] .product-card-secondary-image {
+.product-card:has(.product-card-link:focus-visible) [data-secondary-state="ready"] .product-card-secondary-image {
   opacity: 1;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .product-card:has(.product-card-link:hover)
-    [data-secondary-state="ready"] .product-card-secondary-image {
+  .product-card:has(.product-card-link:hover) [data-secondary-state="ready"] .product-card-secondary-image {
     opacity: 1;
   }
 }
@@ -147,7 +146,8 @@
   }
 }
 
-@media (width < 40rem), (pointer: coarse) {
+@media (width < 40rem),
+(pointer: coarse) {
   :root {
     --motion-scale-banner: 1.01;
   }
@@ -165,13 +165,25 @@
 }
 
 @keyframes banner-hero-settle {
-  from { transform: scale(var(--motion-scale-banner)); }
-  to { transform: none; }
+  from {
+    transform: scale(var(--motion-scale-banner));
+  }
+
+  to {
+    transform: none;
+  }
 }
 
 @keyframes banner-promo-settle {
-  from { opacity: 0.92; transform: scale(var(--motion-scale-banner)); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0.92;
+    transform: scale(var(--motion-scale-banner));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Radix Presence waits for these distinct exit animation names before unmounting. */
@@ -188,7 +200,7 @@
 }
 
 /* Match RafalModal's existing sm layout boundary, without replacing its translate. */
-@media (width >= 40rem) {
+@media (width >=40rem) {
   .motion-surface[data-surface="modal"] {
     --surface-offset-y: var(--motion-distance-dialog);
   }
@@ -203,26 +215,51 @@
 }
 
 @keyframes surface-overlay-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes surface-overlay-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes surface-in {
-  from { opacity: 0; transform: translateY(var(--surface-offset-y)); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(var(--surface-offset-y));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes surface-out {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(var(--surface-offset-y)); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(var(--surface-offset-y));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .motion-surface-overlay[data-state],
   .motion-surface[data-state] {
     animation: none;
@@ -427,22 +464,28 @@
   line-height: var(--mobile-bottom-navigation-label-line-height);
   font-weight: 400;
 }
+
 @utility padding-page-sm {
   padding-top: 64px;
 }
+
 @utility padding-page-lg {
   padding-top: 96px;
 }
+
 @utility main-content-spacing {
   @apply pt-4 pb-8 md:pt-8 md:pb-16;
 }
+
 @utility section-spacing {
   @apply space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 xl:space-y-8 2xl:space-y-10;
 }
+
 @layer base {
   body {
     background: var(--page);
     color: var(--foreground);
     font-family: var(--font-tajawal), "Tajawal", ui-sans-serif, sans-serif;
+    overflow-x: hidden;
   }
 }
