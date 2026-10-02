@@ -9,7 +9,6 @@ import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
 import { InputField } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
-import { syncAvailableCartCouponsAfterCartChange } from "@/features/cart/api/cart-coupons-query";
 import { cartMutationFilters, cartMutationKey, cartMutationScope } from "@/features/cart/api/cart-mutation";
 import { currentCartQueryKeyRoot, setCurrentCartQueryData } from "@/features/cart/api/cart-query";
 import type { CartGiftError, CartSnapshot, UpdateCartGiftInput } from "@/features/cart/types/cart.types";
@@ -74,7 +73,6 @@ export function CartGift({ gift, locale }: {
         // Also cancel any focus-triggered read started while the PUT was pending.
         await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
         setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(queryClient, locale, result.cart);
         if (input.kind !== "wrap") {
           setDraft(null);
           setFieldErrors({});

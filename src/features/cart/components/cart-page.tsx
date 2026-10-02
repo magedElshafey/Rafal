@@ -22,6 +22,7 @@ import type {
   CartMutationError,
   CartSnapshot,
 } from "@/features/cart/types/cart.types";
+import type { Coupon } from "@/features/offers/types/offers.types";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -69,8 +70,10 @@ export type CartPageCopy = {
 };
 
 type CartPageProps = {
+  availableCoupons: readonly Coupon[];
   canUseCoupons: boolean;
   copy: CartPageCopy;
+  couponDiscoveryFailed: boolean;
   initialCart: CartSnapshot;
   locale: Locale;
   maxQuantity: number;
@@ -241,8 +244,10 @@ function FreeShippingStatus({
 }
 
 export function CartPage({
+  availableCoupons,
   canUseCoupons,
   copy,
+  couponDiscoveryFailed,
   initialCart,
   locale,
   maxQuantity,
@@ -574,8 +579,10 @@ export function CartPage({
         </h2>
       {canUseCoupons ? (
         <CartCoupon
+          availableCoupons={availableCoupons}
           coupon={cart.coupon}
           copy={copy.coupon}
+          discoveryFailed={couponDiscoveryFailed}
           currency={cart.summary.total.currency}
           locale={locale}
         />

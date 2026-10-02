@@ -8,18 +8,6 @@ export type CartGiftRecipientDto = {
   street_details: string;
 };
 
-export type CartCouponOptionDto = {
-  code: string;
-  name: string;
-  description: string;
-  type: string;
-  value: number;
-  max_discount_amount: number;
-  min_order_amount: number | null;
-  ends_at: string;
-  estimated_discount: string;
-};
-
 export type CartLineAvailabilityDto = {
   city_id: number;
   available: number;
@@ -104,12 +92,6 @@ export type CartDataDto = {
 };
 
 export type CartResponseDto = { success: boolean; message: string; data: CartDataDto };
-export type CartCouponsResponseDto = {
-  success: boolean;
-  message: string;
-  data: readonly CartCouponOptionDto[];
-};
-
 export type AddCartItemDto = {
   product_variant_id: number;
   city_id: number;
@@ -138,6 +120,5 @@ export const cartContractEndpoints = {
   items: "/cart/items",
   merge: "/cart/merge",
   coupon: "/cart/coupon",
-  coupons: "/cart/coupons",
   gift: "/cart/gift",
 } as const;

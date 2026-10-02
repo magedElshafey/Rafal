@@ -67,15 +67,14 @@
       "removeAction": "Remove coupon",
       "removing": "Removing coupon",
       "available": "Available coupons",
-      "loading": "Loading available coupons",
-      "empty": "No coupons are currently available.",
-      "retry": "Try again",
       "invalid": "This coupon is invalid or not available for this cart.",
       "serviceError": "Coupons are temporarily unavailable. Please try again.",
+      "discoveryError": "Available coupons could not be loaded right now.",
       "sessionExpired": "Your session has expired. Sign in again to use coupons.",
       "applied": "Applied coupon",
-      "estimatedDiscount": "Estimated discount",
-      "minimumOrder": "Minimum order"
+      "minimumOrder": "Minimum order",
+      "maximumDiscount": "Maximum discount",
+      "expires": "Expires"
     },
     "gift": {
       "title": "Gift options",

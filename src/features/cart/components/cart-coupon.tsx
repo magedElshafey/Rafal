@@ -1,25 +1,18 @@
 "use client";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { CircleNotchIcon } from "@phosphor-icons/react/dist/ssr/CircleNotch";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
-import { type FormEvent, useEffect, useId, useState } from "react";
+import { type FormEvent, useId, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ChevronDownIcon, PlusIcon } from "@/components/ui/icons";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   applyCartCoupon,
   removeCartCoupon,
 } from "@/features/cart/actions/cart-coupons";
-import {
-  availableCartCouponsQueryOptions,
-  CartCouponQueryError,
-  syncAvailableCartCouponsAfterCartChange,
-} from "@/features/cart/api/cart-coupons-query";
 import {
   cartMutationKey,
   cartMutationScope,
@@ -29,6 +22,8 @@ import type {
   CartCouponError,
   CartSnapshot,
 } from "@/features/cart/types/cart.types";
+import type { Coupon } from "@/features/offers/types/offers.types";
+import { couponTimestampToDate } from "@/features/offers/utils/coupon-date";
 import { useRouter } from "@/i18n/navigation";
 
 export type CartCouponCopy = {
@@ -42,62 +37,99 @@ export type CartCouponCopy = {
   removeAction: string;
   removing: string;
   available: string;
-  loading: string;
-  empty: string;
-  retry: string;
   invalid: string;
   serviceError: string;
+  discoveryError: string;
   sessionExpired: string;
   applied: string;
-  estimatedDiscount: string;
   minimumOrder: string;
+  maximumDiscount: string;
+  expires: string;
 };
 
 type CartCouponProps = {
+  availableCoupons: readonly Coupon[];
   coupon: CartSnapshot["coupon"];
   copy: CartCouponCopy;
   currency: string;
+  discoveryFailed: boolean;
   locale: Locale;
 };
 
-function formatCouponAmount(locale: Locale, amount: string | number, currency: string) {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(Number(amount));
-}
-
 function couponErrorMessage(error: CartCouponError, copy: CartCouponCopy) {
-  if (error.code === "invalid-input" || error.code === "rejected") {
+  if (error.code === "invalid-input" || error.code === "rejected")
     return copy.invalid;
-  }
   return error.code === "unauthorized"
     ? copy.sessionExpired
     : copy.serviceError;
 }
 
-export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) {
+type CouponBadge =
+  | { kind: "percent"; value: string }
+  | { kind: "fixed"; amount: string; currency: string };
+
+function couponBadge(
+  coupon: Coupon,
+  moneyFormatter: Intl.NumberFormat,
+  percentFormatter: Intl.NumberFormat,
+): CouponBadge {
+  if (coupon.type === "percent") {
+    return {
+      kind: "percent",
+      value: percentFormatter.format(coupon.value / 100),
+    };
+  }
+  const parts = moneyFormatter.formatToParts(coupon.value);
+  return {
+    kind: "fixed",
+    amount: parts
+      .filter((part) => part.type !== "currency" && part.type !== "literal")
+      .map((part) => part.value)
+      .join(""),
+    currency: parts
+      .filter((part) => part.type === "currency")
+      .map((part) => part.value)
+      .join(""),
+  };
+}
+
+function couponFormatters(locale: Locale, currency: string) {
+  return {
+    money: new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+      maximumFractionDigits: 2,
+    }),
+    badgeMoney: new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }),
+    percent: new Intl.NumberFormat(locale, {
+      style: "percent",
+      maximumFractionDigits: 2,
+    }),
+  };
+}
+
+export function CartCoupon({
+  availableCoupons,
+  coupon,
+  copy,
+  currency,
+  discoveryFailed,
+  locale,
+}: CartCouponProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const inputId = useId();
   const errorId = useId();
   const availableId = useId();
   const [code, setCode] = useState("");
-  const [availableOpen, setAvailableOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const availableCoupons = useQuery({
-    ...availableCartCouponsQueryOptions(locale),
-    enabled: availableOpen,
-  });
-  const availableError =
-    availableCoupons.error instanceof CartCouponQueryError
-      ? availableCoupons.error
-      : null;
-
-  useEffect(() => {
-    if (availableError?.code === "unauthorized") router.refresh();
-  }, [availableError, router]);
 
   const handleMutationError = (couponError: CartCouponError) => {
     setError(couponErrorMessage(couponError, copy));
@@ -112,11 +144,6 @@ export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) 
     onSuccess: (result) => {
       if (result.ok) {
         setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(
-          queryClient,
-          locale,
-          result.cart,
-        );
         setCode("");
         setError(null);
         return;
@@ -134,11 +161,6 @@ export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) 
     onSuccess: (result) => {
       if (result.ok) {
         setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(
-          queryClient,
-          locale,
-          result.cart,
-        );
         setError(null);
         return;
       }
@@ -155,6 +177,7 @@ export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) 
       setError(copy.invalid);
       return;
     }
+    if (coupon?.applied && normalizedCode === coupon.code) return;
     setError(null);
     applyMutation.mutate(normalizedCode);
   };
@@ -162,197 +185,240 @@ export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) 
     event.preventDefault();
     applyCode(code);
   };
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }),
+    [locale],
+  );
+  const formatters = useMemo(
+    () => couponFormatters(locale, currency),
+    [currency, locale],
+  );
+  const countFormatter = useMemo(() => new Intl.NumberFormat(locale), [locale]);
+  const availableCouponOptions = availableCoupons.filter(
+    (availableCoupon) =>
+      !(coupon?.applied && coupon.code === availableCoupon.code),
+  );
 
   return (
-    <section className="mt-5 border-b border-gray-200 pb-5">
+    <section
+      aria-labelledby={`${inputId}-title`}
+      className="mt-5 border-b border-gray-200 pb-5"
+    >
+      <h3
+        id={`${inputId}-title`}
+        className="type-body font-medium text-gray-1000"
+      >
+        {copy.label}
+      </h3>
+      <form className="mt-3 flex items-start gap-2" onSubmit={submitCoupon}>
+        <label htmlFor={inputId} className="sr-only">
+          {copy.codeLabel}
+        </label>
+        <Input
+          id={inputId}
+          name="couponCode"
+          value={code}
+          autoComplete="off"
+          placeholder={copy.codePlaceholder}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          disabled={busy}
+          onChange={(event) => setCode(event.target.value)}
+          className="min-w-0 flex-1 bg-gray-0"
+        />
+        <Button
+          type="submit"
+          aria-label={
+            code.trim()
+              ? `${copy.applyAction} ${code.trim()}`
+              : copy.applyAction
+          }
+          variant="outline"
+          loading={
+            applyMutation.isPending && applyMutation.variables === code.trim()
+          }
+          loadingLabel={copy.applying}
+          disabled={
+            busy || (coupon?.applied === true && code.trim() === coupon.code)
+          }
+          className="px-4"
+        >
+          {copy.apply}
+        </Button>
+      </form>
+
       {coupon?.applied ? (
-        <div className="rounded-md border border-success/30 bg-gray-0 p-4">
-          <p className="type-caption font-medium text-success">{copy.applied}</p>
-          <div className="mt-1 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="truncate type-body font-medium text-gray-1000">
-                {coupon.name || coupon.code}
-              </p>
-              <p className="type-caption text-gray-500">
-                <bdi>{coupon.code}</bdi>
-              </p>
-            </div>
-            <Button
-              type="button"
-              aria-label={`${copy.removeAction} ${coupon.code}`}
-              variant="outline"
-              size="sm"
-              loading={removeMutation.isPending}
-              loadingLabel={copy.removing}
-              disabled={busy}
-              onClick={() => {
-                setError(null);
-                removeMutation.mutate();
-              }}
-            >
-              {copy.remove}
-            </Button>
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-md border border-success/30 bg-gray-0 p-3">
+          <div className="min-w-0">
+            <p className="type-caption font-medium text-success">
+              {copy.applied}
+            </p>
+            <p className="break-words type-body-sm font-medium text-gray-1000 [overflow-wrap:anywhere]">
+              {coupon.name || coupon.code}
+            </p>
+            <p className="break-all type-caption text-gray-500">
+              <bdi>{coupon.code}</bdi>
+            </p>
           </div>
-        </div>
-      ) : (
-        <>
-          <p className="type-body font-medium text-gray-1000">{copy.label}</p>
-          <label
-            htmlFor={inputId}
-            className="mt-3 block type-caption text-gray-600"
-          >
-            {copy.codeLabel}
-          </label>
-          <form className="mt-2 flex items-start gap-2" onSubmit={submitCoupon}>
-            <div className="min-w-0 flex-1">
-              <Input
-                id={inputId}
-                name="couponCode"
-                value={code}
-                autoComplete="off"
-                placeholder={copy.codePlaceholder}
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? errorId : undefined}
-                disabled={busy}
-                onChange={(event) => setCode(event.target.value)}
-              />
-            </div>
-            <Button
-              type="submit"
-              aria-label={
-                code.trim()
-                  ? `${copy.applyAction} ${code.trim()}`
-                  : copy.applyAction
-              }
-              variant="outline"
-              loading={applyMutation.isPending}
-              loadingLabel={copy.applying}
-              disabled={busy}
-            >
-              {copy.apply}
-            </Button>
-          </form>
-
-          <button
+          <Button
             type="button"
-            aria-expanded={availableOpen}
-            aria-controls={availableId}
-            className="mt-3 min-h-11 rounded-sm type-body-sm font-medium text-gold-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            onClick={() => setAvailableOpen((open) => !open)}
+            aria-label={`${copy.removeAction} ${coupon.code}`}
+            variant="ghost"
+            size="sm"
+            loading={removeMutation.isPending}
+            loadingLabel={copy.removing}
+            disabled={busy}
+            onClick={() => {
+              setError(null);
+              removeMutation.mutate();
+            }}
           >
-            {copy.available}
-          </button>
-
-          {availableOpen ? (
-            <div id={availableId} className="mt-2 space-y-2">
-              {availableCoupons.isPending ? (
-                <div
-                  aria-busy="true"
-                  aria-label={copy.loading}
-                  className="space-y-2"
-                >
-                  <Skeleton className="h-16 w-full" />
-                  <Skeleton className="h-16 w-full" />
-                </div>
-              ) : availableCoupons.isError ? (
-                <div className="rounded-md border border-destructive/20 bg-destructive/5 p-3">
-                  <p className="type-caption text-destructive">
-                    {availableError
-                      ? couponErrorMessage(availableError, copy)
-                      : copy.serviceError}
-                  </p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="mt-1"
-                    onClick={() => void availableCoupons.refetch()}
-                  >
-                    {copy.retry}
-                  </Button>
-                </div>
-              ) : availableCoupons.data.length === 0 ? (
-                <p className="rounded-md bg-gray-0 p-3 type-caption text-gray-500">
-                  {copy.empty}
-                </p>
-              ) : (
-                <ul className="space-y-2">
-                  {availableCoupons.data.map((availableCoupon) => (
-                    <li
-                      key={availableCoupon.code}
-                      className="flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-gray-0 p-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="type-body-sm font-medium text-gray-1000">
-                          {availableCoupon.name}
-                        </p>
-                        <p className="type-caption text-gray-500">
-                          <bdi>{availableCoupon.code}</bdi>
-                        </p>
-                        {availableCoupon.description ? (
-                          <p className="mt-1 type-caption text-gray-500">
-                            {availableCoupon.description}
-                          </p>
-                        ) : null}
-                        <p className="mt-1 type-caption text-gray-500">
-                          {copy.estimatedDiscount}:{" "}
-                          <bdi>
-                            {formatCouponAmount(
-                              locale,
-                              availableCoupon.estimatedDiscount,
-                              currency,
-                            )}
-                          </bdi>
-                          {availableCoupon.minOrderAmount !== null ? (
-                            <>
-                              {" · "}
-                              {copy.minimumOrder}:{" "}
-                              <bdi>
-                                {formatCouponAmount(
-                                  locale,
-                                  availableCoupon.minOrderAmount,
-                                  currency,
-                                )}
-                              </bdi>
-                            </>
-                          ) : null}
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        aria-label={`${copy.applyAction} ${availableCoupon.code}`}
-                        variant="outline"
-                        size="sm"
-                        disabled={busy}
-                        loading={
-                          applyMutation.isPending &&
-                          code.trim() === availableCoupon.code
-                        }
-                        loadingLabel={copy.applying}
-                        onClick={() => {
-                          setCode(availableCoupon.code);
-                          applyCode(availableCoupon.code);
-                        }}
-                      >
-                        {copy.apply}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ) : null}
-        </>
-      )}
+            {copy.remove}
+          </Button>
+        </div>
+      ) : null}
 
       {error ? (
         <p
           id={errorId}
           role="alert"
-          className="mt-3 type-caption text-destructive"
+          className="mt-2 type-caption text-destructive"
         >
           {error}
         </p>
+      ) : null}
+
+      {discoveryFailed ? (
+        <p className="mt-4 type-caption text-gray-500">{copy.discoveryError}</p>
+      ) : availableCouponOptions.length > 0 ? (
+        <details className="group mt-4">
+          <summary
+            aria-controls={availableId}
+            className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-sm type-body-sm font-medium text-gray-1000 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden"
+          >
+            <span>
+              {copy.available} ({countFormatter.format(
+                availableCouponOptions.length,
+              )})
+            </span>
+            <ChevronDownIcon
+              aria-hidden="true"
+              className="size-4 shrink-0 group-open:rotate-180"
+            />
+          </summary>
+          <div id={availableId}>
+            <ul className="mt-2 space-y-2">
+              {availableCouponOptions.map((availableCoupon) => {
+                const expiry = availableCoupon.endsAt
+                  ? couponTimestampToDate(availableCoupon.endsAt)
+                  : null;
+                const applying =
+                  applyMutation.isPending &&
+                  applyMutation.variables === availableCoupon.code;
+                const badge = couponBadge(
+                  availableCoupon,
+                  formatters.badgeMoney,
+                  formatters.percent,
+                );
+                return (
+                  <li
+                    key={availableCoupon.code}
+                    className="flex min-w-0 items-center gap-3 rounded-md border border-gold-400 bg-gray-0 p-3"
+                  >
+                  <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-full border border-gold-400 bg-gold-50 px-1 text-center font-bold leading-none text-gold-700 tabular-nums">
+                    {badge.kind === "percent" ? (
+                      <bdi className="type-body-sm">{badge.value}</bdi>
+                    ) : (
+                      <>
+                        <bdi className="type-body-sm">{badge.amount}</bdi>
+                        <bdi className="mt-1 type-caption font-medium">
+                          {badge.currency}
+                        </bdi>
+                      </>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="break-words type-body-sm font-medium text-gray-1000 [overflow-wrap:anywhere]">
+                      {availableCoupon.name}
+                    </p>
+                    {availableCoupon.description ? (
+                      <p className="mt-0.5 break-words type-caption text-gray-500 [overflow-wrap:anywhere]">
+                        {availableCoupon.description}
+                      </p>
+                    ) : null}
+                    {availableCoupon.minOrderAmount !== null ||
+                    (availableCoupon.type === "percent" &&
+                      availableCoupon.maxDiscountAmount !== null) ||
+                    expiry ? (
+                      <dl className="mt-1 space-y-0.5 type-caption text-gray-500">
+                        {availableCoupon.minOrderAmount !== null ? (
+                          <div className="flex flex-wrap gap-x-1">
+                            <dt>{copy.minimumOrder}:</dt>
+                            <dd>
+                              <bdi>
+                                {formatters.money.format(
+                                  availableCoupon.minOrderAmount,
+                                )}
+                              </bdi>
+                            </dd>
+                          </div>
+                        ) : null}
+                        {availableCoupon.type === "percent" &&
+                        availableCoupon.maxDiscountAmount !== null ? (
+                          <div className="flex flex-wrap gap-x-1">
+                            <dt>{copy.maximumDiscount}:</dt>
+                            <dd>
+                              <bdi>
+                                {formatters.money.format(
+                                  availableCoupon.maxDiscountAmount,
+                                )}
+                              </bdi>
+                            </dd>
+                          </div>
+                        ) : null}
+                        {expiry ? (
+                          <div className="flex flex-wrap gap-x-1">
+                            <dt>{copy.expires}:</dt>
+                            <dd>
+                              <time dateTime={expiry.toISOString()}>
+                                {dateFormatter.format(expiry)}
+                              </time>
+                            </dd>
+                          </div>
+                        ) : null}
+                      </dl>
+                    ) : null}
+                  </div>
+                  <IconButton
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    aria-label={`${copy.applyAction}: ${
+                      availableCoupon.name || availableCoupon.code
+                    }`}
+                    disabled={busy}
+                    className="self-center border-gold-500 text-gold-700"
+                    onClick={() => applyCode(availableCoupon.code)}
+                  >
+                    {applying ? (
+                      <CircleNotchIcon
+                        aria-hidden="true"
+                        className="animate-spin motion-reduce:animate-none"
+                      />
+                    ) : (
+                      <PlusIcon aria-hidden="true" />
+                    )}
+                  </IconButton>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </details>
       ) : null}
     </section>
   );

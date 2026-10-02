@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { clearCart } from "@/features/cart/actions/clear-cart";
 import { removeCartLine } from "@/features/cart/actions/remove-cart-line";
 import { updateCartLine } from "@/features/cart/actions/update-cart-line";
-import { syncAvailableCartCouponsAfterCartChange } from "@/features/cart/api/cart-coupons-query";
 import {
   currentCartQueryKey,
   currentCartQueryOptions,
@@ -208,11 +207,6 @@ export function useCartPageMutations({
   const applyCanonicalCart = useCallback(
     (canonical: CartSnapshot) => {
       setCurrentCartQueryData(
-        queryClient,
-        locale,
-        canonical,
-      );
-      void syncAvailableCartCouponsAfterCartChange(
         queryClient,
         locale,
         canonical,

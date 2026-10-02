@@ -6,11 +6,9 @@ import { mapProtectedAuthActionError } from "@/features/auth/actions/auth-action
 import {
   applyCouponToCurrentCart,
   CartCouponAuthenticationError,
-  getAvailableCartCoupons,
   removeCouponFromCurrentCart,
 } from "@/features/cart/server/cart-boundary";
 import type {
-  CartCouponListResult,
   CartCouponMutationResult,
   CartCouponError,
 } from "@/features/cart/types/cart.types";
@@ -35,20 +33,6 @@ async function mapCouponActionError(
 
 function isSupportedLocale(value: unknown): value is (typeof routing.locales)[number] {
   return typeof value === "string" && hasLocale(routing.locales, value);
-}
-
-export async function loadAvailableCartCoupons(
-  locale: unknown,
-): Promise<CartCouponListResult> {
-  if (!isSupportedLocale(locale)) {
-    return { ok: false, error: { code: "invalid-input" } };
-  }
-
-  try {
-    return { ok: true, coupons: await getAvailableCartCoupons(locale) };
-  } catch (error) {
-    return { ok: false, error: await mapCouponActionError(error) };
-  }
 }
 
 export async function applyCartCoupon(

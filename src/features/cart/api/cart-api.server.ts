@@ -5,14 +5,12 @@ import type { Locale } from "next-intl";
 import type {
   AddCartItemDto,
   ApplyCartCouponDto,
-  CartCouponsResponseDto,
   CartResponseDto,
   UpdateCartGiftDto,
   UpdateCartItemDto,
 } from "@/features/cart/api/cart-dto";
 import { cartContractEndpoints } from "@/features/cart/api/cart-dto";
 import {
-  parseCartCouponsResponse,
   parseCartResponse,
 } from "@/features/cart/api/parse-cart-dto";
 import {
@@ -103,20 +101,6 @@ export function updateCartGiftDto(
   body: UpdateCartGiftDto,
 ) {
   return cartRequest({ identity, locale, path: cartContractEndpoints.gift, method: "PUT", body });
-}
-
-export async function getCartCouponsDto(
-  bearerToken: string,
-  locale: Locale,
-): Promise<CartCouponsResponseDto> {
-  const payload = await serverApi.request<unknown>({
-    path: cartContractEndpoints.coupons,
-    headers: {
-      Authorization: `Bearer ${bearerToken}`,
-      "Accept-Language": locale,
-    },
-  });
-  return parseCartCouponsResponse(payload);
 }
 
 export function applyCartCouponDto(

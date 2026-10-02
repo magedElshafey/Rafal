@@ -1,7 +1,5 @@
 import type {
   CartAttributeDto,
-  CartCouponOptionDto,
-  CartCouponsResponseDto,
   CartDataDto,
   CartGiftRecipientDto,
   CartLineDto,
@@ -85,17 +83,6 @@ function decimalString(value: unknown, path: string): string {
     );
   }
   return normalized;
-}
-
-function finiteNumber(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new CartContractError(path, "a finite number");
-  }
-  return value;
-}
-
-function nullableFiniteNumber(value: unknown, path: string): number | null {
-  return value === null ? null : finiteNumber(value, path);
 }
 
 function normalizedDecimal(value: string): string {
@@ -264,34 +251,6 @@ function parseGiftRecipient(
   };
 }
 
-function parseCouponOption(
-  value: unknown,
-  path: string,
-): CartCouponOptionDto {
-  const source = record(value, path);
-
-  return {
-    code: string(source.code, `${path}.code`),
-    name: string(source.name, `${path}.name`),
-    description: string(source.description, `${path}.description`),
-    type: string(source.type, `${path}.type`),
-    value: finiteNumber(source.value, `${path}.value`),
-    max_discount_amount: finiteNumber(
-      source.max_discount_amount,
-      `${path}.max_discount_amount`,
-    ),
-    min_order_amount: nullableFiniteNumber(
-      source.min_order_amount,
-      `${path}.min_order_amount`,
-    ),
-    ends_at: string(source.ends_at, `${path}.ends_at`),
-    estimated_discount: decimalString(
-      source.estimated_discount,
-      `${path}.estimated_discount`,
-    ),
-  };
-}
-
 function parseData(value: unknown, path: string): CartDataDto {
   const source = record(value, path);
   const city = source.city === undefined ? undefined : record(source.city, `${path}.city`);
@@ -365,18 +324,5 @@ export function parseCartResponse(value: unknown): CartResponseDto {
     success: boolean(source.success, "response.success"),
     message: string(source.message, "response.message"),
     data: parseData(source.data, "response.data"),
-  };
-}
-
-export function parseCartCouponsResponse(
-  value: unknown,
-): CartCouponsResponseDto {
-  const source = record(value, "response");
-  return {
-    success: boolean(source.success, "response.success"),
-    message: string(source.message, "response.message"),
-    data: array(source.data, "response.data").map((coupon, index) =>
-      parseCouponOption(coupon, `response.data[${index}]`),
-    ),
   };
 }

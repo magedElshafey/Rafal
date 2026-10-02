@@ -2,18 +2,6 @@ import type { ProductPersonalizationInput } from "@/features/products/types/prod
 
 export type CartMoney = { amount: string; currency: string };
 
-export type CartCouponOption = {
-  code: string;
-  name: string;
-  description: string;
-  type: string;
-  value: number;
-  maxDiscountAmount: number;
-  minOrderAmount: number | null;
-  endsAt: string;
-  estimatedDiscount: string;
-};
-
 export type CartGiftRecipient = {
   name: string;
   phone: string;
@@ -174,8 +162,4 @@ export type CartCouponError = {
 
 export type CartCouponMutationResult =
   | { ok: true; cart: CartSnapshot }
-  | { ok: false; error: CartCouponError };
-
-export type CartCouponListResult =
-  | { ok: true; coupons: readonly CartCouponOption[] }
   | { ok: false; error: CartCouponError };

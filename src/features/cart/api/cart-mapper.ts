@@ -1,9 +1,5 @@
+import type { CartDataDto } from "@/features/cart/api/cart-dto";
 import type {
-  CartCouponOptionDto,
-  CartDataDto,
-} from "@/features/cart/api/cart-dto";
-import type {
-  CartCouponOption,
   CartLinePersonalization,
   CartMoney,
   CartSnapshot,
@@ -31,22 +27,6 @@ function mapPersonalization(value: unknown | null): CartLinePersonalization | nu
           : null,
     raw: value,
     text: text ?? null,
-  };
-}
-
-export function mapCartCouponOption(
-  coupon: CartCouponOptionDto,
-): CartCouponOption {
-  return {
-    code: coupon.code,
-    name: coupon.name,
-    description: coupon.description,
-    type: coupon.type,
-    value: coupon.value,
-    maxDiscountAmount: coupon.max_discount_amount,
-    minOrderAmount: coupon.min_order_amount,
-    endsAt: coupon.ends_at,
-    estimatedDiscount: coupon.estimated_discount,
   };
 }
 

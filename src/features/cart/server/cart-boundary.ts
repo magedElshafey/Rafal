@@ -7,7 +7,6 @@ import {
   addCartItemDto,
   applyCartCouponDto,
   clearCartDto,
-  getCartCouponsDto,
   getCartDto,
   removeCartCouponDto,
   removeCartItemDto,
@@ -15,14 +14,8 @@ import {
   updateCartGiftDto,
   type CartTransportIdentity,
 } from "@/features/cart/api/cart-api.server";
-import type {
-  CartCouponsResponseDto,
-  CartResponseDto,
-} from "@/features/cart/api/cart-dto";
-import {
-  mapCartCouponOption,
-  mapCartData,
-} from "@/features/cart/api/cart-mapper";
+import type { CartResponseDto } from "@/features/cart/api/cart-dto";
+import { mapCartData } from "@/features/cart/api/cart-mapper";
 import type { CartAddDiagnostics } from "@/features/cart/server/cart-add-diagnostics";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import {
@@ -32,7 +25,6 @@ import {
 import type {
   AddCartLineInput,
   AddCartLineResult,
-  CartCouponOption,
   CartMutationResult,
   CartSnapshot,
   UpdateCartGiftInput,
@@ -42,15 +34,6 @@ import { readGuestCityId } from "@/features/location/server/guest-city-session";
 function assertSuccessfulResponse(response: CartResponseDto): CartResponseDto {
   if (!response.success) {
     throw new Error("The Cart API returned an unsuccessful response.");
-  }
-  return response;
-}
-
-function assertSuccessfulCouponsResponse(
-  response: CartCouponsResponseDto,
-): CartCouponsResponseDto {
-  if (!response.success) {
-    throw new Error("The Cart Coupons API returned an unsuccessful response.");
   }
   return response;
 }
@@ -221,16 +204,6 @@ export async function updateCurrentCartGift(
   }
   await syncGuestToken(identity, response);
   return mapCartData(response.data);
-}
-
-export async function getAvailableCartCoupons(
-  locale: Locale,
-): Promise<readonly CartCouponOption[]> {
-  const accessToken = await requireAuthenticatedCartToken();
-  const response = assertSuccessfulCouponsResponse(
-    await getCartCouponsDto(accessToken, locale),
-  );
-  return response.data.map(mapCartCouponOption);
 }
 
 export async function applyCouponToCurrentCart(
