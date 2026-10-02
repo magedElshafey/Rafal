@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useIsMutating,
   useMutation,
   useQuery,
   useQueryClient,
@@ -22,7 +21,6 @@ import {
   syncAvailableCartCouponsAfterCartChange,
 } from "@/features/cart/api/cart-coupons-query";
 import {
-  cartMutationFilters,
   cartMutationKey,
   cartMutationScope,
 } from "@/features/cart/api/cart-mutation";
@@ -81,7 +79,6 @@ function couponErrorMessage(error: CartCouponError, copy: CartCouponCopy) {
 export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const cartMutationPending = useIsMutating(cartMutationFilters) > 0;
   const inputId = useId();
   const errorId = useId();
   const availableId = useId();
@@ -150,7 +147,7 @@ export function CartCoupon({ coupon, copy, currency, locale }: CartCouponProps) 
     onError: () => setError(copy.serviceError),
   });
 
-  const busy = cartMutationPending;
+  const busy = applyMutation.isPending || removeMutation.isPending;
   const applyCode = (couponCode: string) => {
     if (busy) return;
     const normalizedCode = couponCode.trim();

@@ -29,7 +29,8 @@ type LocationControllerProps = {
   copy: LocationControllerCopy;
   initialCity: City | null;
   locale: Locale;
-  onLocationPersisted?: () => void | Promise<void>;
+  onLocationPersisted?: (city: City) => void | Promise<void>;
+  onLocationSelected?: (city: City) => void;
 };
 
 export function LocationController({
@@ -37,10 +38,11 @@ export function LocationController({
   initialCity,
   locale,
   onLocationPersisted,
+  onLocationSelected,
 }: LocationControllerProps) {
   const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
   const [isOpen, setIsOpen] = useState(initialCity === null);
-  const [, startTransition] = useTransition();
+  const [isPersisting, startTransition] = useTransition();
   const router = useRouter();
   const citiesQuery = useQuery({
     ...cityCatalogQueryOptions(locale),
@@ -48,11 +50,13 @@ export function LocationController({
   });
 
   const handleSelect = (city: City) => {
+    if (isPersisting) return;
+    onLocationSelected?.(city);
     setSelectedCity(city);
     setIsOpen(false);
     startTransition(async () => {
       await setGuestCityId(city.id);
-      await onLocationPersisted?.();
+      await onLocationPersisted?.(city);
       router.refresh();
     });
   };

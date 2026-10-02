@@ -37,6 +37,11 @@
     "quantity": { "label": "Quantity", "increase": "Increase quantity", "decrease": "Decrease quantity" },
     "line": { "unitPrice": "Unit price", "total": "Line total", "personalization": "Personalization", "sku": "Product code" },
     "stock": { "ok": "In stock", "low": "Low stock", "outOfStock": "Out of stock" },
+    "availability": {
+      "unavailable": "This item is not available in the requested quantity for the selected city.",
+      "unconfirmed": "Availability for this item could not be confirmed for the selected city. Change the city or try again.",
+      "checkoutUnavailable": "Confirm that every item is available in the selected city before continuing to checkout."
+    },
     "summary": {
       "title": "Order summary",
       "subtotal": "Subtotal",

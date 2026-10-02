@@ -3,7 +3,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
 
-import { invalidateCurrentCartQueries } from "@/features/cart/api/cart-query";
+import { currentCartQueryKey, currentCartQueryOptions } from "@/features/cart/api/cart-query";
+import { notifyBrowsingCitySelected } from "@/features/location/browsing-city-events";
 import {
   LocationController,
   type LocationControllerCopy,
@@ -28,7 +29,13 @@ export function StorefrontLocationController({
       copy={copy}
       initialCity={initialCity}
       locale={locale}
-      onLocationPersisted={() => invalidateCurrentCartQueries(queryClient)}
+      onLocationSelected={(city) => notifyBrowsingCitySelected(city.id)}
+      onLocationPersisted={async (city) => {
+        await queryClient.cancelQueries({ queryKey: currentCartQueryKey(locale, city.id), exact: true });
+        await queryClient
+          .fetchQuery({ ...currentCartQueryOptions(locale, city.id), staleTime: 0 })
+          .catch(() => undefined);
+      }}
     />
   );
 }

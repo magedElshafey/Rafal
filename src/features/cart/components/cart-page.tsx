@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  useIsMutating,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
 import Image from "next/image";
 import type { Locale } from "next-intl";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { isCancelledError } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { TruckIcon, XIcon } from "@/components/ui/icons";
@@ -17,17 +13,9 @@ import {
   CartCoupon,
   type CartCouponCopy,
 } from "@/features/cart/components/cart-coupon";
-import { clearCart } from "@/features/cart/actions/clear-cart";
-import { removeCartLine } from "@/features/cart/actions/remove-cart-line";
-import { updateCartLine } from "@/features/cart/actions/update-cart-line";
-import { syncAvailableCartCouponsAfterCartChange } from "@/features/cart/api/cart-coupons-query";
-import {
-  cartMutationFilters,
-  cartMutationKey,
-  cartMutationScope,
-} from "@/features/cart/api/cart-mutation";
-import { setCurrentCartQueryData } from "@/features/cart/api/cart-query";
+import { useCartPageMutations } from "@/features/cart/hooks/use-cart-page-mutations";
 import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
+import { browsingCitySelectedEvent } from "@/features/location/browsing-city-events";
 import type {
   CartMoney,
   CartMutationError,
@@ -63,6 +51,11 @@ export type CartPageCopy = {
   vatIncluded: string;
   total: string;
   checkout: string;
+  availability: {
+    unavailable: string;
+    unconfirmed: string;
+    checkoutUnavailable: string;
+  };
   freeShippingQualified: string;
   freeShippingRemaining: string;
   coupon: CartCouponCopy;
@@ -80,7 +73,40 @@ type CartPageProps = {
   initialCart: CartSnapshot;
   locale: Locale;
   maxQuantity: number;
+  selectedCityId: number | null;
 };
+
+function lineAvailabilityIssue(
+  line: CartSnapshot["lines"][number],
+  selectedCityId: number | null,
+): "unconfirmed" | "unavailable" | null {
+  if (
+    selectedCityId === null ||
+    !line.availability ||
+    line.availability.cityId !== selectedCityId
+  ) {
+    return "unconfirmed";
+  }
+  if (
+    !line.availability.inStock ||
+    line.availability.available < line.quantity
+  ) {
+    return "unavailable";
+  }
+  return null;
+}
+
+function isCartFulfillable(
+  cart: CartSnapshot,
+  selectedCityId: number | null,
+) {
+  return (
+    cart.lines.length > 0 &&
+    cart.lines.every(
+      (line) => lineAvailabilityIssue(line, selectedCityId) === null,
+    )
+  );
+}
 
 function formatMoney(locale: Locale, value: CartMoney): string {
   return new Intl.NumberFormat(locale, {
@@ -214,81 +240,56 @@ export function CartPage({
   initialCart,
   locale,
   maxQuantity,
+  selectedCityId,
 }: CartPageProps) {
-  const queryClient = useQueryClient();
   const router = useRouter();
-  const cartMutationPending = useIsMutating(cartMutationFilters) > 0;
+  const [transitionCity, setTransitionCity] = useState<number | null>(null);
+  const transitionCityRef = useRef<number | null>(null);
+  const currentCityRef = useRef(selectedCityId);
+  useEffect(() => { currentCityRef.current = selectedCityId; }, [selectedCityId]);
+  useEffect(() => {
+    const onCitySelected = (event: Event) => {
+      const cityId = (event as CustomEvent<number>).detail;
+      transitionCityRef.current = cityId;
+      setTransitionCity(cityId);
+    };
+    window.addEventListener(browsingCitySelectedEvent, onCitySelected);
+    return () => window.removeEventListener(browsingCitySelectedEvent, onCitySelected);
+  }, []);
+  const cityTransitionPending = transitionCity !== null && transitionCity !== selectedCityId;
   const {
     data: cart,
     isError,
     isPending,
     refetch,
-  } = useCurrentCart(locale, initialCart);
-  const [activeLineId, setActiveLineId] = useState<string | null>(null);
+    projectionReady,
+    projectionFetching,
+  } = useCurrentCart(locale, selectedCityId, initialCart);
   const [mutationError, setMutationError] = useState<string | null>(null);
-
-  const updateMutation = useMutation({
-    mutationKey: cartMutationKey,
-    scope: cartMutationScope,
-    mutationFn: ({ lineId, quantity }: { lineId: string; quantity: number }) =>
-      updateCartLine(lineId, quantity, locale),
-    retry: false,
-    onSuccess: (result) => {
-      if (result.ok) {
-        setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(
-          queryClient,
-          locale,
-          result.cart,
-        );
-      } else setMutationError(errorMessage(result.error, copy.errors));
-    },
-    onError: () => setMutationError(copy.errors.generic),
-    onSettled: () => setActiveLineId(null),
+  const handleMutationError = useCallback(
+    (error: CartMutationError) =>
+      setMutationError(errorMessage(error, copy.errors)),
+    [copy.errors],
+  );
+  const mutations = useCartPageMutations({
+    locale,
+    maxQuantity,
+    onError: handleMutationError,
+    selectedCityId,
   });
-  const removeMutation = useMutation({
-    mutationKey: cartMutationKey,
-    scope: cartMutationScope,
-    mutationFn: (lineId: string) => removeCartLine(lineId, locale),
-    retry: false,
-    onSuccess: (result) => {
-      if (result.ok) {
-        setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(
-          queryClient,
-          locale,
-          result.cart,
-        );
-      } else setMutationError(errorMessage(result.error, copy.errors));
-    },
-    onError: () => setMutationError(copy.errors.generic),
-    onSettled: () => setActiveLineId(null),
-  });
-  const clearMutation = useMutation({
-    mutationKey: cartMutationKey,
-    scope: cartMutationScope,
-    mutationFn: () => clearCart(locale),
-    retry: false,
-    onSuccess: (result) => {
-      if (result.ok) {
-        setCurrentCartQueryData(queryClient, locale, result.cart);
-        void syncAvailableCartCouponsAfterCartChange(
-          queryClient,
-          locale,
-          result.cart,
-        );
-      } else setMutationError(errorMessage(result.error, copy.errors));
-    },
-    onError: () => setMutationError(copy.errors.generic),
-  });
-
-  const busy = cartMutationPending;
-  const mutateQuantity = (lineId: string, quantity: number) => {
-    if (busy || quantity < 1 || quantity > maxQuantity) return;
+  const mutateQuantity = (lineId: string, delta: -1 | 1) => {
     setMutationError(null);
-    setActiveLineId(lineId);
-    updateMutation.mutate({ lineId, quantity });
+    mutations.changeQuantity(lineId, delta);
   };
+
+  const mutationErrorNotice = mutationError ? (
+    <p
+      role="alert"
+      className="fixed inset-x-4 bottom-20 z-50 mx-auto max-w-xl rounded-md border border-destructive/20 bg-gray-0 px-4 py-3 type-body-sm text-destructive shadow-lg md:bottom-6"
+    >
+      {mutationError}
+    </p>
+  ) : null;
 
   if (isError && !cart) {
     return (
@@ -314,6 +315,7 @@ export function CartPage({
   if (cart.lines.length === 0) {
     return (
       <div>
+        {mutationErrorNotice}
         <h1 className="text-h2 font-bold text-gray-1000">{cartTitle}</h1>
         <section className="mt-6 rounded-lg border border-gray-200 bg-gray-0 px-5 py-14 text-center sm:px-8 sm:py-20">
           <h2 className="text-h2 font-bold text-gray-1000">
@@ -343,41 +345,26 @@ export function CartPage({
         <Button
           variant="ghost"
           size="sm"
-          loading={clearMutation.isPending}
-          loadingLabel={copy.clearing}
-          disabled={busy}
           onClick={() => {
-            if (queryClient.isMutating(cartMutationFilters) > 0) return;
             setMutationError(null);
-            clearMutation.mutate();
+            mutations.clear();
           }}
         >
           {copy.clear}
         </Button>
       </div>
 
-      {mutationError ? (
-        <p
-          role="alert"
-          className="mb-4 rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 type-body-sm text-destructive"
-        >
-          {mutationError}
-        </p>
-      ) : null}
-
       <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0 divide-y divide-gray-200">
         {cart.lines.map((line) => {
-          const lineBusy = activeLineId === line.id;
           const attributes = Object.entries(line.variant.attributes);
+          const availabilityIssue = cityTransitionPending || mutations.projectionPending || projectionFetching ? null :
+            mutations.projectionDirty || isError ? "unconfirmed" : lineAvailabilityIssue(
+            line,
+            selectedCityId,
+          );
           return (
             <li key={line.id} className="p-4 sm:p-5">
-              <article
-                className={cn(
-                  "grid grid-cols-[5.5rem_minmax(0,1fr)] gap-4 sm:grid-cols-[6rem_minmax(0,1fr)_10rem]",
-                  lineBusy && "opacity-70",
-                )}
-                aria-busy={lineBusy || undefined}
-              >
+              <article className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-4 sm:grid-cols-[6rem_minmax(0,1fr)_10rem]">
                 <Link
                   href={`/products/${line.product.slug}`}
                   className="block aspect-square w-full self-start overflow-hidden rounded-md bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -466,11 +453,9 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={`${copy.remove}: ${line.product.name}`}
-                      disabled={busy}
                       onClick={() => {
                         setMutationError(null);
-                        setActiveLineId(line.id);
-                        removeMutation.mutate(line.id);
+                        mutations.removeLine(line.id);
                       }}
                       className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-50 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
                     >
@@ -482,10 +467,8 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.decrease}
-                      disabled={busy || line.quantity <= 1}
-                      onClick={() =>
-                        mutateQuantity(line.id, line.quantity - 1)
-                      }
+                      disabled={line.quantity <= 1}
+                      onClick={() => mutateQuantity(line.id, -1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       {"\u2212"}
@@ -500,10 +483,10 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.increase}
-                      disabled={busy || line.quantity >= maxQuantity}
-                      onClick={() =>
-                        mutateQuantity(line.id, line.quantity + 1)
-                      }
+                      disabled={line.quantity >= maxQuantity ||
+                        (line.availability?.cityId === selectedCityId &&
+                          (!line.availability.inStock || line.quantity >= line.availability.available))}
+                      onClick={() => mutateQuantity(line.id, 1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       +
@@ -513,13 +496,17 @@ export function CartPage({
 
                 <p
                   aria-live="polite"
-                  className="col-span-2 min-h-4 type-caption text-gray-500 sm:col-start-3 sm:text-end"
+                  className={cn(
+                    "col-span-2 grid min-h-5 type-caption sm:col-start-2 sm:col-span-2",
+                    availabilityIssue ? "text-destructive" : "text-transparent",
+                  )}
                 >
-                  {lineBusy
-                    ? removeMutation.isPending
-                      ? copy.removing
-                      : copy.quantity
-                    : ""}
+                  <span aria-hidden="true" className="invisible col-start-1 row-start-1">
+                    {copy.availability.unconfirmed}
+                  </span>
+                  <span className="col-start-1 row-start-1">
+                    {availabilityIssue ? copy.availability[availabilityIssue] : "\u00a0"}
+                  </span>
                 </p>
               </article>
             </li>
@@ -529,6 +516,9 @@ export function CartPage({
       <CartGift gift={cart.gift} locale={locale} />
     </section>
   );
+
+  const cartFulfillable = projectionReady && !isError && !cityTransitionPending && !mutations.projectionDirty &&
+    !mutations.projectionPending && isCartFulfillable(cart, selectedCityId);
 
   const summarySection = (
     <aside
@@ -601,15 +591,37 @@ export function CartPage({
       <Button
         size="lg"
         className="mt-5 w-full"
-        onClick={() => router.push("/checkout")}
+        disabled={!cartFulfillable}
+        onClick={async () => {
+          const cityIsCurrent = () => currentCityRef.current === selectedCityId &&
+            (transitionCityRef.current === null || transitionCityRef.current === selectedCityId);
+          if (!cityIsCurrent()) return;
+          const result = await mutations.flushPendingMutations();
+          if (!result.ok || !cityIsCurrent()) return;
+          try {
+            const projectedCart = await mutations.refreshProjection();
+            if (cityIsCurrent() && mutations.canNavigate() && isCartFulfillable(projectedCart, selectedCityId)) {
+              router.push("/checkout");
+            }
+          } catch (error) {
+            if (isCancelledError(error) || (error instanceof DOMException && error.name === "AbortError")) return;
+            setMutationError(copy.errors.generic);
+          }
+        }}
       >
         {copy.checkout}
       </Button>
+      <p className={cn("mt-3 min-h-10 type-caption text-destructive",
+        (cartFulfillable || mutations.projectionPending || projectionFetching || cityTransitionPending) && "invisible")}
+      >
+        {copy.availability.checkoutUnavailable}
+      </p>
     </aside>
   );
 
   return (
     <div>
+      {mutationErrorNotice}
       <h1 className="text-h2 font-bold text-gray-1000">{cartTitle}</h1>
       <FreeShippingStatus cart={cart} copy={copy} locale={locale} />
       <div

@@ -8,7 +8,9 @@ const PRIVATE_NO_STORE_HEADERS = {
 } as const;
 
 export async function GET(request: Request) {
-  const locale = new URL(request.url).searchParams.get("locale");
+  const searchParams = new URL(request.url).searchParams;
+  const locale = searchParams.get("locale");
+  const cityIdValue = searchParams.get("cityId");
   if (!locale || !hasLocale(routing.locales, locale)) {
     return Response.json(
       { code: "invalid-locale" },
@@ -16,8 +18,19 @@ export async function GET(request: Request) {
     );
   }
 
+  const cityId = cityIdValue === null ? undefined : Number(cityIdValue);
+  if (
+    cityId !== undefined &&
+    (!Number.isSafeInteger(cityId) || cityId <= 0)
+  ) {
+    return Response.json(
+      { code: "invalid-city" },
+      { status: 400, headers: PRIVATE_NO_STORE_HEADERS },
+    );
+  }
+
   try {
-    return Response.json(await getCurrentCart(locale), {
+    return Response.json(await getCurrentCart(locale, cityId), {
       headers: PRIVATE_NO_STORE_HEADERS,
     });
   } catch {

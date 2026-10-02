@@ -91,9 +91,14 @@ function positiveBackendId(value: string): number | null {
   return Number.isSafeInteger(parsed) ? parsed : null;
 }
 
-export async function getCurrentCart(locale: Locale): Promise<CartSnapshot> {
+export async function getCurrentCart(
+  locale: Locale,
+  cityId?: number,
+): Promise<CartSnapshot> {
   const identity = await resolveCartTransportIdentity();
-  const response = assertSuccessfulResponse(await getCartDto(identity, locale));
+  const response = assertSuccessfulResponse(
+    await getCartDto(identity, locale, cityId),
+  );
   return mapCartData(response.data);
 }
 

@@ -11,6 +11,7 @@ import type {
 } from "@/features/cart/types/cart.types";
 
 const AVAILABLE_CART_COUPONS_STALE_TIME = 30_000;
+const syncVersions = new WeakMap<QueryClient, Map<Locale, number>>();
 
 export class CartCouponQueryError extends Error {
   constructor(readonly code: CartCouponError["code"]) {
@@ -47,13 +48,20 @@ export async function syncAvailableCartCouponsAfterCartChange(
   locale: Locale,
   cart: CartSnapshot,
 ) {
+  let versions = syncVersions.get(queryClient);
+  if (!versions) syncVersions.set(queryClient, (versions = new Map()));
+  const version = (versions.get(locale) ?? 0) + 1;
+  versions.set(locale, version);
   const filters = {
     queryKey: availableCartCouponsQueryKey(locale),
     exact: true,
   } as const;
 
+  // Explicit cancellation also covers an initial fetch with no cached data.
+  // The Server Action may finish, but its cancelled query cannot publish data.
+  await queryClient.cancelQueries(filters);
+  if (versions.get(locale) !== version) return;
   if (cart.lines.length === 0) {
-    await queryClient.cancelQueries(filters);
     queryClient.removeQueries(filters);
     return;
   }

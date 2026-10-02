@@ -545,7 +545,7 @@ function ProductSocialProofSummary({
   ] as const;
 
   return (
-    <dl className="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-gray-200 py-3">
+    <dl className="flex flex-col md:flex-row items-center gap-x-6 gap-y-3 border-y border-gray-200 py-3">
       {items.map(({ icon: Icon, label, value }) => (
         <div key={label} className="flex min-w-0 items-center gap-2.5">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-50 text-gold-700">

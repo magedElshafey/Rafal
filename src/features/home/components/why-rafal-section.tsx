@@ -42,7 +42,7 @@ export async function WhyRafalSection({
                   </span>
                 ) : null}
                 {item.title ? (
-                  <h3 className="mt-3 type-body font-medium text-foreground">
+                  <h3 className="mt-3 type-body font-bold text-foreground">
                     {item.title}
                   </h3>
                 ) : null}

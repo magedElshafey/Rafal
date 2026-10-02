@@ -1,5 +1,4 @@
 import { headerActionItems } from "@/components/shell/storefront/navigation-config";
-import { buttonVariants } from "@/components/ui/button";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -15,11 +14,29 @@ const HeaderActions = async () => {
   ]);
 
   if (!currentUser) {
+    const cartItem = headerActionItems.find((item) => item.key === "cart");
+    const CartIcon = cartItem?.icon;
+
     return (
       <nav aria-label={t("user_navigation")}>
-        <Link href="/login" className="font-medium text-primary">
-          {t("login")}
-        </Link>
+        <ul className="flex items-center gap-1 sm:gap-2">
+          {cartItem && CartIcon ? (
+            <li className="hidden md:list-item">
+              <Link
+                href={cartItem.href}
+                aria-label={t("cart")}
+                className={actionLinkClassName}
+              >
+                <CartIcon aria-hidden="true" />
+              </Link>
+            </li>
+          ) : null}
+          <li>
+            <Link href="/login" className="font-medium text-primary">
+              {t("login")}
+            </Link>
+          </li>
+        </ul>
       </nav>
     );
   }
