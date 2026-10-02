@@ -1,48 +1,59 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 
-export function CopyCouponButton({ code, label, accessibleLabel, copied, failed }: {
+type CopyCouponButtonProps = {
   code: string;
-  label: string;
   accessibleLabel: string;
   copied: string;
   failed: string;
-}) {
+};
+
+export function CopyCouponButton({
+  code,
+  accessibleLabel,
+  copied,
+  failed,
+}: CopyCouponButtonProps) {
   const locked = useRef(false);
   const [pending, setPending] = useState(false);
-  const [status, setStatus] = useState<"success" | "error" | null>(null);
+
   async function copy() {
-    if (locked.current) return;
+    if (locked.current) {
+      return;
+    }
+
     locked.current = true;
     setPending(true);
-    setStatus(null);
+
     try {
       await navigator.clipboard.writeText(code);
-      setStatus("success");
+
+      toast.success(copied);
     } catch {
-      setStatus("error");
+      toast.error(failed);
     } finally {
       locked.current = false;
       setPending(false);
     }
   }
+
   return (
-    <div className="space-y-2">
-      <Button
-        className="w-full"
-        variant="outline"
-        aria-label={accessibleLabel}
-        loading={pending}
-        loadingLabel={accessibleLabel}
-        onClick={() => void copy()}
-      >
-        {label}
-      </Button>
-      <p role="status" aria-live="polite" className="min-h-5 type-caption text-gray-600">
-        {status === "success" ? copied : status === "error" ? failed : null}
-      </p>
-    </div>
+    <Button
+      type="button"
+      variant="ghost"
+      className="size-9 shrink-0 p-0 text-gold-600 hover:text-gold-600"
+      aria-label={accessibleLabel}
+      title={accessibleLabel}
+      loading={pending}
+      loadingLabel={accessibleLabel}
+      onClick={() => void copy()}
+    >
+      <Copy aria-hidden="true" className="size-4" />
+    </Button>
   );
 }

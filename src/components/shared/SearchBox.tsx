@@ -33,7 +33,7 @@ const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(
         id={id}
         type="search"
         value={value}
-        className="min-w-0 flex-1 bg-transparent type-ui-sm [&::-webkit-search-cancel-button]:hidden border-none"
+        className="min-w-0 flex-1 bg-transparent type-ui-sm [&::-webkit-search-cancel-button]:hidden border-none focus:ring-0 focus:outline-none"
         {...props}
       />
 

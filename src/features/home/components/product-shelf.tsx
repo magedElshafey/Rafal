@@ -54,7 +54,7 @@ export function ProductShelf({
   return (
     <Section spacing="none" aria-label={title}>
       <Container>
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <h2 className="text-h3 font-medium text-foreground">{title}</h2>
           <Link
             href={viewAllHref}
@@ -76,8 +76,18 @@ export function ProductShelf({
             slidesToScroll="auto"
           >
             <div className="mb-3 hidden justify-end gap-3 p-1 md:flex">
-              <AppCarouselPrevious label={previousLabel} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
-              <AppCarouselNext label={nextLabel} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+              <AppCarouselPrevious
+                label={previousLabel}
+                size="sm"
+                variant="outline"
+                className="duration-[var(--motion-duration-fast)]"
+              />
+              <AppCarouselNext
+                label={nextLabel}
+                size="sm"
+                variant="outline"
+                className="duration-[var(--motion-duration-fast)]"
+              />
             </div>
             <AppCarouselViewport>
               <AppCarouselContent className="-ms-4">

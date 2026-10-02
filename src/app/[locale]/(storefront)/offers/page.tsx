@@ -34,21 +34,34 @@ export default async function OffersPage() {
     }),
     getCurrentUser(),
   ]);
-  const empty = offers.coupons.length === 0 && offers.discountedProducts.items.length === 0;
+  const empty =
+    offers.coupons.length === 0 && offers.discountedProducts.items.length === 0;
   return (
     <Container className="main-content-spacing">
-      <Breadcrumbs label={t("breadcrumbs.label")} items={[
-        { label: t("breadcrumbs.home"), href: "/" },
-        { label: t("breadcrumbs.offers") },
-      ]} />
+      <Breadcrumbs
+        label={t("breadcrumbs.label")}
+        items={[
+          { label: t("breadcrumbs.home"), href: "/" },
+          { label: t("breadcrumbs.offers") },
+        ]}
+      />
       <div className="mt-5 space-y-2">
         <h1 className="text-h1 font-bold text-foreground">{t("title")}</h1>
         <p className="type-body text-gray-600">{t("description")}</p>
       </div>
       <div className="mt-8 space-y-10">
         {empty ? (
-          <EmptyState role="status" title={t("emptyTitle")} description={t("emptyDescription")}>
-            <Link href="/products" className={buttonVariants({ className: "mt-5" })}>{t("emptyCta")}</Link>
+          <EmptyState
+            role="status"
+            title={t("emptyTitle")}
+            description={t("emptyDescription")}
+          >
+            <Link
+              href="/products"
+              className={buttonVariants({ className: "mt-5" })}
+            >
+              {t("emptyCta")}
+            </Link>
           </EmptyState>
         ) : (
           <>

@@ -33,7 +33,9 @@ export async function generateMetadata({
       publishedTime: article.publishedAt,
       url: new URL(`/${locale}${pathname}`, serverEnv.siteUrl),
       ...(article.authorName !== null ? { authors: [article.authorName] } : {}),
-      ...(article.coverUrl !== null ? { images: [{ url: article.coverUrl, alt: article.title }] } : {}),
+      ...(article.coverUrl !== null
+        ? { images: [{ url: article.coverUrl, alt: article.title }] }
+        : {}),
     },
   };
 }
@@ -44,7 +46,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (result.kind === "not-found") notFound();
   const article = result.post;
   const t = await getTranslations({ locale, namespace: "ContentPages.blog" });
-  const paragraphs = article.body.replace(/\r\n?/g, "\n")
+  const paragraphs = article.body
+    .replace(/\r\n?/g, "\n")
     .split(/\n[\t ]*\n+/)
     .map((paragraph) => paragraph.trim())
     .filter((paragraph) => paragraph.length > 0);
@@ -59,7 +62,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <Container>
         <Breadcrumbs items={breadcrumbItems} label={t("breadcrumbs.label")} />
       </Container>
-      <Container size="default" className="mt-6">
+      <Container className="mt-6">
         <header className="text-center space-y-4">
           {article.category !== null ? (
             <Badge className="bg-success/10 text-success">
@@ -74,7 +77,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               date={article.publishedAt}
               author={article.authorName}
               locale={locale}
-              readingTime={t("readingTime", { minutes: article.readingTimeMinutes })}
+              readingTime={t("readingTime", {
+                minutes: article.readingTimeMinutes,
+              })}
             />
           </div>
         </header>
@@ -87,10 +92,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           frameClassName="mt-5 rounded-lg"
         />
       </Container>
-      <Container size="wide" className="mt-6 md:mt-8">
-        <div className="mx-auto max-w-prose space-y-6 type-body-lg leading-8 text-gray-600">
+      <Container className="mt-6 md:mt-8">
+        <div className=" space-y-6 type-body-lg leading-8 text-gray-600">
           {paragraphs.map((paragraph, index) => (
-            <p key={index} className="whitespace-pre-line">{paragraph}</p>
+            <p key={index} className="whitespace-pre-line">
+              {paragraph}
+            </p>
           ))}
         </div>
         {article.related.length > 0 ? (
