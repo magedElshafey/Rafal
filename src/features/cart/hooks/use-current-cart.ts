@@ -32,9 +32,12 @@ export function useCurrentCart(
   );
   const serverFallback = cityId !== null && !hasCartProjection(query.data, cityId) &&
     hasCartProjection(initialData, cityId) ? initialData : undefined;
+  const projectedCart = cityId !== null && hasCartProjection(query.data, cityId)
+    ? query.data
+    : serverFallback;
   return {
     ...query,
-    projectedCart: serverFallback ?? query.data,
+    projectedCart,
     data: serverFallback ? overlayCurrentCart(client, locale, serverFallback) :
       currentCartDisplayData(client, locale, cityId) ?? initialData,
     projectionReady,

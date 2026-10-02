@@ -78,19 +78,20 @@ type CartPageProps = {
 };
 
 function lineAvailabilityIssue(
-  line: CartSnapshot["lines"][number],
+  availability: CartSnapshot["lines"][number]["availability"],
+  quantity: number,
   selectedCityId: number | null,
 ): "unconfirmed" | "unavailable" | null {
   if (
     selectedCityId === null ||
-    !line.availability ||
-    line.availability.cityId !== selectedCityId
+    !availability ||
+    availability.cityId !== selectedCityId
   ) {
     return "unconfirmed";
   }
   if (
-    !line.availability.inStock ||
-    line.availability.available < line.quantity
+    !availability.inStock ||
+    availability.available < quantity
   ) {
     return "unavailable";
   }
@@ -104,7 +105,11 @@ function isCartFulfillable(
   return (
     cart.lines.length > 0 &&
     cart.lines.every(
-      (line) => lineAvailabilityIssue(line, selectedCityId) === null,
+      (line) => lineAvailabilityIssue(
+        line.availability,
+        line.quantity,
+        selectedCityId,
+      ) === null,
     )
   );
 }
@@ -279,7 +284,8 @@ export function CartPage({
     onError: handleMutationError,
     selectedCityId,
   });
-  const summaryBusy = cityTransitionPending || projectionFetching || mutations.projectionPending;
+  const summaryBusy =
+    cityTransitionPending || projectionFetching || mutations.projectionPending;
   const [showSummaryBusy, setShowSummaryBusy] = useState(false);
   useEffect(() => {
     if (!summaryBusy) return;
@@ -370,15 +376,30 @@ export function CartPage({
       <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0 divide-y divide-gray-200">
         {cart.lines.map((line) => {
           const attributes = Object.entries(line.variant.attributes);
-          const projectedAvailability = projectedCart?.lines.find((candidate) => candidate.id === line.id)?.availability;
-          const availability = !cityTransitionPending && selectedCityId !== null &&
-            projectedAvailability?.cityId === selectedCityId ? projectedAvailability : undefined;
-          const unavailable = !!availability && (!availability.inStock || availability.available <= 0);
-          const availabilityIssue = cityTransitionPending || mutations.projectionPending || projectionFetching ? null :
-            mutations.projectionDirty || isError ? "unconfirmed" : lineAvailabilityIssue(
-            line,
-            selectedCityId,
-          );
+          const projectedAvailability = projectedCart?.lines.find(
+            (candidate) => candidate.id === line.id,
+          )?.availability;
+          const availability =
+            !cityTransitionPending &&
+            selectedCityId !== null &&
+            projectedAvailability?.cityId === selectedCityId
+              ? projectedAvailability
+              : undefined;
+          const unavailable =
+            !!availability &&
+            (!availability.inStock || availability.available <= 0);
+          const availabilityIssue =
+            cityTransitionPending ||
+            mutations.projectionPending ||
+            projectionFetching
+              ? null
+              : mutations.projectionDirty || isError
+                ? "unconfirmed"
+                : lineAvailabilityIssue(
+                    availability,
+                    line.quantity,
+                    selectedCityId,
+                  );
           return (
             <li key={line.id} className="p-4 sm:p-5">
               <article className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-4 sm:grid-cols-[6rem_minmax(0,1fr)_10rem]">
@@ -500,8 +521,12 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.increase}
-                      disabled={line.quantity >= maxQuantity || unavailable ||
-                        (!!availability && line.quantity >= availability.available)}
+                      disabled={
+                        line.quantity >= maxQuantity ||
+                        unavailable ||
+                        (!!availability &&
+                          line.quantity >= availability.available)
+                      }
                       onClick={() => mutateQuantity(line.id, 1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
@@ -544,9 +569,9 @@ export function CartPage({
       className="relative rounded-lg bg-gray-50 p-5 sm:p-6 lg:sticky lg:top-4"
     >
       <div className={cn(summaryBusyVisible && "opacity-70")}>
-      <h2 id="cart-summary-title" className="text-h3 font-bold text-gray-1000">
-        {copy.summary}
-      </h2>
+        <h2 id="cart-summary-title" className="text-h3 font-bold text-gray-1000">
+          {copy.summary}
+        </h2>
       {canUseCoupons ? (
         <CartCoupon
           coupon={cart.coupon}
@@ -633,7 +658,7 @@ export function CartPage({
         (cartFulfillable || mutations.projectionPending || projectionFetching || cityTransitionPending) && "invisible")}
       >
         {copy.availability.checkoutUnavailable}
-      </p>
+        </p>
       </div>
       {summaryBusyVisible ? (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center">
