@@ -30,10 +30,11 @@ export default async function CategoryPage({
     getLocale(),
     getTranslations("Common.productListing"),
   ]);
-
+  console.log("slug", slug);
   let category;
   try {
     category = await getCategoryBySlug(slug, locale);
+    console.log("category", category);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;

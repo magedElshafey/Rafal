@@ -2,12 +2,10 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { serverEnv } from "@/config/server-env";
 import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user.types";
 import type { AccountPreferences } from "@/features/account/settings/types/account-preferences.types";
 
-const MOCK_ACCOUNT_PREFERENCES_COOKIE_NAME =
-  "rafal_mock_account_preferences";
+const MOCK_ACCOUNT_PREFERENCES_COOKIE_NAME = "rafal_mock_account_preferences";
 
 const defaultPreferences: AccountPreferences = {
   receiveOrderUpdates: true,
@@ -17,12 +15,6 @@ const defaultPreferences: AccountPreferences = {
 type StoredAccountPreferences = AccountPreferences & {
   customerId: string;
 };
-
-function assertMockPreferencesAvailable() {
-  if (!serverEnv.useMockApi || process.env.NODE_ENV === "production") {
-    throw new Error("The mock Account Preferences store is unavailable.");
-  }
-}
 
 function parseStoredPreferences(
   value: string | undefined,
@@ -61,8 +53,6 @@ function parseStoredPreferences(
 export async function readMockAccountPreferences(
   user: AuthenticatedUser,
 ): Promise<AccountPreferences> {
-  assertMockPreferencesAvailable();
-
   const cookieStore = await cookies();
   const storedPreferences = parseStoredPreferences(
     cookieStore.get(MOCK_ACCOUNT_PREFERENCES_COOKIE_NAME)?.value,
@@ -82,8 +72,6 @@ export async function writeMockAccountPreferences(
   user: AuthenticatedUser,
   preferences: AccountPreferences,
 ): Promise<void> {
-  assertMockPreferencesAvailable();
-
   const storedPreferences: StoredAccountPreferences = {
     customerId: user.id,
     receiveOrderUpdates: preferences.receiveOrderUpdates,

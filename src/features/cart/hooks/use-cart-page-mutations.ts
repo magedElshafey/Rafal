@@ -360,10 +360,17 @@ export function useCartPageMutations({
       const line = cart?.lines.find((candidate) => candidate.id === lineId);
       if (!line) return;
       const quantity = (quantitiesRef.current.get(lineId)?.desired ?? line.quantity) + delta;
-      if (quantity < 1 || quantity > maxQuantity) return;
-      const availability = quantitiesRef.current.get(lineId)?.availability ?? line.availability;
-      if (delta > 0 && availability?.cityId === selectedCityId &&
-          (!availability.inStock || quantity > availability.available)) return;
+      if (quantity < 1 || (delta > 0 && quantity > maxQuantity)) return;
+      // Canonical responses omit availability; retain the selected city's last
+      // confirmed projection as a control ceiling, never as Checkout eligibility.
+      const projectedLine = queryClient.getQueryData<CartSnapshot>(
+        currentCartQueryKey(locale, selectedCityId),
+      )?.lines.find((candidate) => candidate.id === lineId);
+      const availability = projectedLine?.availability ?? line.availability;
+      if (selectedCityId !== null && availability?.cityId === selectedCityId) {
+        if (!availability.inStock || availability.available <= 0) return;
+        if (delta > 0 && quantity > availability.available) return;
+      }
 
       // TanStack cancels/reverts synchronously before returning its completion promise.
       void cancelProjection();

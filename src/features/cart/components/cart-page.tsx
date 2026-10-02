@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { CircleNotchIcon } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import type { Locale } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isCancelledError } from "@tanstack/react-query";
@@ -264,6 +265,7 @@ export function CartPage({
     refetch,
     projectionReady,
     projectionFetching,
+    projectedCart,
   } = useCurrentCart(locale, selectedCityId, initialCart);
   const [mutationError, setMutationError] = useState<string | null>(null);
   const handleMutationError = useCallback(
@@ -277,6 +279,17 @@ export function CartPage({
     onError: handleMutationError,
     selectedCityId,
   });
+  const summaryBusy = cityTransitionPending || projectionFetching || mutations.projectionPending;
+  const [showSummaryBusy, setShowSummaryBusy] = useState(false);
+  useEffect(() => {
+    if (!summaryBusy) return;
+    const timer = window.setTimeout(() => setShowSummaryBusy(true), 250);
+    return () => {
+      window.clearTimeout(timer);
+      setShowSummaryBusy(false);
+    };
+  }, [summaryBusy]);
+  const summaryBusyVisible = summaryBusy && showSummaryBusy;
   const mutateQuantity = (lineId: string, delta: -1 | 1) => {
     setMutationError(null);
     mutations.changeQuantity(lineId, delta);
@@ -357,6 +370,10 @@ export function CartPage({
       <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0 divide-y divide-gray-200">
         {cart.lines.map((line) => {
           const attributes = Object.entries(line.variant.attributes);
+          const projectedAvailability = projectedCart?.lines.find((candidate) => candidate.id === line.id)?.availability;
+          const availability = !cityTransitionPending && selectedCityId !== null &&
+            projectedAvailability?.cityId === selectedCityId ? projectedAvailability : undefined;
+          const unavailable = !!availability && (!availability.inStock || availability.available <= 0);
           const availabilityIssue = cityTransitionPending || mutations.projectionPending || projectionFetching ? null :
             mutations.projectionDirty || isError ? "unconfirmed" : lineAvailabilityIssue(
             line,
@@ -467,7 +484,7 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.decrease}
-                      disabled={line.quantity <= 1}
+                      disabled={line.quantity <= 1 || unavailable}
                       onClick={() => mutateQuantity(line.id, -1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
@@ -483,9 +500,8 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.increase}
-                      disabled={line.quantity >= maxQuantity ||
-                        (line.availability?.cityId === selectedCityId &&
-                          (!line.availability.inStock || line.quantity >= line.availability.available))}
+                      disabled={line.quantity >= maxQuantity || unavailable ||
+                        (!!availability && line.quantity >= availability.available)}
                       onClick={() => mutateQuantity(line.id, 1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
@@ -523,9 +539,11 @@ export function CartPage({
   const summarySection = (
     <aside
       aria-labelledby="cart-summary-title"
+      aria-busy={summaryBusy}
       dir={locale === "ar" ? "rtl" : "ltr"}
-      className="rounded-lg bg-gray-50 p-5 sm:p-6 lg:sticky lg:top-4"
+      className="relative rounded-lg bg-gray-50 p-5 sm:p-6 lg:sticky lg:top-4"
     >
+      <div className={cn(summaryBusyVisible && "opacity-70")}>
       <h2 id="cart-summary-title" className="text-h3 font-bold text-gray-1000">
         {copy.summary}
       </h2>
@@ -616,6 +634,12 @@ export function CartPage({
       >
         {copy.availability.checkoutUnavailable}
       </p>
+      </div>
+      {summaryBusyVisible ? (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <CircleNotchIcon className="size-4 animate-spin text-gray-700 motion-reduce:animate-none" />
+        </div>
+      ) : null}
     </aside>
   );
 
