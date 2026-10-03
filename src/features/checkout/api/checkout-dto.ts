@@ -4,55 +4,28 @@ export type CheckoutApiResponse<TData> = {
   data: TData;
 };
 
-export type CheckoutShippingMethodDto = {
-  id: number;
-  code: string;
-  name: string;
-  eta_label: string;
-  price: string;
-  is_pickup: boolean;
-};
-
-export type CheckoutShippingMethodsResponseDto = CheckoutApiResponse<
-  readonly CheckoutShippingMethodDto[]
->;
-
-export type CheckoutPaymentMethodDto = {
-  label: string;
-  icon: string;
-};
-
-export type CheckoutPaymentMethodsResponseDto = CheckoutApiResponse<
-  Readonly<Record<string, CheckoutPaymentMethodDto>>
->;
-
-export type CheckoutOneTimeAddressDto = {
-  recipient_name: string;
-  recipient_phone: string;
-  district: string;
-  street_details: string;
-};
-
 type CheckoutQuoteRequestBaseDto = {
-  city_id: number;
-  shipping_method_id?: number;
+  city_id: string;
+  shipping_method_id?: string;
 };
 
 export type CheckoutSavedAddressQuoteRequestDto =
   CheckoutQuoteRequestBaseDto & {
-    address_id: number;
-    address?: never;
+    address_id: string;
   };
 
-export type CheckoutOneTimeAddressQuoteRequestDto =
+export type CheckoutRawAddressQuoteRequestDto =
   CheckoutQuoteRequestBaseDto & {
-    address_id?: never;
-    address: CheckoutOneTimeAddressDto;
+    "address[recipient_name]": string;
+    "address[recipient_phone]": string;
+    "address[city_id]": string;
+    "address[district]": string;
+    "address[street_details]": string;
   };
 
 export type CheckoutQuoteRequestDto =
   | CheckoutSavedAddressQuoteRequestDto
-  | CheckoutOneTimeAddressQuoteRequestDto;
+  | CheckoutRawAddressQuoteRequestDto;
 
 export type CheckoutQuoteTotalsLineDto = {
   unit_regular_price: string;
@@ -84,16 +57,15 @@ export type CheckoutQuoteTotalsDto = {
   total: string;
   vat: {
     rate: string;
-    included_amount: string;
+    amount: string;
   };
   currency: string;
 };
 
 export type CheckoutQuoteCouponDto = {
   code: string;
-  name: string;
-  applied: boolean;
-  discount: string;
+  valid: boolean;
+  reason: string | null;
 };
 
 export type CheckoutQuoteShippingOptionDto = {
@@ -120,12 +92,23 @@ export type CheckoutQuoteLocationDto = {
   };
 };
 
+export type CheckoutUnavailableLineDto = {
+  cart_item_id: number;
+  product_name: {
+    ar: string;
+    en: string;
+  };
+  requested: number;
+  available: number;
+  variant_total_requested: number;
+};
+
 export type CheckoutQuoteDataDto = {
   totals: CheckoutQuoteTotalsDto;
   shipping_options: readonly CheckoutQuoteShippingOptionDto[];
   fulfillable: boolean;
   warehouse: CheckoutQuoteWarehouseDto | null;
-  unavailable_lines: readonly unknown[];
+  unavailable_lines: readonly CheckoutUnavailableLineDto[];
   coupon: CheckoutQuoteCouponDto | null;
   location: CheckoutQuoteLocationDto;
 };
@@ -134,7 +117,5 @@ export type CheckoutQuoteResponseDto =
   CheckoutApiResponse<CheckoutQuoteDataDto>;
 
 export const checkoutContractEndpoints = {
-  shippingMethods: "/shipping-methods",
-  paymentMethods: "/checkout/payment-methods",
   quote: "/checkout/quote",
 } as const;

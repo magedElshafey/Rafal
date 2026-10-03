@@ -1,85 +1,23 @@
 import type {
-  CheckoutPaymentMethodsResponseDto,
   CheckoutQuoteDataDto,
   CheckoutQuoteLocationDto,
-  CheckoutQuoteRequestDto,
   CheckoutQuoteShippingOptionDto,
   CheckoutQuoteTotalsDto,
   CheckoutQuoteTotalsLineDto,
   CheckoutQuoteWarehouseDto,
-  CheckoutShippingMethodDto,
 } from "@/features/checkout/api/checkout-dto";
 import type {
-  CheckoutPaymentMethod,
   CheckoutQuote,
   CheckoutQuoteLocation,
-  CheckoutQuoteRequest,
-  CheckoutQuoteShippingOption,
+  CheckoutShippingOption,
   CheckoutQuoteTotals,
   CheckoutQuoteTotalsLine,
   CheckoutQuoteWarehouse,
-  CheckoutShippingMethod,
 } from "@/features/checkout/types/checkout.types";
 
-export function mapCheckoutPaymentMethods(
-  data: CheckoutPaymentMethodsResponseDto["data"],
-): readonly CheckoutPaymentMethod[] {
-  return Object.entries(data).map(([code, method]) => ({
-    code,
-    label: method.label,
-    icon: method.icon,
-  }));
-}
-
-export function mapCheckoutShippingMethod(
-  method: CheckoutShippingMethodDto,
-): CheckoutShippingMethod {
-  return {
-    id: method.id,
-    code: method.code,
-    name: method.name,
-    etaLabel: method.eta_label,
-    price: method.price,
-    isPickup: method.is_pickup,
-  };
-}
-
-export function mapCheckoutQuoteRequest(
-  input: CheckoutQuoteRequest,
-): CheckoutQuoteRequestDto {
-  const base = {
-    city_id: input.cityId,
-    ...(input.shippingMethodId === undefined
-      ? {}
-      : { shipping_method_id: input.shippingMethodId }),
-  };
-
-  if (input.addressId !== undefined) {
-    if (input.address !== undefined) {
-      throw new Error("Checkout quote requires exactly one address source.");
-    }
-
-    return { ...base, address_id: input.addressId };
-  }
-
-  if (input.address === undefined) {
-    throw new Error("Checkout quote requires exactly one address source.");
-  }
-
-  return {
-    ...base,
-    address: {
-      recipient_name: input.address.recipientName,
-      recipient_phone: input.address.recipientPhone,
-      district: input.address.district,
-      street_details: input.address.streetDetails,
-    },
-  };
-}
-
-export function mapCheckoutQuoteShippingOption(
+function mapCheckoutQuoteShippingOption(
   option: CheckoutQuoteShippingOptionDto,
-): CheckoutQuoteShippingOption {
+): CheckoutShippingOption {
   return {
     id: option.id,
     code: option.code,
@@ -88,11 +26,10 @@ export function mapCheckoutQuoteShippingOption(
     price: option.price,
     fee: option.fee,
     isFree: option.is_free,
-    isPickup: option.is_pickup,
   };
 }
 
-export function mapCheckoutQuoteWarehouse(
+function mapCheckoutQuoteWarehouse(
   warehouse: CheckoutQuoteWarehouseDto | null,
 ): CheckoutQuoteWarehouse | null {
   return warehouse
@@ -103,7 +40,7 @@ export function mapCheckoutQuoteWarehouse(
     : null;
 }
 
-export function mapCheckoutQuoteLocation(
+function mapCheckoutQuoteLocation(
   location: CheckoutQuoteLocationDto,
 ): CheckoutQuoteLocation {
   return {
@@ -152,7 +89,7 @@ function mapCheckoutQuoteTotals(
     total: totals.total,
     vat: {
       rate: totals.vat.rate,
-      includedAmount: totals.vat.included_amount,
+      amount: totals.vat.amount,
     },
     currency: totals.currency,
   };
@@ -161,16 +98,28 @@ function mapCheckoutQuoteTotals(
 export function mapCheckoutQuote(data: CheckoutQuoteDataDto): CheckoutQuote {
   return {
     totals: mapCheckoutQuoteTotals(data.totals),
-    shippingOptions: data.shipping_options.map(mapCheckoutQuoteShippingOption),
+    // Pickup options are contract-valid, but delivery is the only selectable
+    // fulfillment method in the current Checkout scope.
+    shippingOptions: data.shipping_options
+      .filter((option) => !option.is_pickup)
+      .map(mapCheckoutQuoteShippingOption),
     fulfillable: data.fulfillable,
     warehouse: mapCheckoutQuoteWarehouse(data.warehouse),
-    unavailableLines: data.unavailable_lines,
+    unavailableLines: data.unavailable_lines.map((line) => ({
+      cartItemId: line.cart_item_id,
+      productName: {
+        ar: line.product_name.ar,
+        en: line.product_name.en,
+      },
+      requested: line.requested,
+      available: line.available,
+      variantTotalRequested: line.variant_total_requested,
+    })),
     coupon: data.coupon
       ? {
           code: data.coupon.code,
-          name: data.coupon.name,
-          applied: data.coupon.applied,
-          discount: data.coupon.discount,
+          valid: data.coupon.valid,
+          reason: data.coupon.reason,
         }
       : null,
     location: mapCheckoutQuoteLocation(data.location),

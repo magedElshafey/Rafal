@@ -1,6 +1,4 @@
 import type {
-  CheckoutPaymentMethodDto,
-  CheckoutPaymentMethodsResponseDto,
   CheckoutQuoteCouponDto,
   CheckoutQuoteLocationDto,
   CheckoutQuoteResponseDto,
@@ -8,8 +6,7 @@ import type {
   CheckoutQuoteTotalsDto,
   CheckoutQuoteTotalsLineDto,
   CheckoutQuoteWarehouseDto,
-  CheckoutShippingMethodDto,
-  CheckoutShippingMethodsResponseDto,
+  CheckoutUnavailableLineDto,
 } from "@/features/checkout/api/checkout-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 
@@ -20,30 +17,25 @@ export class CheckoutContractError extends Error {
   }
 }
 
-const {
-  parseArray,
-  parseBoolean,
-  parseNonEmptyString,
-  parseRecord,
-  parseString,
-} = createRuntimeValidators(
-  (path, expected) => new CheckoutContractError(path, expected),
-);
+const { parseArray, parseBoolean, parseRecord, parseString } =
+  createRuntimeValidators(
+    (path, expected) => new CheckoutContractError(path, expected),
+  );
 
 function positiveInteger(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
+  if (!Number.isSafeInteger(value) || (value as number) <= 0) {
     throw new CheckoutContractError(path, "a positive integer");
   }
 
-  return value;
+  return value as number;
 }
 
 function nonNegativeInteger(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+  if (!Number.isSafeInteger(value) || (value as number) < 0) {
     throw new CheckoutContractError(path, "a non-negative integer");
   }
 
-  return value;
+  return value as number;
 }
 
 function decimalString(value: unknown, path: string): string {
@@ -74,34 +66,6 @@ function parseResponseEnvelope(value: unknown) {
   };
 }
 
-function parseShippingMethod(
-  value: unknown,
-  path: string,
-): CheckoutShippingMethodDto {
-  const source = parseRecord(value, path);
-
-  return {
-    id: positiveInteger(source.id, `${path}.id`),
-    code: parseNonEmptyString(source.code, `${path}.code`),
-    name: parseString(source.name, `${path}.name`),
-    eta_label: parseString(source.eta_label, `${path}.eta_label`),
-    price: decimalString(source.price, `${path}.price`),
-    is_pickup: parseBoolean(source.is_pickup, `${path}.is_pickup`),
-  };
-}
-
-function parsePaymentMethod(
-  value: unknown,
-  path: string,
-): CheckoutPaymentMethodDto {
-  const source = parseRecord(value, path);
-
-  return {
-    label: parseString(source.label, `${path}.label`),
-    icon: parseString(source.icon, `${path}.icon`),
-  };
-}
-
 function parseQuoteShippingOption(
   value: unknown,
   path: string,
@@ -110,7 +74,7 @@ function parseQuoteShippingOption(
 
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    code: parseNonEmptyString(source.code, `${path}.code`),
+    code: parseString(source.code, `${path}.code`),
     name: parseString(source.name, `${path}.name`),
     eta_label: parseString(source.eta_label, `${path}.eta_label`),
     price: decimalString(source.price, `${path}.price`),
@@ -249,10 +213,7 @@ function parseTotals(value: unknown, path: string): CheckoutQuoteTotalsDto {
     total: decimalString(source.total, `${path}.total`),
     vat: {
       rate: decimalString(vat.rate, `${path}.vat.rate`),
-      included_amount: decimalString(
-        vat.included_amount,
-        `${path}.vat.included_amount`,
-      ),
+      amount: decimalString(vat.amount, `${path}.vat.amount`),
     },
     currency: parseString(source.currency, `${path}.currency`),
   };
@@ -266,40 +227,32 @@ function parseCoupon(
 
   return {
     code: parseString(source.code, `${path}.code`),
-    name: parseString(source.name, `${path}.name`),
-    applied: parseBoolean(source.applied, `${path}.applied`),
-    discount: decimalString(source.discount, `${path}.discount`),
+    valid: parseBoolean(source.valid, `${path}.valid`),
+    reason:
+      source.reason === null
+        ? null
+        : parseString(source.reason, `${path}.reason`),
   };
 }
 
-export function parseCheckoutShippingMethodsResponse(
+function parseUnavailableLine(
   value: unknown,
-): CheckoutShippingMethodsResponseDto {
-  const { source, success, message } = parseResponseEnvelope(value);
+  path: string,
+): CheckoutUnavailableLineDto {
+  const source = parseRecord(value, path);
+  const productName = parseRecord(source.product_name, `${path}.product_name`);
 
   return {
-    success,
-    message,
-    data: parseArray(source.data, "response.data").map((method, index) =>
-      parseShippingMethod(method, `response.data[${index}]`),
-    ),
-  };
-}
-
-export function parseCheckoutPaymentMethodsResponse(
-  value: unknown,
-): CheckoutPaymentMethodsResponseDto {
-  const { source, success, message } = parseResponseEnvelope(value);
-  const methods = parseRecord(source.data, "response.data");
-
-  return {
-    success,
-    message,
-    data: Object.fromEntries(
-      Object.entries(methods).map(([code, method]) => [
-        parseNonEmptyString(code, "response.data key"),
-        parsePaymentMethod(method, `response.data.${code}`),
-      ]),
+    cart_item_id: positiveInteger(source.cart_item_id, `${path}.cart_item_id`),
+    product_name: {
+      ar: parseString(productName.ar, `${path}.product_name.ar`),
+      en: parseString(productName.en, `${path}.product_name.en`),
+    },
+    requested: positiveInteger(source.requested, `${path}.requested`),
+    available: nonNegativeInteger(source.available, `${path}.available`),
+    variant_total_requested: positiveInteger(
+      source.variant_total_requested,
+      `${path}.variant_total_requested`,
     ),
   };
 }
@@ -335,6 +288,11 @@ export function parseCheckoutQuoteResponse(
       unavailable_lines: parseArray(
         data.unavailable_lines,
         "response.data.unavailable_lines",
+      ).map((line, index) =>
+        parseUnavailableLine(
+          line,
+          `response.data.unavailable_lines[${index}]`,
+        ),
       ),
       coupon:
         data.coupon === null

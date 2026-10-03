@@ -1,37 +1,32 @@
-export type CheckoutPaymentMethod = {
-  code: string;
-  label: string;
-  icon: string;
-};
-
-export type CheckoutShippingMethod = {
-  id: number;
-  code: string;
-  name: string;
-  etaLabel: string;
-  price: string;
-  isPickup: boolean;
-};
-
-export type CheckoutOneTimeAddress = {
+export type CheckoutAddress = Readonly<{
   recipientName: string;
   recipientPhone: string;
+  cityId: number;
   district: string;
   streetDetails: string;
-};
+}>;
 
-type CheckoutQuoteRequestBase = {
-  cityId: number;
+export type CheckoutDestination =
+  | Readonly<{
+      kind: "saved-address";
+      addressId: number;
+      cityId: number;
+    }>
+  | Readonly<{
+      kind: "one-time-address";
+      address: CheckoutAddress;
+    }>
+  | Readonly<{
+      kind: "gift-recipient";
+      recipient: CheckoutAddress;
+    }>;
+
+export type CheckoutQuoteRequest = Readonly<{
+  destination: CheckoutDestination;
   shippingMethodId?: number;
-};
+}>;
 
-export type CheckoutQuoteRequest = CheckoutQuoteRequestBase &
-  (
-    | { addressId: number; address?: never }
-    | { addressId?: never; address: CheckoutOneTimeAddress }
-  );
-
-export type CheckoutQuoteShippingOption = {
+export type CheckoutShippingOption = Readonly<{
   id: number;
   code: string;
   name: string;
@@ -39,23 +34,22 @@ export type CheckoutQuoteShippingOption = {
   price: string;
   fee: string;
   isFree: boolean;
-  isPickup: boolean;
-};
+}>;
 
-export type CheckoutQuoteWarehouse = {
+export type CheckoutQuoteWarehouse = Readonly<{
   id: number;
   name: string;
-};
+}>;
 
-export type CheckoutQuoteLocation = {
+export type CheckoutQuoteLocation = Readonly<{
   inCoverage: boolean;
-  city: {
+  city: Readonly<{
     id: number;
     name: string;
-  };
-};
+  }>;
+}>;
 
-export type CheckoutQuoteTotalsLine = {
+export type CheckoutQuoteTotalsLine = Readonly<{
   unitRegularPrice: string;
   unitPrice: string;
   discountPerUnit: string;
@@ -64,9 +58,9 @@ export type CheckoutQuoteTotalsLine = {
   personalizationFee: string;
   lineTotal: string;
   discountActive: boolean;
-};
+}>;
 
-export type CheckoutQuoteTotals = {
+export type CheckoutQuoteTotals = Readonly<{
   lines: readonly CheckoutQuoteTotalsLine[];
   itemsCount: number;
   linesCount: number;
@@ -76,33 +70,43 @@ export type CheckoutQuoteTotals = {
   couponDiscount: string;
   giftWrapFee: string;
   shippingFee: string | null;
-  freeShipping: {
+  freeShipping: Readonly<{
     enabled: boolean;
     threshold: string | null;
     qualifies: boolean;
     remaining: string | null;
-  };
+  }>;
   total: string;
-  vat: {
+  vat: Readonly<{
     rate: string;
-    includedAmount: string;
-  };
+    amount: string;
+  }>;
   currency: string;
-};
+}>;
 
-export type CheckoutQuoteCoupon = {
+export type CheckoutQuoteCoupon = Readonly<{
   code: string;
-  name: string;
-  applied: boolean;
-  discount: string;
-};
+  valid: boolean;
+  reason: string | null;
+}>;
 
-export type CheckoutQuote = {
+export type CheckoutUnavailableLine = Readonly<{
+  cartItemId: number;
+  productName: Readonly<{
+    ar: string;
+    en: string;
+  }>;
+  requested: number;
+  available: number;
+  variantTotalRequested: number;
+}>;
+
+export type CheckoutQuote = Readonly<{
   totals: CheckoutQuoteTotals;
-  shippingOptions: readonly CheckoutQuoteShippingOption[];
+  shippingOptions: readonly CheckoutShippingOption[];
   fulfillable: boolean;
   warehouse: CheckoutQuoteWarehouse | null;
-  unavailableLines: readonly unknown[];
+  unavailableLines: readonly CheckoutUnavailableLine[];
   coupon: CheckoutQuoteCoupon | null;
   location: CheckoutQuoteLocation;
-};
+}>;
