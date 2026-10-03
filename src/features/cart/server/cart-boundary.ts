@@ -182,7 +182,12 @@ export async function updateCurrentCartGift(
 ): Promise<CartSnapshot> {
   const identity = await resolveCartTransportIdentity();
   const body: UpdateCartGiftDto = input.kind === "disable-gift"
-    ? { is_gift: false, gift_wrap: input.giftWrap }
+    ? {
+        is_gift: false,
+        gift_wrap: input.giftWrap,
+        is_anonymous: input.isAnonymous,
+        gift_message: input.message,
+      }
     : {
         is_gift: true,
         gift_wrap: input.giftWrap,

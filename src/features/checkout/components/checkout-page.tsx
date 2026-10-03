@@ -18,6 +18,10 @@ import {
   type CheckoutDestinationCopy,
 } from "@/features/checkout/components/checkout-destination-section";
 import {
+  CheckoutGiftWrap,
+  type CheckoutGiftWrapCopy,
+} from "@/features/checkout/components/checkout-gift-wrap";
+import {
   CheckoutShippingSection,
   type CheckoutShippingCopy,
 } from "@/features/checkout/components/checkout-shipping-section";
@@ -31,6 +35,7 @@ import { useCheckoutPlace } from "@/features/checkout/hooks/use-checkout-place";
 import type {
   CheckoutBuyer,
   CheckoutDestination,
+  CheckoutGiftWrapConfig,
   CheckoutPlaceRequest,
   CheckoutQuoteRequest,
   CheckoutUnavailableLine,
@@ -51,6 +56,7 @@ export type CheckoutPageCopy = {
   };
   destination: CheckoutDestinationCopy;
   buyer: CheckoutBuyerCopy;
+  giftWrap: CheckoutGiftWrapCopy;
   shipping: CheckoutShippingCopy;
   summary: CheckoutSummaryCopy;
   place: {
@@ -69,7 +75,8 @@ type CheckoutPageProps = {
   addressesUnavailable: boolean;
   cartEmpty: boolean;
   copy: CheckoutPageCopy;
-  initialGift: CartSnapshot["gift"] | null;
+  giftWrapConfig: CheckoutGiftWrapConfig | null;
+  initialGift: CartSnapshot["gift"];
   initialDestination: CheckoutDestination | null;
   isAuthenticated: boolean;
   locale: Locale;
@@ -81,6 +88,7 @@ export function CheckoutPage({
   addressesUnavailable,
   cartEmpty,
   copy,
+  giftWrapConfig,
   initialGift,
   initialDestination,
   isAuthenticated,
@@ -91,10 +99,14 @@ export function CheckoutPage({
   const queryClient = useQueryClient();
   const placeMutation = useCheckoutPlace(locale);
   const placeInFlightRef = useRef(false);
+  const recipientGiftPendingRef = useRef(false);
+  const giftAddOnPendingRef = useRef(false);
   const [destination, setDestination] =
     useState<CheckoutDestination | null>(initialDestination);
   const [gift, setGift] = useState(initialGift);
-  const [giftMutationPending, setGiftMutationPending] = useState(false);
+  const [recipientGiftPending, setRecipientGiftPending] = useState(false);
+  const [giftAddOnPending, setGiftAddOnPending] = useState(false);
+  const [giftMessageDirty, setGiftMessageDirty] = useState(false);
   const [guestBuyer, setGuestBuyer] = useState<
     Extract<CheckoutBuyer, { kind: "guest" }> | null
   >(null);
@@ -110,6 +122,16 @@ export function CheckoutPage({
       }
     : null;
   const quoteQuery = useCheckoutQuote(locale, request);
+
+  const setRecipientGiftMutationPending = (pending: boolean) => {
+    recipientGiftPendingRef.current = pending;
+    setRecipientGiftPending(pending);
+  };
+
+  const setGiftAddOnMutationPending = (pending: boolean) => {
+    giftAddOnPendingRef.current = pending;
+    setGiftAddOnPending(pending);
+  };
 
   const invalidateTarget = (nextRequest: CheckoutQuoteRequest) => {
     void queryClient.invalidateQueries({
@@ -154,6 +176,28 @@ export function CheckoutPage({
         streetDetails: recipient.streetDetails,
       },
     });
+  };
+
+  const persistGiftAddOn = async (
+    nextGift: CartSnapshot["gift"],
+    refreshQuote: boolean,
+  ) => {
+    setGift(nextGift);
+    setPlaceUnavailableLines([]);
+    placeMutation.reset();
+    if (!refreshQuote || !destination) return;
+
+    const refreshed = await quoteQuery.refetch();
+    if (
+      refreshed.isSuccess &&
+      shippingMethodId !== null &&
+      !refreshed.data.shippingOptions.some(
+        (option) => option.id === shippingMethodId,
+      )
+    ) {
+      invalidateTarget({ destination });
+      setShippingMethodId(null);
+    }
   };
 
   if (cartEmpty) {
@@ -208,14 +252,22 @@ export function CheckoutPage({
       quote.location.inCoverage &&
       quote.fulfillable &&
       selectedShippingOption &&
-      !giftMutationPending &&
+      !recipientGiftPending &&
+      !giftAddOnPending &&
+      (!gift.isGift || !giftMessageDirty) &&
       placeUnavailableLines.length === 0 &&
       !placeCompleted &&
       !placeMutation.isPending,
   );
 
   const placeOrder = async () => {
-    if (!placeReady || !placeRequest || placeInFlightRef.current) return;
+    if (
+      !placeReady ||
+      !placeRequest ||
+      placeInFlightRef.current ||
+      recipientGiftPendingRef.current ||
+      giftAddOnPendingRef.current
+    ) return;
     placeInFlightRef.current = true;
     placeMutation.reset();
     try {
@@ -269,7 +321,8 @@ export function CheckoutPage({
             isAuthenticated={isAuthenticated}
             locale={locale}
             onCommit={commitDestination}
-            onGiftPendingChange={setGiftMutationPending}
+            giftMutationDisabled={giftAddOnPending}
+            onGiftPendingChange={setRecipientGiftMutationPending}
             onGiftPersisted={persistGiftDestination}
           />
           <CheckoutShippingSection
@@ -294,6 +347,16 @@ export function CheckoutPage({
               }}
             />
           ) : null}
+          <CheckoutGiftWrap
+            config={giftWrapConfig}
+            copy={copy.giftWrap}
+            disabled={recipientGiftPending}
+            gift={gift}
+            locale={locale}
+            onMessageDirtyChange={setGiftMessageDirty}
+            onPendingChange={setGiftAddOnMutationPending}
+            onPersisted={persistGiftAddOn}
+          />
         </div>
         <div dir={locale === "ar" ? "rtl" : "ltr"}>
           <CheckoutSummary

@@ -74,6 +74,7 @@ type CheckoutDestinationSectionProps = {
   committedDestination: CheckoutDestination | null;
   copy: CheckoutDestinationCopy;
   gift: CartSnapshot["gift"] | null;
+  giftMutationDisabled: boolean;
   isAuthenticated: boolean;
   locale: Locale;
   onCommit: (destination: CheckoutDestination) => void;
@@ -368,13 +369,14 @@ export function CheckoutDestinationSection({
   committedDestination,
   copy,
   gift,
+  giftMutationDisabled,
   isAuthenticated,
   locale,
   onCommit,
   onGiftPendingChange,
   onGiftPersisted,
 }: CheckoutDestinationSectionProps) {
-  const giftRecipient = gift?.recipient ?? null;
+  const giftRecipient = gift?.isGift ? gift.recipient : null;
   const [showOneTime, setShowOneTime] = useState(
     giftRecipient === null && addresses.length === 0,
   );
@@ -382,8 +384,7 @@ export function CheckoutDestinationSection({
     committedDestination?.kind === "one-time-address";
   const showOneTimeEditor = showOneTime || hasCommittedOneTimeAddress;
 
-  if (gift?.recipient) {
-    const giftRecipient = gift.recipient;
+  if (giftRecipient && gift) {
     return (
       <CheckoutStepSection id="checkout-destination" step="1" title={copy.title}>
         <div className="rounded-md border border-gold-500 bg-gold-50/50 p-4">
@@ -402,6 +403,7 @@ export function CheckoutDestinationSection({
           </div>
           <CheckoutGiftRecipientEditor
             copy={copy.gift.editor}
+            disabled={giftMutationDisabled}
             gift={gift}
             locale={locale}
             onPendingChange={onGiftPendingChange}

@@ -21,7 +21,16 @@ function parseInput(value: unknown): UpdateCartGiftInput | null {
   if (!isRecord(value)) return null;
   if (typeof value.giftWrap !== "boolean") return null;
   if (value.kind === "disable-gift") {
-    return { kind: "disable-gift", giftWrap: value.giftWrap };
+    if (
+      typeof value.isAnonymous !== "boolean" ||
+      (value.message !== null && typeof value.message !== "string")
+    ) return null;
+    return {
+      kind: "disable-gift",
+      giftWrap: value.giftWrap,
+      isAnonymous: value.isAnonymous,
+      message: value.message?.trim() || null,
+    };
   }
   if (value.kind !== "recipient" || !isRecord(value.recipient)) return null;
   if (

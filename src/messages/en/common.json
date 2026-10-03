@@ -121,6 +121,18 @@
       "invalidPhone": "Enter a valid Saudi mobile number.",
       "validation": "Review the required buyer information."
     },
+    "giftWrap": {
+      "title": "Add gift wrapping",
+      "description": "Make your order ready for gifting.",
+      "messageLabel": "Gift message (optional)",
+      "saveMessage": "Save message",
+      "savingMessage": "Saving message",
+      "updating": "Updating gift options...",
+      "unsaved": "Save this message before placing your order or changing gift wrapping.",
+      "validationError": "The gift options could not be saved. Review them and try again.",
+      "sessionError": "Your Cart session is unavailable. Refresh and try again.",
+      "serviceError": "Gift options could not be updated. Try again."
+    },
     "summary": {
       "title": "Order summary",
       "waiting": "The summary will appear after you select a shipping address.",

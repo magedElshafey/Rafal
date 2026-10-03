@@ -13,7 +13,11 @@ import {
   CheckoutPage,
   type CheckoutPageCopy,
 } from "@/features/checkout/components/checkout-page";
-import type { CheckoutDestination } from "@/features/checkout/types/checkout.types";
+import type {
+  CheckoutDestination,
+  CheckoutGiftWrapConfig,
+} from "@/features/checkout/types/checkout.types";
+import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -46,12 +50,26 @@ async function readAddresses(
   }
 }
 
+async function readGiftWrapConfig(): Promise<CheckoutGiftWrapConfig | null> {
+  try {
+    const settings = await getPublicSettings();
+    return {
+      enabled: settings.giftWrapEnabled,
+      fee: settings.giftWrapFee,
+      currency: settings.currency,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default async function CheckoutRoute() {
   const locale = await getLocale();
-  const [cart, user, t] = await Promise.all([
+  const [cart, user, t, giftWrapConfig] = await Promise.all([
     getCurrentCart(locale),
     getCurrentUser(),
     getTranslations({ locale, namespace: "Common.checkoutPage" }),
+    readGiftWrapConfig(),
   ]);
   const giftRecipient = cart.gift.isGift ? cart.gift.recipient : null;
   const addressState =
@@ -178,6 +196,18 @@ export default async function CheckoutRoute() {
       invalidPhone: t("buyer.invalidPhone"),
       validation: t("buyer.validation"),
     },
+    giftWrap: {
+      title: t("giftWrap.title"),
+      description: t("giftWrap.description"),
+      messageLabel: t("giftWrap.messageLabel"),
+      saveMessage: t("giftWrap.saveMessage"),
+      savingMessage: t("giftWrap.savingMessage"),
+      updating: t("giftWrap.updating"),
+      unsaved: t("giftWrap.unsaved"),
+      validationError: t("giftWrap.validationError"),
+      sessionError: t("giftWrap.sessionError"),
+      serviceError: t("giftWrap.serviceError"),
+    },
     shipping: {
       title: t("shipping.title"),
       waiting: t("shipping.waiting"),
@@ -239,7 +269,8 @@ export default async function CheckoutRoute() {
         addressesUnavailable={addressState.unavailable}
         cartEmpty={cart.lines.length === 0}
         copy={copy}
-        initialGift={giftRecipient ? cart.gift : null}
+        giftWrapConfig={giftWrapConfig}
+        initialGift={cart.gift}
         initialDestination={initialDestination}
         isAuthenticated={user !== null}
         summaryItems={cart.lines.map((line) => ({

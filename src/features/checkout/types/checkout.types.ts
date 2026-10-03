@@ -26,6 +26,12 @@ export type CheckoutQuoteRequest = Readonly<{
   shippingMethodId?: number;
 }>;
 
+export type CheckoutGiftWrapConfig = Readonly<{
+  enabled: boolean;
+  fee: number;
+  currency: string;
+}>;
+
 export type CheckoutBuyer =
   | Readonly<{ kind: "authenticated" }>
   | Readonly<{

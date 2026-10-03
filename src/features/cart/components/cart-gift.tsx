@@ -360,7 +360,12 @@ export function CartGift({
               return;
             }
             if (gift.isGift) {
-              void runMutation({ kind: "disable-gift", giftWrap: gift.giftWrap });
+              void runMutation({
+                kind: "disable-gift",
+                giftWrap: gift.giftWrap,
+                isAnonymous: gift.isAnonymous,
+                message: gift.message,
+              });
               return;
             }
             setEditing(null);

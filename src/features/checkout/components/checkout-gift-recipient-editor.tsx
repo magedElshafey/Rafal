@@ -65,12 +65,14 @@ function errorMessage(error: CartGiftError, copy: CheckoutGiftRecipientEditorCop
 
 export function CheckoutGiftRecipientEditor({
   copy,
+  disabled,
   gift,
   locale,
   onPendingChange,
   onPersisted,
 }: {
   copy: CheckoutGiftRecipientEditorCopy;
+  disabled: boolean;
   gift: CartSnapshot["gift"];
   locale: Locale;
   onPendingChange: (pending: boolean) => void;
@@ -108,7 +110,7 @@ export function CheckoutGiftRecipientEditor({
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!draft || mutation.isPending) return;
+    if (!draft || mutation.isPending || disabled) return;
 
     const nextErrors = validateGiftRecipientDraft(
       draft,
@@ -177,6 +179,7 @@ export function CheckoutGiftRecipientEditor({
         type="button"
         variant="ghost"
         className="mt-4 px-0 text-gold-700"
+        disabled={disabled}
         onClick={() => {
           setDraft(giftRecipientDraft(recipient));
           setFieldErrors({});
@@ -194,13 +197,13 @@ export function CheckoutGiftRecipientEditor({
         title={copy.title}
         closeLabel={copy.close}
         showClose
-        dismissible={!mutation.isPending}
+        dismissible={!mutation.isPending && !disabled}
         returnFocusRef={editButtonRef}
         className="sm:max-w-2xl"
       >
         {draft ? (
           <form className="pt-2" noValidate onSubmit={submit}>
-            <fieldset disabled={mutation.isPending}>
+            <fieldset disabled={mutation.isPending || disabled}>
               <GiftRecipientFields
                 busy={mutation.isPending}
                 copy={copy.fields}

@@ -21,7 +21,12 @@ export type CartGiftRecipientInput = {
 // User intent, not the Laravel request DTO. The caller supplies the canonical
 // companion value required by Laravel so the mutation needs no preflight read.
 export type UpdateCartGiftInput =
-  | { kind: "disable-gift"; giftWrap: boolean }
+  | {
+      kind: "disable-gift";
+      giftWrap: boolean;
+      isAnonymous: boolean;
+      message: string | null;
+    }
   | {
       kind: "recipient";
       giftWrap: boolean;

@@ -102,7 +102,12 @@ export type AddCartItemDto = {
 export type UpdateCartItemDto = { quantity: number };
 export type ApplyCartCouponDto = { code: string };
 export type UpdateCartGiftDto =
-  | { is_gift: false; gift_wrap: boolean }
+  | {
+      is_gift: false;
+      gift_wrap: boolean;
+      is_anonymous: boolean;
+      gift_message: string | null;
+    }
   | {
       is_gift: true;
       gift_wrap: boolean;
