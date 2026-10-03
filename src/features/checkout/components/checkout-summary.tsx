@@ -1,6 +1,7 @@
 import type { Locale } from "next-intl";
 
 import { AppImage } from "@/components/ui/app-image";
+import { ChevronDownIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { CartMoney } from "@/features/cart/types/cart.types";
 import type { CheckoutQuote } from "@/features/checkout/types/checkout.types";
@@ -32,6 +33,7 @@ export type CheckoutSummaryCopy = {
   total: string;
   quantity: string;
   personalizedWith: string;
+  products: string;
 };
 
 type CheckoutSummaryProps = {
@@ -91,62 +93,76 @@ export function CheckoutSummary({
         {copy.title}
       </h2>
 
-      <ul className="mt-5 divide-y divide-gray-200">
-        {items.map((item) => (
-          <li
-            key={item.id}
-            className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-3 py-4 first:pt-0 sm:grid-cols-[4rem_minmax(0,1fr)_auto]"
-          >
-            <Link
-              href={`/products/${item.productSlug}`}
-              className="block self-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <AppImage
-                src={item.imageSrc}
-                alt={item.name}
-                aspectRatio="1 / 1"
-                sizes="64px"
-                frameClassName="rounded-md"
-              />
-            </Link>
-            <div className="min-w-0">
-              <Link
-                href={`/products/${item.productSlug}`}
-                className="type-body-sm font-medium text-gray-1000 hover:text-gold-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <details className="group mt-5">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-md font-medium text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+          <span>
+            {copy.products} ({new Intl.NumberFormat(locale).format(items.length)})
+          </span>
+          <ChevronDownIcon
+            aria-hidden="true"
+            className="size-4 shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+          />
+        </summary>
+        <div className="max-h-[60dvh] overflow-y-auto pe-1 lg:max-h-80">
+          <ul className="divide-y divide-gray-200">
+            {items.map((item) => (
+              <li
+                key={item.id}
+                className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-3 py-4 sm:grid-cols-[4rem_minmax(0,1fr)_auto]"
               >
-                {item.name}
-              </Link>
-              <p className="mt-1 type-caption text-gray-500">
-                {copy.quantity}: <bdi>{item.quantity}</bdi>
-              </p>
-              {item.variantAttributes.length > 0 ? (
-                <dl className="mt-1 flex flex-wrap gap-x-2 type-caption text-gray-500">
-                  {item.variantAttributes.map((attribute) => (
-                    <div key={attribute.name} className="flex gap-1">
-                      <dt>{attribute.name}:</dt>
-                      <dd>{attribute.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-              {item.personalizationText ? (
-                <p className="mt-1 type-caption text-gold-700">
-                  {copy.personalizedWith}: <bdi>{item.personalizationText}</bdi>
-                </p>
-              ) : null}
-            </div>
-            <strong className="col-start-2 type-body-sm text-gray-1000 sm:col-start-3 sm:row-start-1 sm:text-end">
-              <bdi>
-                {formatMoney(
-                  locale,
-                  item.lineTotal.amount,
-                  item.lineTotal.currency,
-                )}
-              </bdi>
-            </strong>
-          </li>
-        ))}
-      </ul>
+                <Link
+                  href={`/products/${item.productSlug}`}
+                  className="block self-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <AppImage
+                    src={item.imageSrc}
+                    alt={item.name}
+                    aspectRatio="1 / 1"
+                    sizes="64px"
+                    frameClassName="rounded-md"
+                  />
+                </Link>
+                <div className="min-w-0">
+                  <Link
+                    href={`/products/${item.productSlug}`}
+                    className="type-body-sm font-medium text-gray-1000 hover:text-gold-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {item.name}
+                  </Link>
+                  <p className="mt-1 type-caption text-gray-500">
+                    {copy.quantity}: <bdi>{item.quantity}</bdi>
+                  </p>
+                  {item.variantAttributes.length > 0 ? (
+                    <dl className="mt-1 flex flex-wrap gap-x-2 type-caption text-gray-500">
+                      {item.variantAttributes.map((attribute) => (
+                        <div key={attribute.name} className="flex gap-1">
+                          <dt>{attribute.name}:</dt>
+                          <dd>{attribute.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
+                  {item.personalizationText ? (
+                    <p className="mt-1 type-caption text-gold-700">
+                      {copy.personalizedWith}:{" "}
+                      <bdi>{item.personalizationText}</bdi>
+                    </p>
+                  ) : null}
+                </div>
+                <strong className="col-start-2 type-body-sm text-gray-1000 sm:col-start-3 sm:row-start-1 sm:text-end">
+                  <bdi>
+                    {formatMoney(
+                      locale,
+                      item.lineTotal.amount,
+                      item.lineTotal.currency,
+                    )}
+                  </bdi>
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
 
       {isLoading ? (
         <div className="mt-5 space-y-4 border-t border-gray-200 pt-5">

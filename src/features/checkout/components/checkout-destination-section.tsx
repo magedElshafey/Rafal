@@ -10,7 +10,11 @@ import { InputField } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import type { Address } from "@/features/addresses/types/address.types";
-import type { CartGiftRecipient } from "@/features/cart/types/cart.types";
+import type { CartSnapshot } from "@/features/cart/types/cart.types";
+import {
+  CheckoutGiftRecipientEditor,
+  type CheckoutGiftRecipientEditorCopy,
+} from "@/features/checkout/components/checkout-gift-recipient-editor";
 import { CheckoutStepSection } from "@/features/checkout/components/checkout-step-section";
 import type {
   CheckoutAddress,
@@ -18,7 +22,6 @@ import type {
 } from "@/features/checkout/types/checkout.types";
 import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
 import type { City } from "@/features/location/types";
-import { Link } from "@/i18n/navigation";
 import {
   formatSaudiMobileForDisplay,
   formatSaudiMobileForInput,
@@ -31,7 +34,7 @@ export type CheckoutDestinationCopy = {
   gift: {
     label: string;
     description: string;
-    edit: string;
+    editor: CheckoutGiftRecipientEditorCopy;
   };
   saved: {
     title: string;
@@ -70,10 +73,11 @@ type CheckoutDestinationSectionProps = {
   addressesUnavailable: boolean;
   committedDestination: CheckoutDestination | null;
   copy: CheckoutDestinationCopy;
-  giftRecipient: CartGiftRecipient | null;
+  gift: CartSnapshot["gift"] | null;
   isAuthenticated: boolean;
   locale: Locale;
   onCommit: (destination: CheckoutDestination) => void;
+  onGiftPersisted: (gift: CartSnapshot["gift"]) => void;
 };
 
 type AddressDraft = {
@@ -362,11 +366,13 @@ export function CheckoutDestinationSection({
   addressesUnavailable,
   committedDestination,
   copy,
-  giftRecipient,
+  gift,
   isAuthenticated,
   locale,
   onCommit,
+  onGiftPersisted,
 }: CheckoutDestinationSectionProps) {
+  const giftRecipient = gift?.recipient ?? null;
   const [showOneTime, setShowOneTime] = useState(
     giftRecipient === null && addresses.length === 0,
   );
@@ -374,7 +380,8 @@ export function CheckoutDestinationSection({
     committedDestination?.kind === "one-time-address";
   const showOneTimeEditor = showOneTime || hasCommittedOneTimeAddress;
 
-  if (giftRecipient) {
+  if (gift?.recipient) {
+    const giftRecipient = gift.recipient;
     return (
       <CheckoutStepSection id="checkout-destination" step="1" title={copy.title}>
         <div className="rounded-md border border-gold-500 bg-gold-50/50 p-4">
@@ -391,12 +398,12 @@ export function CheckoutDestinationSection({
               streetDetails={giftRecipient.streetDetails}
             />
           </div>
-          <Link
-            href="/cart"
-            className="mt-4 inline-flex min-h-11 items-center type-body-sm font-medium text-gold-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {copy.gift.edit}
-          </Link>
+          <CheckoutGiftRecipientEditor
+            copy={copy.gift.editor}
+            gift={gift}
+            locale={locale}
+            onPersisted={onGiftPersisted}
+          />
         </div>
       </CheckoutStepSection>
     );

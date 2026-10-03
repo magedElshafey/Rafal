@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { ErrorState } from "@/components/ui/error-state";
 import type { Address } from "@/features/addresses/types/address.types";
-import type { CartGiftRecipient } from "@/features/cart/types/cart.types";
+import type { CartSnapshot } from "@/features/cart/types/cart.types";
 import { checkoutQuoteQueryKey } from "@/features/checkout/api/checkout-query";
 import {
   CheckoutDestinationSection,
@@ -45,7 +45,7 @@ type CheckoutPageProps = {
   addressesUnavailable: boolean;
   cartEmpty: boolean;
   copy: CheckoutPageCopy;
-  giftRecipient: CartGiftRecipient | null;
+  initialGift: CartSnapshot["gift"] | null;
   initialDestination: CheckoutDestination | null;
   isAuthenticated: boolean;
   locale: Locale;
@@ -57,7 +57,7 @@ export function CheckoutPage({
   addressesUnavailable,
   cartEmpty,
   copy,
-  giftRecipient,
+  initialGift,
   initialDestination,
   isAuthenticated,
   locale,
@@ -66,6 +66,7 @@ export function CheckoutPage({
   const queryClient = useQueryClient();
   const [destination, setDestination] =
     useState<CheckoutDestination | null>(initialDestination);
+  const [gift, setGift] = useState(initialGift);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
   const request: CheckoutQuoteRequest | null = destination
     ? {
@@ -97,6 +98,23 @@ export function CheckoutPage({
       shippingMethodId: nextShippingMethodId,
     });
     setShippingMethodId(nextShippingMethodId);
+  };
+
+  const persistGiftDestination = (nextGift: CartSnapshot["gift"]) => {
+    const recipient = nextGift.recipient;
+    if (!nextGift.isGift || !recipient) return;
+
+    setGift(nextGift);
+    commitDestination({
+      kind: "gift-recipient",
+      recipient: {
+        recipientName: recipient.name,
+        recipientPhone: recipient.phone,
+        cityId: recipient.city.id,
+        district: recipient.district,
+        streetDetails: recipient.streetDetails,
+      },
+    });
   };
 
   if (cartEmpty) {
@@ -146,10 +164,11 @@ export function CheckoutPage({
             addressesUnavailable={addressesUnavailable}
             committedDestination={destination}
             copy={copy.destination}
-            giftRecipient={giftRecipient}
+            gift={gift}
             isAuthenticated={isAuthenticated}
             locale={locale}
             onCommit={commitDestination}
+            onGiftPersisted={persistGiftDestination}
           />
           <CheckoutShippingSection
             copy={copy.shipping}

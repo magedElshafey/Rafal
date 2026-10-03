@@ -32,7 +32,25 @@
       "gift": {
         "label": "Gift recipient",
         "description": "The gift recipient saved in your Cart is used for this order.",
-        "edit": "Edit gift recipient in Cart"
+        "edit": "Edit recipient details",
+        "editor": {
+          "title": "Edit recipient details",
+          "close": "Close recipient editor",
+          "save": "Save recipient",
+          "saving": "Saving recipient",
+          "cancel": "Cancel",
+          "validationError": "Review the recipient details and try again.",
+          "sessionError": "Your Cart session is unavailable. Refresh and try again.",
+          "serviceError": "Recipient details could not be saved. Try again.",
+          "cityDialog": {
+            "title": "Choose recipient city",
+            "description": "Select the city where the gift will be delivered.",
+            "close": "Close city picker",
+            "searchLabel": "Search cities",
+            "searchPlaceholder": "Search by city name",
+            "searchNoResults": "No matching cities found."
+          }
+        }
       },
       "saved": {
         "title": "Choose a saved address",
@@ -105,7 +123,8 @@
       "vat": "VAT ({rate}%)",
       "total": "Total",
       "quantity": "Quantity",
-      "personalizedWith": "Personalization"
+      "personalizedWith": "Personalization",
+      "products": "Products"
     }
   },
   "cartPage": {

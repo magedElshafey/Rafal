@@ -3,7 +3,13 @@
 import Image from "next/image";
 import { CircleNotchIcon } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import type { Locale } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { isCancelledError } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -254,6 +260,8 @@ export function CartPage({
   selectedCityId,
 }: CartPageProps) {
   const router = useRouter();
+  const [checkoutPreparing, setCheckoutPreparing] = useState(false);
+  const [checkoutNavigationPending, startCheckoutNavigation] = useTransition();
   const [transitionCity, setTransitionCity] = useState<number | null>(null);
   const transitionCityRef = useRef<number | null>(null);
   const currentCityRef = useRef(selectedCityId);
@@ -311,6 +319,7 @@ export function CartPage({
     };
   }, [summaryBusy]);
   const summaryBusyVisible = summaryBusy && showSummaryBusy;
+  const checkoutPending = checkoutPreparing || checkoutNavigationPending;
   const mutateQuantity = (lineId: string, delta: -1 | 1) => {
     setMutationError(null);
     mutations.changeQuantity(lineId, delta);
@@ -651,29 +660,35 @@ export function CartPage({
       <Button
         size="lg"
         className="mt-5 w-full"
-        disabled={!cartFulfillable}
+        disabled={!cartFulfillable || checkoutPending}
+        loading={checkoutPending}
+        loadingLabel={copy.checkout}
         onClick={async () => {
+          if (checkoutPending) return;
+          setCheckoutPreparing(true);
           const fulfillmentIsCurrent = () =>
             fulfillmentCityRef.current === fulfillmentCityId &&
             (usesGiftFulfillment || (
               currentCityRef.current === selectedCityId &&
               (transitionCityRef.current === null || transitionCityRef.current === selectedCityId)
             ));
-          if (!fulfillmentIsCurrent()) return;
-          const result = await mutations.flushPendingMutations();
-          if (!result.ok || !fulfillmentIsCurrent()) return;
           try {
+            if (!fulfillmentIsCurrent()) return;
+            const result = await mutations.flushPendingMutations();
+            if (!result.ok || !fulfillmentIsCurrent()) return;
             const projectedCart = await mutations.refreshProjection();
             if (
               fulfillmentIsCurrent() &&
               mutations.canNavigate() &&
               isCartFulfillable(projectedCart, fulfillmentCityId)
             ) {
-              router.push("/checkout");
+              startCheckoutNavigation(() => router.push("/checkout"));
             }
           } catch (error) {
             if (isCancelledError(error) || (error instanceof DOMException && error.name === "AbortError")) return;
             setMutationError(copy.errors.generic);
+          } finally {
+            setCheckoutPreparing(false);
           }
         }}
       >

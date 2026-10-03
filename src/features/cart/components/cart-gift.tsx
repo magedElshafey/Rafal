@@ -1,13 +1,11 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type Locale, useTranslations } from "next-intl";
 import { type FormEvent, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
 import { InputField } from "@/components/ui/input";
-import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { Switch } from "@/components/ui/switch";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
 import {
@@ -18,25 +16,23 @@ import {
   currentCartQueryKeyRoot,
   setCurrentCartQueryData,
 } from "@/features/cart/api/cart-query";
+import {
+  canonicalGiftRecipientDraft,
+  emptyGiftRecipientDraft,
+  GiftRecipientFields,
+  giftRecipientDraft,
+  type GiftRecipientDraft,
+  type GiftRecipientDraftField,
+  validateGiftRecipientDraft,
+} from "@/features/cart/components/gift-recipient-fields";
 import type {
   CartGiftError,
   CartSnapshot,
   UpdateCartGiftInput,
 } from "@/features/cart/types/cart.types";
-import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
-import {
-  formatSaudiMobileForDisplay,
-  formatSaudiMobileForInput,
-  isValidSaudiMobile,
-  normalizeSaudiMobile,
-} from "@/lib/phone/saudi-mobile";
+import { formatSaudiMobileForDisplay } from "@/lib/phone/saudi-mobile";
 
-type GiftDraft = {
-  name: string;
-  phone: string;
-  city: { id: number; name: string } | null;
-  district: string;
-  streetDetails: string;
+type GiftDraft = GiftRecipientDraft & {
   message: string;
   isAnonymous: boolean;
 };
@@ -45,7 +41,6 @@ type GiftEditingMode = "new" | "existing";
 type GiftDraftField = keyof GiftDraft;
 type GiftDraftErrors = Partial<Record<GiftDraftField, string>>;
 
-const recipientFields = ["name", "phone", "district", "streetDetails"] as const;
 const backendFields: Record<GiftDraftField, string> = {
   name: "recipient.name",
   phone: "recipient.phone",
@@ -58,11 +53,7 @@ const backendFields: Record<GiftDraftField, string> = {
 
 function emptyGiftDraft(): GiftDraft {
   return {
-    name: "",
-    phone: "",
-    city: null,
-    district: "",
-    streetDetails: "",
+    ...emptyGiftRecipientDraft(),
     message: "",
     isAnonymous: false,
   };
@@ -71,11 +62,7 @@ function emptyGiftDraft(): GiftDraft {
 function persistedGiftDraft(gift: CartSnapshot["gift"]): GiftDraft {
   const { recipient } = gift;
   return {
-    name: recipient?.name ?? "",
-    phone: recipient ? formatSaudiMobileForInput(recipient.phone) : "",
-    city: recipient?.city ?? null,
-    district: recipient?.district ?? "",
-    streetDetails: recipient?.streetDetails ?? "",
+    ...(recipient ? giftRecipientDraft(recipient) : emptyGiftRecipientDraft()),
     message: gift.message ?? "",
     isAnonymous: gift.isAnonymous,
   };
@@ -160,16 +147,18 @@ function GiftEditor({
   const t = useTranslations("Common.cartPage.gift");
   const id = useId();
   const [draft, setDraft] = useState(initialDraft);
-  const [cityOpen, setCityOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<GiftDraftErrors>({});
-  const cities = useQuery({
-    ...cityCatalogQueryOptions(locale),
-    enabled: cityOpen,
-  });
 
   const updateDraft = <Field extends GiftDraftField>(
     field: Field,
     value: GiftDraft[Field],
+  ) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => ({ ...current, [field]: undefined }));
+  };
+  const updateRecipientDraft = <Field extends GiftRecipientDraftField>(
+    field: Field,
+    value: GiftRecipientDraft[Field],
   ) => {
     setDraft((current) => ({ ...current, [field]: value }));
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
@@ -179,23 +168,20 @@ function GiftEditor({
     event.preventDefault();
     if (busy) return;
 
-    const nextErrors: GiftDraftErrors = {};
-    for (const field of recipientFields) {
-      if (!draft[field].trim()) nextErrors[field] = t("required");
-    }
-    if (draft.phone.trim() && !isValidSaudiMobile(draft.phone)) {
-      nextErrors.phone = t("invalidField");
-    }
-    if (!draft.city) nextErrors.city = t("required");
+    const nextErrors: GiftDraftErrors = {
+      ...validateGiftRecipientDraft(
+        draft,
+        t("required"),
+        t("invalidField"),
+      ),
+    };
     setFieldErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0 || !draft.city) return;
+    const recipient = canonicalGiftRecipientDraft(draft);
+    if (Object.keys(nextErrors).length > 0 || !recipient) return;
 
     const failure = await onSave({
       ...draft,
-      name: draft.name.trim(),
-      phone: normalizeSaudiMobile(draft.phone)!,
-      district: draft.district.trim(),
-      streetDetails: draft.streetDetails.trim(),
+      ...recipient,
       message: draft.message.trim(),
     });
     if (failure?.code !== "validation-rejected") return;
@@ -216,59 +202,34 @@ function GiftEditor({
     <form className="mt-5 border-t border-gray-200 pt-5" noValidate onSubmit={handleSubmit}>
       <fieldset disabled={busy}>
         <legend className="text-h4 font-bold text-gray-1000">{t("recipientTitle")}</legend>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {recipientFields.map((field) =>
-            field === "phone" ? (
-              <SaudiMobileField
-                key={field}
-                id={`${id}-${field}`}
-                name={field}
-                label={t(field)}
-                required
-                value={draft.phone}
-                error={fieldErrors.phone}
-                onChange={(event) => updateDraft("phone", event.target.value)}
-              />
-            ) : (
-              <InputField
-                key={field}
-                id={`${id}-${field}`}
-                name={field}
-                label={t(field)}
-                type="text"
-                autoComplete="off"
-                required
-                value={draft[field]}
-                error={fieldErrors[field]}
-                onChange={(event) => updateDraft(field, event.target.value)}
-              />
-            ),
-          )}
-
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <label htmlFor={`${id}-city`} className="type-label text-gray-600">
-              {t("city")}
-            </label>
-            <Button
-              id={`${id}-city`}
-              type="button"
-              variant="outline"
-              aria-haspopup="dialog"
-              aria-expanded={cityOpen}
-              aria-invalid={Boolean(fieldErrors.city) || undefined}
-              aria-describedby={fieldErrors.city ? `${id}-city-error` : undefined}
-              className="w-full justify-start border border-gray-200 bg-gray-0 font-normal"
-              onClick={() => setCityOpen(true)}
-            >
-              {draft.city?.name ?? t("selectCity")}
-            </Button>
-            {fieldErrors.city ? (
-              <p id={`${id}-city-error`} className="type-caption text-destructive">
-                {fieldErrors.city}
-              </p>
-            ) : null}
-          </div>
-
+        <div className="mt-4">
+          <GiftRecipientFields
+            busy={busy}
+            copy={{
+              name: t("name"),
+              phone: t("phone"),
+              city: t("city"),
+              district: t("district"),
+              streetDetails: t("streetDetails"),
+              selectCity: t("selectCity"),
+              cityDialog: {
+                title: t("cityDialog.title"),
+                description: t("cityDialog.description"),
+                loading: t("cityDialog.loading"),
+                empty: t("cityDialog.empty"),
+                unavailable: t("cityDialog.unavailable"),
+                close: t("cityDialog.close"),
+                searchLabel: t("cityDialog.searchLabel"),
+                searchPlaceholder: t("cityDialog.searchPlaceholder"),
+                searchNoResults: t("cityDialog.searchNoResults"),
+              },
+            }}
+            draft={draft}
+            errors={fieldErrors}
+            locale={locale}
+            onChange={updateRecipientDraft}
+          />
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <InputField
               id={`${id}-message`}
@@ -304,6 +265,7 @@ function GiftEditor({
             ) : null}
           </div>
         </div>
+        </div>
 
         <div className="mt-5 flex flex-wrap gap-3">
           <Button type="submit" loading={busy} loadingLabel={t("saving")}>
@@ -315,29 +277,6 @@ function GiftEditor({
         </div>
       </fieldset>
 
-      {cityOpen ? (
-        <CityPickerDialog
-          cities={cities.data ?? []}
-          copy={{
-            title: t("cityDialog.title"),
-            description: t("cityDialog.description"),
-            loading: t("cityDialog.loading"),
-            empty: cities.isError ? t("cityDialog.unavailable") : t("cityDialog.empty"),
-            close: t("cityDialog.close"),
-            searchLabel: t("cityDialog.searchLabel"),
-            searchPlaceholder: t("cityDialog.searchPlaceholder"),
-            searchNoResults: t("cityDialog.searchNoResults"),
-          }}
-          isOpen
-          isLoading={cities.isPending}
-          selectedCityId={draft.city?.id}
-          onClose={() => setCityOpen(false)}
-          onSelect={(city) => {
-            updateDraft("city", city);
-            setCityOpen(false);
-          }}
-        />
-      ) : null}
     </form>
   );
 }

@@ -94,7 +94,46 @@ export default async function CheckoutRoute() {
       gift: {
         label: t("destination.gift.label"),
         description: t("destination.gift.description"),
-        edit: t("destination.gift.edit"),
+        editor: {
+          edit: t("destination.gift.edit"),
+          title: t("destination.gift.editor.title"),
+          close: t("destination.gift.editor.close"),
+          save: t("destination.gift.editor.save"),
+          saving: t("destination.gift.editor.saving"),
+          cancel: t("destination.gift.editor.cancel"),
+          required: t("destination.errors.required"),
+          invalidPhone: t("destination.errors.invalidPhone"),
+          validationError: t("destination.gift.editor.validationError"),
+          sessionError: t("destination.gift.editor.sessionError"),
+          serviceError: t("destination.gift.editor.serviceError"),
+          fields: {
+            name: t("destination.fields.recipientName"),
+            phone: t("destination.fields.recipientPhone"),
+            city: t("destination.fields.city"),
+            district: t("destination.fields.district"),
+            streetDetails: t("destination.fields.streetDetails"),
+            selectCity: t("destination.cityOptions.select"),
+            cityDialog: {
+              title: t("destination.gift.editor.cityDialog.title"),
+              description: t(
+                "destination.gift.editor.cityDialog.description",
+              ),
+              loading: t("destination.cityOptions.loading"),
+              empty: t("destination.cityOptions.empty"),
+              unavailable: t("destination.cityOptions.unavailable"),
+              close: t("destination.gift.editor.cityDialog.close"),
+              searchLabel: t(
+                "destination.gift.editor.cityDialog.searchLabel",
+              ),
+              searchPlaceholder: t(
+                "destination.gift.editor.cityDialog.searchPlaceholder",
+              ),
+              searchNoResults: t(
+                "destination.gift.editor.cityDialog.searchNoResults",
+              ),
+            },
+          },
+        },
       },
       saved: {
         title: t("destination.saved.title"),
@@ -168,6 +207,7 @@ export default async function CheckoutRoute() {
       total: t("summary.total"),
       quantity: t("summary.quantity"),
       personalizedWith: t("summary.personalizedWith"),
+      products: t("summary.products"),
     },
   };
 
@@ -178,7 +218,7 @@ export default async function CheckoutRoute() {
         addressesUnavailable={addressState.unavailable}
         cartEmpty={cart.lines.length === 0}
         copy={copy}
-        giftRecipient={giftRecipient}
+        initialGift={giftRecipient ? cart.gift : null}
         initialDestination={initialDestination}
         isAuthenticated={user !== null}
         summaryItems={cart.lines.map((line) => ({
