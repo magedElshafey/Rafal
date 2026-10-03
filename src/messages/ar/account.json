@@ -123,11 +123,21 @@
       "cancelled": "ملغاة",
       "returned": "مرتجعة"
     },
-    "itemCount": "{count} منتجات",
+    "itemCount": "{count, plural, zero {لا توجد منتجات} one {منتج واحد} two {منتجان} few {# منتجات} many {# منتجًا} other {# منتج}}",
     "detailsLink": "عرض تفاصيل الطلب {number}",
     "empty": {
-      "title": "لا توجد طلبات",
-      "description": "لا توجد طلبات تطابق هذه الحالة."
+      "title": "ليس لديك طلبات حتى الآن",
+      "description": "عند إتمام طلب، سيظهر هنا.",
+      "cta": "متابعة التسوق"
+    },
+    "error": {
+      "title": "تعذر تحميل طلباتك",
+      "description": "حدثت مشكلة مؤقتة أثناء تحميل طلباتك. حاول مرة أخرى."
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "الصفحة {current} من {total}"
     },
     "details": {
       "title": "طلب #{number}",

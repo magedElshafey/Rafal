@@ -1,78 +1,80 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
-import { getOrders } from "@/features/orders/api/get-orders";
-import { OrderFilterNavigation } from "@/features/orders/components/order-filter-navigation";
 import { OrderListItem } from "@/features/orders/components/order-list-item";
-import type {
-  OrderFilter,
-  OrderStatus,
-} from "@/features/orders/types/order.types";
-import { parseOrderFilter } from "@/features/orders/utils/orders-search-params";
+import { OrdersPagination } from "@/features/orders/components/orders-pagination";
+import { getCurrentUserOrdersPage } from "@/features/orders/server/orders-boundary";
+import type { OrdersPage as OrdersPageData } from "@/features/orders/types/order.types";
+import { Link } from "@/i18n/navigation";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 type OrdersPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
-  const params = await searchParams;
-  const activeFilter = parseOrderFilter(params.status);
-  const [orders, locale, t] = await Promise.all([
-    getOrders({ filter: activeFilter }),
-    getLocale(),
+  const [params, locale] = await Promise.all([searchParams, getLocale()]);
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const parsedPage = rawPage === undefined ? 1 : Number(rawPage);
+  const page =
+    Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const [ordersPage, t] = await Promise.all([
+    getCurrentUserOrdersPage(locale, page).catch(
+      (): OrdersPageData | null => null,
+    ),
     getTranslations("Account.orders"),
   ]);
-  const filterLabels: Record<OrderFilter, string> = {
-    all: t("filters.all"),
-    "in-progress": t("filters.inProgress"),
-    completed: t("filters.completed"),
-    cancelled: t("filters.cancelled"),
-  };
-  const statusLabels: Record<OrderStatus, string> = {
-    new: t("status.new"),
-    confirmed: t("status.confirmed"),
-    processing: t("status.processing"),
-    shipped: t("status.shipped"),
-    delivered: t("status.delivered"),
-    cancelled: t("status.cancelled"),
-    returned: t("status.returned"),
-  };
 
   return (
     <div>
       <h1 className="text-h2 font-bold text-gray-1000">{t("title")}</h1>
-      <div className="mt-4">
-        <OrderFilterNavigation
-          activeFilter={activeFilter}
-          label={t("filters.label")}
-          labels={filterLabels}
-        />
-      </div>
-
-      <div className="mt-5">
-        {orders.length === 0 ? (
+      <div className="mt-6">
+        {ordersPage === null ? (
+          <ErrorState
+            title={t("error.title")}
+            description={t("error.description")}
+          />
+        ) : ordersPage.orders.length === 0 ? (
           <ErrorState
             title={t("empty.title")}
             description={t("empty.description")}
+            action={
+              <Link
+                href="/products"
+                className={buttonVariants({ size: "md", variant: "primary" })}
+              >
+                {t("empty.cta")}
+              </Link>
+            }
           />
         ) : (
-          <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0">
-            {orders.map((order) => (
-              <OrderListItem
-                key={order.id}
-                order={order}
-                locale={locale}
-                statusLabels={statusLabels}
-                itemCountLabel={t("itemCount", {
-                  count: order.items.reduce(
-                    (total, item) => total + item.quantity,
-                    0,
-                  ),
-                })}
-                detailsLabel={t("detailsLink", { number: order.id })}
-              />
-            ))}
-          </ul>
+          <>
+            <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0">
+              {ordersPage.orders.map((order) => (
+                <OrderListItem
+                  key={order.orderNumber}
+                  order={order}
+                  locale={locale}
+                  itemCountLabel={t("itemCount", {
+                    count: order.itemsCount,
+                  })}
+                />
+              ))}
+            </ul>
+            <OrdersPagination
+              currentPage={ordersPage.pagination.currentPage}
+              lastPage={ordersPage.pagination.lastPage}
+              nextLabel={t("pagination.next")}
+              pageLabel={t("pagination.page", {
+                current: ordersPage.pagination.currentPage,
+                total: ordersPage.pagination.lastPage,
+              })}
+              previousLabel={t("pagination.previous")}
+            />
+          </>
         )}
       </div>
     </div>

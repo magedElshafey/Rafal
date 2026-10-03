@@ -66,6 +66,31 @@ export type Order = {
   payment: OrderPaymentSummary;
 };
 
+export type OrderListItem = Readonly<{
+  orderNumber: string;
+  displayNumber: string;
+  placedAt: string;
+  customerStatus: string;
+  statusLabel: string;
+  total: string;
+  currency: string;
+  itemsCount: number;
+  firstItem: Readonly<{
+    name: string;
+    imageUrl: string | null;
+  }>;
+}>;
+
+export type OrdersPage = Readonly<{
+  orders: readonly OrderListItem[];
+  pagination: Readonly<{
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
+    total: number;
+  }>;
+}>;
+
 export const orderFilterValues = [
   "all",
   "in-progress",

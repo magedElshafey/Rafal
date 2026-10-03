@@ -4,15 +4,20 @@ const STORE_TIME_ZONE = "Asia/Riyadh";
 
 export function formatOrderMoney(
   locale: Locale,
-  amount: number,
-  currency: "SAR",
+  amount: number | string,
+  currency: string,
 ): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const numericAmount = typeof amount === "string" ? Number(amount) : amount;
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(numericAmount);
+  } catch {
+    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(numericAmount)} ${currency}`;
+  }
 }
 
 export function formatOrderDate(locale: Locale, value: string): string {

@@ -126,8 +126,18 @@
     "itemCount": "{count, plural, one {# product} other {# products}}",
     "detailsLink": "View order {number}",
     "empty": {
-      "title": "No orders found",
-      "description": "There are no orders matching this status."
+      "title": "You don't have any orders yet",
+      "description": "When you place an order, it will appear here.",
+      "cta": "Continue shopping"
+    },
+    "error": {
+      "title": "Your orders could not be loaded",
+      "description": "There was a temporary problem loading your orders. Please try again."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
     },
     "details": {
       "title": "Order #{number}",
