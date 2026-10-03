@@ -72,6 +72,19 @@ export function readCheckoutVerificationHandoff(
     : null;
 }
 
+export function clearCheckoutVerificationHandoff(
+  orderNumber: string,
+): boolean {
+  try {
+    sessionStorage.removeItem(
+      storageKey(VERIFICATION_KEY_PREFIX, orderNumber),
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function storeCheckoutConfirmationHandoff(
   result: Extract<CheckoutPlaceResult, { kind: "confirmed" }>,
 ): boolean {

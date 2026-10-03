@@ -162,12 +162,20 @@
   },
   "checkoutVerification": {
     "title": "Verify your order email",
-    "description": "We created your order, but it is not confirmed yet. Enter the code sent to your email in the next verification step.",
+    "description": "Your order was created but is not confirmed yet. Enter the six-digit code sent to your email.",
     "sentTo": "Code sent to",
     "orderNumber": "Order number",
-    "foundation": "Code entry and verification will be added in the next Checkout slice.",
+    "otpLabel": "Verification code",
+    "otpHint": "Enter the six-digit code.",
+    "required": "Enter the verification code.",
+    "incomplete": "Enter all six digits.",
+    "expiresIn": "Code expires in",
+    "expired": "This verification code has expired.",
+    "verify": "Verify order",
+    "verifying": "Verifying order",
+    "verificationFailed": "The order could not be verified. Check the code and try again.",
     "missingTitle": "Order verification context is unavailable",
-    "missingDescription": "This page can be opened safely, but the browser-session verification details are missing. A later step will allow secure email re-entry.",
+    "missingDescription": "The details needed to verify this order are unavailable in the current browser session.",
     "returnToCheckout": "Return to Checkout"
   },
   "checkoutConfirmation": {

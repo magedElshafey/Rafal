@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/container";
 import {
@@ -14,8 +14,9 @@ export default async function OrderVerificationPage({
 }: {
   params: Promise<{ orderNumber: string }>;
 }) {
-  const [{ orderNumber }, t] = await Promise.all([
+  const [{ orderNumber }, locale, t] = await Promise.all([
     params,
+    getLocale(),
     getTranslations("Common.checkoutVerification"),
   ]);
   const copy: CheckoutVerificationCopy = {
@@ -23,7 +24,15 @@ export default async function OrderVerificationPage({
     description: t("description"),
     sentTo: t("sentTo"),
     orderNumber: t("orderNumber"),
-    foundation: t("foundation"),
+    otpLabel: t("otpLabel"),
+    otpHint: t("otpHint"),
+    required: t("required"),
+    incomplete: t("incomplete"),
+    expiresIn: t("expiresIn"),
+    expired: t("expired"),
+    verify: t("verify"),
+    verifying: t("verifying"),
+    verificationFailed: t("verificationFailed"),
     missingTitle: t("missingTitle"),
     missingDescription: t("missingDescription"),
     returnToCheckout: t("returnToCheckout"),
@@ -31,7 +40,11 @@ export default async function OrderVerificationPage({
 
   return (
     <Container className="main-content-spacing bg-gray-50 py-12 sm:py-16">
-      <CheckoutVerificationHandoff copy={copy} orderNumber={orderNumber} />
+      <CheckoutVerificationHandoff
+        copy={copy}
+        locale={locale}
+        orderNumber={orderNumber}
+      />
     </Container>
   );
 }

@@ -11,6 +11,11 @@ type CheckoutPlaceFieldsDto = {
 export type CheckoutPlaceRequestDto = CheckoutQuoteRequestDto &
   CheckoutPlaceFieldsDto;
 
+export type CheckoutVerifyRequestDto = {
+  email: string;
+  otp: string;
+};
+
 export type CheckoutPlaceMoneyDto = {
   subtotal: string;
   discount_total: string;

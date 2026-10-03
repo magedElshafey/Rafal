@@ -119,4 +119,6 @@ export type CheckoutQuoteResponseDto =
 export const checkoutContractEndpoints = {
   quote: "/checkout/quote",
   place: "/checkout/place",
+  verifyOrder: (orderNumber: string) =>
+    `/checkout/orders/${encodeURIComponent(orderNumber)}/verify`,
 } as const;

@@ -9,11 +9,14 @@ import { parseCheckoutPlaceResponse } from "@/features/checkout/api/parse-checko
 import { parseCheckoutQuoteResponse } from "@/features/checkout/api/parse-checkout-dto";
 import { serializeCheckoutPlaceRequest } from "@/features/checkout/api/checkout-place-serializer";
 import { serializeCheckoutQuoteRequest } from "@/features/checkout/api/checkout-serializer";
+import type { CheckoutVerifyRequestDto } from "@/features/checkout/api/checkout-place-dto";
 import type {
   CheckoutQuote,
   CheckoutQuoteRequest,
   CheckoutPlaceRequest,
   CheckoutPlaceResult,
+  CheckoutVerifyRequest,
+  CheckoutVerifyResult,
 } from "@/features/checkout/types/checkout.types";
 import { ApiError } from "@/lib/api/api-error";
 import { serverApi } from "@/lib/api/server-api";
@@ -103,4 +106,36 @@ export async function placeCheckout(
   }
   const response = parseCheckoutPlaceResponse(payload);
   return mapCheckoutPlaceResult(response);
+}
+
+export async function verifyCheckoutOrder(
+  locale: Locale,
+  input: CheckoutVerifyRequest,
+  signal?: AbortSignal,
+): Promise<CheckoutVerifyResult> {
+  const serialized: CheckoutVerifyRequestDto = {
+    email: input.email,
+    otp: input.otp,
+  };
+  const body = new FormData();
+  body.append("email", serialized.email);
+  body.append("otp", serialized.otp);
+
+  const payload = await serverApi.request<unknown, FormData>({
+    path: checkoutContractEndpoints.verifyOrder(input.orderNumber),
+    method: "POST",
+    headers: { "Accept-Language": locale },
+    body,
+    signal,
+  });
+  const response = parseCheckoutPlaceResponse(payload);
+  if (!response.success) {
+    throw new Error("The Checkout Verify API returned an unsuccessful response.");
+  }
+
+  const result = mapCheckoutPlaceResult(response);
+  if (response.data.status !== "confirmed" || result.kind !== "confirmed") {
+    throw new Error("The Checkout Verify API did not return a confirmed order.");
+  }
+  return result;
 }

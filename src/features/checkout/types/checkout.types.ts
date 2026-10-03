@@ -47,6 +47,12 @@ export type CheckoutPlaceRequest = Readonly<{
   buyer: CheckoutBuyer;
 }>;
 
+export type CheckoutVerifyRequest = Readonly<{
+  orderNumber: string;
+  email: string;
+  otp: string;
+}>;
+
 export type CheckoutShippingOption = Readonly<{
   id: number;
   code: string;
@@ -168,3 +174,8 @@ export type CheckoutPlaceResult =
         kind: "verification-required";
         verificationExpiresAt: string | null;
       }>);
+
+export type CheckoutVerifyResult = Extract<
+  CheckoutPlaceResult,
+  { kind: "confirmed" }
+>;

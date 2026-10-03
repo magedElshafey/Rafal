@@ -8,6 +8,7 @@ import {
 } from "@/features/checkout/server/checkout-boundary";
 import { parseCheckoutPlaceRequest } from "@/features/checkout/server/parse-checkout-place-request";
 import type { CheckoutUnavailableLine } from "@/features/checkout/types/checkout.types";
+import { deleteGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
 
@@ -65,6 +66,13 @@ export async function POST(request: Request) {
       placeRequest,
       request.signal,
     );
+    if (placeRequest.buyer.kind === "guest") {
+      try {
+        await deleteGuestCartToken();
+      } catch {
+        // The order already exists; cookie cleanup must not turn success into a retryable failure.
+      }
+    }
     return Response.json(result, { headers: PRIVATE_NO_STORE_HEADERS });
   } catch (error) {
     if (error instanceof CheckoutCartSessionError) {

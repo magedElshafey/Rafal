@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import type { Address } from "@/features/addresses/types/address.types";
 import type { CartSnapshot } from "@/features/cart/types/cart.types";
+import {
+  currentCartQueryKeyRoot,
+  removeCurrentCartQueries,
+} from "@/features/cart/api/cart-query";
 import { checkoutQuoteQueryKey } from "@/features/checkout/api/checkout-query";
 import {
   CheckoutBuyerSection,
@@ -272,6 +276,12 @@ export function CheckoutPage({
     placeMutation.reset();
     try {
       const result = await placeMutation.mutateAsync(placeRequest);
+      try {
+        await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
+      } catch {
+        // A confirmed Place result must never become a retryable Place failure.
+      }
+      removeCurrentCartQueries(queryClient);
       setPlaceCompleted(true);
       const encodedOrderNumber = encodeURIComponent(result.orderNumber);
       if (result.kind === "verification-required") {

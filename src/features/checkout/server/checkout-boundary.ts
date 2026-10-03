@@ -5,12 +5,15 @@ import type { Locale } from "next-intl";
 import {
   placeCheckout,
   quoteCheckout,
+  verifyCheckoutOrder,
 } from "@/features/checkout/api/checkout-api.server";
 import type {
   CheckoutPlaceRequest,
   CheckoutPlaceResult,
   CheckoutQuote,
   CheckoutQuoteRequest,
+  CheckoutVerifyRequest,
+  CheckoutVerifyResult,
 } from "@/features/checkout/types/checkout.types";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 
@@ -75,4 +78,12 @@ export async function placeCurrentCheckout(
     request,
     signal,
   );
+}
+
+export function verifyGuestCheckoutOrder(
+  locale: Locale,
+  request: CheckoutVerifyRequest,
+  signal?: AbortSignal,
+): Promise<CheckoutVerifyResult> {
+  return verifyCheckoutOrder(locale, request, signal);
 }
