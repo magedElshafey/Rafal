@@ -101,19 +101,21 @@ export type AddCartItemDto = {
 };
 export type UpdateCartItemDto = { quantity: number };
 export type ApplyCartCouponDto = { code: string };
-export type UpdateCartGiftDto = {
-  is_gift: boolean;
-  gift_wrap: boolean;
-  is_anonymous: boolean;
-  gift_message: string | null;
-  recipient?: {
-    name: string;
-    phone: string;
-    city_id: number;
-    district: string;
-    street_details: string;
-  };
-};
+export type UpdateCartGiftDto =
+  | { is_gift: false; gift_wrap: boolean }
+  | {
+      is_gift: true;
+      gift_wrap: boolean;
+      is_anonymous: boolean;
+      gift_message: string | null;
+      recipient: {
+        name: string;
+        phone: string;
+        city_id: number;
+        district: string;
+        street_details: string;
+      };
+    };
 
 export const cartContractEndpoints = {
   current: "/cart",

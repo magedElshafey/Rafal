@@ -26,10 +26,12 @@ import type {
 } from "@/features/cart/types/cart.types";
 
 type CartPageMutationOptions = {
+  fulfillmentCityId: number | null;
   locale: Locale;
   maxQuantity: number;
   onError: (error: CartMutationError) => void;
-  selectedCityId: number | null;
+  projectionFetching: boolean;
+  projectionReady: boolean;
 };
 
 type PendingQuantity = {
@@ -91,10 +93,12 @@ function visuallyEmpty(cart: CartSnapshot): CartSnapshot {
 }
 
 export function useCartPageMutations({
+  fulfillmentCityId,
   locale,
   maxQuantity,
   onError,
-  selectedCityId,
+  projectionFetching,
+  projectionReady,
 }: CartPageMutationOptions) {
   const queryClient = useQueryClient();
   const onErrorRef = useRef(onError);
@@ -113,7 +117,7 @@ export function useCartPageMutations({
   const mutationCount = useIsMutating(cartMutationFilters);
   const attemptedRef = useRef("");
   const projectionRequestRef = useRef(0);
-  const activeCityRef = useRef(selectedCityId);
+  const activeCityRef = useRef(fulfillmentCityId);
   const notify = useCallback(() => setRevision(++revisionRef.current), []);
   const setDirty = useCallback((dirty: boolean) => {
     dirtyRef.current = dirty;
@@ -139,15 +143,15 @@ export function useCartPageMutations({
     onErrorRef.current(error);
   }, []);
   const cancelProjection = useCallback(() => queryClient.cancelQueries({
-    queryKey: currentCartQueryKey(locale, selectedCityId), exact: true,
-  }), [locale, queryClient, selectedCityId]);
+    queryKey: currentCartQueryKey(locale, fulfillmentCityId), exact: true,
+  }), [fulfillmentCityId, locale, queryClient]);
 
   useEffect(() => {
-    if (activeCityRef.current !== selectedCityId) {
-      activeCityRef.current = selectedCityId;
+    if (activeCityRef.current !== fulfillmentCityId) {
+      activeCityRef.current = fulfillmentCityId;
       markDirty();
     }
-  }, [markDirty, selectedCityId]);
+  }, [fulfillmentCityId, markDirty]);
 
   useEffect(() => {
     onErrorRef.current = onError;
@@ -217,25 +221,42 @@ export function useCartPageMutations({
 
   const refreshProjection = useCallback(async () => {
     const startedRevision = revisionRef.current;
-    await cancelProjection();
     await queryClient.invalidateQueries({
       exact: true,
-      queryKey: currentCartQueryKey(locale, selectedCityId),
+      queryKey: currentCartQueryKey(locale, fulfillmentCityId),
       refetchType: "none",
     });
     const projected = await queryClient.fetchQuery(
-      currentCartQueryOptions(locale, selectedCityId),
+      currentCartQueryOptions(locale, fulfillmentCityId),
     );
-    if (activeCityRef.current === selectedCityId && startedRevision === revisionRef.current && operationsRef.current.size === 0 &&
+    if (activeCityRef.current === fulfillmentCityId && startedRevision === revisionRef.current && operationsRef.current.size === 0 &&
         queryClient.isMutating(cartMutationFilters) === 0) {
       setDirty(false);
     }
     return projected;
-  }, [cancelProjection, locale, queryClient, selectedCityId, setDirty]);
+  }, [fulfillmentCityId, locale, queryClient, setDirty]);
 
   useEffect(() => {
-    const attempt = `${selectedCityId}:${revision}`;
-    if (!dirtyRef.current || mutationCount > 0 || operationsRef.current.size > 0 || attemptedRef.current === attempt) return;
+    if (
+      projectionReady &&
+      activeCityRef.current === fulfillmentCityId &&
+      operationsRef.current.size === 0 &&
+      mutationCount === 0
+    ) {
+      setDirty(false);
+    }
+  }, [fulfillmentCityId, mutationCount, projectionReady, setDirty]);
+
+  useEffect(() => {
+    const attempt = `${fulfillmentCityId}:${revision}`;
+    if (
+      !dirtyRef.current ||
+      mutationCount > 0 ||
+      operationsRef.current.size > 0 ||
+      projectionFetching ||
+      projectionReady ||
+      attemptedRef.current === attempt
+    ) return;
     attemptedRef.current = attempt;
     setAttemptedProjection(attempt);
     setProjectionPending(true);
@@ -247,19 +268,19 @@ export function useCartPageMutations({
     }).finally(() => {
       if (projectionRequestRef.current === request) setProjectionPending(false);
     });
-  }, [mutationCount, refreshProjection, reportFailure, revision, selectedCityId]);
+  }, [fulfillmentCityId, mutationCount, projectionFetching, projectionReady, refreshProjection, reportFailure, revision]);
 
   const recoverAuthoritativeCart = useCallback(async () => {
     try {
       await refreshProjection();
     } catch {
       await queryClient.invalidateQueries({
-        queryKey: currentCartQueryKey(locale, selectedCityId),
+        queryKey: currentCartQueryKey(locale, fulfillmentCityId),
         exact: true,
         refetchType: "none",
       });
     }
-  }, [locale, queryClient, refreshProjection, selectedCityId]);
+  }, [fulfillmentCityId, locale, queryClient, refreshProjection]);
 
   const syncLine = useCallback(
     (lineId: string) => {
@@ -350,18 +371,18 @@ export function useCartPageMutations({
         return;
       }
 
-      const cart = currentCartDisplayData(queryClient, locale, selectedCityId);
+      const cart = currentCartDisplayData(queryClient, locale, fulfillmentCityId);
       const line = cart?.lines.find((candidate) => candidate.id === lineId);
       if (!line) return;
       const quantity = (quantitiesRef.current.get(lineId)?.desired ?? line.quantity) + delta;
       if (quantity < 1 || (delta > 0 && quantity > maxQuantity)) return;
-      // Canonical responses omit availability; retain the selected city's last
+      // Canonical responses omit availability; retain the fulfillment city's last
       // confirmed projection as a control ceiling, never as Checkout eligibility.
       const projectedLine = queryClient.getQueryData<CartSnapshot>(
-        currentCartQueryKey(locale, selectedCityId),
+        currentCartQueryKey(locale, fulfillmentCityId),
       )?.lines.find((candidate) => candidate.id === lineId);
       const availability = projectedLine?.availability ?? line.availability;
-      if (selectedCityId !== null && availability?.cityId === selectedCityId) {
+      if (fulfillmentCityId !== null && availability?.cityId === fulfillmentCityId) {
         if (!availability.inStock || availability.available <= 0) return;
         if (delta > 0 && quantity > availability.available) return;
       }
@@ -379,11 +400,11 @@ export function useCartPageMutations({
       updateCurrentCartQueryData(
         queryClient,
         locale,
-        selectedCityId,
+        fulfillmentCityId,
         overlayPendingIntent,
       );
       void syncLine(lineId);
-    }, [cancelProjection, locale, markDirty, maxQuantity, overlayPendingIntent, queryClient, selectedCityId, syncLine],
+    }, [cancelProjection, fulfillmentCityId, locale, markDirty, maxQuantity, overlayPendingIntent, queryClient, syncLine],
   );
 
   const removeLine = useCallback(
@@ -399,7 +420,7 @@ export function useCartPageMutations({
       updateCurrentCartQueryData(
         queryClient,
         locale,
-        selectedCityId,
+        fulfillmentCityId,
         overlayPendingIntent,
       );
 
@@ -429,7 +450,7 @@ export function useCartPageMutations({
       queryClient,
       recoverAuthoritativeCart,
       removeMutation,
-      selectedCityId,
+      fulfillmentCityId,
       cancelProjection,
       markDirty,
       trackOperation,
@@ -449,7 +470,7 @@ export function useCartPageMutations({
     updateCurrentCartQueryData(
       queryClient,
       locale,
-      selectedCityId,
+      fulfillmentCityId,
       visuallyEmpty,
     );
 
@@ -477,7 +498,7 @@ export function useCartPageMutations({
     locale,
     queryClient,
     recoverAuthoritativeCart,
-    selectedCityId,
+    fulfillmentCityId,
     cancelProjection,
     markDirty,
     trackOperation,
@@ -503,7 +524,7 @@ export function useCartPageMutations({
     removeLine,
     projectionDirty,
     projectionPending: projectionPending || pendingOperationCount > 0 || mutationCount > 0 ||
-      (projectionDirty && attemptedProjection !== `${selectedCityId}:${revision}`),
+      (projectionDirty && attemptedProjection !== `${fulfillmentCityId}:${revision}`),
     canNavigate: () => !dirtyRef.current && operationsRef.current.size === 0 && queryClient.isMutating(cartMutationFilters) === 0,
   };
 }

@@ -83,12 +83,12 @@ type CartPageProps = {
 function lineAvailabilityIssue(
   availability: CartSnapshot["lines"][number]["availability"],
   quantity: number,
-  selectedCityId: number | null,
+  fulfillmentCityId: number | null,
 ): "unconfirmed" | "unavailable" | null {
   if (
-    selectedCityId === null ||
+    fulfillmentCityId === null ||
     !availability ||
-    availability.cityId !== selectedCityId
+    availability.cityId !== fulfillmentCityId
   ) {
     return "unconfirmed";
   }
@@ -103,7 +103,7 @@ function lineAvailabilityIssue(
 
 function isCartFulfillable(
   cart: CartSnapshot,
-  selectedCityId: number | null,
+  fulfillmentCityId: number | null,
 ) {
   return (
     cart.lines.length > 0 &&
@@ -111,7 +111,7 @@ function isCartFulfillable(
       (line) => lineAvailabilityIssue(
         line.availability,
         line.quantity,
-        selectedCityId,
+        fulfillmentCityId,
       ) === null,
     )
   );
@@ -267,16 +267,24 @@ export function CartPage({
     window.addEventListener(browsingCitySelectedEvent, onCitySelected);
     return () => window.removeEventListener(browsingCitySelectedEvent, onCitySelected);
   }, []);
-  const cityTransitionPending = transitionCity !== null && transitionCity !== selectedCityId;
   const {
     data: cart,
+    fulfillmentCityId,
     isError,
     isPending,
     refetch,
     projectionReady,
     projectionFetching,
     projectedCart,
+    usesGiftFulfillment,
   } = useCurrentCart(locale, selectedCityId, initialCart);
+  const fulfillmentCityRef = useRef(fulfillmentCityId);
+  useEffect(() => {
+    fulfillmentCityRef.current = fulfillmentCityId;
+  }, [fulfillmentCityId]);
+  const cityTransitionPending = !usesGiftFulfillment &&
+    transitionCity !== null &&
+    transitionCity !== selectedCityId;
   const [mutationError, setMutationError] = useState<string | null>(null);
   const handleMutationError = useCallback(
     (error: CartMutationError) =>
@@ -284,10 +292,12 @@ export function CartPage({
     [copy.errors],
   );
   const mutations = useCartPageMutations({
+    fulfillmentCityId,
     locale,
     maxQuantity,
     onError: handleMutationError,
-    selectedCityId,
+    projectionFetching,
+    projectionReady,
   });
   const summaryBusy =
     cityTransitionPending || projectionFetching || mutations.projectionPending;
@@ -386,8 +396,8 @@ export function CartPage({
           )?.availability;
           const availability =
             !cityTransitionPending &&
-            selectedCityId !== null &&
-            projectedAvailability?.cityId === selectedCityId
+            fulfillmentCityId !== null &&
+            projectedAvailability?.cityId === fulfillmentCityId
               ? projectedAvailability
               : undefined;
           const unavailable =
@@ -403,7 +413,7 @@ export function CartPage({
                 : lineAvailabilityIssue(
                     availability,
                     line.quantity,
-                    selectedCityId,
+                    fulfillmentCityId,
                   );
           return (
             <li key={line.id} className="p-4 sm:p-5">
@@ -564,7 +574,7 @@ export function CartPage({
   );
 
   const cartFulfillable = projectionReady && !isError && !cityTransitionPending && !mutations.projectionDirty &&
-    !mutations.projectionPending && isCartFulfillable(cart, selectedCityId);
+    !mutations.projectionPending && isCartFulfillable(cart, fulfillmentCityId);
 
   const summarySection = (
     <aside
@@ -643,14 +653,22 @@ export function CartPage({
         className="mt-5 w-full"
         disabled={!cartFulfillable}
         onClick={async () => {
-          const cityIsCurrent = () => currentCityRef.current === selectedCityId &&
-            (transitionCityRef.current === null || transitionCityRef.current === selectedCityId);
-          if (!cityIsCurrent()) return;
+          const fulfillmentIsCurrent = () =>
+            fulfillmentCityRef.current === fulfillmentCityId &&
+            (usesGiftFulfillment || (
+              currentCityRef.current === selectedCityId &&
+              (transitionCityRef.current === null || transitionCityRef.current === selectedCityId)
+            ));
+          if (!fulfillmentIsCurrent()) return;
           const result = await mutations.flushPendingMutations();
-          if (!result.ok || !cityIsCurrent()) return;
+          if (!result.ok || !fulfillmentIsCurrent()) return;
           try {
             const projectedCart = await mutations.refreshProjection();
-            if (cityIsCurrent() && mutations.canNavigate() && isCartFulfillable(projectedCart, selectedCityId)) {
+            if (
+              fulfillmentIsCurrent() &&
+              mutations.canNavigate() &&
+              isCartFulfillable(projectedCart, fulfillmentCityId)
+            ) {
               router.push("/checkout");
             }
           } catch (error) {

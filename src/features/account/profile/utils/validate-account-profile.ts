@@ -2,8 +2,7 @@ import type {
   AccountProfileInput,
   AccountProfileValidationErrors,
 } from "@/features/account/profile/types/account-profile.types";
-
-const phonePattern = /^\+?[\d\s()-]+$/;
+import { isValidPhoneFormat } from "@/lib/validation/phone";
 
 export function validateAccountProfile(
   profile: AccountProfileInput,
@@ -14,15 +13,8 @@ export function validateAccountProfile(
   if (!profile.lastName.trim()) errors.lastName = "required";
 
   const phone = profile.phone.trim();
-  const phoneDigits = phone.replace(/\D/g, "");
   if (!phone) errors.phone = "required";
-  else if (
-    !phonePattern.test(phone) ||
-    phoneDigits.length < 8 ||
-    phoneDigits.length > 15
-  ) {
-    errors.phone = "phone";
-  }
+  else if (!isValidPhoneFormat(phone)) errors.phone = "phone";
 
   return errors;
 }

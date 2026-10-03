@@ -18,12 +18,13 @@ export type CartGiftRecipientInput = {
   streetDetails: string;
 };
 
-// User intent, not the Laravel request DTO. The server preserves companion state.
+// User intent, not the Laravel request DTO. The caller supplies the canonical
+// companion value required by Laravel so the mutation needs no preflight read.
 export type UpdateCartGiftInput =
-  | { kind: "wrap"; enabled: boolean }
-  | { kind: "disable-gift" }
+  | { kind: "disable-gift"; giftWrap: boolean }
   | {
       kind: "recipient";
+      giftWrap: boolean;
       recipient: CartGiftRecipientInput;
       isAnonymous: boolean;
       message: string | null;

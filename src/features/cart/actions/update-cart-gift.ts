@@ -11,6 +11,7 @@ import type {
 } from "@/features/cart/types/cart.types";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
+import { isValidPhoneFormat } from "@/lib/validation/phone";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -18,9 +19,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function parseInput(value: unknown): UpdateCartGiftInput | null {
   if (!isRecord(value)) return null;
-  if (value.kind === "disable-gift") return { kind: "disable-gift" };
-  if (value.kind === "wrap" && typeof value.enabled === "boolean") {
-    return { kind: "wrap", enabled: value.enabled };
+  if (typeof value.giftWrap !== "boolean") return null;
+  if (value.kind === "disable-gift") {
+    return { kind: "disable-gift", giftWrap: value.giftWrap };
   }
   if (value.kind !== "recipient" || !isRecord(value.recipient)) return null;
   if (
@@ -35,10 +36,12 @@ function parseInput(value: unknown): UpdateCartGiftInput | null {
     typeof streetDetails !== "string" || !streetDetails.trim() ||
     typeof cityId !== "number" || !Number.isSafeInteger(cityId) || cityId <= 0
   ) return null;
+  if (!isValidPhoneFormat(phone)) return null;
   return {
     kind: "recipient",
+    giftWrap: value.giftWrap,
     isAnonymous: value.isAnonymous,
-    message: value.message?.trim() ? value.message : null,
+    message: value.message?.trim() || null,
     recipient: {
       name: name.trim(), phone: phone.trim(), cityId,
       district: district.trim(), streetDetails: streetDetails.trim(),

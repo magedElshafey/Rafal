@@ -14,7 +14,10 @@ import {
   updateCartGiftDto,
   type CartTransportIdentity,
 } from "@/features/cart/api/cart-api.server";
-import type { CartResponseDto } from "@/features/cart/api/cart-dto";
+import type {
+  CartResponseDto,
+  UpdateCartGiftDto,
+} from "@/features/cart/api/cart-dto";
 import { mapCartData } from "@/features/cart/api/cart-mapper";
 import type { CartAddDiagnostics } from "@/features/cart/server/cart-add-diagnostics";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
@@ -178,17 +181,13 @@ export async function updateCurrentCartGift(
   locale: Locale,
 ): Promise<CartSnapshot> {
   const identity = await resolveCartTransportIdentity();
-  const current = assertSuccessfulResponse(await getCartDto(identity, locale));
-  const gift = current.data.gift;
-  const response = assertSuccessfulResponse(
-    await updateCartGiftDto(identity, locale, {
-      is_gift: input.kind === "recipient"
-        ? true
-        : input.kind === "disable-gift" ? false : gift.is_gift,
-      gift_wrap: input.kind === "wrap" ? input.enabled : gift.gift_wrap,
-      is_anonymous: input.kind === "recipient" ? input.isAnonymous : gift.is_anonymous,
-      gift_message: input.kind === "recipient" ? input.message : gift.gift_message,
-      ...(input.kind === "recipient" ? {
+  const body: UpdateCartGiftDto = input.kind === "disable-gift"
+    ? { is_gift: false, gift_wrap: input.giftWrap }
+    : {
+        is_gift: true,
+        gift_wrap: input.giftWrap,
+        is_anonymous: input.isAnonymous,
+        gift_message: input.message,
         recipient: {
           name: input.recipient.name,
           phone: input.recipient.phone,
@@ -196,8 +195,9 @@ export async function updateCurrentCartGift(
           district: input.recipient.district,
           street_details: input.recipient.streetDetails,
         },
-      } : {}),
-    }),
+      };
+  const response = assertSuccessfulResponse(
+    await updateCartGiftDto(identity, locale, body),
   );
   if (identity.kind === "guest" && !identity.token && !response.data.token) {
     throw new Error("A newly created guest Cart must return a token.");
