@@ -1,6 +1,7 @@
 import type { Locale } from "next-intl";
 
 import type { OrderGiftSnapshot } from "@/features/orders/types/order.types";
+import { formatSaudiMobileForDisplay } from "@/lib/phone/saudi-mobile";
 
 type OrderGiftRecipientProps = {
   gift: OrderGiftSnapshot;
@@ -36,7 +37,9 @@ export function OrderGiftRecipient({
           <div>
             <dt className="text-gray-500">{labels.phone}</dt>
             <dd className="mt-1 font-medium text-gray-700">
-              <bdi>{gift.recipientPhone}</bdi>
+              <bdi dir="ltr">
+                {formatSaudiMobileForDisplay(gift.recipientPhone)}
+              </bdi>
             </dd>
           </div>
         ) : null}

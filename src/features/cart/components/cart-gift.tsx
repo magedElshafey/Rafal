@@ -7,6 +7,7 @@ import { type FormEvent, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
 import { InputField } from "@/components/ui/input";
+import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { Switch } from "@/components/ui/switch";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
 import {
@@ -23,7 +24,12 @@ import type {
   UpdateCartGiftInput,
 } from "@/features/cart/types/cart.types";
 import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
-import { isValidPhoneFormat } from "@/lib/validation/phone";
+import {
+  formatSaudiMobileForDisplay,
+  formatSaudiMobileForInput,
+  isValidSaudiMobile,
+  normalizeSaudiMobile,
+} from "@/lib/phone/saudi-mobile";
 
 type GiftDraft = {
   name: string;
@@ -66,7 +72,7 @@ function persistedGiftDraft(gift: CartSnapshot["gift"]): GiftDraft {
   const { recipient } = gift;
   return {
     name: recipient?.name ?? "",
-    phone: recipient?.phone ?? "",
+    phone: recipient ? formatSaudiMobileForInput(recipient.phone) : "",
     city: recipient?.city ?? null,
     district: recipient?.district ?? "",
     streetDetails: recipient?.streetDetails ?? "",
@@ -106,7 +112,11 @@ function GiftSummary({
               </div>
               <div>
                 <dt className="type-caption text-gray-500">{t("phone")}</dt>
-                <dd className="mt-0.5 text-gray-1000"><bdi>{recipient.phone}</bdi></dd>
+                <dd className="mt-0.5 text-gray-1000">
+                  <bdi dir="ltr">
+                    {formatSaudiMobileForDisplay(recipient.phone)}
+                  </bdi>
+                </dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="type-caption text-gray-500">{t("savedAddress")}</dt>
@@ -173,7 +183,7 @@ function GiftEditor({
     for (const field of recipientFields) {
       if (!draft[field].trim()) nextErrors[field] = t("required");
     }
-    if (draft.phone.trim() && !isValidPhoneFormat(draft.phone)) {
+    if (draft.phone.trim() && !isValidSaudiMobile(draft.phone)) {
       nextErrors.phone = t("invalidField");
     }
     if (!draft.city) nextErrors.city = t("required");
@@ -183,7 +193,7 @@ function GiftEditor({
     const failure = await onSave({
       ...draft,
       name: draft.name.trim(),
-      phone: draft.phone.trim(),
+      phone: normalizeSaudiMobile(draft.phone)!,
       district: draft.district.trim(),
       streetDetails: draft.streetDetails.trim(),
       message: draft.message.trim(),
@@ -207,22 +217,33 @@ function GiftEditor({
       <fieldset disabled={busy}>
         <legend className="text-h4 font-bold text-gray-1000">{t("recipientTitle")}</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {recipientFields.map((field) => (
-            <InputField
-              key={field}
-              id={`${id}-${field}`}
-              name={field}
-              label={t(field)}
-              type={field === "phone" ? "tel" : "text"}
-              dir={field === "phone" ? "ltr" : undefined}
-              inputMode={field === "phone" ? "tel" : undefined}
-              autoComplete="off"
-              required
-              value={draft[field]}
-              error={fieldErrors[field]}
-              onChange={(event) => updateDraft(field, event.target.value)}
-            />
-          ))}
+          {recipientFields.map((field) =>
+            field === "phone" ? (
+              <SaudiMobileField
+                key={field}
+                id={`${id}-${field}`}
+                name={field}
+                label={t(field)}
+                required
+                value={draft.phone}
+                error={fieldErrors.phone}
+                onChange={(event) => updateDraft("phone", event.target.value)}
+              />
+            ) : (
+              <InputField
+                key={field}
+                id={`${id}-${field}`}
+                name={field}
+                label={t(field)}
+                type="text"
+                autoComplete="off"
+                required
+                value={draft[field]}
+                error={fieldErrors[field]}
+                onChange={(event) => updateDraft(field, event.target.value)}
+              />
+            ),
+          )}
 
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             <label htmlFor={`${id}-city`} className="type-label text-gray-600">

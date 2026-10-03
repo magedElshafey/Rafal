@@ -2,7 +2,7 @@ import type {
   AccountProfileInput,
   AccountProfileValidationErrors,
 } from "@/features/account/profile/types/account-profile.types";
-import { isValidPhoneFormat } from "@/lib/validation/phone";
+import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 export function validateAccountProfile(
   profile: AccountProfileInput,
@@ -14,7 +14,7 @@ export function validateAccountProfile(
 
   const phone = profile.phone.trim();
   if (!phone) errors.phone = "required";
-  else if (!isValidPhoneFormat(phone)) errors.phone = "phone";
+  else if (!isValidSaudiMobile(phone)) errors.phone = "phone";
 
   return errors;
 }

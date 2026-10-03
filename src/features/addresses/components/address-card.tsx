@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CheckIcon, InfoIcon, MapPinIcon } from "@/components/ui/icons";
 import type { Address } from "@/features/addresses/types/address.types";
+import { formatSaudiMobileForDisplay } from "@/lib/phone/saudi-mobile";
 import { cn } from "@/lib/utils";
 
 export type AddressCardCopy = {
@@ -47,7 +48,9 @@ export function AddressCard({
             <span className="sr-only">{copy.recipient}: </span>
             {address.recipientName}
             {" | "}
-            <bdi dir="ltr">{address.recipientPhone}</bdi>
+            <bdi dir="ltr">
+              {formatSaudiMobileForDisplay(address.recipientPhone)}
+            </bdi>
           </p>
         </div>
         <span

@@ -20,6 +20,94 @@
     "retry": "Try again",
     "retrying": "Retrying"
   },
+  "checkoutPage": {
+    "title": "Checkout",
+    "emptyCart": {
+      "title": "There are no items to check out",
+      "description": "Add products to your shopping cart before continuing to checkout.",
+      "action": "Return to cart"
+    },
+    "destination": {
+      "title": "Shipping address",
+      "gift": {
+        "label": "Gift recipient",
+        "description": "The gift recipient saved in your Cart is used for this order.",
+        "edit": "Edit gift recipient in Cart"
+      },
+      "saved": {
+        "title": "Choose a saved address",
+        "defaultLabel": "Default",
+        "unavailable": "Your saved addresses could not be loaded. You can use a one-time address."
+      },
+      "oneTime": {
+        "show": "Use a one-time address",
+        "hide": "Hide address form",
+        "committed": "This delivery address is now selected.",
+        "submit": "Use this address"
+      },
+      "fields": {
+        "recipientName": "Recipient name",
+        "recipientPhone": "Recipient mobile number",
+        "city": "City",
+        "district": "District",
+        "streetDetails": "Street and address details"
+      },
+      "cityOptions": {
+        "select": "Choose a city",
+        "loading": "Loading cities",
+        "empty": "No cities are currently available.",
+        "unavailable": "Cities could not be loaded.",
+        "retry": "Try again"
+      },
+      "errors": {
+        "required": "This field is required.",
+        "invalidPhone": "Enter a valid Saudi mobile number.",
+        "validation": "Review the required shipping-address details."
+      }
+    },
+    "shipping": {
+      "title": "Shipping method",
+      "waiting": "Select a shipping address to see available delivery options.",
+      "loading": "Calculating shipping options",
+      "retry": "Try again",
+      "refreshing": "Refreshing quote",
+      "free": "Free",
+      "error": {
+        "title": "Shipping could not be calculated",
+        "description": "There was a temporary problem calculating the order. Try again."
+      },
+      "coverage": {
+        "title": "Address outside delivery coverage",
+        "description": "Choose another address within the available delivery area."
+      },
+      "unavailable": {
+        "title": "Some products are unavailable",
+        "description": "Correct your Cart before continuing with checkout.",
+        "line": "{name}: requested {requested}, available {available}, total requested for this variant {variantTotalRequested}.",
+        "backToCart": "Return to Cart"
+      },
+      "noOptions": {
+        "title": "No delivery options available",
+        "description": "No delivery method is currently available for this address. Choose another address or try again later."
+      }
+    },
+    "summary": {
+      "title": "Order summary",
+      "waiting": "The summary will appear after you select a shipping address.",
+      "unavailable": "A valid summary is not currently available for this address.",
+      "subtotal": "Subtotal",
+      "productDiscount": "Product discount",
+      "personalization": "Personalization",
+      "giftWrap": "Gift wrapping",
+      "shipping": "Shipping",
+      "shippingPending": "Calculated after choosing a shipping method",
+      "couponDiscount": "Coupon discount",
+      "vat": "VAT ({rate}%)",
+      "total": "Total",
+      "quantity": "Quantity",
+      "personalizedWith": "Personalization"
+    }
+  },
   "cartPage": {
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },
     "title": "Shopping cart",

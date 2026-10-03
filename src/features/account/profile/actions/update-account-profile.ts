@@ -16,9 +16,9 @@ import {
 import { updateProfileDto } from "@/features/auth/api/auth-api.server";
 import { mapAuthUser } from "@/features/auth/api/parse-auth-dto";
 import { getAccessToken } from "@/features/auth/server/auth-session";
-import { normalizeSaudiPhoneForSubmission } from "@/features/auth/utils/normalize-saudi-phone";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 const updateProfileFieldMap = {
   first_name: "firstName",
@@ -78,6 +78,13 @@ export async function updateAccountProfile(
   if (Object.keys(errors).length > 0) {
     return { ok: false, error: { code: "invalid-input", fields: errors } };
   }
+  const phone = normalizeSaudiMobile(profile.phone);
+  if (!phone) {
+    return {
+      ok: false,
+      error: { code: "invalid-input", fields: { phone: "phone" } },
+    };
+  }
 
   const accessToken = await getAccessToken();
   if (!accessToken) {
@@ -88,7 +95,7 @@ export async function updateAccountProfile(
     const response = await updateProfileDto(locale, accessToken, {
       first_name: profile.firstName,
       last_name: profile.lastName,
-      phone: normalizeSaudiPhoneForSubmission(profile.phone),
+      phone,
     });
     if (!response.success) {
       return { ok: false, error: { code: "service-unavailable" } };

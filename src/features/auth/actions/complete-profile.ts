@@ -12,8 +12,8 @@ import type {
   AuthenticatedActionResult,
   CompleteProfileField,
 } from "@/features/auth/types/auth.types";
-import { normalizeSaudiPhoneForSubmission } from "@/features/auth/utils/normalize-saudi-phone";
 import { ApiError } from "@/lib/api/api-error";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 const completeProfileFieldMap = {
   first_name: "firstName",
@@ -53,6 +53,13 @@ export async function completeProfile(
   ) {
     return { ok: false, error: { code: "invalid-input" } };
   }
+  const phone = normalizeSaudiMobile(input.phone);
+  if (!phone) {
+    return {
+      ok: false,
+      error: { code: "invalid-input", fields: ["phone"] },
+    };
+  }
 
   const accessToken = await getAccessToken();
   if (!accessToken) {
@@ -63,7 +70,7 @@ export async function completeProfile(
     const response = await completeProfileDto(locale, accessToken, {
       first_name: input.firstName.trim(),
       last_name: input.lastName.trim(),
-      phone: normalizeSaudiPhoneForSubmission(input.phone),
+      phone,
       terms_accepted: true,
     });
     if (!response.success) {

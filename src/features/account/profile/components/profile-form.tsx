@@ -5,6 +5,7 @@ import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/ui/input";
+import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { updateAccountProfile } from "@/features/account/profile/actions/update-account-profile";
 import type {
   AccountProfile,
@@ -15,6 +16,7 @@ import type {
 } from "@/features/account/profile/types/account-profile.types";
 import { validateAccountProfile } from "@/features/account/profile/utils/validate-account-profile";
 import { rafalToast } from "@/lib/rafal-toast";
+import { formatSaudiMobileForInput } from "@/lib/phone/saudi-mobile";
 
 export type ProfileFormCopy = {
   title: string;
@@ -39,7 +41,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
   const [values, setValues] = useState<AccountProfileInput>({
     firstName: profile.firstName,
     lastName: profile.lastName,
-    phone: profile.phone,
+    phone: formatSaudiMobileForInput(profile.phone),
   });
   const [errors, setErrors] = useState<AccountProfileValidationErrors>({});
   const [pending, startTransition] = useTransition();
@@ -76,7 +78,10 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
           }
           return;
         }
-        setValues(result.profile);
+        setValues({
+          ...result.profile,
+          phone: formatSaudiMobileForInput(result.profile.phone),
+        });
         rafalToast.success(copy.saved);
       } catch {
         rafalToast.error(copy.saveError);
@@ -133,13 +138,9 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
             />
           </div>
           <div className="sm:col-span-2">
-            <InputField
+            <SaudiMobileField
               id="account-phone"
               name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              dir="ltr"
               className="text-start"
               label={copy.phone}
               value={values.phone}

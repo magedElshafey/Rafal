@@ -12,6 +12,7 @@ import { type ChangeEvent, type FormEvent, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/ui/input";
 import { RafalModal } from "@/components/ui/rafal-modal";
+import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { Switch } from "@/components/ui/switch";
 import { createAddress, updateAddress } from "@/features/addresses/actions/address-actions";
 import { addressListQueryKey } from "@/features/addresses/api/address-query";
@@ -27,6 +28,11 @@ import type {
 } from "@/features/addresses/types/address.types";
 import { useRouter } from "@/i18n/navigation";
 import { rafalToast } from "@/lib/rafal-toast";
+import {
+  formatSaudiMobileForInput,
+  isValidSaudiMobile,
+  normalizeSaudiMobile,
+} from "@/lib/phone/saudi-mobile";
 import { cn } from "@/lib/utils";
 
 export type AddressFormCopy = {
@@ -88,7 +94,9 @@ function initialDraft(address: Address | null): AddressDraft {
   return {
     label: address?.label ?? "",
     recipientName: address?.recipientName ?? "",
-    recipientPhone: address?.recipientPhone ?? "",
+    recipientPhone: address
+      ? formatSaudiMobileForInput(address.recipientPhone)
+      : "",
     city: address ? { id: address.city.id, name: address.city.name } : null,
     district: address?.district ?? "",
     streetDetails: address?.streetDetails ?? "",
@@ -101,6 +109,9 @@ function validateDraft(draft: AddressDraft): AddressValidationErrors {
   if (!draft.label.trim()) errors.label = "required";
   if (!draft.recipientName.trim()) errors.recipientName = "required";
   if (!draft.recipientPhone.trim()) errors.recipientPhone = "required";
+  else if (!isValidSaudiMobile(draft.recipientPhone)) {
+    errors.recipientPhone = "rejected";
+  }
   if (!draft.city) errors.cityId = "required";
   if (!draft.district.trim()) errors.district = "required";
   if (!draft.streetDetails.trim()) errors.streetDetails = "required";
@@ -111,7 +122,7 @@ function createInput(draft: AddressDraft): CreateAddressInput {
   return {
     label: draft.label.trim(),
     recipientName: draft.recipientName.trim(),
-    recipientPhone: draft.recipientPhone.trim(),
+    recipientPhone: normalizeSaudiMobile(draft.recipientPhone)!,
     cityId: draft.city!.id,
     district: draft.district.trim(),
     streetDetails: draft.streetDetails.trim(),
@@ -320,13 +331,9 @@ export function AddressForm({
                 error={fieldError("recipientName")}
                 onChange={(event) => updateField("recipientName", event.target.value)}
               />
-              <InputField
+              <SaudiMobileField
                 id={phoneId}
                 name="recipientPhone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                dir="ltr"
                 className="text-start"
                 label={copy.fields.recipientPhone}
                 required

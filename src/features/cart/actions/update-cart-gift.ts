@@ -11,7 +11,7 @@ import type {
 } from "@/features/cart/types/cart.types";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
-import { isValidPhoneFormat } from "@/lib/validation/phone";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -36,14 +36,15 @@ function parseInput(value: unknown): UpdateCartGiftInput | null {
     typeof streetDetails !== "string" || !streetDetails.trim() ||
     typeof cityId !== "number" || !Number.isSafeInteger(cityId) || cityId <= 0
   ) return null;
-  if (!isValidPhoneFormat(phone)) return null;
+  const normalizedPhone = normalizeSaudiMobile(phone);
+  if (!normalizedPhone) return null;
   return {
     kind: "recipient",
     giftWrap: value.giftWrap,
     isAnonymous: value.isAnonymous,
     message: value.message?.trim() || null,
     recipient: {
-      name: name.trim(), phone: phone.trim(), cityId,
+      name: name.trim(), phone: normalizedPhone, cityId,
       district: district.trim(), streetDetails: streetDetails.trim(),
     },
   };

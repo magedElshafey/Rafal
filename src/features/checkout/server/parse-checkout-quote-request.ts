@@ -5,6 +5,7 @@ import type {
   CheckoutDestination,
   CheckoutQuoteRequest,
 } from "@/features/checkout/types/checkout.types";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -46,7 +47,10 @@ function parseAddress(value: unknown): CheckoutAddress | null {
   }
 
   const recipientName = nonEmptyString(value.recipientName);
-  const recipientPhone = nonEmptyString(value.recipientPhone);
+  const recipientPhone =
+    typeof value.recipientPhone === "string"
+      ? normalizeSaudiMobile(value.recipientPhone)
+      : null;
   const cityId = positiveInteger(value.cityId);
   const district = nonEmptyString(value.district);
   const streetDetails = nonEmptyString(value.streetDetails);

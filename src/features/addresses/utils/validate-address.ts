@@ -4,6 +4,7 @@ import type {
   CreateAddressInput,
   UpdateAddressInput,
 } from "@/features/addresses/types/address.types";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 const inputFields = [
   "label",
@@ -60,6 +61,18 @@ function parseFields(
         errors.isDefault = "rejected";
       } else {
         input.isDefault = value.isDefault;
+      }
+      continue;
+    }
+
+    if (field === "recipientPhone") {
+      const raw = value.recipientPhone;
+      if (typeof raw !== "string" || !raw.trim()) {
+        errors.recipientPhone = "required";
+      } else {
+        const normalized = normalizeSaudiMobile(raw);
+        if (normalized) input.recipientPhone = normalized;
+        else errors.recipientPhone = "rejected";
       }
       continue;
     }

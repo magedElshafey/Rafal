@@ -5,11 +5,12 @@ import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SaudiFlagIcon } from "@/components/ui/icons";
-import { InputField, PhoneInputField } from "@/components/ui/input";
+import { InputField } from "@/components/ui/input";
+import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { completeProfile } from "@/features/auth/actions/complete-profile";
 import { usePostAuthCartMerge } from "@/features/auth/hooks/use-post-auth-cart-merge";
 import { useRouter } from "@/i18n/navigation";
+import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 
 export type CompleteProfileFormCopy = {
@@ -69,6 +70,9 @@ export function CompleteProfileForm({
     if (!values.firstName.trim()) nextErrors.firstName = copy.required;
     if (!values.lastName.trim()) nextErrors.lastName = copy.required;
     if (!values.phone.trim()) nextErrors.phone = copy.required;
+    else if (!isValidSaudiMobile(values.phone)) {
+      nextErrors.phone = copy.invalidPhone;
+    }
     if (!termsAccepted) nextErrors.termsAccepted = copy.termsRequired;
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
@@ -143,14 +147,11 @@ export function CompleteProfileForm({
           error={errors.lastName}
           onChange={(event) => updateValue("lastName", event.target.value)}
         />
-        <PhoneInputField
+        <SaudiMobileField
           id="mobile-number"
           name="phone"
-          autoComplete="tel-national"
           required
           label={copy.phone}
-          countryCode="+966"
-          countryFlag={<SaudiFlagIcon className="size-full" />}
           placeholder={copy.phonePlaceholder}
           value={values.phone}
           error={errors.phone}
