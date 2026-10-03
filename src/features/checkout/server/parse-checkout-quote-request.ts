@@ -74,7 +74,9 @@ function parseAddress(value: unknown): CheckoutAddress | null {
   };
 }
 
-function parseDestination(value: unknown): CheckoutDestination | null {
+export function parseCheckoutDestination(
+  value: unknown,
+): CheckoutDestination | null {
   if (!isRecord(value) || typeof value.kind !== "string") return null;
 
   if (value.kind === "saved-address") {
@@ -111,7 +113,7 @@ export function parseCheckoutQuoteRequest(
     return null;
   }
 
-  const destination = parseDestination(value.destination);
+  const destination = parseCheckoutDestination(value.destination);
   if (!destination) return null;
 
   if (value.shippingMethodId === undefined) return { destination };

@@ -77,6 +77,7 @@ type CheckoutDestinationSectionProps = {
   isAuthenticated: boolean;
   locale: Locale;
   onCommit: (destination: CheckoutDestination) => void;
+  onGiftPendingChange: (pending: boolean) => void;
   onGiftPersisted: (gift: CartSnapshot["gift"]) => void;
 };
 
@@ -370,6 +371,7 @@ export function CheckoutDestinationSection({
   isAuthenticated,
   locale,
   onCommit,
+  onGiftPendingChange,
   onGiftPersisted,
 }: CheckoutDestinationSectionProps) {
   const giftRecipient = gift?.recipient ?? null;
@@ -402,6 +404,7 @@ export function CheckoutDestinationSection({
             copy={copy.gift.editor}
             gift={gift}
             locale={locale}
+            onPendingChange={onGiftPendingChange}
             onPersisted={onGiftPersisted}
           />
         </div>

@@ -166,6 +166,18 @@ export default async function CheckoutRoute() {
         validation: t("destination.errors.validation"),
       },
     },
+    buyer: {
+      title: t("buyer.title"),
+      name: t("buyer.name"),
+      email: t("buyer.email"),
+      phone: t("buyer.phone"),
+      submit: t("buyer.submit"),
+      committed: t("buyer.committed"),
+      required: t("buyer.required"),
+      invalidEmail: t("buyer.invalidEmail"),
+      invalidPhone: t("buyer.invalidPhone"),
+      validation: t("buyer.validation"),
+    },
     shipping: {
       title: t("shipping.title"),
       waiting: t("shipping.waiting"),
@@ -208,6 +220,15 @@ export default async function CheckoutRoute() {
       quantity: t("summary.quantity"),
       personalizedWith: t("summary.personalizedWith"),
       products: t("summary.products"),
+    },
+    place: {
+      submit: t("place.submit"),
+      submitting: t("place.submitting"),
+      error: t("place.error"),
+      checkoutChanged: t("place.checkoutChanged"),
+      unavailableTitle: t("place.unavailableTitle"),
+      unavailableDescription: t("place.unavailableDescription"),
+      backToCart: t("place.backToCart"),
     },
   };
 

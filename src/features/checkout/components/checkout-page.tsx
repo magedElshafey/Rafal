@@ -2,12 +2,17 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import type { Address } from "@/features/addresses/types/address.types";
 import type { CartSnapshot } from "@/features/cart/types/cart.types";
 import { checkoutQuoteQueryKey } from "@/features/checkout/api/checkout-query";
+import {
+  CheckoutBuyerSection,
+  type CheckoutBuyerCopy,
+} from "@/features/checkout/components/checkout-buyer-section";
 import {
   CheckoutDestinationSection,
   type CheckoutDestinationCopy,
@@ -22,11 +27,20 @@ import {
   type CheckoutSummaryItem,
 } from "@/features/checkout/components/checkout-summary";
 import { useCheckoutQuote } from "@/features/checkout/hooks/use-checkout-quote";
+import { useCheckoutPlace } from "@/features/checkout/hooks/use-checkout-place";
 import type {
+  CheckoutBuyer,
   CheckoutDestination,
+  CheckoutPlaceRequest,
   CheckoutQuoteRequest,
+  CheckoutUnavailableLine,
 } from "@/features/checkout/types/checkout.types";
-import { Link } from "@/i18n/navigation";
+import {
+  storeCheckoutConfirmationHandoff,
+  storeCheckoutVerificationHandoff,
+} from "@/features/checkout/utils/checkout-handoff";
+import { Link, useRouter } from "@/i18n/navigation";
+import { ApiError } from "@/lib/api/api-error";
 
 export type CheckoutPageCopy = {
   title: string;
@@ -36,8 +50,18 @@ export type CheckoutPageCopy = {
     action: string;
   };
   destination: CheckoutDestinationCopy;
+  buyer: CheckoutBuyerCopy;
   shipping: CheckoutShippingCopy;
   summary: CheckoutSummaryCopy;
+  place: {
+    submit: string;
+    submitting: string;
+    error: string;
+    checkoutChanged: string;
+    unavailableTitle: string;
+    unavailableDescription: string;
+    backToCart: string;
+  };
 };
 
 type CheckoutPageProps = {
@@ -63,10 +87,21 @@ export function CheckoutPage({
   locale,
   summaryItems,
 }: CheckoutPageProps) {
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const placeMutation = useCheckoutPlace(locale);
+  const placeInFlightRef = useRef(false);
   const [destination, setDestination] =
     useState<CheckoutDestination | null>(initialDestination);
   const [gift, setGift] = useState(initialGift);
+  const [giftMutationPending, setGiftMutationPending] = useState(false);
+  const [guestBuyer, setGuestBuyer] = useState<
+    Extract<CheckoutBuyer, { kind: "guest" }> | null
+  >(null);
+  const [placeUnavailableLines, setPlaceUnavailableLines] = useState<
+    readonly CheckoutUnavailableLine[]
+  >([]);
+  const [placeCompleted, setPlaceCompleted] = useState(false);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
   const request: CheckoutQuoteRequest | null = destination
     ? {
@@ -89,6 +124,8 @@ export function CheckoutPage({
     invalidateTarget(nextRequest);
     setShippingMethodId(null);
     setDestination(nextDestination);
+    setPlaceUnavailableLines([]);
+    placeMutation.reset();
   };
 
   const selectShipping = (nextShippingMethodId: number) => {
@@ -98,6 +135,8 @@ export function CheckoutPage({
       shippingMethodId: nextShippingMethodId,
     });
     setShippingMethodId(nextShippingMethodId);
+    setPlaceUnavailableLines([]);
+    placeMutation.reset();
   };
 
   const persistGiftDestination = (nextGift: CartSnapshot["gift"]) => {
@@ -150,6 +189,68 @@ export function CheckoutPage({
     hasDestination &&
     !quoteLoading &&
     quoteQuery.isError;
+  const selectedShippingOption =
+    shippingMethodId === null
+      ? null
+      : quote?.shippingOptions.find(
+          (option) => option.id === shippingMethodId,
+        ) ?? null;
+  const buyer: CheckoutBuyer | null = isAuthenticated
+    ? { kind: "authenticated" }
+    : guestBuyer;
+  const placeRequest: CheckoutPlaceRequest | null =
+    destination && shippingMethodId !== null && buyer
+      ? { destination, shippingMethodId, buyer }
+      : null;
+  const placeReady = Boolean(
+    placeRequest &&
+      quote &&
+      quote.location.inCoverage &&
+      quote.fulfillable &&
+      selectedShippingOption &&
+      !giftMutationPending &&
+      placeUnavailableLines.length === 0 &&
+      !placeCompleted &&
+      !placeMutation.isPending,
+  );
+
+  const placeOrder = async () => {
+    if (!placeReady || !placeRequest || placeInFlightRef.current) return;
+    placeInFlightRef.current = true;
+    placeMutation.reset();
+    try {
+      const result = await placeMutation.mutateAsync(placeRequest);
+      setPlaceCompleted(true);
+      const encodedOrderNumber = encodeURIComponent(result.orderNumber);
+      if (result.kind === "verification-required") {
+        storeCheckoutVerificationHandoff(
+          result,
+          placeRequest.buyer.kind === "guest" ? placeRequest.buyer.email : "",
+        );
+        router.push(`/orders/${encodedOrderNumber}/verify`);
+      } else {
+        storeCheckoutConfirmationHandoff(result);
+        router.push(`/orders/${encodedOrderNumber}/confirmation`);
+      }
+    } catch (error) {
+      if (error instanceof ApiError && error.code === "unavailable-lines") {
+        const lines = Array.isArray(error.details)
+          ? error.details.filter(
+              (line): line is CheckoutUnavailableLine =>
+                typeof line === "object" && line !== null,
+            )
+          : [];
+        setPlaceUnavailableLines(lines);
+      } else if (
+        error instanceof ApiError &&
+        error.code === "checkout-changed"
+      ) {
+        void quoteQuery.refetch();
+      }
+    } finally {
+      placeInFlightRef.current = false;
+    }
+  };
 
   return (
     <div>
@@ -168,6 +269,7 @@ export function CheckoutPage({
             isAuthenticated={isAuthenticated}
             locale={locale}
             onCommit={commitDestination}
+            onGiftPendingChange={setGiftMutationPending}
             onGiftPersisted={persistGiftDestination}
           />
           <CheckoutShippingSection
@@ -181,6 +283,17 @@ export function CheckoutPage({
             quote={quote}
             selectedShippingMethodId={shippingMethodId}
           />
+          {!isAuthenticated ? (
+            <CheckoutBuyerSection
+              copy={copy.buyer}
+              committedBuyer={guestBuyer}
+              onCommit={(nextBuyer) => {
+                setGuestBuyer(nextBuyer);
+                setPlaceUnavailableLines([]);
+                placeMutation.reset();
+              }}
+            />
+          ) : null}
         </div>
         <div dir={locale === "ar" ? "rtl" : "ltr"}>
           <CheckoutSummary
@@ -189,6 +302,53 @@ export function CheckoutPage({
             isLoading={quoteLoading}
             items={summaryItems}
             locale={locale}
+            placeAction={
+              <div>
+                {placeUnavailableLines.length > 0 ? (
+                  <div
+                    role="alert"
+                    className="mb-4 rounded-md border border-destructive/20 bg-destructive/5 p-4"
+                  >
+                    <p className="type-body font-medium text-gray-1000">
+                      {copy.place.unavailableTitle}
+                    </p>
+                    <p className="mt-1 type-body-sm text-gray-600">
+                      {copy.place.unavailableDescription}
+                    </p>
+                    <ul className="mt-2 list-disc space-y-1 ps-5 type-body-sm text-destructive">
+                      {placeUnavailableLines.map((line) => (
+                        <li key={line.cartItemId}>
+                          {line.productName[locale]}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href="/cart"
+                      className="mt-3 inline-flex min-h-11 items-center font-medium text-destructive underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {copy.place.backToCart}
+                    </Link>
+                  </div>
+                ) : placeMutation.isError ? (
+                  <p role="alert" className="mb-3 type-body-sm text-destructive">
+                    {placeMutation.error instanceof ApiError &&
+                    placeMutation.error.code === "checkout-changed"
+                      ? copy.place.checkoutChanged
+                      : copy.place.error}
+                  </p>
+                ) : null}
+                <Button
+                  size="lg"
+                  className="w-full"
+                  disabled={!placeReady}
+                  loading={placeMutation.isPending}
+                  loadingLabel={copy.place.submitting}
+                  onClick={() => void placeOrder()}
+                >
+                  {copy.place.submit}
+                </Button>
+              </div>
+            }
             quote={quote}
           />
         </div>

@@ -257,6 +257,15 @@ function parseUnavailableLine(
   };
 }
 
+export function parseCheckoutUnavailableLines(
+  value: unknown,
+  path = "unavailable_lines",
+): readonly CheckoutUnavailableLineDto[] {
+  return parseArray(value, path).map((line, index) =>
+    parseUnavailableLine(line, `${path}[${index}]`),
+  );
+}
+
 export function parseCheckoutQuoteResponse(
   value: unknown,
 ): CheckoutQuoteResponseDto {
@@ -285,14 +294,9 @@ export function parseCheckoutQuoteResponse(
         data.warehouse === null
           ? null
           : parseQuoteWarehouse(data.warehouse, "response.data.warehouse"),
-      unavailable_lines: parseArray(
+      unavailable_lines: parseCheckoutUnavailableLines(
         data.unavailable_lines,
         "response.data.unavailable_lines",
-      ).map((line, index) =>
-        parseUnavailableLine(
-          line,
-          `response.data.unavailable_lines[${index}]`,
-        ),
       ),
       coupon:
         data.coupon === null

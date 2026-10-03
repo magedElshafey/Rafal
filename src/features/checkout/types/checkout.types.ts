@@ -26,6 +26,21 @@ export type CheckoutQuoteRequest = Readonly<{
   shippingMethodId?: number;
 }>;
 
+export type CheckoutBuyer =
+  | Readonly<{ kind: "authenticated" }>
+  | Readonly<{
+      kind: "guest";
+      name: string;
+      email: string;
+      phone: string;
+    }>;
+
+export type CheckoutPlaceRequest = Readonly<{
+  destination: CheckoutDestination;
+  shippingMethodId: number;
+  buyer: CheckoutBuyer;
+}>;
+
 export type CheckoutShippingOption = Readonly<{
   id: number;
   code: string;
@@ -110,3 +125,40 @@ export type CheckoutQuote = Readonly<{
   coupon: CheckoutQuoteCoupon | null;
   location: CheckoutQuoteLocation;
 }>;
+
+export type CheckoutPlacedMoney = Readonly<{
+  subtotal: string;
+  discountTotal: string;
+  shippingFee: string;
+  personalizationTotal: string;
+  giftWrapFee: string;
+  taxableAmount: string;
+  vat: Readonly<{ rate: string; amount: string }>;
+  total: string;
+  currency: string;
+}>;
+
+export type CheckoutPlacedShippingAddress = Readonly<{
+  recipientName: string;
+  recipientPhone: string;
+  city: Readonly<{ id: number; name: string }> | null;
+  district: string;
+  streetDetails: string;
+}>;
+
+type CheckoutPlacedOrder = Readonly<{
+  id: number;
+  orderNumber: string;
+  displayNumber: string;
+  placedAt: string;
+  shippingAddress: CheckoutPlacedShippingAddress;
+  money: CheckoutPlacedMoney;
+}>;
+
+export type CheckoutPlaceResult =
+  | (CheckoutPlacedOrder & Readonly<{ kind: "confirmed" }>)
+  | (CheckoutPlacedOrder &
+      Readonly<{
+        kind: "verification-required";
+        verificationExpiresAt: string | null;
+      }>);

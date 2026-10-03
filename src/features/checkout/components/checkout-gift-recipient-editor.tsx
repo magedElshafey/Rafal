@@ -67,11 +67,13 @@ export function CheckoutGiftRecipientEditor({
   copy,
   gift,
   locale,
+  onPendingChange,
   onPersisted,
 }: {
   copy: CheckoutGiftRecipientEditorCopy;
   gift: CartSnapshot["gift"];
   locale: Locale;
+  onPendingChange: (pending: boolean) => void;
   onPersisted: (gift: CartSnapshot["gift"]) => void;
 }) {
   const queryClient = useQueryClient();
@@ -118,6 +120,7 @@ export function CheckoutGiftRecipientEditor({
     if (Object.keys(nextErrors).length > 0 || !canonicalDraft) return;
 
     setError(null);
+    onPendingChange(true);
     try {
       const result = await mutation.mutateAsync({
           kind: "recipient",
@@ -162,6 +165,8 @@ export function CheckoutGiftRecipientEditor({
       setOpen(false);
     } catch {
       setError({ code: "service-unavailable" });
+    } finally {
+      onPendingChange(false);
     }
   };
 

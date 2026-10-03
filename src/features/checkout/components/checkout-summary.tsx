@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import type { ReactNode } from "react";
 
 import { AppImage } from "@/components/ui/app-image";
 import { ChevronDownIcon } from "@/components/ui/icons";
@@ -42,6 +43,7 @@ type CheckoutSummaryProps = {
   isLoading: boolean;
   items: readonly CheckoutSummaryItem[];
   locale: Locale;
+  placeAction?: ReactNode;
   quote: CheckoutQuote | null;
 };
 
@@ -81,6 +83,7 @@ export function CheckoutSummary({
   isLoading,
   items,
   locale,
+  placeAction,
   quote,
 }: CheckoutSummaryProps) {
   return (
@@ -244,6 +247,7 @@ export function CheckoutSummary({
           </div>
         </>
       )}
+      {placeAction ? <div className="mt-6">{placeAction}</div> : null}
     </aside>
   );
 }

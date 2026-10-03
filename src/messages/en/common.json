@@ -109,6 +109,18 @@
         "description": "No delivery method is currently available for this address. Choose another address or try again later."
       }
     },
+    "buyer": {
+      "title": "Buyer information",
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Saudi mobile number",
+      "submit": "Use these buyer details",
+      "committed": "Buyer details are ready.",
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidPhone": "Enter a valid Saudi mobile number.",
+      "validation": "Review the required buyer information."
+    },
     "summary": {
       "title": "Order summary",
       "waiting": "The summary will appear after you select a shipping address.",
@@ -125,7 +137,36 @@
       "quantity": "Quantity",
       "personalizedWith": "Personalization",
       "products": "Products"
+    },
+    "place": {
+      "submit": "Place order",
+      "submitting": "Placing order",
+      "error": "The order could not be placed. Your Checkout is still available; try again when ready.",
+      "checkoutChanged": "Checkout details changed. Review the refreshed quote before trying again.",
+      "unavailableTitle": "Some products are no longer available",
+      "unavailableDescription": "Return to your Cart to correct these products before placing the order.",
+      "backToCart": "Return to Cart"
     }
+  },
+  "checkoutVerification": {
+    "title": "Verify your order email",
+    "description": "We created your order, but it is not confirmed yet. Enter the code sent to your email in the next verification step.",
+    "sentTo": "Code sent to",
+    "orderNumber": "Order number",
+    "foundation": "Code entry and verification will be added in the next Checkout slice.",
+    "missingTitle": "Order verification context is unavailable",
+    "missingDescription": "This page can be opened safely, but the browser-session verification details are missing. A later step will allow secure email re-entry.",
+    "returnToCheckout": "Return to Checkout"
+  },
+  "checkoutConfirmation": {
+    "title": "Thank you! Your order was received successfully",
+    "orderNumber": "Order number",
+    "description": "We will contact you soon to confirm the delivery details.",
+    "shippingAddress": "Shipping destination",
+    "total": "Total",
+    "continueShopping": "Continue shopping",
+    "missingTitle": "Confirmation details are unavailable",
+    "missingDescription": "This confirmation can only display details from a successfully confirmed order in the current browser session."
   },
   "cartPage": {
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },

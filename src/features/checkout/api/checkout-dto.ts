@@ -118,4 +118,5 @@ export type CheckoutQuoteResponseDto =
 
 export const checkoutContractEndpoints = {
   quote: "/checkout/quote",
+  place: "/checkout/place",
 } as const;
