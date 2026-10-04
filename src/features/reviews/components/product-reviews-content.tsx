@@ -1,6 +1,5 @@
 import type { Locale } from "next-intl";
 
-import { Rating } from "@/features/products/components/product-card/rating";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
 import { ProductReviewsCarousel } from "@/features/reviews/components/product-reviews-carousel";
 import { ReviewCard } from "@/features/reviews/components/review-card";

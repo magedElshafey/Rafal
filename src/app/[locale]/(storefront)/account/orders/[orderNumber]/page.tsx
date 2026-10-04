@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
+import { OrderReturnHistory } from "@/features/order-returns/components/order-return-history";
 import {
   OrderDetailsView,
   type OrderDetailsCopy,
@@ -59,6 +61,46 @@ export default async function OrderDetailsPage({
         notAllowed: t("review.errors.notAllowed"),
         rateLimited: t("review.errors.rateLimited"),
         service: t("review.errors.service"),
+      },
+    },
+    returnRequest: {
+      action: t("returnRequest.action"),
+      title: t("returnRequest.title"),
+      orderContextText: t("returnRequest.orderContext", {
+        number: result.order.orderNumber,
+      }),
+      description: t("returnRequest.description"),
+      reasonLabel: t("returnRequest.reasonLabel"),
+      reasonPlaceholder: t("returnRequest.reasonPlaceholder"),
+      reasonRequired: t("returnRequest.reasonRequired"),
+      reasons: {
+        damaged: t("returnRequest.reasons.damaged"),
+        wrong_item: t("returnRequest.reasons.wrongItem"),
+        not_as_described: t("returnRequest.reasons.notAsDescribed"),
+        changed_mind: t("returnRequest.reasons.changedMind"),
+        other: t("returnRequest.reasons.other"),
+      },
+      submit: t("returnRequest.submit"),
+      submitting: t("returnRequest.submitting"),
+      cancel: t("returnRequest.cancel"),
+      close: t("returnRequest.close"),
+      successTitle: t("returnRequest.successTitle"),
+      successBody: t("returnRequest.successBody"),
+      summaryTitle: t("returnRequest.summaryTitle"),
+      requestDate: t("returnRequest.requestDate"),
+      decisionDate: t("returnRequest.decisionDate"),
+      decisionNote: t("returnRequest.decisionNote"),
+      statuses: {
+        pending: t("returnRequest.statuses.pending"),
+        approved: t("returnRequest.statuses.approved"),
+        rejected: t("returnRequest.statuses.rejected"),
+      },
+      errors: {
+        auth: t("returnRequest.errors.auth"),
+        invalidReason: t("returnRequest.errors.invalidReason"),
+        notAllowed: t("returnRequest.errors.notAllowed"),
+        rateLimited: t("returnRequest.errors.rateLimited"),
+        service: t("returnRequest.errors.service"),
       },
     },
     orderLabel: t("orderLabel"),
@@ -119,5 +161,20 @@ export default async function OrderDetailsPage({
     },
   };
 
-  return <OrderDetailsView order={result.order} locale={locale} copy={copy} />;
+  return (
+    <OrderDetailsView
+      order={result.order}
+      locale={locale}
+      copy={copy}
+      returnHistory={
+        <Suspense fallback={null}>
+          <OrderReturnHistory
+            copy={copy.returnRequest}
+            locale={locale}
+            order={result.order}
+          />
+        </Suspense>
+      }
+    />
+  );
 }

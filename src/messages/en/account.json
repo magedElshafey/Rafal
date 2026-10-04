@@ -207,6 +207,44 @@
         "success": "Order cancelled.",
         "error": "We couldn't cancel this order. Refresh the page and try again if cancellation is still available."
       },
+      "returnRequest": {
+        "action": "Request return",
+        "title": "Request a return",
+        "orderContext": "Order #{number}.",
+        "description": "Select a return reason. Your request will be sent for review.",
+        "reasonLabel": "Return reason",
+        "reasonPlaceholder": "Select a reason",
+        "reasonRequired": "Select a return reason.",
+        "reasons": {
+          "damaged": "Damaged product",
+          "wrongItem": "Wrong item received",
+          "notAsDescribed": "Not as described",
+          "changedMind": "Changed my mind",
+          "other": "Other"
+        },
+        "submit": "Submit return request",
+        "submitting": "Submitting return request",
+        "cancel": "Cancel",
+        "close": "Close",
+        "successTitle": "Return request submitted",
+        "successBody": "Your return request has been received and will be reviewed.",
+        "summaryTitle": "Return request",
+        "requestDate": "Request date",
+        "decisionDate": "Decision date",
+        "decisionNote": "Decision note",
+        "statuses": {
+          "pending": "Under review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "errors": {
+          "auth": "Your session has expired. Please sign in again.",
+          "invalidReason": "Select a valid return reason.",
+          "notAllowed": "A return request can't be submitted for this order right now.",
+          "rateLimited": "Too many attempts. Please try again later.",
+          "service": "We couldn't submit your return request right now."
+        }
+      },
       "review": {
         "action": "Rate product",
         "pendingReview": "Pending review",

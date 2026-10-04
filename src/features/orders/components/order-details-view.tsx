@@ -1,6 +1,13 @@
 import type { Locale } from "next-intl";
+import type { ReactNode } from "react";
 
 import { ChevronLeftIcon } from "@/components/ui/icons";
+import { OrderReturnAction } from "@/features/order-returns/components/order-return-action";
+import type { OrderReturnCopy } from "@/features/order-returns/types/order-return.types";
+import {
+  canCreateOrderReturn,
+  isCompletedCustomerOrder,
+} from "@/features/order-returns/utils/order-return-eligibility";
 import { CancelOrderAction } from "@/features/orders/components/cancel-order-action";
 import {
   OrderDetailsContent,
@@ -24,19 +31,27 @@ export type OrderDetailsCopy = OrderDetailsContentCopy & Readonly<{
     title: string;
   }>;
   productReview: OrderProductReviewCopy;
+  returnRequest: OrderReturnCopy;
 }>;
 
 type OrderDetailsViewProps = {
   copy: OrderDetailsCopy;
   locale: Locale;
   order: OrderDetails;
+  returnHistory?: ReactNode;
 };
 
 export function OrderDetailsView({
   copy,
   locale,
   order,
+  returnHistory,
 }: OrderDetailsViewProps) {
+  const showReturnAction = canCreateOrderReturn(order);
+  const showReturnHistory =
+    isCompletedCustomerOrder(order) && !showReturnAction;
+  const showActions = order.capabilities.canCancel || showReturnAction;
+
   return (
     <div className="space-y-5">
       <Link
@@ -53,15 +68,28 @@ export function OrderDetailsView({
         locale={locale}
         order={order}
         actions={
-          order.capabilities.canCancel ? (
-            <CancelOrderAction
-              copy={copy.cancel}
-              locale={locale}
-              orderNumber={order.orderNumber}
-            />
+          showActions ? (
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+              {showReturnAction ? (
+                <OrderReturnAction
+                  copy={copy.returnRequest}
+                  locale={locale}
+                  orderNumber={order.orderNumber}
+                />
+              ) : null}
+              {order.capabilities.canCancel ? (
+                <CancelOrderAction
+                  copy={copy.cancel}
+                  locale={locale}
+                  orderNumber={order.orderNumber}
+                />
+              ) : null}
+            </div>
           ) : null
         }
       />
+
+      {showReturnHistory ? returnHistory : null}
 
       <OrderDetailsContent
         copy={copy}

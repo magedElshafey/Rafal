@@ -491,6 +491,22 @@ Laravel Product DTO
   Pending Review; it never mutates or refetches public Reviews or aggregates.
   Laravel does not yet expose `can_review` or `review_status`, so that pending
   state is intentionally non-persistent and may reset after refresh.
+- Authenticated Order Return Requests are Order-level and Guest Order Tracking
+  remains read-only. A new request is offered only when authenticated Order
+  Details reports both `customer_status === completed` and
+  `can_request_return === true`; the frontend does not calculate a Return
+  window. The fixed reasons are `damaged`, `wrong_item`, `not_as_described`,
+  `changed_mind`, and `other`; current statuses are `pending`, `approved`, and
+  `rejected`. Server-side `GET /orders/:order/return-request` reads historical
+  state only for completed Orders where `can_request_return === false`;
+  non-completed Orders and creation-eligible completed Orders perform no Return
+  history read. Authenticated `POST` creates one request using only the raw
+  `reason` value and is never automatically retried. Pending does
+  not mean approved, approved does not mean refunded, and rejected does not
+  authorize resubmission. Admin identity is never customer-facing and the
+  response `comment` is not currently customer-editable. The exact backend
+  response when GET has no current request remains documented contract debt and
+  must not be guessed from an arbitrary error status.
 - Wishlist, Related Products, and Complementary Products remain
   source-isolated until their Laravel contracts are integrated. A
   Laravel-backed PDP does not pass its IDs to those development mock domains.

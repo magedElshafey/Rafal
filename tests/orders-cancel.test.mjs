@@ -123,6 +123,9 @@ test("Order details renders cancellation only when can_cancel maps to true", () 
     "@/features/orders/components/cancel-order-action": {
       CancelOrderAction: element("cancel-action"),
     },
+    "@/features/order-returns/components/order-return-action": {
+      OrderReturnAction: element("return-action"),
+    },
     "@/features/orders/components/order-address": { OrderAddress: element("address") },
     "@/features/orders/components/order-items": { OrderItems: element("items") },
     "@/features/orders/components/order-payment-summary": { OrderPaymentSummary: element("payment") },
