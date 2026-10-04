@@ -1,9 +1,12 @@
 import { buttonVariants } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
+import type { OrderFilter } from "@/features/orders/types/order.types";
+import { buildOrdersListHref } from "@/features/orders/utils/orders-search-params";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type OrdersPaginationProps = {
+  activeFilter: OrderFilter;
   currentPage: number;
   lastPage: number;
   nextLabel: string;
@@ -11,11 +14,8 @@ type OrdersPaginationProps = {
   previousLabel: string;
 };
 
-function pageHref(page: number): string {
-  return page === 1 ? "/account/orders" : `/account/orders?page=${page}`;
-}
-
 export function OrdersPagination({
+  activeFilter,
   currentPage,
   lastPage,
   nextLabel,
@@ -35,7 +35,13 @@ export function OrdersPagination({
       className="mt-6 flex items-center justify-center gap-3"
     >
       {currentPage > 1 ? (
-        <Link href={pageHref(currentPage - 1)} className={linkClassName}>
+        <Link
+          href={buildOrdersListHref({
+            filter: activeFilter,
+            page: currentPage - 1,
+          })}
+          className={linkClassName}
+        >
           <ChevronLeftIcon
             aria-hidden="true"
             className="size-4 rtl:rotate-180"
@@ -47,7 +53,13 @@ export function OrdersPagination({
         {pageLabel}
       </p>
       {currentPage < lastPage ? (
-        <Link href={pageHref(currentPage + 1)} className={linkClassName}>
+        <Link
+          href={buildOrdersListHref({
+            filter: activeFilter,
+            page: currentPage + 1,
+          })}
+          className={linkClassName}
+        >
           <span className="hidden sm:inline">{nextLabel}</span>
           <ChevronRightIcon
             aria-hidden="true"

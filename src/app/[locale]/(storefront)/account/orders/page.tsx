@@ -3,10 +3,16 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { buttonVariants } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
+import { OrderFilterNavigation } from "@/features/orders/components/order-filter-navigation";
 import { OrderListItem } from "@/features/orders/components/order-list-item";
 import { OrdersPagination } from "@/features/orders/components/orders-pagination";
 import { getCurrentUserOrdersPage } from "@/features/orders/server/orders-boundary";
 import type { OrdersPage as OrdersPageData } from "@/features/orders/types/order.types";
+import { getBackendOrderStatuses } from "@/features/orders/utils/order-filters";
+import {
+  parseOrderFilter,
+  parseOrdersPage,
+} from "@/features/orders/utils/orders-search-params";
 import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -17,12 +23,11 @@ type OrdersPageProps = {
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const [params, locale] = await Promise.all([searchParams, getLocale()]);
-  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
-  const parsedPage = rawPage === undefined ? 1 : Number(rawPage);
-  const page =
-    Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const filter = parseOrderFilter(params.filter);
+  const page = parseOrdersPage(params.page);
+  const statuses = getBackendOrderStatuses(filter);
   const [ordersPage, t] = await Promise.all([
-    getCurrentUserOrdersPage(locale, page).catch(
+    getCurrentUserOrdersPage(locale, page, statuses).catch(
       (): OrdersPageData | null => null,
     ),
     getTranslations("Account.orders"),
@@ -31,6 +36,18 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   return (
     <div>
       <h1 className="text-h2 font-bold text-gray-1000">{t("title")}</h1>
+      <div className="mt-5">
+        <OrderFilterNavigation
+          activeFilter={filter}
+          label={t("filters.label")}
+          labels={{
+            all: t("filters.all"),
+            "in-progress": t("filters.inProgress"),
+            completed: t("filters.completed"),
+            cancelled: t("filters.cancelled"),
+          }}
+        />
+      </div>
       <div className="mt-6">
         {ordersPage === null ? (
           <ErrorState
@@ -68,6 +85,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               ))}
             </ul>
             <OrdersPagination
+              activeFilter={filter}
               currentPage={ordersPage.pagination.currentPage}
               lastPage={ordersPage.pagination.lastPage}
               nextLabel={t("pagination.next")}

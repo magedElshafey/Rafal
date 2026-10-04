@@ -1,7 +1,10 @@
 import type { OrderDetails } from "@/features/orders/types/order.types";
+import { formatOrderDate } from "@/features/orders/utils/order-formatters";
+import type { Locale } from "next-intl";
 
 type OrderTimelineProps = {
   events: OrderDetails["timeline"];
+  locale: Locale;
   pendingLabel: string;
   reachedLabel: string;
   stageLabels: Readonly<Record<string, string>>;
@@ -15,6 +18,7 @@ function formatStep(step: string, stageLabels: Readonly<Record<string, string>>)
 
 export function OrderTimeline({
   events,
+  locale,
   pendingLabel,
   reachedLabel,
   stageLabels,
@@ -68,6 +72,14 @@ export function OrderTimeline({
                 >
                   {event.reached ? reachedLabel : pendingLabel}
                 </p>
+                {event.reached && event.reachedAt ? (
+                  <time
+                    dateTime={event.reachedAt}
+                    className="mt-1 block type-caption text-gray-500"
+                  >
+                    {formatOrderDate(locale, event.reachedAt)}
+                  </time>
+                ) : null}
               </div>
             </li>
           );

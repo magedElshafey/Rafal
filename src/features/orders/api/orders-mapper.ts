@@ -105,7 +105,11 @@ export function mapOrderDetails(
       paidAt: order.payment.paid_at,
     },
     verificationExpiresAt: order.verification_expires_at,
-    timeline: order.timeline.map((step) => ({ ...step })),
+    timeline: order.timeline.map((step) => ({
+      step: step.step,
+      reached: step.reached,
+      reachedAt: step.reached_at,
+    })),
     capabilities: {
       canCancel: order.can_cancel,
       canReorder: order.can_reorder,

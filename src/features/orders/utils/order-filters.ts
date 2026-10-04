@@ -3,7 +3,34 @@ import type {
   OrderStatus,
 } from "@/features/orders/types/order.types";
 
-export const orderStatusesByFilter: Record<
+export type BackendOrderStatus =
+  | "new"
+  | "confirmed"
+  | "proccessing"
+  | "shipped"
+  | "delivered"
+  | "reterned"
+  | "canceled"
+  | "payment_failed";
+
+const backendStatusesByFilter: Record<
+  Exclude<OrderFilter, "all">,
+  readonly BackendOrderStatus[]
+> = {
+  "in-progress": ["new", "confirmed", "proccessing", "shipped"],
+  completed: ["delivered"],
+  cancelled: ["canceled"],
+};
+
+export function getBackendOrderStatuses(
+  filter: OrderFilter,
+): readonly BackendOrderStatus[] | undefined {
+  if (filter === "all") return undefined;
+
+  return backendStatusesByFilter[filter];
+}
+
+const legacyDomainStatusesByFilter: Record<
   Exclude<OrderFilter, "all">,
   readonly OrderStatus[]
 > = {
@@ -16,7 +43,7 @@ export function matchesOrderFilter(
   status: OrderStatus,
   filter: OrderFilter,
 ): boolean {
-  if (filter === "all") return true;
-
-  return orderStatusesByFilter[filter].includes(status);
+  return (
+    filter === "all" || legacyDomainStatusesByFilter[filter].includes(status)
+  );
 }

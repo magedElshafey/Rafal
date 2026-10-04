@@ -3,6 +3,7 @@ import {
   orderFilterValues,
   type OrderFilter,
 } from "@/features/orders/types/order.types";
+import { buildOrdersListHref } from "@/features/orders/utils/orders-search-params";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -22,10 +23,7 @@ export function OrderFilterNavigation({
       <ul className="flex max-w-full gap-2 overflow-x-auto pb-1">
         {orderFilterValues.map((filter) => {
           const active = activeFilter === filter;
-          const href =
-            filter === "all"
-              ? "/account/orders"
-              : `/account/orders?status=${filter}`;
+          const href = buildOrdersListHref({ filter });
 
           return (
             <li key={filter}>
@@ -37,7 +35,7 @@ export function OrderFilterNavigation({
                     size: "sm",
                     variant: active ? "secondary" : "outline",
                   }),
-                  "border-gray-200",
+                  "border-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500",
                 )}
               >
                 {labels[filter]}

@@ -62,6 +62,10 @@ function nullableTimestamp(value: unknown, path: string): string | null {
   return value === null || value === undefined ? null : timestamp(value, path);
 }
 
+function requiredNullableTimestamp(value: unknown, path: string): string | null {
+  return value === null ? null : timestamp(value, path);
+}
+
 function optionalString(value: unknown, path: string): string | null {
   return value === null || value === undefined
     ? null
@@ -336,6 +340,10 @@ function parseDetails(value: unknown, path: string): OrderDetailsDto {
           reached: parseBoolean(
             timelineSource.reached,
             `${timelinePath}.reached`,
+          ),
+          reached_at: requiredNullableTimestamp(
+            timelineSource.reached_at,
+            `${timelinePath}.reached_at`,
           ),
         };
       },

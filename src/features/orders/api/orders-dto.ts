@@ -85,7 +85,11 @@ export type OrderDetailsDto = {
     paid_at: string | null;
   };
   verification_expires_at: string | null;
-  timeline: Array<{ step: string; reached: boolean }>;
+  timeline: Array<{
+    step: string;
+    reached: boolean;
+    reached_at: string | null;
+  }>;
   can_cancel: boolean;
   can_reorder: boolean;
   can_request_return: boolean;

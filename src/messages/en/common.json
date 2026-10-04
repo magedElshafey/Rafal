@@ -659,6 +659,29 @@
       "copyright": "All rights reserved to Rafal Store"
     }
   },
+  "guestOrderTracking": {
+    "title": "Track my order",
+    "description": "Enter your order number and the email address or mobile number used for the order.",
+    "methodLabel": "Choose contact information",
+    "methods": {
+      "email": "Email",
+      "phone": "Mobile number"
+    },
+    "orderNumber": "Order number",
+    "email": "Email address",
+    "phone": "Saudi mobile number",
+    "submit": "Track order",
+    "tracking": "Tracking order",
+    "changeDetails": "Track another order",
+    "errors": {
+      "invalidOrderNumber": "Enter your order number.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidPhone": "Enter a valid Saudi mobile number.",
+      "mismatch": "We couldn't find an order matching these details. Check the order number and contact information.",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "service": "We couldn't track the order right now. Please try again."
+    }
+  },
   "auth": {
     "brandHome": "Rafal — home page",
     "backToEmail": "Back to email entry",

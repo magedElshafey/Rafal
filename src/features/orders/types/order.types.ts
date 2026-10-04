@@ -151,7 +151,11 @@ export type OrderDetails = Readonly<{
     paidAt: string | null;
   }>;
   verificationExpiresAt: string | null;
-  timeline: readonly Readonly<{ step: string; reached: boolean }>[];
+  timeline: readonly Readonly<{
+    step: string;
+    reached: boolean;
+    reachedAt: string | null;
+  }>[];
   capabilities: Readonly<{
     canCancel: boolean;
     canReorder: boolean;
