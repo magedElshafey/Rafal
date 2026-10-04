@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { AppImage } from "@/components/ui/app-image";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
 import type { CartMoney } from "@/features/cart/types/cart.types";
 import type { CheckoutQuote } from "@/features/checkout/types/checkout.types";
 import { Link } from "@/i18n/navigation";
@@ -16,7 +17,7 @@ export type CheckoutSummaryItem = {
   personalizationText: string | null;
   productSlug: string;
   quantity: number;
-  variantAttributes: readonly { name: string; value: string }[];
+  variantAttributes: readonly { key: string; label: string; value: string }[];
 };
 
 export type CheckoutSummaryCopy = {
@@ -138,9 +139,14 @@ export function CheckoutSummary({
                   {item.variantAttributes.length > 0 ? (
                     <dl className="mt-1 flex flex-wrap gap-x-2 type-caption text-gray-500">
                       {item.variantAttributes.map((attribute) => (
-                        <div key={attribute.name} className="flex gap-1">
-                          <dt>{attribute.name}:</dt>
-                          <dd>{attribute.value}</dd>
+                        <div key={attribute.key} className="flex gap-1">
+                          <dt>{attribute.label}:</dt>
+                          <dd className="flex items-center">
+                            <VariantAttributeValue
+                              attributeKey={attribute.key}
+                              attributeValue={attribute.value}
+                            />
+                          </dd>
                         </div>
                       ))}
                     </dl>

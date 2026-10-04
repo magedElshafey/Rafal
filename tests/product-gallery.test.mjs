@@ -74,23 +74,23 @@ function mappedMedia(productImages, variantImages) {
   });
 }
 
-test("PDP mapping deduplicates URLs and IDs in backend order, including variant aliases", () => {
+test("PDP mapping deduplicates URLs in backend order, including variant aliases", () => {
   const result = mappedMedia(
-    [{ id: 1, url: "a" }, { id: 2, url: "a" }, { id: 3, url: "b" }],
-    [[{ id: 4, url: "a" }, { id: 5, url: "c" }, { id: 4, url: "d" }], [{ id: 6, url: "c" }]],
+    ["a", "a", "b"],
+    [["a", "c", "d"], ["c"]],
   );
-  assert.deepEqual(Array.from(result.images, ({ id, src }) => [id, src]), [["1", "a"], ["3", "b"], ["5", "c"]]);
-  assert.deepEqual(Array.from(result.variants, (variant) => Array.from(variant.imageIds)), [["1", "5"], ["5"]]);
+  assert.deepEqual(Array.from(result.images, ({ id, src }) => [id, src]), [["url:a", "a"], ["url:b", "b"], ["url:c", "c"], ["url:d", "d"]]);
+  assert.deepEqual(Array.from(result.variants, (variant) => Array.from(variant.imageIds)), [["url:a", "url:c", "url:d"], ["url:c"]]);
   assert.ok(result.images.every((image) => image.alt === "Product"));
 });
 
-test("exact URL identity preserves different query variants and first repeated ID", () => {
-  const result = mappedMedia([{ id: 1, url: "a?q=1" }, { id: 1, url: "b" }], [[{ id: 2, url: "a?q=2" }]]);
-  assert.deepEqual(Array.from(result.images, (image) => image.src), ["a?q=1", "a?q=2"]);
+test("exact URL identity preserves different query variants", () => {
+  const result = mappedMedia(["a?q=1", "b"], [["a?q=2"]]);
+  assert.deepEqual(Array.from(result.images, (image) => image.src), ["a?q=1", "b", "a?q=2"]);
 });
 
 test("empty product media falls back to ordered variant media, including no media", () => {
-  assert.deepEqual(Array.from(mappedMedia([], [[], [{ id: 7, url: "v" }]]).images, (image) => image.id), ["7"]);
+  assert.deepEqual(Array.from(mappedMedia([], [[], ["v"]]).images, (image) => image.id), ["url:v"]);
   assert.equal(mappedMedia([], [[]]).images.length, 0);
 });
 

@@ -339,6 +339,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               title: t("quantity.title"),
             },
             options: {
+              colorOptionTemplate: t.raw("options.colorOption") as string,
               labels: {
                 color: t("options.color"),
                 size: t("options.size"),

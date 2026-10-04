@@ -29,10 +29,11 @@ export default async function CartRoute() {
       return { coupons: [], failed: true } as const;
     }
   });
-  const [cart, settings, t, user, couponDiscovery] = await Promise.all([
+  const [cart, settings, t, attributeT, user, couponDiscovery] = await Promise.all([
     getCurrentCart(locale, selectedCityId ?? undefined),
     getPublicSettings(),
     getTranslations({ locale, namespace: "Common.cartPage" }),
+    getTranslations({ locale, namespace: "Common.productDetails.options" }),
     userPromise,
     couponDiscoveryPromise,
   ]);
@@ -52,6 +53,7 @@ export default async function CartRoute() {
           title: t("title"), emptyTitle: t("empty.title"), emptyDescription: t("empty.description"), continueShopping: t("empty.continueShopping"),
           clear: t("actions.clear"), clearing: t("actions.clearing"), remove: t("actions.remove"), removing: t("actions.removing"),
           increase: t("quantity.increase"), decrease: t("quantity.decrease"), quantity: t("quantity.label"), unitPrice: t("line.unitPrice"), lineTotal: t("line.total"), personalization: t("line.personalization"), sku: t("line.sku"),
+          variantAttributeLabels: { color: attributeT("color"), size: attributeT("size") },
           stock: { ok: t("stock.ok"), low: t("stock.low"), outOfStock: t("stock.outOfStock") },
           summary: t("summary.title"), subtotal: t("summary.subtotal"), productDiscount: t("summary.productDiscount"), personalizationTotal: t("summary.personalization"), giftWrap: t("summary.giftWrap"), shipping: t("summary.shipping"), couponDiscount: t("summary.couponDiscount"), vatIncluded: t("summary.vatIncluded"), total: t("summary.total"), checkout: t("summary.checkout"), freeShippingQualified: t("summary.freeShippingQualified"), freeShippingRemaining: t("summary.freeShippingRemaining"),
           availability: { unavailable: t("availability.unavailable"), unconfirmed: t("availability.unconfirmed"), checkoutUnavailable: t("availability.checkoutUnavailable") },

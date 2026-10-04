@@ -140,6 +140,9 @@
       "page": "الصفحة {current} من {total}"
     },
     "details": {
+      "orderLabel": "طلب",
+      "backToOrders": "العودة إلى طلباتي",
+      "placedAt": "تم الطلب في {date}",
       "title": "طلب #{number}",
       "currentStatus": {
         "new": "طلب جديد",
@@ -148,7 +151,8 @@
         "shipped": "تم شحن الطلب",
         "delivered": "تم توصيل الطلب",
         "cancelled": "تم إلغاء الطلب",
-        "returned": "تم إرجاع الطلب"
+        "returned": "تم إرجاع الطلب",
+        "paymentFailed": "فشل الدفع"
       },
       "timeline": {
         "title": "تتبع الطلب",
@@ -159,11 +163,17 @@
         "cancelled": "تم الإلغاء",
         "returned": "تم الإرجاع",
         "completedState": "مكتملة",
+        "reachedState": "تم",
         "pendingState": "قيد الانتظار"
       },
       "shipmentTrackingNumber": "رقم تتبع الشحنة",
       "itemsTitle": "المنتجات",
       "quantity": "الكمية: {count}",
+      "unitPrice": "سعر الوحدة",
+      "attributes": {
+        "size": "المقاس",
+        "color": "اللون"
+      },
       "gift": {
         "title": "مستلم الهدية",
         "address": "المستلم وعنوان التوصيل",
@@ -171,13 +181,32 @@
         "message": "رسالة الهدية"
       },
       "shippingAddress": "عنوان الشحن",
+      "shippingRecipient": "المستلم",
+      "shippingAddressLabel": "العنوان",
+      "shippingPhone": "رقم الجوال",
+      "shippingMethod": "طريقة الشحن",
       "paymentTitle": "ملخص الدفع",
       "paymentMethod": "طريقة الدفع",
+      "paymentStatus": "حالة الدفع",
+      "paidAt": "تم الدفع في",
       "paymentMethods": {
+        "card": "بطاقة ائتمانية",
         "mada": "بطاقة مدى",
         "creditCard": "بطاقة ائتمان"
       },
-      "total": "الإجمالي"
+      "paymentStatuses": {
+        "paid": "مدفوع"
+      },
+      "total": "الإجمالي",
+      "error": {
+        "title": "تعذر تحميل هذا الطلب",
+        "description": "حدثت مشكلة مؤقتة أثناء تحميل الطلب. حاول مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      },
+      "notFound": {
+        "title": "الطلب غير موجود",
+        "description": "هذا الطلب غير متاح أو لا ينتمي إلى حسابك."
+      }
     }
   },
   "wishlist": {

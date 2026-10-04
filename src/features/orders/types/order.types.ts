@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import type { VariantAttributes } from "@/lib/variant-attributes";
 
 export type OrderStatus =
   | "new"
@@ -88,6 +89,73 @@ export type OrdersPage = Readonly<{
     lastPage: number;
     perPage: number;
     total: number;
+  }>;
+}>;
+
+export type OrderDetails = Readonly<{
+  id: number;
+  orderNumber: string;
+  displayNumber: string;
+  status: string;
+  customerStatus: string;
+  requiresVerification: boolean | null;
+  placedAt: string;
+  items: readonly Readonly<{
+    id: number;
+    productName: string;
+    variantSku: string | null;
+    variantAttributes: VariantAttributes;
+    quantity: number;
+    unitPrice: string;
+    discountAmount: string | null;
+    lineTotal: string;
+  }>[];
+  gift: Readonly<{
+    isGift: boolean;
+    isAnonymous: boolean | null;
+    giftMessage: string | null;
+    recipient: Readonly<{
+      name: string | null;
+      phone: string | null;
+      city: Readonly<{ id: number; name: string }> | null;
+      district: string | null;
+      streetDetails: string | null;
+    }> | null;
+  }> | null;
+  shippingAddress: Readonly<{
+    recipientName: string;
+    recipientPhone: string;
+    city: Readonly<{ id: number; name: string }> | null;
+    district: string;
+    streetDetails: string;
+  }>;
+  shippingMethod: Readonly<{
+    id: number | null;
+    code: string | null;
+    name: string | null;
+  }> | null;
+  money: Readonly<{
+    subtotal: string | null;
+    discountTotal: string | null;
+    shippingFee: string | null;
+    personalizationTotal: string | null;
+    giftWrapFee: string | null;
+    taxableAmount: string | null;
+    vat: Readonly<{ rate: string | null; amount: string | null }> | null;
+    total: string;
+    currency: string;
+  }>;
+  payment: Readonly<{
+    method: string | null;
+    status: string;
+    paidAt: string | null;
+  }>;
+  verificationExpiresAt: string | null;
+  timeline: readonly Readonly<{ step: string; reached: boolean }>[];
+  capabilities: Readonly<{
+    canCancel: boolean;
+    canReorder: boolean;
+    canRequestReturn: boolean;
   }>;
 }>;
 

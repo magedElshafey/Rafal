@@ -1,4 +1,5 @@
 import type { Money } from "@/types/money.types";
+import type { VariantAttributes } from "@/lib/variant-attributes";
 
 export type ProductCategoryReference = {
   id: string;
@@ -21,7 +22,6 @@ export type ProductOptionKey = string;
 export type ProductOptionValue = {
   id: string;
   label: string;
-  swatchHex?: `#${string}`;
 };
 
 export type ProductOption = {
@@ -55,6 +55,7 @@ export type ProductWarehouseStock = {
 export type ProductVariant = {
   id: string;
   sku: string;
+  attributes: VariantAttributes;
   /** Physical stock projected from Laravel warehouse quantities. */
   inStock: boolean;
   optionValues: readonly ProductVariantOptionValue[];

@@ -58,6 +58,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   key={order.orderNumber}
                   order={order}
                   locale={locale}
+                  detailsLabel={t("detailsLink", {
+                    number: order.displayNumber,
+                  })}
                   itemCountLabel={t("itemCount", {
                     count: order.itemsCount,
                   })}

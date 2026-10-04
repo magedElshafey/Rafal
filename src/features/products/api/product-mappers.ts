@@ -1,5 +1,4 @@
 import type {
-  ProductAttributeValue,
   ProductDetailsResponseDto,
   ProductDto,
   ProductListResponseDto,
@@ -21,62 +20,20 @@ import type {
   ProductPersonalizationConfig,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
+import { getVariantAttributeEntries } from "@/lib/variant-attributes";
 
 type ProductImageMapping = {
   images: readonly ProductImage[];
   imageIdsByVariantId: Readonly<Record<string, readonly string[]>>;
 };
 
-function attributeValueId(value: ProductAttributeValue): string {
-  return `${typeof value}:${String(value)}`;
-}
-
-export class ProductConfigurationUnavailableError extends Error {
-  constructor(productId: number) {
-    super(`Product "${productId}" has no valid selectable variant configuration.`);
-    this.name = "ProductConfigurationUnavailableError";
-  }
-}
-
-export function normalizeProductDetailVariants(
-  variants: readonly ProductVariantDto[],
-): readonly ProductVariantDto[] {
-  const optionKeys = new Set(
-    variants.flatMap((variant) => Object.keys(variant.attributes)),
-  );
-  const seenConfigurations = new Set<string>();
-
-  return variants.filter((variant) => {
-    const attributes = Object.entries(variant.attributes);
-    if (
-      attributes.length !== optionKeys.size ||
-      [...optionKeys].some(
-        (optionKey) =>
-          !Object.prototype.hasOwnProperty.call(variant.attributes, optionKey),
-      )
-    ) {
-      return false;
-    }
-
-    const configuration = attributes
-      .map(([key, value]) => [key, attributeValueId(value)] as const)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, valueId]) => `${key}:${valueId}`)
-      .join("|");
-    if (seenConfigurations.has(configuration)) return false;
-
-    seenConfigurations.add(configuration);
-    return true;
-  });
-}
-
 function deriveOptions(variants: readonly ProductVariantDto[]): ProductOption[] {
-  const valuesByKey = new Map<string, Map<string, ProductAttributeValue>>();
+  const valuesByKey = new Map<string, Set<string>>();
 
   for (const variant of variants) {
-    for (const [key, value] of Object.entries(variant.attributes)) {
-      const values = valuesByKey.get(key) ?? new Map();
-      values.set(attributeValueId(value), value);
+    for (const [key, value] of getVariantAttributeEntries(variant.attributes)) {
+      const values = valuesByKey.get(key) ?? new Set<string>();
+      values.add(value);
       valuesByKey.set(key, values);
     }
   }
@@ -85,11 +42,53 @@ function deriveOptions(variants: readonly ProductVariantDto[]): ProductOption[] 
     id: key,
     key,
     name: key,
-    values: Array.from(values, ([id, value]) => ({
-      id,
-      label: String(value),
+    values: Array.from(values, (value) => ({
+      id: value,
+      label: value,
     })),
   }));
+}
+
+function haveEqualAttributes(
+  left: ProductVariantDto,
+  right: ProductVariantDto,
+): boolean {
+  const leftEntries = getVariantAttributeEntries(left.attributes);
+  const rightEntries = getVariantAttributeEntries(right.attributes);
+  return (
+    leftEntries.length === rightEntries.length &&
+    leftEntries.every(([key, value]) => right.attributes[key] === value)
+  );
+}
+
+function reportAmbiguousVariantCombinations(
+  product: ProductDto,
+  variants: readonly ProductVariantDto[],
+) {
+  const reported = new Set<number>();
+  for (let index = 0; index < variants.length; index += 1) {
+    if (reported.has(index)) continue;
+    const variant = variants[index];
+    if (!variant) continue;
+    const duplicateIndexes = variants.flatMap((candidate, candidateIndex) =>
+      candidateIndex > index && haveEqualAttributes(variant, candidate)
+        ? [candidateIndex]
+        : [],
+    );
+    if (duplicateIndexes.length === 0) continue;
+    duplicateIndexes.forEach((duplicateIndex) => reported.add(duplicateIndex));
+    console.error("[products:variant-contract] ambiguous variant combination", {
+      productId: product.id,
+      productSlug: product.slug,
+      variantIds: [
+        variant.id,
+        ...duplicateIndexes.flatMap((duplicateIndex) => {
+          const duplicate = variants[duplicateIndex];
+          return duplicate ? [duplicate.id] : [];
+        }),
+      ],
+    });
+  }
 }
 
 function mapVariant(
@@ -100,11 +99,11 @@ function mapVariant(
   return {
     id: String(variant.id),
     sku: variant.sku,
+    attributes: variant.attributes,
     inStock: isVariantInStock(variant),
-    optionValues: Object.entries(variant.attributes).map(([key, value]) => ({
-      optionId: key,
-      valueId: attributeValueId(value),
-    })),
+    optionValues: getVariantAttributeEntries(variant.attributes).map(
+      ([key, value]) => ({ optionId: key, valueId: value }),
+    ),
     pricing: mapVariantPrice(
       variant,
       product.discount_percentage,
@@ -148,11 +147,11 @@ export function isVariantInStock(variant: ProductVariantDto): boolean {
 
 function getListingImageUrl(product: ProductDto): string | null {
   const productImage = product.images[0];
-  if (productImage) return productImage.url;
+  if (productImage) return productImage;
 
   for (const variant of product.variants) {
     const variantImage = variant.images[0];
-    if (variantImage) return variantImage.url;
+    if (variantImage) return variantImage;
   }
 
   return null;
@@ -162,12 +161,12 @@ function getListingSecondaryImageUrl(
   product: ProductDto,
   primaryUrl: string | null,
 ): string | null {
-  const productImage = product.images.find((image) => image.url !== primaryUrl);
-  if (productImage) return productImage.url;
+  const productImage = product.images.find((image) => image !== primaryUrl);
+  if (productImage) return productImage;
 
   for (const variant of product.variants) {
-    const variantImage = variant.images.find((image) => image.url !== primaryUrl);
-    if (variantImage) return variantImage.url;
+    const variantImage = variant.images.find((image) => image !== primaryUrl);
+    if (variantImage) return variantImage;
   }
 
   return null;
@@ -175,19 +174,12 @@ function getListingSecondaryImageUrl(
 
 function mapProductImages(product: ProductDto): ProductImageMapping {
   const imagesById = new Map<string, ProductImage>();
-  const canonicalIdBySourceId = new Map<string, string>();
   const canonicalIdByUrl = new Map<string, string>();
-  const addImage = (image: ProductDto["images"][number]) => {
-    const id = String(image.id);
-    // First ID occurrence wins; exact duplicate URLs share that first image.
-    // Keep aliases so variant image references still select the same media.
-    const knownId = canonicalIdBySourceId.get(id);
-    if (knownId !== undefined) return knownId;
-    const canonicalId = canonicalIdByUrl.get(image.url) ?? id;
-    canonicalIdBySourceId.set(id, canonicalId);
-    if (!canonicalIdByUrl.has(image.url)) {
-      canonicalIdByUrl.set(image.url, canonicalId);
-      imagesById.set(id, { id, src: image.url, alt: product.name });
+  const addImage = (url: ProductDto["images"][number]) => {
+    const canonicalId = canonicalIdByUrl.get(url) ?? `url:${url}`;
+    if (!canonicalIdByUrl.has(url)) {
+      canonicalIdByUrl.set(url, canonicalId);
+      imagesById.set(canonicalId, { id: canonicalId, src: url, alt: product.name });
     }
     return canonicalId;
   };
@@ -240,16 +232,12 @@ export function mapProductDtoToListingProduct(
 export function mapProductDtoToProductDetails(
   product: ProductDto,
 ): ProductDetails | null {
-  if (!product.category || product.variants.length === 0) return null;
+  if (!product.category) return null;
 
-  const variants = normalizeProductDetailVariants(product.variants);
-  if (variants.length === 0) {
-    throw new ProductConfigurationUnavailableError(product.id);
-  }
-
-  const normalizedProduct = { ...product, variants };
-  const personalization = mapPersonalization(normalizedProduct);
-  const mappedImages = mapProductImages(normalizedProduct);
+  const variants = product.variants;
+  reportAmbiguousVariantCombinations(product, variants);
+  const personalization = mapPersonalization(product);
+  const mappedImages = mapProductImages(product);
   if (!personalization) return null;
 
   return {
@@ -268,7 +256,7 @@ export function mapProductDtoToProductDetails(
     variants: variants.map((variant) =>
       mapVariant(
         variant,
-        normalizedProduct,
+        product,
         mappedImages.imageIdsByVariantId[String(variant.id)] ?? [],
       ),
     ),

@@ -46,7 +46,7 @@ export function mapCartData(data: CartDataDto): CartSnapshot {
       variant: {
         id: String(line.variant.id),
         sku: line.variant.sku,
-        attributes: line.variant.attributes ?? {},
+        attributes: line.variant.attributes,
       },
       personalization: mapPersonalization(line.personalization),
       quantity: line.quantity,

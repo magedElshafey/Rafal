@@ -32,14 +32,15 @@ const { mapProductDtoToListingProduct } = loadSource(
 );
 
 function listingMedia(productUrls, variantUrls) {
-  const images = (urls) => urls.map((url, id) => ({ id, url }));
   const product = mapProductDtoToListingProduct({
     id: 1,
     category: { id: 1, slug: "gifts" },
-    images: images(productUrls),
+    images: productUrls,
     variants: variantUrls.map((urls) => ({
-      images: images(urls),
+      images: urls,
+      effective_price: "100",
       effective_price_incl_vat: "100",
+      discounted_price: null,
       discounted_price_incl_vat: null,
       warehouse_stocks: [],
     })),
@@ -49,7 +50,7 @@ function listingMedia(productUrls, variantUrls) {
 
 for (const [name, products, variants, expected] of [
   ["product ordering wins over variants", ["a", "b", "c"], [["d"]], ["a", "b"]],
-  ["duplicate URLs are skipped regardless of IDs", ["a", "a", "b"], [["c"]], ["a", "b"]],
+  ["duplicate URLs are skipped", ["a", "a", "b"], [["c"]], ["a", "b"]],
   ["variant fallback preserves variant and image order", ["a"], [["a", "a"], ["b", "c"]], ["a", "b"]],
   ["primary falls back past empty variants", [], [[], ["a", "a", "b"], ["c"]], ["a", "b"]],
   ["all duplicate images leave no secondary", ["a", "a"], [["a"]], ["a", null]],

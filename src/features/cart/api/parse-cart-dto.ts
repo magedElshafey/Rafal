@@ -1,11 +1,14 @@
 import type {
-  CartAttributeDto,
   CartDataDto,
   CartGiftRecipientDto,
   CartLineDto,
   CartResponseDto,
   CartTotalsLineDto,
 } from "@/features/cart/api/cart-dto";
+import {
+  parseVariantAttributes,
+  VariantAttributesContractError,
+} from "@/lib/variant-attributes";
 
 export class CartContractError extends Error {
   constructor(path: string, expected: string) {
@@ -134,25 +137,17 @@ function array(value: unknown, path: string): unknown[] {
   return value;
 }
 
-function attributes(value: unknown, path: string): Readonly<Record<string, CartAttributeDto>> | null {
-  if (value === null) return null;
-  if (Array.isArray(value)) {
-    if (value.length === 0) return {};
-    throw new CartContractError(path, "an object, null, or an empty array");
+function cartVariantAttributes(value: unknown, path: string) {
+  try {
+    return parseVariantAttributes(value, path);
+  } catch (error) {
+    if (!(error instanceof VariantAttributesContractError)) throw error;
+    console.error("[cart:variant-contract] omitted malformed attributes", {
+      path,
+      reason: error.message,
+    });
+    return parseVariantAttributes(undefined, path);
   }
-  const source = record(value, path);
-  return Object.fromEntries(
-    Object.entries(source).map(([key, item]) => {
-      if (
-        typeof item !== "string" &&
-        typeof item !== "boolean" &&
-        (typeof item !== "number" || !Number.isFinite(item))
-      ) {
-        throw new CartContractError(`${path}.${key}`, "a scalar attribute value");
-      }
-      return [key, item];
-    }),
-  );
 }
 
 function parseLine(value: unknown, path: string): CartLineDto {
@@ -205,7 +200,10 @@ function parseLine(value: unknown, path: string): CartLineDto {
     variant: {
       id: positiveInteger(variant.id, `${path}.variant.id`),
       sku: string(variant.sku, `${path}.variant.sku`),
-      attributes: attributes(variant.attributes, `${path}.variant.attributes`),
+      attributes: cartVariantAttributes(
+        variant.attributes,
+        `${path}.variant.attributes`,
+      ),
     },
     unit_regular_price: decimalString(source.unit_regular_price, `${path}.unit_regular_price`),
     unit_price: decimalString(source.unit_price, `${path}.unit_price`),

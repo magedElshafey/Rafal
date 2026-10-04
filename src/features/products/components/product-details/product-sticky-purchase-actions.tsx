@@ -11,7 +11,7 @@ type ProductStickyPurchaseActionsProps = {
   addingLabel: string;
   canAddToCart: boolean;
   errorMessage: string | null;
-  formattedPrice: string;
+  formattedPrice: string | null;
   isPending: boolean;
   isVisible: boolean;
   mobileLabel: string;
@@ -58,9 +58,13 @@ export function ProductStickyPurchaseActions({
           </p>
         ) : null}
         <div className="flex min-w-0 items-center gap-3">
-          <strong className="min-w-0 flex-1 truncate type-body-lg text-gray-1000">
-            <bdi>{formattedPrice}</bdi>
-          </strong>
+          {formattedPrice ? (
+            <strong className="min-w-0 flex-1 truncate type-body-lg text-gray-1000">
+              <bdi>{formattedPrice}</bdi>
+            </strong>
+          ) : (
+            <span className="min-w-0 flex-1" />
+          )}
           <Button
             className="min-w-36"
             disabled={!canAddToCart || isPending}
@@ -101,9 +105,11 @@ export function ProductStickyPurchaseActions({
               </p>
             ) : null}
           </div>
-          <strong className="shrink-0 type-body-lg text-gray-1000">
-            <bdi>{formattedPrice}</bdi>
-          </strong>
+          {formattedPrice ? (
+            <strong className="shrink-0 type-body-lg text-gray-1000">
+              <bdi>{formattedPrice}</bdi>
+            </strong>
+          ) : null}
           <Button
             className="min-w-40"
             disabled={!canAddToCart || isPending}

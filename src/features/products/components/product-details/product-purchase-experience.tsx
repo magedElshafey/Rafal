@@ -105,10 +105,10 @@ type ProductPurchaseExperienceProps = {
 
 function getPreferredImageId(
   product: ProductPurchaseData,
-  variant: ProductVariant,
+  variant: ProductVariant | null,
 ): string | null {
   return (
-    variant.imageIds.find((candidate) =>
+    variant?.imageIds.find((candidate) =>
       product.images.some((image) => image.id === candidate),
     ) ??
     product.images[0]?.id ??
@@ -190,7 +190,7 @@ export function ProductPurchaseExperience({
   const [isSuccessSheetOpen, setIsSuccessSheetOpen] = useState(false);
   const [isStickyPurchaseVisible, setIsStickyPurchaseVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState(() =>
-    getSelectedOptionsFromVariant(initialVariant),
+    initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {},
   );
   const [selectedImageId, setSelectedImageId] = useState(() => initialImageId);
   const [quantity, setQuantity] = useState(1);
@@ -218,27 +218,29 @@ export function ProductPurchaseExperience({
       setQuantity(1);
       setPersonalizationInput(getInitialPersonalizationInput(product));
       setPersonalizationResetKey((currentKey) => currentKey + 1);
-      setSelectedOptions(getSelectedOptionsFromVariant(initialVariant));
+      setSelectedOptions(
+        initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {},
+      );
       setSelectedImageId(getPreferredImageId(product, initialVariant));
       setIsSuccessSheetOpen(true);
     },
   });
   const selectedVariant = resolveProductVariant(
-    product.options,
     product.variants,
     selectedOptions,
   );
+  const presentationVariant = selectedVariant ?? initialVariant;
   // Reconcile removed media at the existing selection owner before children
   // render. Do not keep a stale ID that could reappear on a later data update.
   const validImageId = resolveGalleryImageId(
     product.images,
     selectedImageId,
-    selectedVariant?.imageIds,
+    presentationVariant?.imageIds,
   );
   if (validImageId !== selectedImageId) setSelectedImageId(validImageId);
-  const availability = selectedVariant
-    ? availabilityByVariantId[selectedVariant.id]
-    : undefined;
+  const availability = presentationVariant
+    ? availabilityByVariantId[presentationVariant.id]
+    : { status: "purchase_unavailable" as const };
   const personalizationValidation =
     product.personalization.enabled && personalizationInput
       ? validateProductPersonalization(
@@ -351,25 +353,19 @@ export function ProductPurchaseExperience({
     resetAddToCartMutation,
   ]);
 
-  if (!selectedVariant) {
+  if (presentationVariant && !availability) {
     throw new Error(
-      `Product "${product.id}" selection does not resolve to an exact variant.`,
-    );
-  }
-
-  if (!availability) {
-    throw new Error(
-      `Product variant "${selectedVariant.id}" is missing resolved availability.`,
+      `Product variant "${presentationVariant.id}" is missing resolved availability.`,
     );
   }
 
   const handleSelectOption = (optionId: string, valueId: string) => {
     const nextSelection = { ...selectedOptions, [optionId]: valueId };
     const nextVariant = resolveProductVariant(
-      product.options,
       product.variants,
       nextSelection,
     );
+    setSelectedOptions(nextSelection);
     if (!nextVariant) return;
 
     const nextAvailability = availabilityByVariantId[nextVariant.id];
@@ -390,7 +386,6 @@ export function ProductPurchaseExperience({
         ? Math.max(0, nextAvailability.maxOrderQuantity - nextHeld)
         : null;
 
-    setSelectedOptions(nextSelection);
     setSelectedImageId(getPreferredImageId(product, nextVariant));
     setQuantity((currentQuantity) =>
       nextRemaining === null || nextRemaining === 0
@@ -424,7 +419,7 @@ export function ProductPurchaseExperience({
 
   const handleAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
     lastAddToCartTriggerRef.current = event.currentTarget;
-    if (!canAddToCart || isAddingToCart) return;
+    if (!canAddToCart || isAddingToCart || !selectedVariant) return;
 
     const input: AddCartLineInput = {
       productId: product.id,
@@ -445,10 +440,12 @@ export function ProductPurchaseExperience({
     router.push("/checkout");
   };
 
-  const formattedSelectedPrice = new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: selectedVariant.pricing.current.currency,
-  }).format(selectedVariant.pricing.current.amount);
+  const formattedSelectedPrice = presentationVariant
+    ? new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: presentationVariant.pricing.current.currency,
+      }).format(presentationVariant.pricing.current.amount)
+    : null;
 
   return (
     <>
@@ -495,7 +492,7 @@ export function ProductPurchaseExperience({
             renderedAt={renderedAt}
             selectedOptions={selectedOptions}
             shareActions={shareActions}
-            variant={selectedVariant}
+            variant={presentationVariant}
           />
         </div>
       </div>

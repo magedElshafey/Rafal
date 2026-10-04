@@ -10,14 +10,19 @@ export type ProductPricePresentation = {
 export function getVariantPricePresentation(
   variant: Pick<
     ProductVariantDto,
-    "discounted_price_incl_vat" | "effective_price_incl_vat"
+    | "discounted_price"
+    | "discounted_price_incl_vat"
+    | "effective_price"
+    | "effective_price_incl_vat"
   >,
 ): ProductPricePresentation {
-  const original = Number(variant.effective_price_incl_vat);
+  const original = Number(
+    variant.effective_price_incl_vat ?? variant.effective_price,
+  );
+  const discountedSource =
+    variant.discounted_price_incl_vat ?? variant.discounted_price;
   const discounted =
-    variant.discounted_price_incl_vat === null
-      ? null
-      : Number(variant.discounted_price_incl_vat);
+    discountedSource === null ? null : Number(discountedSource);
 
   return {
     current: discounted ?? original,

@@ -141,6 +141,9 @@
     },
     "details": {
       "title": "Order #{number}",
+      "orderLabel": "Order",
+      "backToOrders": "Back to My orders",
+      "placedAt": "Placed on {date}",
       "currentStatus": {
         "new": "New order",
         "confirmed": "Order confirmed",
@@ -148,7 +151,8 @@
         "shipped": "Order shipped",
         "delivered": "Order delivered",
         "cancelled": "Order cancelled",
-        "returned": "Order returned"
+        "returned": "Order returned",
+        "paymentFailed": "Payment failed"
       },
       "timeline": {
         "title": "Track order",
@@ -159,11 +163,17 @@
         "cancelled": "Cancelled",
         "returned": "Returned",
         "completedState": "Completed",
+        "reachedState": "Reached",
         "pendingState": "Pending"
       },
       "shipmentTrackingNumber": "Shipment tracking number",
       "itemsTitle": "Products",
       "quantity": "Quantity: {count}",
+      "unitPrice": "Unit price",
+      "attributes": {
+        "size": "Size",
+        "color": "Color"
+      },
       "gift": {
         "title": "Gift recipient",
         "address": "Recipient and delivery address",
@@ -171,13 +181,32 @@
         "message": "Gift message"
       },
       "shippingAddress": "Shipping address",
+      "shippingRecipient": "Recipient",
+      "shippingAddressLabel": "Address",
+      "shippingPhone": "Phone",
+      "shippingMethod": "Shipping method",
       "paymentTitle": "Payment summary",
       "paymentMethod": "Payment method",
+      "paymentStatus": "Payment status",
+      "paidAt": "Paid on",
       "paymentMethods": {
+        "card": "Credit card",
         "mada": "Mada card",
         "creditCard": "Credit card"
       },
-      "total": "Total"
+      "paymentStatuses": {
+        "paid": "Paid"
+      },
+      "total": "Total",
+      "error": {
+        "title": "The order details could not be loaded",
+        "description": "There was a temporary problem loading the order. Please try again.",
+        "retry": "Try again"
+      },
+      "notFound": {
+        "title": "Order not found",
+        "description": "This order is unavailable or does not belong to your account."
+      }
     }
   },
   "wishlist": {

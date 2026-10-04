@@ -18,6 +18,10 @@ import type {
   CheckoutGiftWrapConfig,
 } from "@/features/checkout/types/checkout.types";
 import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
+import {
+  getVariantAttributeEntries,
+  getVariantAttributeLabel,
+} from "@/lib/variant-attributes";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -65,10 +69,11 @@ async function readGiftWrapConfig(): Promise<CheckoutGiftWrapConfig | null> {
 
 export default async function CheckoutRoute() {
   const locale = await getLocale();
-  const [cart, user, t, giftWrapConfig] = await Promise.all([
+  const [cart, user, t, attributeT, giftWrapConfig] = await Promise.all([
     getCurrentCart(locale),
     getCurrentUser(),
     getTranslations({ locale, namespace: "Common.checkoutPage" }),
+    getTranslations({ locale, namespace: "Common.productDetails.options" }),
     readGiftWrapConfig(),
   ]);
   const giftRecipient = cart.gift.isGift ? cart.gift.recipient : null;
@@ -281,9 +286,16 @@ export default async function CheckoutRoute() {
           personalizationText: line.personalization?.text ?? null,
           productSlug: line.product.slug,
           quantity: line.quantity,
-          variantAttributes: Object.entries(line.variant.attributes).map(
-            ([name, value]) => ({ name, value: String(value) }),
-          ),
+          variantAttributes: getVariantAttributeEntries(
+            line.variant.attributes,
+          ).map(([name, value]) => ({
+            key: name,
+            label: getVariantAttributeLabel(name, {
+              color: attributeT("color"),
+              size: attributeT("size"),
+            }),
+            value,
+          })),
         }))}
         locale={locale}
       />

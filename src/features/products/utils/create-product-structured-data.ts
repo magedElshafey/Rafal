@@ -16,7 +16,7 @@ type ProductStructuredData = {
   description?: string;
   image: string[];
   name: string;
-  offers: {
+  offers?: {
     "@type": "AggregateOffer";
     highPrice: number;
     lowPrice: number;
@@ -24,7 +24,7 @@ type ProductStructuredData = {
     priceCurrency: "SAR";
     url: string;
   };
-  sku: string;
+  sku?: string;
   url: string;
 };
 
@@ -48,17 +48,21 @@ export function createProductStructuredData(
     "@type": "Product",
     name: product.name,
     ...(description ? { description } : {}),
-    sku: initialVariant.sku,
+    ...(initialVariant ? { sku: initialVariant.sku } : {}),
     image: product.images.map(({ src }) => new URL(src, siteUrl).toString()),
     url: canonicalUrl,
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "SAR",
-      lowPrice: Math.min(...prices),
-      highPrice: Math.max(...prices),
-      offerCount: product.variants.length,
-      url: canonicalUrl,
-    },
+    ...(prices.length > 0
+      ? {
+          offers: {
+            "@type": "AggregateOffer" as const,
+            priceCurrency: "SAR" as const,
+            lowPrice: Math.min(...prices),
+            highPrice: Math.max(...prices),
+            offerCount: product.variants.length,
+            url: canonicalUrl,
+          },
+        }
+      : {}),
     ...(ratingSummary &&
     ratingSummary.count > 0 &&
     ratingSummary.average > 0

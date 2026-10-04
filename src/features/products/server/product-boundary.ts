@@ -4,10 +4,7 @@ import type { Locale } from "next-intl";
 import { cache } from "react";
 
 import { getProductBySlugDto } from "@/features/products/api/product-api.server";
-import {
-  mapProductDetailsResponse,
-  ProductConfigurationUnavailableError,
-} from "@/features/products/api/product-mappers";
+import { mapProductDetailsResponse } from "@/features/products/api/product-mappers";
 import type { ProductDetails } from "@/features/products/types/product-details.types";
 import { ApiError } from "@/lib/api/api-error";
 
@@ -26,9 +23,6 @@ export const getProductDetailsBySlug = cache(async function getProductDetailsByS
 
     return product;
   } catch (error) {
-    if (error instanceof ProductConfigurationUnavailableError) {
-      return null;
-    }
     if (error instanceof ApiError && error.status === 404) {
       return null;
     }

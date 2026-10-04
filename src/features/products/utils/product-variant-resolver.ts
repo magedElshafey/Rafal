@@ -1,37 +1,40 @@
-import type {
-  ProductOption,
-  ProductVariant,
-} from "@/features/products/types/product-details.types";
+import type { ProductVariant } from "@/features/products/types/product-details.types";
+import { getVariantAttributeEntries } from "@/lib/variant-attributes";
 
 export type SelectedProductOptions = Readonly<Record<string, string>>;
 
 export function getSelectedOptionsFromVariant(
   variant: ProductVariant,
 ): SelectedProductOptions {
-  return Object.fromEntries(
-    variant.optionValues.map(({ optionId, valueId }) => [optionId, valueId]),
-  );
+  return { ...variant.attributes };
 }
 
 export function resolveProductVariant(
-  options: readonly ProductOption[],
   variants: readonly ProductVariant[],
   selectedOptions: SelectedProductOptions,
 ): ProductVariant | null {
-  if (
-    options.some((option) => selectedOptions[option.id] === undefined) ||
-    Object.keys(selectedOptions).length !== options.length
-  ) {
-    return null;
-  }
+  const selectedEntries = Object.entries(selectedOptions);
+  const matches = variants.filter((variant) => {
+    const attributes = getVariantAttributeEntries(variant.attributes);
+    return (
+      attributes.length === selectedEntries.length &&
+      attributes.every(([key, value]) => selectedOptions[key] === value)
+    );
+  });
 
-  return (
-    variants.find(
-      (variant) =>
-        variant.optionValues.length === options.length &&
-        variant.optionValues.every(
-          ({ optionId, valueId }) => selectedOptions[optionId] === valueId,
-        ),
-    ) ?? null
+  return matches.length === 1 ? matches[0]! : null;
+}
+
+export function isProductOptionValueAvailable(
+  variants: readonly ProductVariant[],
+  selectedOptions: SelectedProductOptions,
+  optionId: string,
+  valueId: string,
+): boolean {
+  const candidateSelection = { ...selectedOptions, [optionId]: valueId };
+  const candidateEntries = Object.entries(candidateSelection);
+
+  return variants.some((variant) =>
+    candidateEntries.every(([key, value]) => variant.attributes[key] === value),
   );
 }

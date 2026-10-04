@@ -1,5 +1,4 @@
 import type {
-  ProductAttributeValue,
   ProductCategoryDto,
   ProductDetailsResponseDto,
   ProductDto,
@@ -10,6 +9,7 @@ import type {
   ProductWarehouseStockDto,
 } from "@/features/products/api/product-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
+import { parseVariantAttributes } from "@/lib/variant-attributes";
 export class ProductContractError extends Error {
   constructor(path: string, expected: string) {
     super(`Invalid Product API payload at "${path}": expected ${expected}.`);
@@ -57,44 +57,9 @@ function decimalString(value: unknown, path: string): string {
 }
 
 function nullableDecimalString(value: unknown, path: string): string | null {
-  return value === null ? null : decimalString(value, path);
-}
-
-function parseAttributes(
-  value: unknown,
-  path: string,
-): Readonly<Record<string, ProductAttributeValue>> {
-  if (value === null) return {};
-  if (Array.isArray(value)) {
-    if (value.length === 0) return {};
-    throw new ProductContractError(
-      path,
-      "null, an empty legacy array, or an object",
-    );
-  }
-
-  const attributes = parseRecord(value, path);
-  return Object.fromEntries(
-    Object.entries(attributes).map(([key, attributeValue]) => {
-      if (
-        typeof attributeValue !== "string" &&
-        typeof attributeValue !== "number" &&
-        typeof attributeValue !== "boolean"
-      ) {
-        throw new ProductContractError(
-          `${path}.${key}`,
-          "a string, number, or boolean",
-        );
-      }
-      if (
-        typeof attributeValue === "number" &&
-        !Number.isFinite(attributeValue)
-      ) {
-        throw new ProductContractError(`${path}.${key}`, "a finite number");
-      }
-      return [key, attributeValue];
-    }),
-  );
+  return value === null || value === undefined
+    ? null
+    : decimalString(value, path);
 }
 
 function parseWarehouseStock(
@@ -109,29 +74,20 @@ function parseWarehouseStock(
 }
 
 function parseImage(value: unknown, path: string): ProductImageDto {
-  if (typeof value === "string") {
-    const url = parseNonEmptyString(value, path);
-    return { id: `url:${url}`, url };
-  }
-
-  const source = parseRecord(value, path);
-  return {
-    id: positiveInteger(source.id, `${path}.id`),
-    url: parseNonEmptyString(source.url, `${path}.url`),
-  };
+  return parseNonEmptyString(value, path);
 }
 
 function parseVariant(value: unknown, path: string): ProductVariantDto {
   const source = parseRecord(value, path);
   return {
     id: positiveInteger(source.id, `${path}.id`),
-    sku: parseString(source.sku, `${path}.sku`),
-    attributes: parseAttributes(source.attributes, `${path}.attributes`),
+    sku: parseNonEmptyString(source.sku, `${path}.sku`),
+    attributes: parseVariantAttributes(source.attributes, `${path}.attributes`),
     effective_price: decimalString(
       source.effective_price,
       `${path}.effective_price`,
     ),
-    effective_price_incl_vat: decimalString(
+    effective_price_incl_vat: nullableDecimalString(
       source.effective_price_incl_vat,
       `${path}.effective_price_incl_vat`,
     ),
@@ -147,12 +103,66 @@ function parseVariant(value: unknown, path: string): ProductVariantDto {
       parseImage(image, `${path}.images[${index}]`),
     ),
     warehouse_stocks: parseArray(
-      source.warehouse_stocks,
+      source.warehouse_stocks ?? [],
       `${path}.warehouse_stocks`,
     ).map((stock, index) =>
       parseWarehouseStock(stock, `${path}.warehouse_stocks[${index}]`),
     ),
   };
+}
+
+function reportMalformedVariant({
+  error,
+  index,
+  path,
+  productId,
+  productSlug,
+  value,
+}: {
+  error: unknown;
+  index: number;
+  path: string;
+  productId: number;
+  productSlug: string;
+  value: unknown;
+}) {
+  const variantId =
+    typeof value === "object" && value !== null && !Array.isArray(value)
+      ? (value as Record<string, unknown>).id
+      : undefined;
+  console.error("[products:variant-contract] excluded malformed variant", {
+    productId,
+    productSlug,
+    variantIndex: index,
+    variantId:
+      typeof variantId === "number" || typeof variantId === "string"
+        ? variantId
+        : undefined,
+    reason: error instanceof Error ? error.message : `Invalid value at ${path}`,
+  });
+}
+
+function parseVariants(
+  value: unknown,
+  path: string,
+  product: { id: number; slug: string },
+): readonly ProductVariantDto[] {
+  return parseArray(value, path).flatMap((variant, index) => {
+    const variantPath = `${path}[${index}]`;
+    try {
+      return [parseVariant(variant, variantPath)];
+    } catch (error) {
+      reportMalformedVariant({
+        error,
+        index,
+        path: variantPath,
+        productId: product.id,
+        productSlug: product.slug,
+        value: variant,
+      });
+      return [];
+    }
+  });
 }
 
 function parseCategory(
@@ -170,12 +180,14 @@ function parseCategory(
 
 export function parseProductDto(value: unknown, path = "product"): ProductDto {
   const source = parseRecord(value, path);
+  const id = positiveInteger(source.id, `${path}.id`);
+  const slug = parseString(source.slug, `${path}.slug`);
   return {
-    id: positiveInteger(source.id, `${path}.id`),
+    id,
     sku: parseString(source.sku, `${path}.sku`),
     name: parseString(source.name, `${path}.name`),
     description: parseNullableString(source.description, `${path}.description`),
-    slug: parseString(source.slug, `${path}.slug`),
+    slug,
     base_price: decimalString(source.base_price, `${path}.base_price`),
     discount_percentage: parseNullableNumber(
       source.discount_percentage,
@@ -218,9 +230,7 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       parseImage(image, `${path}.images[${index}]`),
     ),
     category: parseCategory(source.category, `${path}.category`),
-    variants: parseArray(source.variants, `${path}.variants`).map(
-      (variant, index) => parseVariant(variant, `${path}.variants[${index}]`),
-    ),
+    variants: parseVariants(source.variants, `${path}.variants`, { id, slug }),
   };
 }
 

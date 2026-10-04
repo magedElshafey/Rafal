@@ -15,6 +15,7 @@ import { isCancelledError } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { TruckIcon, XIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
 import { CartGift } from "@/features/cart/components/cart-gift";
 import {
   CartCoupon,
@@ -31,6 +32,10 @@ import type {
 import type { Coupon } from "@/features/offers/types/offers.types";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import {
+  getVariantAttributeEntries,
+  getVariantAttributeLabel,
+} from "@/lib/variant-attributes";
 
 export type CartPageCopy = {
   title: string;
@@ -48,6 +53,7 @@ export type CartPageCopy = {
   lineTotal: string;
   personalization: string;
   sku: string;
+  variantAttributeLabels: { color: string; size: string };
   stock: { ok: string; low: string; outOfStock: string };
   summary: string;
   subtotal: string;
@@ -399,7 +405,7 @@ export function CartPage({
 
       <ul className="overflow-hidden rounded-lg border border-gray-200 bg-gray-0 divide-y divide-gray-200">
         {cart.lines.map((line) => {
-          const attributes = Object.entries(line.variant.attributes);
+          const attributes = getVariantAttributeEntries(line.variant.attributes);
           const projectedAvailability = projectedCart?.lines.find(
             (candidate) => candidate.id === line.id,
           )?.availability;
@@ -463,8 +469,19 @@ export function CartPage({
                     <dl className="mt-2 flex flex-wrap gap-x-4 gap-y-1 type-body-sm text-gray-500">
                       {attributes.map(([name, value]) => (
                         <div key={name} className="flex gap-1">
-                          <dt>{name}:</dt>
-                          <dd>{String(value)}</dd>
+                          <dt>
+                            {getVariantAttributeLabel(
+                              name,
+                              copy.variantAttributeLabels,
+                            )}
+                            :
+                          </dt>
+                          <dd className="flex items-center">
+                            <VariantAttributeValue
+                              attributeKey={name}
+                              attributeValue={value}
+                            />
+                          </dd>
                         </div>
                       ))}
                     </dl>

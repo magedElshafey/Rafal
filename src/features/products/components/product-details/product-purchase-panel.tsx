@@ -1,13 +1,13 @@
 import type { Locale } from "next-intl";
 import {
   useState,
-  useSyncExternalStore,
   type MouseEventHandler,
   type ReactNode,
   type Ref,
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import { VariantColorSwatch } from "@/components/ui/variant-attribute-value";
 import {
   CheckIcon,
   EyeIcon,
@@ -24,18 +24,18 @@ import type {
   PersonalizationLanguage,
   ProductDetails,
   ProductOption,
-  ProductOptionValue,
   ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
 import type { SelectedProductOptions } from "@/features/products/utils/product-variant-resolver";
-import { resolveProductVariant } from "@/features/products/utils/product-variant-resolver";
+import { isProductOptionValueAvailable } from "@/features/products/utils/product-variant-resolver";
 import type {
   ProductPersonalizationValidationError,
   ProductPersonalizationValidationResult,
 } from "@/features/products/utils/validate-product-personalization";
 import { cn } from "@/lib/utils";
+import { getVariantAttributeLabel } from "@/lib/variant-attributes";
 
 export type ProductPurchasePanelCopy = {
   addToCart: string;
@@ -67,6 +67,7 @@ export type ProductPurchasePanelCopy = {
     title: string;
   };
   options: {
+    colorOptionTemplate: string;
     labels: {
       color: string;
       size: string;
@@ -138,64 +139,15 @@ type ProductPurchasePanelProps = {
   renderedAt: number;
   selectedOptions: SelectedProductOptions;
   shareActions: ReactNode;
-  variant: ProductVariant;
+  variant: ProductVariant | null;
 };
-
-const NON_VISUAL_CSS_COLORS = new Set([
-  "currentcolor",
-  "inherit",
-  "initial",
-  "revert",
-  "revert-layer",
-  "transparent",
-  "unset",
-]);
-
-function subscribeToCssColorSupport() {
-  return () => undefined;
-}
-
-function isUsableCssColor(value: string): boolean {
-  const normalizedValue = value.trim();
-  if (
-    normalizedValue.length === 0 ||
-    NON_VISUAL_CSS_COLORS.has(normalizedValue.toLowerCase()) ||
-    /^(?:env|var)\(/i.test(normalizedValue) ||
-    typeof CSS === "undefined"
-  ) {
-    return false;
-  }
-
-  return CSS.supports("color", normalizedValue);
-}
-
-function ColorOptionSwatch({ value }: { value: ProductOptionValue }) {
-  const colorValue = value.swatchHex ?? value.label;
-  const canRenderSwatch = useSyncExternalStore(
-    subscribeToCssColorSupport,
-    () => isUsableCssColor(colorValue),
-    () => false,
-  );
-
-  return canRenderSwatch ? (
-    <span
-      aria-hidden="true"
-      className="size-7 shrink-0 rounded-full border border-gray-300 shadow-[inset_0_0_0_1px_rgb(255_255_255_/_70%)]"
-      style={{ backgroundColor: colorValue }}
-    />
-  ) : null;
-}
 
 function getOptionLabel(
   option: ProductOption,
   locale: Locale,
   copy: ProductPurchasePanelCopy["options"],
 ): string {
-  const presentationKey = option.key.trim().toLowerCase();
-  if (presentationKey === "size") return copy.labels.size;
-  if (presentationKey === "color") return copy.labels.color;
-
-  const fallback = option.name.trim().replace(/[_-]+/g, " ");
+  const fallback = getVariantAttributeLabel(option.key, copy.labels);
   const [firstCharacter, ...remainingCharacters] = fallback;
   return firstCharacter
     ? `${firstCharacter.toLocaleUpperCase(locale)}${remainingCharacters.join("")}`
@@ -221,10 +173,9 @@ function ProductOptions({
 
   return (
     <div className="space-y-5 border-t border-gray-200 pt-6">
-      {options.map((option) => {
-        const presentationKey = option.key.trim().toLowerCase();
-        const isColorOption = presentationKey === "color";
-        const isSizeOption = presentationKey === "size";
+      {options.map((option, optionIndex) => {
+        const isColorOption = option.key === "color";
+        const isSizeOption = option.key === "size";
         const optionLabel = getOptionLabel(option, locale, copy);
 
         return (
@@ -233,25 +184,31 @@ function ProductOptions({
               {optionLabel}
             </legend>
             <div className="mt-3 flex flex-wrap gap-3">
-              {option.values.map((value) => {
-                const candidateSelection = {
-                  ...selectedOptions,
-                  [option.id]: value.id,
-                };
-                const selectable =
-                  resolveProductVariant(
-                    options,
-                    variants,
-                    candidateSelection,
-                  ) !== null;
-                const inputId = `${option.id}-${value.id}`;
+              {option.values.map((value, valueIndex) => {
+                const selectable = isProductOptionValueAvailable(
+                  variants,
+                  selectedOptions,
+                  option.id,
+                  value.id,
+                );
+                const inputId = `product-option-${optionIndex}-${valueIndex}`;
                 const selected = selectedOptions[option.id] === value.id;
+                const accessibleLabel = isColorOption
+                  ? formatProductMessage(copy.colorOptionTemplate, {
+                      index: valueIndex + 1,
+                    })
+                  : `${optionLabel}: ${value.label}`;
 
                 return (
                   <label
                     key={value.id}
                     htmlFor={inputId}
-                    className="relative cursor-pointer"
+                    className={cn(
+                      "relative",
+                      isColorOption &&
+                        "flex size-11 items-center justify-center",
+                      selectable ? "cursor-pointer" : "cursor-not-allowed",
+                    )}
                   >
                     <input
                       id={inputId}
@@ -260,40 +217,53 @@ function ProductOptions({
                       value={value.id}
                       checked={selected}
                       disabled={!selectable}
-                      aria-label={`${optionLabel}: ${value.label}`}
+                      aria-label={accessibleLabel}
                       onChange={() => onSelectOption(option.id, value.id)}
                       className="peer sr-only"
                     />
-                    <span
-                      className={cn(
-                        "flex min-h-11 items-center justify-center gap-2 border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
-                        isColorOption ? "rounded-full ps-2" : "rounded-md",
-                        isSizeOption && "min-w-12",
-                        selected &&
-                          "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
-                        !selectable &&
-                          "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400 opacity-60",
-                      )}
-                    >
-                      {isColorOption ? (
-                        <ColorOptionSwatch value={value} />
-                      ) : value.swatchHex ? (
-                        <span
-                          aria-hidden="true"
-                          className="size-7 shrink-0 rounded-full border border-gray-300"
-                          style={{ backgroundColor: value.swatchHex }}
-                        />
-                      ) : null}
-                      <span className={cn(!selectable && "line-through")}>
-                        {value.label}
+                    {isColorOption ? (
+                      <span
+                        className={cn(
+                          "relative flex size-10 items-center justify-center rounded-full border-2 border-transparent transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
+                          selected && "border-gold-500 ring-1 ring-gold-500",
+                          !selectable && "opacity-50",
+                        )}
+                      >
+                        <VariantColorSwatch className="size-8" value={value.id} />
+                        {selected ? (
+                          <span className="absolute -end-1 -top-1 flex size-4 items-center justify-center rounded-full bg-gold-700 text-gray-0">
+                            <CheckIcon aria-hidden="true" className="size-3" />
+                          </span>
+                        ) : null}
+                        {!selectable ? (
+                          <span
+                            aria-hidden="true"
+                            className="absolute h-0.5 w-9 rotate-45 rounded-full bg-gray-700"
+                          />
+                        ) : null}
                       </span>
-                      {selected ? (
-                        <CheckIcon
-                          aria-hidden="true"
-                          className="size-4 shrink-0 text-gold-700"
-                        />
-                      ) : null}
-                    </span>
+                    ) : (
+                      <span
+                        className={cn(
+                          "flex min-h-11 items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
+                          isSizeOption && "min-w-12",
+                          selected &&
+                            "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
+                          !selectable &&
+                            "border-gray-200 bg-gray-50 text-gray-400 opacity-60",
+                        )}
+                      >
+                        <span className={cn(!selectable && "line-through")}>
+                          {value.label}
+                        </span>
+                        {selected ? (
+                          <CheckIcon
+                            aria-hidden="true"
+                            className="size-4 shrink-0 text-gold-700"
+                          />
+                        ) : null}
+                      </span>
+                    )}
                   </label>
                 );
               })}
@@ -607,9 +577,11 @@ export function ProductPurchasePanel({
         >
           {product.name}
         </h1>
-        <p className="mt-2 type-body-sm text-gray-400">
-          {formatProductMessage(copy.skuTemplate, { sku: variant.sku })}
-        </p>
+        {variant ? (
+          <p className="mt-2 type-body-sm text-gray-400">
+            {formatProductMessage(copy.skuTemplate, { sku: variant.sku })}
+          </p>
+        ) : null}
         {product.ratingSummary ? (
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Rating
@@ -628,18 +600,20 @@ export function ProductPurchasePanel({
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <ProductPriceBlock
-          locale={locale}
-          pricing={variant.pricing}
-          renderedAt={renderedAt}
-          copy={copy.price}
-        />
-        <p className="flex items-center gap-2 type-body-sm text-gray-500">
-          <ShieldCheckIcon aria-hidden="true" className="size-4 shrink-0" />
-          {copy.price.vatInclusive}
-        </p>
-      </div>
+      {variant ? (
+        <div className="space-y-2">
+          <ProductPriceBlock
+            locale={locale}
+            pricing={variant.pricing}
+            renderedAt={renderedAt}
+            copy={copy.price}
+          />
+          <p className="flex items-center gap-2 type-body-sm text-gray-500">
+            <ShieldCheckIcon aria-hidden="true" className="size-4 shrink-0" />
+            {copy.price.vatInclusive}
+          </p>
+        </div>
+      ) : null}
 
       <ProductSocialProofSummary
         copy={copy.socialProof}

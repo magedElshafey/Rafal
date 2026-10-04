@@ -1,5 +1,4 @@
 import type { ProductDetails } from "@/features/products/types/product-details.types";
-import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
 
 const SUPPORTED_PERSONALIZATION_LANGUAGES = new Set(["arabic", "english"]);
 
@@ -11,7 +10,6 @@ export function assertProductConfiguration(product: ProductDetails): void {
     ]),
   );
   const imageIds = new Set(product.images.map((image) => image.id));
-  const combinations = new Set<string>();
   const variantIds = new Set<string>();
 
   if (product.personalization.enabled) {
@@ -73,8 +71,6 @@ export function assertProductConfiguration(product: ProductDetails): void {
     }
   }
 
-  getInitialProductVariant(product);
-
   for (const variant of product.variants) {
     if (variantIds.has(variant.id)) {
       throw new Error(
@@ -83,9 +79,11 @@ export function assertProductConfiguration(product: ProductDetails): void {
     }
     variantIds.add(variant.id);
 
-    if (variant.optionValues.length !== product.options.length) {
+    if (
+      variant.optionValues.length !== Object.keys(variant.attributes).length
+    ) {
       throw new Error(
-        `Product variant "${variant.id}" does not configure every Product option.`,
+        `Product variant "${variant.id}" does not project every Variant attribute.`,
       );
     }
 
@@ -111,29 +109,11 @@ export function assertProductConfiguration(product: ProductDetails): void {
       }
     }
 
-    for (const option of product.options) {
-      if (!configuredOptionIds.has(option.id)) {
-        throw new Error(
-          `Product variant "${variant.id}" does not configure option "${option.id}".`,
-        );
-      }
-    }
-
     if (variant.imageIds.some((imageId) => !imageIds.has(imageId))) {
       throw new Error(
         `Product variant "${variant.id}" references an unknown Product image.`,
       );
     }
 
-    const combination = [...variant.optionValues]
-      .sort((left, right) => left.optionId.localeCompare(right.optionId))
-      .map(({ optionId, valueId }) => `${optionId}:${valueId}`)
-      .join("|");
-    if (combinations.has(combination)) {
-      throw new Error(
-        `Product "${product.id}" contains duplicate variant option combinations.`,
-      );
-    }
-    combinations.add(combination);
   }
 }

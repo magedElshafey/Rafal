@@ -1,4 +1,3 @@
-export type CartAttributeDto = string | number | boolean;
 export type CartCityDto = { id: number; name: string };
 export type CartGiftRecipientDto = {
   name: string;
@@ -30,7 +29,7 @@ export type CartLineDto = {
   variant: {
     id: number;
     sku: string;
-    attributes: Readonly<Record<string, CartAttributeDto>> | null;
+    attributes: VariantAttributes;
   };
   unit_regular_price: string;
   unit_price: string;
@@ -129,3 +128,4 @@ export const cartContractEndpoints = {
   coupon: "/cart/coupon",
   gift: "/cart/gift",
 } as const;
+import type { VariantAttributes } from "@/lib/variant-attributes";

@@ -382,7 +382,8 @@
     },
     "options": {
       "size": "Size",
-      "color": "Color"
+      "color": "Color",
+      "colorOption": "Color option {index}"
     },
     "descriptionTitle": "Product description",
     "bnpl": {

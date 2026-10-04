@@ -1,4 +1,5 @@
 import type { ProductPersonalizationInput } from "@/features/products/types/product-details.types";
+import type { VariantAttributes } from "@/lib/variant-attributes";
 
 export type CartMoney = { amount: string; currency: string };
 
@@ -79,7 +80,7 @@ export type CartLine = {
   variant: {
     id: string;
     sku: string;
-    attributes: Readonly<Record<string, string | number | boolean>>;
+    attributes: VariantAttributes;
   };
   personalization: CartLinePersonalization | null;
   quantity: number;

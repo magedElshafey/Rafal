@@ -1,4 +1,4 @@
-export type ProductAttributeValue = string | number | boolean;
+import type { VariantAttributes } from "@/lib/variant-attributes";
 
 export type ProductCategoryDto = {
   id: number;
@@ -12,17 +12,14 @@ export type ProductWarehouseStockDto = {
   quantity: number;
 };
 
-export type ProductImageDto = {
-  id: number | string;
-  url: string;
-};
+export type ProductImageDto = string;
 
 export type ProductVariantDto = {
   id: number;
   sku: string;
-  attributes: Readonly<Record<string, ProductAttributeValue>>;
+  attributes: VariantAttributes;
   effective_price: string;
-  effective_price_incl_vat: string;
+  effective_price_incl_vat: string | null;
   discounted_price: string | null;
   discounted_price_incl_vat: string | null;
   images: readonly ProductImageDto[];

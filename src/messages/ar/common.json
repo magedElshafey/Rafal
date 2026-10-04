@@ -395,7 +395,8 @@
     },
     "options": {
       "size": "المقاس",
-      "color": "اللون"
+      "color": "اللون",
+      "colorOption": "خيار اللون {index}"
     },
     "descriptionTitle": "وصف المنتج",
     "bnpl": {
