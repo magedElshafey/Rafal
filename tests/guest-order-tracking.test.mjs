@@ -367,6 +367,8 @@ test("Malformed secondary variant metadata does not crash Guest details", () => 
     ],
   });
   const order = mapOrderDetails(parseGuestOrderLookupResponse(response));
+  assert.equal(order.items[0].orderItemId, "2");
+  assert.equal(order.items[0].productId, null);
   assert.deepEqual(Object.entries(order.items[0].variantAttributes), []);
 });
 

@@ -1,8 +1,12 @@
 import type {
   ProductReviewDto,
+  ProductReviewSubmissionResponseDto,
   ProductReviewsResponseDto,
 } from "@/features/reviews/api/product-reviews-dto";
-import { isProductReviewRating } from "@/features/reviews/utils/is-product-review-rating";
+import {
+  isProductReviewRating,
+  isProductReviewSubmissionRating,
+} from "@/features/reviews/utils/is-product-review-rating";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 
 export class ProductReviewsContractError extends Error {
@@ -194,6 +198,40 @@ export function parseProductReviewsResponse(
       last_page: integer(meta.last_page, "meta.last_page", 1),
       per_page: integer(meta.per_page, "meta.per_page", 1),
       total: integer(meta.total, "meta.total"),
+    },
+  };
+}
+
+export function parseProductReviewSubmissionResponse(
+  value: unknown,
+): ProductReviewSubmissionResponseDto {
+  const source = parseRecord(value, "response");
+  if (source.success !== true) {
+    throw new ProductReviewsContractError("response.success", "true");
+  }
+  const data = parseRecord(source.data, "response.data");
+  if (!isProductReviewSubmissionRating(data.rating)) {
+    throw new ProductReviewsContractError(
+      "response.data.rating",
+      "a whole-number rating from 1 to 5",
+    );
+  }
+  if (data.status !== "pending") {
+    throw new ProductReviewsContractError(
+      "response.data.status",
+      '"pending"',
+    );
+  }
+
+  return {
+    success: true,
+    message: parseString(source.message, "response.message"),
+    data: {
+      id: integer(data.id, "response.data.id", 1),
+      rating: data.rating,
+      comment: parseNullableString(data.comment, "response.data.comment"),
+      status: "pending",
+      created_at: timestamp(data.created_at, "response.data.created_at"),
     },
   };
 }

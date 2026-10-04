@@ -1,6 +1,20 @@
 import type { PaginationMeta } from "@/lib/api/pagination";
 
 export type ProductReviewRating = 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
+export type ProductReviewSubmissionRating = 1 | 2 | 3 | 4 | 5;
+
+export type ProductReviewSubmissionInput = Readonly<{
+  rating: ProductReviewSubmissionRating;
+  comment?: string;
+}>;
+
+export type ProductReviewSubmission = Readonly<{
+  id: string;
+  rating: ProductReviewSubmissionRating;
+  comment: string | null;
+  status: "pending";
+  createdAt: string;
+}>;
 
 export type ProductReviewSummary = {
   average: number;

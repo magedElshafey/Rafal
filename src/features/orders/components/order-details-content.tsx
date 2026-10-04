@@ -8,6 +8,7 @@ import { OrderStatusBadge } from "@/features/orders/components/order-status-badg
 import { OrderTimeline } from "@/features/orders/components/order-timeline";
 import type { OrderDetails } from "@/features/orders/types/order.types";
 import { formatOrderDate } from "@/features/orders/utils/order-formatters";
+import type { OrderProductReviewCopy } from "@/features/reviews/components/order-product-review-action";
 
 export type OrderDetailsContentCopy = Readonly<{
   orderLabel: string;
@@ -110,12 +111,14 @@ type OrderDetailsContentProps = {
   copy: OrderDetailsContentCopy;
   locale: Locale;
   order: OrderDetails;
+  productReviewCopy?: OrderProductReviewCopy;
 };
 
 export function OrderDetailsContent({
   copy,
   locale,
   order,
+  productReviewCopy,
 }: OrderDetailsContentProps) {
   return (
     <>
@@ -135,6 +138,7 @@ export function OrderDetailsContent({
         currency={order.money.currency}
         attributeLabels={copy.products.attributeLabels}
         quantityLabel={copy.products.quantity}
+        reviewCopy={productReviewCopy}
         unitPriceLabel={copy.products.unitPrice}
       />
 

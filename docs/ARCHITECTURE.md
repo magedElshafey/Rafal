@@ -466,7 +466,21 @@ Laravel Product DTO
   for intentional Show More reads; shared HTTP defaults and Page 1 are unchanged.
   Response page identity is checked, duplicate IDs are suppressed, and failures
   preserve existing cards for manual retry. No mock Reviews storage, global state,
-  React Query integration, or review mutations are part of this slice.
+  or React Query integration is used.
+- Authenticated Product Review submission starts only from delivered Order
+  Details; the PDP remains read-only. Authenticated Order Details `items[].id`
+  is the Order Item ID and `items[].product_id` is the Product ID. The frontend
+  Order domain names these `orderItemId` and `productId` respectively; line
+  rendering uses `orderItemId`, while Product Review submission uses only
+  `productId`.
+  `POST /api/products/:productId/reviews` validates the browser's whole-star
+  rating and optional trimmed comment, resolves the HttpOnly auth token on the
+  server, and forwards one non-retried multipart request to Laravel. Laravel
+  owns purchase, delivery, duplicate, and other eligibility rules. A confirmed
+  `pending` moderation response changes only the mounted Order item action to
+  Pending Review; it never mutates or refetches public Reviews or aggregates.
+  Laravel does not yet expose `can_review` or `review_status`, so that pending
+  state is intentionally non-persistent and may reset after refresh.
 - Wishlist, Related Products, and Complementary Products remain
   source-isolated until their Laravel contracts are integrated. A
   Laravel-backed PDP does not pass its IDs to those development mock domains.

@@ -1,4 +1,7 @@
-import type { ProductReviewRating } from "@/features/reviews/types/product-review.types";
+import type {
+  ProductReviewRating,
+  ProductReviewSubmissionRating,
+} from "@/features/reviews/types/product-review.types";
 
 export type ProductReviewDto = {
   id: number;
@@ -27,5 +30,17 @@ export type ProductReviewsResponseDto = {
     last_page: number;
     per_page: number;
     total: number;
+  };
+};
+
+export type ProductReviewSubmissionResponseDto = {
+  success: true;
+  message: string;
+  data: {
+    id: number;
+    rating: ProductReviewSubmissionRating;
+    comment: string | null;
+    status: "pending";
+    created_at: string;
   };
 };

@@ -26,7 +26,9 @@ export type OrdersPageResponseDto = {
   };
 };
 
-export type OrderDetailsDto = {
+export type OrderDetailsDto<
+  TProductId extends number | null = number,
+> = {
   id: number;
   order_number: string;
   display_number: string;
@@ -36,6 +38,7 @@ export type OrderDetailsDto = {
   placed_at: string;
   items: Array<{
     id: number;
+    product_id: TProductId;
     product_name: string;
     variant_sku: string | null;
     variant_attributes: VariantAttributes;
@@ -95,7 +98,9 @@ export type OrderDetailsDto = {
   can_request_return: boolean;
 };
 
-export type OrderDetailsResponseDto = {
+export type OrderDetailsResponseDto<
+  TProductId extends number | null = number,
+> = {
   success: true;
-  data: OrderDetailsDto;
+  data: OrderDetailsDto<TProductId>;
 };

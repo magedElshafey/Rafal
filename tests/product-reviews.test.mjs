@@ -282,7 +282,7 @@ test("PDP keeps reviews behind Suspense and header wired to Product resource; ca
   assert.match(source, /ratingSummary: product.ratingSummary/);
   const panel = readFileSync(path.join(root, "src/features/products/components/product-details/product-purchase-panel.tsx"), "utf8");
   assert.match(panel, /<ProductHeaderRating\s+summary=\{product.ratingSummary\}/);
-  for (const file of readdirSync(path.join(root, "src/features/reviews/components")).filter((name) => name !== "product-reviews-load-more.tsx")) {
+  for (const file of readdirSync(path.join(root, "src/features/reviews/components")).filter((name) => !["product-reviews-load-more.tsx", "order-product-review-action.tsx", "product-review-rating-input.tsx"].includes(name))) {
     assert.doesNotMatch(readFileSync(path.join(root, "src/features/reviews/components", file), "utf8"), /["']use client["']|useEffect|useState/);
   }
 });
@@ -514,6 +514,8 @@ test("internal public route validates ID/page/locale before reading and returns 
     "next-intl": { hasLocale: (locales, locale) => locales.includes(locale) },
     "@/i18n/routing": { routing: { locales: ["ar", "en"] } },
     "@/features/reviews/server/product-reviews-boundary": { readProductReviews: async (...args) => { calls.push(args); return { ok: true, page: laterPage(2, 3, [7]) }; } },
+    "@/features/reviews/server/product-review-submission-boundary": { ProductReviewAuthenticationError: class extends Error {}, submitCurrentUserProductReview: async () => { throw new Error("not used by GET"); } },
+    "@/features/auth/server/auth-session": { clearAccessToken: async () => {} },
   });
   const { GET } = routeLoad("src/app/api/products/[productId]/reviews/route");
   for (const [id, query, locale] of [["0", "2", "en"], ["no", "2", "en"], ["42", "0", "en"], ["42", "-1", "en"], ["42", "1.5", "en"], ["42", "02", "en"], ["42", "9007199254740992", "en"], ["42", "2&page=3", "en"], ["42", "2", "xx"], ["42", "", "en"]]) {
@@ -538,6 +540,8 @@ test("server read rejects mismatched pagination and localizes public route failu
     "next-intl": { hasLocale: (locales, locale) => locales.includes(locale) },
     "@/i18n/routing": { routing: { locales: ["ar", "en"] } },
     "@/lib/api/server-api": { serverApi: { request: async () => response() } },
+    "@/features/reviews/server/product-review-submission-boundary": { ProductReviewAuthenticationError: class extends Error {}, submitCurrentUserProductReview: async () => { throw new Error("not used by GET"); } },
+    "@/features/auth/server/auth-session": { clearAccessToken: async () => {} },
   });
   const { GET } = routeLoad("src/app/api/products/[productId]/reviews/route");
   const result = await GET(new Request("https://store.test/api/products/42/reviews?page=2", { headers: { "Accept-Language": "en" } }), { params: Promise.resolve({ productId: "42" }) });

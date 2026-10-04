@@ -1,4 +1,7 @@
-import type { ProductReviewRating } from "@/features/reviews/types/product-review.types";
+import type {
+  ProductReviewRating,
+  ProductReviewSubmissionRating,
+} from "@/features/reviews/types/product-review.types";
 
 export function isProductReviewRating(
   value: unknown,
@@ -9,5 +12,16 @@ export function isProductReviewRating(
     value >= 1 &&
     value <= 5 &&
     Number.isInteger(value * 2)
+  );
+}
+
+export function isProductReviewSubmissionRating(
+  value: unknown,
+): value is ProductReviewSubmissionRating {
+  return (
+    typeof value === "number" &&
+    Number.isSafeInteger(value) &&
+    value >= 1 &&
+    value <= 5
   );
 }

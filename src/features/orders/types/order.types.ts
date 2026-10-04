@@ -101,7 +101,8 @@ export type OrderDetails = Readonly<{
   requiresVerification: boolean | null;
   placedAt: string;
   items: readonly Readonly<{
-    id: number;
+    orderItemId: string;
+    productId: string | null;
     productName: string;
     variantSku: string | null;
     variantAttributes: VariantAttributes;

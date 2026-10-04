@@ -8,6 +8,7 @@ import {
   type OrderDetailsContentCopy,
 } from "@/features/orders/components/order-details-content";
 import type { OrderDetails } from "@/features/orders/types/order.types";
+import type { OrderProductReviewCopy } from "@/features/reviews/components/order-product-review-action";
 import { Link } from "@/i18n/navigation";
 
 export type OrderDetailsCopy = OrderDetailsContentCopy & Readonly<{
@@ -22,6 +23,7 @@ export type OrderDetailsCopy = OrderDetailsContentCopy & Readonly<{
     success: string;
     title: string;
   }>;
+  productReview: OrderProductReviewCopy;
 }>;
 
 type OrderDetailsViewProps = {
@@ -61,7 +63,16 @@ export function OrderDetailsView({
         }
       />
 
-      <OrderDetailsContent copy={copy} locale={locale} order={order} />
+      <OrderDetailsContent
+        copy={copy}
+        locale={locale}
+        order={order}
+        productReviewCopy={
+          order.status.trim().toLowerCase() === "delivered"
+            ? copy.productReview
+            : undefined
+        }
+      />
     </div>
   );
 }
