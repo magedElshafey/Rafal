@@ -408,6 +408,13 @@
       "next": "Next products"
     },
     "reviews": {
+      "heading": "Ratings and reviews",
+      "loading": "Loading reviews",
+      "adminResponse": "Rafal response",
+      "showMore": "Show more reviews",
+      "loadMoreError": "We couldn't load more reviews. Please try again.",
+      "moreLoaded": "{count} more reviews loaded",
+      "pageUnavailable": "No reviews are available to display on this page.",
       "title": "Ratings and reviews ({count})",
       "aggregate": "{average} out of 5 from {count} reviews",
       "empty": "There are no published reviews for this product yet.",

@@ -461,9 +461,36 @@ Laravel Product DTO
   authoritative for availability only when that canonical Backend location
   context was supplied with the Product request; without it, stock is unresolved
   and must not be presented as out of stock.
-- Reviews is a planned backend-backed feature; frontend integration is pending.
-  Only reusable review display code and its types remain. No mock Reviews
-  transport or storage is part of the current architecture.
+- Public Product Reviews use a feature-owned runtime parser and mapper through
+  `serverApi`. The first backend page streams under its own PDP Suspense boundary;
+  read/contract failures stay local to Reviews with safe server diagnostics.
+  Envelope, summary and pagination are strict. Malformed review rows are excluded
+  independently without changing the backend summary count. Invalid photo items
+  are omitted; a non-array photo collection becomes empty with a safe structural
+  diagnostic. Photos are never rendered or fetched in this slice.
+  Page 1 cards remain server-rendered. Only multi-page results mount a small client
+  island for subsequent pages, using the shared presentational ReviewCard. The
+  explicitly approved public `GET /api/products/:productId/reviews?page=N` boundary
+  validates ID/page/locale, returns normalized data with `private, no-store`, and
+  forwards no authentication or Cart identity. Both hops disable automatic retries
+  for intentional Show More reads; shared HTTP defaults and Page 1 are unchanged.
+  Response page identity is checked, duplicate IDs are suppressed, and failures
+  preserve existing cards for manual retry. No mock Reviews storage, global state,
+  or React Query integration is used.
+- Authenticated Product Review submission starts only from delivered Order
+  Details; the PDP remains read-only. Authenticated Order Details `items[].id`
+  is the Order Item ID and `items[].product_id` is the Product ID. The frontend
+  Order domain names these `orderItemId` and `productId` respectively; line
+  rendering uses `orderItemId`, while Product Review submission uses only
+  `productId`.
+  `POST /api/products/:productId/reviews` validates the browser's whole-star
+  rating and optional trimmed comment, resolves the HttpOnly auth token on the
+  server, and forwards one non-retried multipart request to Laravel. Laravel
+  owns purchase, delivery, duplicate, and other eligibility rules. A confirmed
+  `pending` moderation response changes only the mounted Order item action to
+  Pending Review; it never mutates or refetches public Reviews or aggregates.
+  Laravel does not yet expose `can_review` or `review_status`, so that pending
+  state is intentionally non-persistent and may reset after refresh.
 - Wishlist, Related Products, and Complementary Products remain
   source-isolated until their Laravel contracts are integrated. A
   Laravel-backed PDP does not pass its IDs to those development mock domains.
@@ -502,7 +529,9 @@ Laravel Product DTO
   may derive availability from `quantity > 0`, but must not use that quantity as
   `maxOrderQuantity`; Laravel remains authoritative for Add-to-Cart availability
   and purchase-limit validation.
-- Product ratings remain explicitly absent until Laravel provides aggregates.
+- Product header ratings and existing AggregateRating structured data use the
+  Product resource's `rating_average` / `reviews_count`. The Reviews section uses
+  its own endpoint's summary; it never blocks or supplies the Product header.
 - Dynamic Variant attributes are normalized at the API boundary; `null` and a
   legacy empty array both normalize to an empty object. Attribute keys and
   values are not assumed to be localized display metadata.

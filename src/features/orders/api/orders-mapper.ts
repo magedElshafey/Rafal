@@ -33,7 +33,7 @@ export function mapOrdersPage(response: OrdersPageResponseDto): OrdersPage {
 }
 
 export function mapOrderDetails(
-  response: OrderDetailsResponseDto,
+  response: OrderDetailsResponseDto<number | null>,
 ): OrderDetails {
   const order = response.data;
   return {
@@ -45,7 +45,9 @@ export function mapOrderDetails(
     requiresVerification: order.requires_verification,
     placedAt: order.placed_at,
     items: order.items.map((item) => ({
-      id: item.id,
+      orderItemId: String(item.id),
+      productId:
+        item.product_id === null ? null : String(item.product_id),
       productName: item.product_name,
       variantSku: item.variant_sku,
       variantAttributes: item.variant_attributes,

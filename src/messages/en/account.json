@@ -207,6 +207,30 @@
         "success": "Order cancelled.",
         "error": "We couldn't cancel this order. Refresh the page and try again if cancellation is still available."
       },
+      "review": {
+        "action": "Rate product",
+        "pendingReview": "Pending review",
+        "title": "Rate product",
+        "question": "How would you rate this product?",
+        "ratingLabel": "{rating} out of 5",
+        "ratingRequired": "Select a rating.",
+        "commentLabel": "Share your experience",
+        "commentPlaceholder": "Tell us what you thought",
+        "cancel": "Cancel",
+        "submit": "Submit review",
+        "submitting": "Submitting review",
+        "close": "Close",
+        "successTitle": "Review submitted",
+        "successBody": "Thanks for sharing your experience. Your review will appear after moderation.",
+        "developmentDiagnostic": "Development diagnostic",
+        "errors": {
+          "auth": "Your session has expired. Please sign in again.",
+          "validation": "Review the highlighted fields.",
+          "notAllowed": "A review can’t be submitted for this product right now.",
+          "rateLimited": "Try again later.",
+          "service": "We couldn't submit your review right now."
+        }
+      },
       "total": "Total",
       "error": {
         "title": "The order details could not be loaded",

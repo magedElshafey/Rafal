@@ -120,7 +120,21 @@ function historicalVariantAttributes(value: unknown, path: string) {
   }
 }
 
-function parseDetails(value: unknown, path: string): OrderDetailsDto {
+function parseDetails(
+  value: unknown,
+  path: string,
+  requireProductId: true,
+): OrderDetailsDto;
+function parseDetails(
+  value: unknown,
+  path: string,
+  requireProductId: false,
+): OrderDetailsDto<number | null>;
+function parseDetails(
+  value: unknown,
+  path: string,
+  requireProductId: boolean,
+): OrderDetailsDto<number | null> {
   const source = parseRecord(value, path);
   const gift =
     source.gift === null || source.gift === undefined
@@ -170,6 +184,12 @@ function parseDetails(value: unknown, path: string): OrderDetailsDto {
       const itemSource = parseRecord(item, itemPath);
       return {
         id: positiveInteger(itemSource.id, `${itemPath}.id`),
+        product_id: requireProductId
+          ? positiveInteger(itemSource.product_id, `${itemPath}.product_id`)
+          : optionalPositiveInteger(
+              itemSource.product_id,
+              `${itemPath}.product_id`,
+            ),
         product_name: parseNonEmptyString(
           itemSource.product_name,
           `${itemPath}.product_name`,
@@ -427,6 +447,19 @@ export function parseOrderDetailsResponse(
   }
   return {
     success: true,
-    data: parseDetails(source.data, "response.data"),
+    data: parseDetails(source.data, "response.data", true),
+  };
+}
+
+export function parseGuestCompatibleOrderDetailsResponse(
+  value: unknown,
+): OrderDetailsResponseDto<number | null> {
+  const source = parseRecord(value, "response");
+  if (source.success !== true) {
+    throw new OrdersContractError("response.success", "true");
+  }
+  return {
+    success: true,
+    data: parseDetails(source.data, "response.data", false),
   };
 }

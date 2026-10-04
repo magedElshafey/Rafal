@@ -4,6 +4,10 @@ import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
 import type { OrderDetails } from "@/features/orders/types/order.types";
 import { formatOrderMoney } from "@/features/orders/utils/order-formatters";
 import {
+  OrderProductReviewAction,
+  type OrderProductReviewCopy,
+} from "@/features/reviews/components/order-product-review-action";
+import {
   getVariantAttributeEntries,
   getVariantAttributeLabel,
 } from "@/lib/variant-attributes";
@@ -14,6 +18,7 @@ type OrderItemsProps = {
   items: OrderDetails["items"];
   locale: Locale;
   quantityLabel: (count: number) => string;
+  reviewCopy?: OrderProductReviewCopy;
   title: string;
   unitPriceLabel: string;
 };
@@ -24,6 +29,7 @@ export function OrderItems({
   items,
   locale,
   quantityLabel,
+  reviewCopy,
   title,
   unitPriceLabel,
 }: OrderItemsProps) {
@@ -36,7 +42,7 @@ export function OrderItems({
 
           return (
             <li
-              key={item.id}
+              key={item.orderItemId}
               className="flex min-w-0 flex-col gap-3 py-4 first:pt-2 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0 flex-1">
@@ -74,6 +80,16 @@ export function OrderItems({
                     {formatOrderMoney(locale, item.unitPrice, currency)}
                   </bdi>
                 </p>
+                {reviewCopy && item.productId ? (
+                  <div className="mt-3">
+                    <OrderProductReviewAction
+                      copy={reviewCopy}
+                      locale={locale}
+                      productId={item.productId}
+                      productName={item.productName}
+                    />
+                  </div>
+                ) : null}
               </div>
             </li>
           );

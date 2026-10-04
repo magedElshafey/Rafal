@@ -1,0 +1,124 @@
+"use client";
+
+import type { Locale } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { formatProductMessage } from "@/features/products/utils/format-product-message";
+import { getProductReviewsClient } from "@/features/reviews/api/get-product-reviews.client";
+import {
+  ReviewCard,
+  type ReviewCardCopy,
+} from "@/features/reviews/components/review-card";
+import type { ProductReview } from "@/features/reviews/types/product-review.types";
+import { getNextReviewPage } from "@/features/reviews/utils/review-pagination";
+
+export function ProductReviewsLoadMore({
+  productId,
+  locale,
+  initialNextPage,
+  lastPage,
+  initialReviewIds,
+  copy,
+}: {
+  productId: string;
+  locale: Locale;
+  initialNextPage: number;
+  lastPage: number;
+  initialReviewIds: readonly string[];
+  copy: ReviewCardCopy & {
+    showMore: string;
+    loading: string;
+    error: string;
+    loadedTemplate: string;
+  };
+}) {
+  // Page 1 remains outside this client island. Only IDs cross for deduplication.
+  const [reviews, setReviews] = useState<ProductReview[]>([]);
+  const [nextPage, setNextPage] = useState<number | null>(
+    initialNextPage <= lastPage ? initialNextPage : null,
+  );
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const seenIds = useRef(new Set(initialReviewIds));
+  const inFlight = useRef<AbortController | null>(null);
+
+  useEffect(() => () => inFlight.current?.abort(), []);
+
+  async function loadMore() {
+    if (inFlight.current || nextPage === null) return;
+    const controller = new AbortController();
+    inFlight.current = controller;
+    setPending(true);
+    setFailed(false);
+    setAnnouncement("");
+    try {
+      const page = await getProductReviewsClient({
+        productId,
+        locale,
+        page: nextPage,
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) return;
+      const followingPage = getNextReviewPage(page.pagination, nextPage);
+      const added: ProductReview[] = [];
+      for (const review of page.reviews) {
+        if (seenIds.current.has(review.id)) continue;
+        seenIds.current.add(review.id);
+        added.push(review);
+      }
+      setReviews((previous) => [...previous, ...added]);
+      setNextPage(followingPage);
+      setAnnouncement(
+        formatProductMessage(copy.loadedTemplate, {
+          count: new Intl.NumberFormat(locale).format(added.length),
+        }),
+      );
+    } catch {
+      if (!controller.signal.aborted) setFailed(true);
+    } finally {
+      if (!controller.signal.aborted) setPending(false);
+      inFlight.current = null;
+    }
+  }
+
+  return (
+    <div>
+      {reviews.length > 0 ? (
+        <ul className="mt-4 grid gap-4 md:grid-cols-2">
+          {reviews.map((review) => (
+            <li key={review.id} className="min-w-0">
+              <ReviewCard review={review} locale={locale} copy={copy} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <div className="mt-5 flex flex-col items-center gap-3">
+        <Button
+          variant="outline"
+          className="h-auto min-h-11 max-w-full whitespace-normal py-3"
+          onClick={loadMore}
+          loading={pending}
+          loadingLabel={copy.loading}
+          disabled={pending || nextPage === null}
+          aria-describedby={failed ? "product-reviews-load-error" : undefined}
+        >
+          {copy.showMore}
+        </Button>
+        {failed ? (
+          <p
+            id="product-reviews-load-error"
+            role="alert"
+            className="type-body text-gray-600"
+          >
+            {copy.error}
+          </p>
+        ) : null}
+        <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {announcement}
+        </p>
+      </div>
+    </div>
+  );
+}

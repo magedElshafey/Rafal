@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/icons";
 import { AnimatedProductMetric } from "@/features/products/components/product-details/animated-product-metric";
 import { ProductPriceBlock } from "@/features/products/components/product-details/product-price-block";
-import { Rating } from "@/features/products/components/product-card/rating";
+import { ProductHeaderRating } from "@/features/products/components/product-details/product-header-rating";
 import type { ResolvedVariantAvailability } from "@/features/products/types/product-availability.types";
 import type {
   PersonalizationCharacterPolicy,
@@ -583,20 +583,12 @@ export function ProductPurchasePanel({
           </p>
         ) : null}
         {product.ratingSummary ? (
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Rating
-              value={product.ratingSummary.average}
-              label={formatProductMessage(copy.ratingLabelTemplate, {
-                value: product.ratingSummary.average,
-              })}
-            />
-            <span className="type-body-sm text-gray-500">
-              {formatProductMessage(copy.ratingSummaryTemplate, {
-                average: product.ratingSummary.average,
-                count: product.ratingSummary.count,
-              })}
-            </span>
-          </div>
+          <ProductHeaderRating
+            summary={product.ratingSummary}
+            locale={locale}
+            ratingLabelTemplate={copy.ratingLabelTemplate}
+            ratingSummaryTemplate={copy.ratingSummaryTemplate}
+          />
         ) : null}
       </div>
 

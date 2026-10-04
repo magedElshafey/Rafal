@@ -95,6 +95,7 @@ function order(canCancel) {
   return {
     orderNumber: "ORD/100",
     displayNumber: "100",
+    status: "confirmed",
     placedAt: "2026-10-04T00:00:00Z",
     customerStatus: "confirmed",
     items: [],

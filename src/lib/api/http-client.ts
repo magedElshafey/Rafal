@@ -16,6 +16,8 @@ type RequestConfig<TBody = unknown> = {
   query?: QueryParams;
   signal?: AbortSignal;
   timeoutMs?: number;
+  /** Explicit caller opt-out; the default GET retry policy is unchanged. */
+  retry?: false;
 };
 
 type CreateHttpClientOptions = {
@@ -117,6 +119,7 @@ export function createHttpClient({
     query,
     signal,
     timeoutMs,
+    retry,
   }: RequestConfig<TBody>): Promise<TResponse> {
     const url = buildUrl(path, baseUrl, query);
 
@@ -132,7 +135,8 @@ export function createHttpClient({
 
     const formDataBody = isFormData(body);
 
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const requestMaxRetries = retry === false ? 0 : maxRetries;
+    for (let attempt = 0; attempt <= requestMaxRetries; attempt++) {
       try {
         const response = await fetch(url, {
           method,
@@ -153,7 +157,7 @@ export function createHttpClient({
 
         if (!response.ok) {
           const canRetry =
-            shouldRetry(method, response.status) && attempt < maxRetries;
+            shouldRetry(method, response.status) && attempt < requestMaxRetries;
 
           if (canRetry) {
             const retryDelay = 500 * 2 ** attempt;
@@ -190,7 +194,7 @@ export function createHttpClient({
           throw error;
         }
 
-        const canRetry = shouldRetry(method) && attempt < maxRetries;
+        const canRetry = shouldRetry(method) && attempt < requestMaxRetries;
 
         if (canRetry) {
           const retryDelay = 500 * 2 ** attempt;

@@ -1,4 +1,4 @@
-import { parseOrderDetailsResponse } from "@/features/orders/api/parse-orders-dto";
+import { parseGuestCompatibleOrderDetailsResponse } from "@/features/orders/api/parse-orders-dto";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -6,7 +6,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export function parseGuestOrderLookupResponse(value: unknown) {
   if (!isRecord(value) || !isRecord(value.data)) {
-    return parseOrderDetailsResponse(value);
+    return parseGuestCompatibleOrderDetailsResponse(value);
   }
 
   const data = value.data;
@@ -34,7 +34,7 @@ export function parseGuestOrderLookupResponse(value: unknown) {
       )
     : data.timeline;
 
-  return parseOrderDetailsResponse({
+  return parseGuestCompatibleOrderDetailsResponse({
     ...value,
     data: {
       ...data,
