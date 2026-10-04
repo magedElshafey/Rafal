@@ -192,7 +192,8 @@ test("SSR section uses summary count independently of first-page size and has no
   assert.match(html, /abdullah e\./);
   assert.match(html, /good product/);
   assert.match(html, /aria-label="Rated 5 out of 5"/);
-  assert.doesNotMatch(html, /<button|<input|<form|<img|rel="preload"|Helpful|Report|Upload|Rafal response/);
+  assert.doesNotMatch(html, /<button|<input|<form|<img|<time|rel="preload"|Helpful|Report|Upload|Rafal response/);
+  assert.equal(page(input).reviews[0].createdAt, "2026-09-23T17:53:47+00:00");
 });
 
 test("SSR comments, names and optional admin response remain escaped plain text", () => {

@@ -19,21 +19,12 @@ export function ReviewCard({
   copy: ReviewCardCopy;
 }) {
   const numbers = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
-  const dates = new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeZone: "UTC",
-  });
   return (
     <article className="h-full rounded-lg bg-gray-50 p-5 [overflow-wrap:anywhere]">
       <header>
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <h3 className="min-w-0 type-body font-bold text-gray-900">
-            <bdi>{review.reviewerDisplayName}</bdi>
-          </h3>
-          <time dateTime={review.createdAt} className="type-caption text-gray-500">
-            {dates.format(new Date(review.createdAt))}
-          </time>
-        </div>
+        <h3 className="min-w-0 type-body font-bold text-gray-900">
+          <bdi>{review.reviewerDisplayName}</bdi>
+        </h3>
         <Rating
           className="mt-1"
           value={review.rating}
