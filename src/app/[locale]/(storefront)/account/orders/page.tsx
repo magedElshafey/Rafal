@@ -8,7 +8,7 @@ import { OrderListItem } from "@/features/orders/components/order-list-item";
 import { OrdersPagination } from "@/features/orders/components/orders-pagination";
 import { getCurrentUserOrdersPage } from "@/features/orders/server/orders-boundary";
 import type { OrdersPage as OrdersPageData } from "@/features/orders/types/order.types";
-import { getBackendOrderStatuses } from "@/features/orders/utils/order-filters";
+import { getOrderCustomerStatuses } from "@/features/orders/utils/order-filters";
 import {
   parseOrderFilter,
   parseOrdersPage,
@@ -25,9 +25,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const [params, locale] = await Promise.all([searchParams, getLocale()]);
   const filter = parseOrderFilter(params.filter);
   const page = parseOrdersPage(params.page);
-  const statuses = getBackendOrderStatuses(filter);
+  const customerStatuses = getOrderCustomerStatuses(filter);
   const [ordersPage, t] = await Promise.all([
-    getCurrentUserOrdersPage(locale, page, statuses).catch(
+    getCurrentUserOrdersPage(locale, page, customerStatuses).catch(
       (): OrdersPageData | null => null,
     ),
     getTranslations("Account.orders"),

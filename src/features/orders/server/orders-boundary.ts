@@ -19,7 +19,7 @@ import {
   assertCancelledOrderIdentity,
   OrderIdentityMismatchError,
 } from "@/features/orders/utils/order-cancellation";
-import type { BackendOrderStatus } from "@/features/orders/utils/order-filters";
+import type { OrderCustomerStatus } from "@/features/orders/utils/order-filters";
 import { getAccessToken } from "@/features/auth/server/auth-session";
 import { ApiError } from "@/lib/api/api-error";
 
@@ -35,13 +35,13 @@ export { OrderIdentityMismatchError };
 export async function getCurrentUserOrdersPage(
   locale: Locale,
   page: number,
-  statuses?: readonly BackendOrderStatus[],
+  customerStatuses?: readonly OrderCustomerStatus[],
 ): Promise<OrdersPage> {
   const accessToken = await getAccessToken();
   if (!accessToken) throw new OrdersAuthenticationError();
 
   return mapOrdersPage(
-    await getOrdersPageDto(locale, accessToken, page, statuses),
+    await getOrdersPageDto(locale, accessToken, page, customerStatuses),
   );
 }
 

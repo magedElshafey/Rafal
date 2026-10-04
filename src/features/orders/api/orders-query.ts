@@ -1,11 +1,13 @@
-import type { BackendOrderStatus } from "@/features/orders/utils/order-filters";
+import type { OrderCustomerStatus } from "@/features/orders/utils/order-filters";
 
 export function buildOrdersListQuery(
   page: number,
-  statuses?: readonly BackendOrderStatus[],
+  customerStatuses?: readonly OrderCustomerStatus[],
 ) {
   return {
     page,
-    ...(statuses?.length ? { status: [...statuses] } : {}),
+    ...(customerStatuses?.length
+      ? { "status[]": [...customerStatuses] }
+      : {}),
   };
 }

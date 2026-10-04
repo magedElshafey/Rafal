@@ -3,31 +3,22 @@ import type {
   OrderStatus,
 } from "@/features/orders/types/order.types";
 
-export type BackendOrderStatus =
-  | "new"
-  | "confirmed"
-  | "proccessing"
-  | "shipped"
-  | "delivered"
-  | "reterned"
-  | "canceled"
-  | "payment_failed";
+export type OrderCustomerStatus = "processing" | "completed" | "cancelled";
 
-const backendStatusesByFilter: Record<
-  Exclude<OrderFilter, "all">,
-  readonly BackendOrderStatus[]
+const customerStatusesByFilter: Record<
+  OrderFilter,
+  readonly OrderCustomerStatus[]
 > = {
-  "in-progress": ["new", "confirmed", "proccessing", "shipped"],
-  completed: ["delivered"],
-  cancelled: ["canceled"],
+  all: [],
+  "in-progress": ["processing"],
+  completed: ["completed"],
+  cancelled: ["cancelled"],
 };
 
-export function getBackendOrderStatuses(
+export function getOrderCustomerStatuses(
   filter: OrderFilter,
-): readonly BackendOrderStatus[] | undefined {
-  if (filter === "all") return undefined;
-
-  return backendStatusesByFilter[filter];
+): readonly OrderCustomerStatus[] {
+  return customerStatusesByFilter[filter];
 }
 
 const legacyDomainStatusesByFilter: Record<

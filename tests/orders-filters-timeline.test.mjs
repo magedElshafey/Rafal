@@ -65,7 +65,7 @@ function loadSource(relativePath) {
   return loaded.exports;
 }
 
-const { getBackendOrderStatuses } = loadSource(
+const { getOrderCustomerStatuses } = loadSource(
   "src/features/orders/utils/order-filters",
 );
 const { buildOrdersListQuery } = loadSource(
@@ -146,35 +146,41 @@ function renderTimeline(events, locale = "en") {
 }
 
 test("All filter maps to no backend statuses", () => {
-  assert.equal(getBackendOrderStatuses("all"), undefined);
+  assert.deepEqual(Array.from(getOrderCustomerStatuses("all")), []);
 });
 
-test("In Progress maps to exact backend transport values", () => {
-  assert.deepEqual(Array.from(getBackendOrderStatuses("in-progress")), [
-    "new",
-    "confirmed",
-    "proccessing",
-    "shipped",
+test("In Progress maps to the processing customer-status bucket", () => {
+  assert.deepEqual(Array.from(getOrderCustomerStatuses("in-progress")), [
+    "processing",
   ]);
 });
 
-test("Completed maps only to delivered", () => {
-  assert.deepEqual(Array.from(getBackendOrderStatuses("completed")), ["delivered"]);
+test("Completed maps to the completed customer-status bucket", () => {
+  assert.deepEqual(Array.from(getOrderCustomerStatuses("completed")), [
+    "completed",
+  ]);
 });
 
-test("Cancelled maps only to backend canceled", () => {
-  assert.deepEqual(Array.from(getBackendOrderStatuses("cancelled")), ["canceled"]);
+test("Cancelled maps to the cancelled customer-status bucket", () => {
+  assert.deepEqual(Array.from(getOrderCustomerStatuses("cancelled")), [
+    "cancelled",
+  ]);
 });
 
-test("Completed does not silently include reterned", () => {
-  assert.ok(!getBackendOrderStatuses("completed").includes("reterned"));
+test("Backend owns internal-state grouping for customer-status filters", () => {
+  const liveContractExample = {
+    customer_status: "processing",
+    status_label: "Confirmed",
+  };
+
+  assert.equal(liveContractExample.customer_status, "processing");
+  assert.equal(liveContractExample.status_label, "Confirmed");
+  assert.deepEqual(Array.from(getOrderCustomerStatuses("in-progress")), [
+    "processing",
+  ]);
 });
 
-test("Cancelled does not silently include payment_failed", () => {
-  assert.ok(!getBackendOrderStatuses("cancelled").includes("payment_failed"));
-});
-
-test("Real HTTP serialization emits repeated plain status keys", async () => {
+test("Real HTTP serialization emits repeated bracketed status keys", async () => {
   const client = createHttpClient({
     baseUrl: new URL("https://api.example.test/api"),
     maxRetries: 0,
@@ -188,34 +194,49 @@ test("Real HTTP serialization emits repeated plain status keys", async () => {
     };
     await client.request({
       path: "/orders",
-      query: buildOrdersListQuery(page, getBackendOrderStatuses(filter)),
+      query: buildOrdersListQuery(page, getOrderCustomerStatuses(filter)),
     });
     assert.ok(outgoingUrl);
     return outgoingUrl;
   }
 
-  const inProgress = await requestUrl("in-progress", 2);
+  const inProgress = await requestUrl("in-progress", 1);
   assert.equal(
     inProgress.search,
-    "?page=2&status=new&status=confirmed&status=proccessing&status=shipped",
+    "?page=1&status%5B%5D=processing",
   );
-  assert.deepEqual(inProgress.searchParams.getAll("status"), [
-    "new",
-    "confirmed",
-    "proccessing",
-    "shipped",
-  ]);
-  assert.equal(inProgress.searchParams.has("status[]"), false);
+  assert.deepEqual(inProgress.searchParams.getAll("status[]"), ["processing"]);
+  assert.deepEqual(inProgress.searchParams.getAll("status"), []);
 
   const completed = await requestUrl("completed", 1);
-  assert.equal(completed.search, "?page=1&status=delivered");
+  assert.equal(completed.search, "?page=1&status%5B%5D=completed");
+  assert.deepEqual(completed.searchParams.getAll("status[]"), ["completed"]);
+  assert.deepEqual(completed.searchParams.getAll("status"), []);
 
   const cancelled = await requestUrl("cancelled", 1);
-  assert.equal(cancelled.search, "?page=1&status=canceled");
+  assert.equal(cancelled.search, "?page=1&status%5B%5D=cancelled");
+  assert.deepEqual(cancelled.searchParams.getAll("status[]"), ["cancelled"]);
+  assert.deepEqual(cancelled.searchParams.getAll("status"), []);
 
   const all = await requestUrl("all", 1);
   assert.equal(all.search, "?page=1");
-  assert.equal(all.searchParams.has("status"), false);
+  assert.deepEqual(all.searchParams.getAll("status[]"), []);
+  assert.deepEqual(all.searchParams.getAll("status"), []);
+
+  for (const url of [inProgress, completed, cancelled, all]) {
+    for (const internalStatus of [
+      "new",
+      "confirmed",
+      "shipped",
+      "delivered",
+      "returned",
+      "payment_failed",
+      "pending_verification",
+    ]) {
+      assert.ok(!url.searchParams.getAll("status[]").includes(internalStatus));
+    }
+    assert.ok(!url.searchParams.get("status[]")?.includes(","));
+  }
 });
 
 test("Pagination URL preserves active filter", () => {
@@ -232,8 +253,68 @@ test("Changing filter starts on page one", () => {
   );
 });
 
-test("Unknown filter safely falls back to All", () => {
-  assert.equal(parseOrderFilter("unexpected"), "all");
+test("Page one remains omitted from customer URLs", () => {
+  assert.equal(
+    buildOrdersListHref({ filter: "cancelled", page: 1 }),
+    "/account/orders?filter=cancelled",
+  );
+  assert.equal(
+    buildOrdersListHref({ filter: "all", page: 1 }),
+    "/account/orders",
+  );
+});
+
+test("Invalid customer filters cannot select or expose backend statuses", () => {
+  for (const candidate of ["unexpected", "processing", "payment_failed"]) {
+    const filter = parseOrderFilter(candidate);
+    assert.equal(filter, "all");
+    assert.deepEqual(Array.from(getOrderCustomerStatuses(filter)), []);
+    const href = buildOrdersListHref({ filter, page: 2 });
+    assert.equal(href, "/account/orders?page=2");
+    assert.ok(!href.includes("status"));
+  }
+});
+
+test("Customer filter URLs never expose backend status parameters", () => {
+  for (const filter of ["all", "in-progress", "completed", "cancelled"]) {
+    const href = buildOrdersListHref({ filter, page: 2 });
+    assert.ok(!href.includes("status"));
+  }
+});
+
+test("Orders list stays server-authenticated without a Dashboard statuses request", () => {
+  const apiSource = readFileSync(
+    path.join(root, "src/features/orders/api/orders-api.server.ts"),
+    "utf8",
+  );
+  const boundarySource = readFileSync(
+    path.join(root, "src/features/orders/server/orders-boundary.ts"),
+    "utf8",
+  );
+
+  assert.match(apiSource, /^import "server-only";/);
+  assert.match(boundarySource, /^import "server-only";/);
+  assert.match(boundarySource, /getAccessToken\(\)/);
+  assert.doesNotMatch(
+    apiSource,
+    /path:\s*["`][^"`]*(?:dashboard|statuses)/i,
+  );
+});
+
+test("Incoming historical display aliases remain tolerated", () => {
+  const detailsSource = readFileSync(
+    path.join(root, "src/features/orders/components/order-details-content.tsx"),
+    "utf8",
+  );
+  const badgeSource = readFileSync(
+    path.join(root, "src/features/orders/components/order-status-badge.tsx"),
+    "utf8",
+  );
+
+  for (const alias of ["proccessing", "reterned", "canceled"]) {
+    assert.ok(detailsSource.includes(alias));
+    assert.ok(badgeSource.includes(alias));
+  }
 });
 
 test("Valid reached_at maps to reachedAt", () => {
