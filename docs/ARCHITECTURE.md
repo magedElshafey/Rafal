@@ -279,6 +279,16 @@ Authentication uses email + OTP and no password.
 
 Frontend authorization state must reflect server/backend identity. Do not treat client storage as an authentication authority.
 
+Account Edit currently reuses Laravel's `POST /auth/complete-profile`
+endpoint. The live endpoint requires multipart profile fields plus
+`terms_accepted=1`; the Account Profile UI does not recollect consent, so the
+auth API adapter supplies that backend-required field without adding it to the
+editable profile model. A profile edit succeeds only after a valid response
+confirms the requested canonical fields, after which the profile route is
+revalidated. HTTP errors, `success: false`, malformed payloads, and unchanged
+success payloads must fail closed. A dedicated profile-update endpoint, or
+conditional complete-profile validation, remains backend technical debt.
+
 ## 10. API Layer
 
 Create feature-oriented API functions rather than making ad-hoc requests deep inside route or presentational components.

@@ -64,6 +64,10 @@ function getBackendValidationErrors(
   return errors;
 }
 
+function hasBackendValidationField(details: unknown, field: string): boolean {
+  return isPlainRecord(details) && Object.hasOwn(details, field);
+}
+
 export async function updateAccountProfile(
   input: unknown,
 ): Promise<AccountProfileMutationResult> {
@@ -102,6 +106,19 @@ export async function updateAccountProfile(
     }
 
     const user = mapAuthUser(response.data);
+    const confirmedPhone = user.phone
+      ? normalizeSaudiMobile(user.phone)
+      : null;
+    if (
+      user.firstName !== profile.firstName ||
+      user.lastName !== profile.lastName ||
+      confirmedPhone !== phone
+    ) {
+      console.error(
+        "[account-profile:update] backend did not confirm requested profile fields",
+      );
+      return { ok: false, error: { code: "service-unavailable" } };
+    }
     revalidatePath(`/${locale}/account/profile`);
 
     return {
@@ -114,6 +131,12 @@ export async function updateAccountProfile(
     };
   } catch (error) {
     if (error instanceof ApiError && error.status === 422) {
+      if (hasBackendValidationField(error.details, "terms_accepted")) {
+        console.error(
+          "[account-profile:update] backend rejected required transport field",
+          { field: "terms_accepted", status: 422 },
+        );
+      }
       return {
         ok: false,
         error: {
