@@ -53,7 +53,12 @@ function sourceLoader(overrides = {}, globals = {}) {
 }
 
 const diagnosticLogs = [];
-const load = sourceLoader({ console: { error: (...args) => diagnosticLogs.push(args) } });
+const load = sourceLoader({
+  console: { error: (...args) => diagnosticLogs.push(args) },
+  "@/features/reviews/components/product-reviews-carousel": {
+    ProductReviewsCarousel: ({ children }) => React.createElement("div", { "data-review-carousel": true }, children),
+  },
+});
 const { parseProductReviewsResponse, ProductReviewsContractError } = load("src/features/reviews/api/parse-product-reviews-dto");
 const { mapProductReviewsResponse } = load("src/features/reviews/api/product-reviews-mapper");
 const { isProductReviewRating } = load("src/features/reviews/utils/is-product-review-rating");
@@ -77,13 +82,17 @@ function response() {
 function page(value = response()) { return mapProductReviewsResponse(parseProductReviewsResponse(value)); }
 const copy = {
   titleTemplate: "Ratings and reviews ({count})", title: "Ratings and reviews",
-  ratingLabelTemplate: "Rated {value} out of 5", empty: "No reviews for this product yet.",
+  ratingLabelTemplate: "Rated {value} out of 5", aggregateTemplate: "{average} out of 5 from {count} reviews",
+  carouselLabel: "Customer reviews", previous: "Previous reviews", next: "Next reviews",
+  position: "Review carousel position", slideLabelTemplate: "Review {current} of {total} by {reviewer}",
+  showMore: "Show more reviews", loading: "Loading reviews", loadMoreError: "Try again",
+  moreLoadedTemplate: "{count} more reviews loaded", empty: "No reviews for this product yet.",
   pageUnavailable: "No reviews available on this page.",
   readError: "We couldn't load reviews right now.", adminResponse: "Rafal response",
 };
 function renderReviews(value = response()) {
   return renderToStaticMarkup(React.createElement(ProductReviewsContent, {
-    copy, locale: "en", readResult: { ok: true, page: page(value) },
+    productId: "42", copy, locale: "en", readResult: { ok: true, page: page(value) },
   }));
 }
 
@@ -182,7 +191,25 @@ test("nullable comment compatibility and empty reviews remain valid", () => {
   assert.match(renderReviews(input), /Ratings and reviews \(0\)/);
 });
 
-test("SSR section uses summary count independently of first-page size and has no extra actions/media", () => {
+test("zero, one and many review states only enable the carousel when useful", () => {
+  const empty = response();
+  empty.data.summary = { average: 0, count: 0, breakdown: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 } };
+  empty.data.reviews = []; empty.meta.total = 0;
+  assert.doesNotMatch(renderReviews(empty), /data-review-carousel/);
+
+  assert.doesNotMatch(renderReviews(), /data-review-carousel/);
+
+  const many = response();
+  many.data.summary.count = 2;
+  many.data.reviews.push({ ...many.data.reviews[0], id: 5, reviewer_display_name: "sara a." });
+  many.meta.total = 2;
+  const html = renderReviews(many);
+  assert.match(html, /data-review-carousel="true"/);
+  assert.match(html, /abdullah e\./);
+  assert.match(html, /sara a\./);
+});
+
+test("SSR section keeps first-page review content in the many-review carousel", () => {
   const input = response(); input.data.summary.count = 40; input.meta.last_page = 3;
   input.data.reviews[0].photos = ["https://example.test/storage/photo.jpg"];
   const html = renderReviews(input);
@@ -192,7 +219,8 @@ test("SSR section uses summary count independently of first-page size and has no
   assert.match(html, /abdullah e\./);
   assert.match(html, /good product/);
   assert.match(html, /aria-label="Rated 5 out of 5"/);
-  assert.doesNotMatch(html, /<button|<input|<form|<img|<time|rel="preload"|Helpful|Report|Upload|Rafal response/);
+  assert.match(html, /data-review-carousel="true"/);
+  assert.doesNotMatch(html, /<input|<form|<img|<time|rel="preload"|Helpful|Report|Upload|Rafal response/);
   assert.equal(page(input).reviews[0].createdAt, "2026-09-23T17:53:47+00:00");
 });
 
@@ -261,18 +289,20 @@ test("network and contract failures become local fallback with safe diagnostics"
     assert.equal(logs.length, 1);
     assert.equal(logs[0][1].kind, failure);
     assert.doesNotMatch(JSON.stringify(logs), /private backend detail|good product/);
-    const html = renderToStaticMarkup(React.createElement(ProductReviewsContent, { copy, locale: "en", readResult: result }));
+    const html = renderToStaticMarkup(React.createElement(ProductReviewsContent, { productId: "42", copy, locale: "en", readResult: result }));
     assert.match(html, /load reviews right now/);
     assert.doesNotMatch(html, /private backend detail|Invalid Product|\(0\)/);
   }
 });
 
-test("skeleton reserves card rows with accessible loading and reduced-motion safe primitive", () => {
+test("skeleton reserves responsive carousel cards with accessible loading and reduced-motion safe primitive", () => {
   const html = renderToStaticMarkup(React.createElement(ProductReviewsSkeleton, { title: copy.title, loadingLabel: "Loading reviews" }));
   assert.match(html, /aria-busy="true"/);
   assert.match(html, /role="status"/);
   assert.match(html, /motion-reduce:animate-none/);
-  assert.match(html, /md:grid-cols-2/);
+  assert.match(html, /overflow-hidden/);
+  assert.match(html, /basis-\[88%\]/);
+  assert.match(html, /xl:basis-1\/3/);
 });
 
 test("PDP keeps reviews behind Suspense and header wired to Product resource; cards stay server-only", () => {
@@ -282,7 +312,7 @@ test("PDP keeps reviews behind Suspense and header wired to Product resource; ca
   assert.match(source, /ratingSummary: product.ratingSummary/);
   const panel = readFileSync(path.join(root, "src/features/products/components/product-details/product-purchase-panel.tsx"), "utf8");
   assert.match(panel, /<ProductHeaderRating\s+summary=\{product.ratingSummary\}/);
-  for (const file of readdirSync(path.join(root, "src/features/reviews/components")).filter((name) => !["product-reviews-load-more.tsx", "order-product-review-action.tsx", "product-review-rating-input.tsx"].includes(name))) {
+  for (const file of readdirSync(path.join(root, "src/features/reviews/components")).filter((name) => !["product-reviews-carousel.tsx", "order-product-review-action.tsx", "product-review-rating-input.tsx"].includes(name))) {
     assert.doesNotMatch(readFileSync(path.join(root, "src/features/reviews/components", file), "utf8"), /["']use client["']|useEffect|useState/);
   }
 });
@@ -298,7 +328,7 @@ test("streaming shell renders purchase content while review read is pending and 
   const { readProductReviews } = streamingLoad("src/features/reviews/server/product-reviews-boundary");
   const read = readProductReviews("42", "en");
   function Reviews() {
-    return React.createElement(ProductReviewsContent, { copy, locale: "en", readResult: React.use(read) });
+    return React.createElement(ProductReviewsContent, { productId: "42", copy, locale: "en", readResult: React.use(read) });
   }
   const output = new PassThrough();
   let html = "";
@@ -361,7 +391,7 @@ test("all excluded rows do not imply a globally empty product", () => {
   assert.doesNotMatch(html, /No reviews for this product yet/);
 });
 
-const loadMoreCopy = { ...copy, showMore: "Show more reviews", loading: "Loading reviews", error: "Try again", loadedTemplate: "{count} more reviews loaded" };
+const loadMoreCopy = { ...copy, error: copy.loadMoreError, loadedTemplate: copy.moreLoadedTemplate };
 function laterPage(current, last, ids) {
   const input = response();
   input.meta.current_page = current; input.meta.last_page = last;
@@ -385,11 +415,16 @@ function loadMoreHarness(request) {
   };
   const clientLoad = sourceLoader({ react: hooks,
     "@/features/reviews/api/get-product-reviews.client": { getProductReviewsClient: request },
+    "@/components/ui/app-carousel": new Proxy({}, { get: () => ({ children }) => React.createElement("div", null, children) }),
   });
-  const { ProductReviewsLoadMore } = clientLoad("src/features/reviews/components/product-reviews-load-more");
-  const props = { productId: "42", locale: "en", initialNextPage: 2, lastPage: 3, initialReviewIds: ["4"], copy: loadMoreCopy };
+  const { ProductReviewsCarousel } = clientLoad("src/features/reviews/components/product-reviews-carousel");
+  const props = {
+    productId: "42", locale: "en", initialNextPage: 2, lastPage: 3,
+    initialReviewIds: ["4"], initialSlideLabels: ["Review 1"], totalReviews: 5, copy: loadMoreCopy,
+    children: React.createElement("article", null, "Page 1 review"),
+  };
   let tree;
-  const render = () => { cursor = 0; tree = ProductReviewsLoadMore(props); return tree; };
+  const render = () => { cursor = 0; tree = ProductReviewsCarousel(props); return tree; };
   const all = (node = tree) => React.isValidElement(node)
     ? [node, ...React.Children.toArray(node.props.children).flatMap((child) => all(child))] : [];
   render();
@@ -430,8 +465,7 @@ test("rapid clicks request exactly page 2 once, then append backend order and de
   await next;
   harness.render();
   assert.deepEqual(harness.reviews(), ["8", "7", "9"]);
-  assert.equal(harness.button().props.disabled, true);
-  await harness.button().props.onClick();
+  assert.equal(harness.button(), undefined);
   assert.equal(calls.length, 2);
 });
 
@@ -447,10 +481,9 @@ test("later-page failure preserves SSR and appended cards, then retries the same
   assert.deepEqual(calls, [2]);
   assert.ok(harness.error());
   assert.equal(harness.button().props.disabled, false);
-  const html = renderToStaticMarkup(React.createElement(ProductReviewsContent, { locale: "en", copy, readResult: { ok: true, page: page() } }, harness.render()));
-  assert.match(html, /good product/);
-  assert.match(html, /Try again/);
-  assert.doesNotMatch(html, /private backend text/);
+  assert.match(renderReviews(), /good product/);
+  assert.match(harness.markup(), /Try again/);
+  assert.doesNotMatch(harness.markup(), /private backend text/);
   fail = false;
   await harness.button().props.onClick(); harness.render();
   assert.deepEqual(calls, [2, 2]);
@@ -480,32 +513,49 @@ test("incorrect returned page leaves the next page unchanged; unmount aborts wit
   assert.deepEqual(abortHarness.reviews(), []);
 });
 
-test("async server section mounts a loader only for multi-page results without passing Page 1 cards", async () => {
+test("async server section passes SSR Page 1 cards and pagination into one carousel", async () => {
   for (const lastPage of [1, 3]) {
-    const input = response(); input.meta.last_page = lastPage;
+    const input = response(); input.data.summary.count = 40; input.meta.last_page = lastPage;
     const t = (key) => ({
       "reviews.heading": copy.title, "reviews.empty": copy.empty, "reviews.readError.title": copy.readError,
       "reviews.adminResponse": copy.adminResponse, "reviews.showMore": loadMoreCopy.showMore,
       "reviews.loading": loadMoreCopy.loading, "reviews.loadMoreError": loadMoreCopy.error,
-      "reviews.pageUnavailable": copy.pageUnavailable,
+      "reviews.pageUnavailable": copy.pageUnavailable, "reviews.carouselLabel": copy.carouselLabel,
+      "reviews.previous": copy.previous, "reviews.next": copy.next, "reviews.position": copy.position,
     })[key];
-    t.raw = (key) => ({ "reviews.title": copy.titleTemplate, "rating.label": copy.ratingLabelTemplate, "reviews.moreLoaded": loadMoreCopy.loadedTemplate })[key];
-    let loaderProps;
+    t.raw = (key) => ({
+      "reviews.title": copy.titleTemplate, "rating.label": copy.ratingLabelTemplate,
+      "reviews.aggregate": copy.aggregateTemplate, "reviews.slideLabel": copy.slideLabelTemplate,
+      "reviews.moreLoaded": loadMoreCopy.loadedTemplate,
+    })[key];
+    let carouselProps;
     const sectionLoad = sourceLoader({
       "@/features/reviews/server/product-reviews-boundary": { readProductReviews: async () => ({ ok: true, page: page(input) }) },
       "next-intl/server": { getTranslations: async () => t },
-      "@/features/reviews/components/product-reviews-load-more": { ProductReviewsLoadMore: (props) => { loaderProps = props; return React.createElement("button", null, props.copy.showMore); } },
+      "@/features/reviews/components/product-reviews-carousel": {
+        ProductReviewsCarousel: (props) => {
+          carouselProps = props;
+          return React.createElement("div", null, props.children, props.initialNextPage === null ? null : props.copy.showMore);
+        },
+      },
     });
     const { ProductReviewsSection } = sectionLoad("src/features/reviews/components/product-reviews-section");
     const html = renderToStaticMarkup(await ProductReviewsSection({ productId: "42", locale: "en" }));
     assert.equal(html.includes("Show more reviews"), lastPage > 1);
     assert.match(html, /good product/);
-    if (lastPage > 1) {
-      assert.equal(loaderProps.initialNextPage, 2);
-      assert.deepEqual(Array.from(loaderProps.initialReviewIds), ["4"]);
-      assert.equal(loaderProps.reviews, undefined);
-    }
+    assert.equal(carouselProps.initialNextPage, lastPage > 1 ? 2 : null);
+    assert.deepEqual(Array.from(carouselProps.initialReviewIds), ["4"]);
+    assert.match(renderToStaticMarkup(carouselProps.children), /good product/);
   }
+});
+
+test("many-review UI reuses the canonical deferred RTL-aware carousel with responsive slides", () => {
+  const source = readFileSync(path.join(root, "src/features/reviews/components/product-reviews-carousel.tsx"), "utf8");
+  assert.match(source, /from "@\/components\/ui\/app-carousel"/);
+  assert.match(source, /direction=\{locale === "ar" \? "rtl" : "ltr"\}/);
+  assert.match(source, /deferUntilNearViewport/);
+  assert.match(source, /basis-\[88%\][\s\S]*sm:basis-\[58%\][\s\S]*lg:basis-1\/2[\s\S]*xl:basis-1\/3/);
+  assert.match(source, /<AppCarouselPrevious[\s\S]*<AppCarouselPosition[\s\S]*<AppCarouselNext/);
 });
 
 test("internal public route validates ID/page/locale before reading and returns no-store normalized data", async () => {

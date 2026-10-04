@@ -17,7 +17,6 @@ export function Rating({ className, label, value }: RatingProps) {
       role="img"
       aria-label={label}
       data-rating-value={normalizedValue}
-      dir="ltr"
       className={cn(
         "inline-flex w-[var(--rating-width)] justify-between",
         className,

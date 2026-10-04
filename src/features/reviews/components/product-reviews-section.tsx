@@ -18,49 +18,30 @@ export async function ProductReviewsSection({
     getTranslations({ locale, namespace: "Common.productDetails" }),
   ]);
 
-  let loadMore = null;
-  if (
-    readResult.ok &&
-    readResult.page.pagination.current_page < readResult.page.pagination.last_page
-  ) {
-    const { ProductReviewsLoadMore } = await import(
-      "@/features/reviews/components/product-reviews-load-more"
-    );
-    loadMore = (
-      <ProductReviewsLoadMore
-        key={`${productId}:${locale}`}
-        productId={productId}
-        locale={locale}
-        initialNextPage={readResult.page.pagination.current_page + 1}
-        lastPage={readResult.page.pagination.last_page}
-        initialReviewIds={readResult.page.reviews.map((review) => review.id)}
-        copy={{
-          ratingLabelTemplate: t.raw("rating.label") as string,
-          adminResponse: t("reviews.adminResponse"),
-          showMore: t("reviews.showMore"),
-          loading: t("reviews.loading"),
-          error: t("reviews.loadMoreError"),
-          loadedTemplate: t.raw("reviews.moreLoaded") as string,
-        }}
-      />
-    );
-  }
-
   return (
     <ProductReviewsContent
+      productId={productId}
       locale={locale}
       readResult={readResult}
       copy={{
         titleTemplate: t.raw("reviews.title") as string,
         title: t("reviews.heading"),
         ratingLabelTemplate: t.raw("rating.label") as string,
+        aggregateTemplate: t.raw("reviews.aggregate") as string,
         empty: t("reviews.empty"),
         pageUnavailable: t("reviews.pageUnavailable"),
         readError: t("reviews.readError.title"),
         adminResponse: t("reviews.adminResponse"),
+        carouselLabel: t("reviews.carouselLabel"),
+        previous: t("reviews.previous"),
+        next: t("reviews.next"),
+        position: t("reviews.position"),
+        slideLabelTemplate: t.raw("reviews.slideLabel") as string,
+        showMore: t("reviews.showMore"),
+        loading: t("reviews.loading"),
+        loadMoreError: t("reviews.loadMoreError"),
+        moreLoadedTemplate: t.raw("reviews.moreLoaded") as string,
       }}
-    >
-      {loadMore}
-    </ProductReviewsContent>
+    />
   );
 }

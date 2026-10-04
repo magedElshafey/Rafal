@@ -417,6 +417,11 @@
       "pageUnavailable": "No reviews are available to display on this page.",
       "title": "Ratings and reviews ({count})",
       "aggregate": "{average} out of 5 from {count} reviews",
+      "carouselLabel": "Customer reviews",
+      "previous": "Previous reviews",
+      "next": "Next reviews",
+      "position": "Review carousel position",
+      "slideLabel": "Review {current} of {total} by {reviewer}",
       "empty": "There are no published reviews for this product yet.",
       "readError": {
         "title": "Reviews could not be loaded",
