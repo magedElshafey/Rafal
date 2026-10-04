@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
@@ -24,6 +25,8 @@ import {
   serializeStructuredData,
 } from "@/features/products/utils/create-product-structured-data";
 import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
+import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
+import { ProductReviewsSkeleton } from "@/features/reviews/components/product-reviews-skeleton";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
 
@@ -394,6 +397,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
       </div>
 
+      <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
+        <Suspense
+          fallback={
+            <ProductReviewsSkeleton
+              title={t("reviews.heading")}
+              loadingLabel={t("reviews.loading")}
+            />
+          }
+        >
+          <ProductReviewsSection productId={product.id} locale={locale} />
+        </Suspense>
+      </div>
     </Container>
   );
 }
