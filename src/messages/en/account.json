@@ -197,6 +197,16 @@
       "paymentStatuses": {
         "paid": "Paid"
       },
+      "cancel": {
+        "action": "Cancel order",
+        "title": "Cancel order?",
+        "description": "This action will cancel the order. Are you sure you want to continue?",
+        "keep": "Keep order",
+        "confirm": "Cancel order",
+        "cancelling": "Cancelling order",
+        "success": "Order cancelled.",
+        "error": "We couldn't cancel this order. Refresh the page and try again if cancellation is still available."
+      },
       "total": "Total",
       "error": {
         "title": "The order details could not be loaded",

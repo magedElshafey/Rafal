@@ -27,6 +27,16 @@ export default async function OrderDetailsPage({
 
   const copy: OrderDetailsCopy = {
     backToOrders: t("backToOrders"),
+    cancel: {
+      action: t("cancel.action"),
+      cancel: t("cancel.keep"),
+      confirm: t("cancel.confirm"),
+      description: t("cancel.description"),
+      error: t("cancel.error"),
+      loading: t("cancel.cancelling"),
+      success: t("cancel.success"),
+      title: t("cancel.title"),
+    },
     orderLabel: t("orderLabel"),
     placedAt: (date) => t("placedAt", { date }),
     statusLabels: {

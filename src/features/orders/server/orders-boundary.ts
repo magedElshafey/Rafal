@@ -3,6 +3,7 @@ import "server-only";
 import type { Locale } from "next-intl";
 
 import {
+  cancelOrderDto,
   getOrderDetailsDto,
   getOrdersPageDto,
 } from "@/features/orders/api/orders-api.server";
@@ -14,6 +15,10 @@ import type {
   OrderDetails,
   OrdersPage,
 } from "@/features/orders/types/order.types";
+import {
+  assertCancelledOrderIdentity,
+  OrderIdentityMismatchError,
+} from "@/features/orders/utils/order-cancellation";
 import { getAccessToken } from "@/features/auth/server/auth-session";
 import { ApiError } from "@/lib/api/api-error";
 
@@ -23,6 +28,8 @@ export class OrdersAuthenticationError extends Error {
     this.name = "OrdersAuthenticationError";
   }
 }
+
+export { OrderIdentityMismatchError };
 
 export async function getCurrentUserOrdersPage(
   locale: Locale,
@@ -61,4 +68,30 @@ export async function getCurrentUserOrderDetails(
     }
     throw error;
   }
+}
+
+export async function cancelCurrentUserOrder(
+  locale: Locale,
+  orderNumber: string,
+  signal?: AbortSignal,
+): Promise<OrderDetails> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new OrdersAuthenticationError();
+
+  const response = await cancelOrderDto(
+    locale,
+    accessToken,
+    orderNumber,
+    signal,
+  );
+
+  if (response.data.order_number !== orderNumber) {
+    console.error("[orders:cancel] response identity mismatch", {
+      requestedOrderNumber: orderNumber,
+      responseOrderNumber: response.data.order_number,
+    });
+    assertCancelledOrderIdentity(orderNumber, response.data.order_number);
+  }
+
+  return mapOrderDetails(response);
 }

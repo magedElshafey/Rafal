@@ -175,7 +175,7 @@ export function InfoDialog({
   );
 }
 
-type ConfirmDialogProps = Omit<RafalModalProps, "children" | "footer"> & {
+type ConfirmDialogProps = Omit<RafalModalProps, "footer"> & {
   cancelLabel: string;
   confirmLabel: string;
   onConfirm: () => void;
@@ -186,6 +186,7 @@ type ConfirmDialogProps = Omit<RafalModalProps, "children" | "footer"> & {
 
 export function ConfirmDialog({
   cancelLabel,
+  children,
   confirmLabel,
   destructive = false,
   loading = false,
@@ -219,6 +220,8 @@ export function ConfirmDialog({
           </Button>
         </>
       }
-    />
+    >
+      {children}
+    </RafalModal>
   );
 }

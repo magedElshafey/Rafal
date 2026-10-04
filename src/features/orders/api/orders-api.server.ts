@@ -40,3 +40,22 @@ export async function getOrderDetailsDto(
 
   return parseOrderDetailsResponse(payload);
 }
+
+export async function cancelOrderDto(
+  locale: Locale,
+  accessToken: string,
+  orderNumber: string,
+  signal?: AbortSignal,
+) {
+  const payload = await serverApi.request<unknown>({
+    path: `/orders/${encodeURIComponent(orderNumber)}/cancel`,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Accept-Language": locale,
+    },
+    signal,
+  });
+
+  return parseOrderDetailsResponse(payload);
+}

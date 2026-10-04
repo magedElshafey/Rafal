@@ -1,6 +1,7 @@
 import type { Locale } from "next-intl";
 
 import { ChevronLeftIcon } from "@/components/ui/icons";
+import { CancelOrderAction } from "@/features/orders/components/cancel-order-action";
 import { OrderAddress } from "@/features/orders/components/order-address";
 import { OrderItems } from "@/features/orders/components/order-items";
 import { OrderPaymentSummary } from "@/features/orders/components/order-payment-summary";
@@ -12,6 +13,16 @@ import { Link } from "@/i18n/navigation";
 
 export type OrderDetailsCopy = Readonly<{
   backToOrders: string;
+  cancel: Readonly<{
+    action: string;
+    cancel: string;
+    confirm: string;
+    description: string;
+    error: string;
+    loading: string;
+    success: string;
+    title: string;
+  }>;
   orderLabel: string;
   payment: Readonly<{
     method: string;
@@ -96,10 +107,19 @@ export function OrderDetailsView({
             </time>
           </p>
         </div>
-        <OrderStatusBadge
-          status={customerStatus}
-          label={statusLabel(customerStatus, copy.statusLabels)}
-        />
+        <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:items-end">
+          <OrderStatusBadge
+            status={customerStatus}
+            label={statusLabel(customerStatus, copy.statusLabels)}
+          />
+          {order.capabilities.canCancel ? (
+            <CancelOrderAction
+              copy={copy.cancel}
+              locale={locale}
+              orderNumber={order.orderNumber}
+            />
+          ) : null}
+        </div>
       </header>
 
       <OrderTimeline
