@@ -176,20 +176,8 @@ test("ListingSort keeps div-free label markup, native selection, values and call
   assert.match(html, /<option value="price_asc">Price<\/option>/);
 });
 
-test("Contact pilot preserves native field attributes and its non-submit button", () => {
-  const { ContactForm } = loadSource("src/features/content/components/ContactForm.tsx");
-  const copy = Object.fromEntries([
-    "title", "nameLabel", "namePlaceholder", "emailLabel", "emailPlaceholder",
-    "subjectLabel", "subjectPlaceholder", "messageLabel", "messagePlaceholder", "submit", "notice",
-  ].map((key) => [key, key]));
-  const html = render(ContactForm, { copy });
-  assert.match(html, /<form[^>]*aria-describedby="contact-form-notice"/);
-  assert.equal((html.match(/<input\b/g) ?? []).length, 3);
-  assert.match(html, /<label[^>]*for="contact-message"/);
-  assert.match(html, /<textarea[^>]*id="contact-message"[^>]*name="message"[^>]*rows="5"[^>]*required=""/);
-  assert.match(html, /<button[^>]*type="button"/);
-  assert.ok(!html.includes('type="submit"'));
-});
+// The static Contact pilot is now a real public mutation. Its native field,
+// textarea, submit and error regression coverage lives in contact-messages.test.mjs.
 
 test("form foundation adds no client directive", () => {
   for (const name of ["field", "input", "textarea", "native-select", "form-control-styles"]) {

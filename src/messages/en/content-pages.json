@@ -54,22 +54,43 @@
   },
   "contact": {
     "title": "Contact us",
-    "description": "We welcome your questions and feedback and will respond as soon as possible.",
+    "description": "We're here to help. Send us your message and we'll follow up regarding your inquiry.",
+    "support": {
+      "title": "How can we help?",
+      "description": "Send your inquiry using the form and our team will follow up on your message."
+    },
+    "help": {
+      "title": "Need quick help?",
+      "description": "Use a clear subject and describe your inquiry in the message to help us understand what you need."
+    },
     "form": {
       "title": "Send us a message",
-      "nameLabel": "Full name",
-      "namePlaceholder": "Enter your name...",
-      "emailLabel": "Email address",
-      "emailPlaceholder": "example@email.com",
-      "subjectLabel": "Subject",
-      "subjectPlaceholder": "Question / feedback",
-      "messageLabel": "Message",
-      "messagePlaceholder": "Write your message or feedback here...",
+      "required": "All fields are required.",
+      "labels": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone number",
+        "subject": "Subject",
+        "message": "Message"
+      },
+      "validation": {
+        "name": "Enter your name.",
+        "email": "Enter a valid email address.",
+        "phone": "Enter a valid Saudi mobile number.",
+        "subject": "Enter a subject.",
+        "message": "Enter your message."
+      },
       "submit": "Send message",
-      "notice": "Your message will go directly to our support team. We aim to reply within 24–48 hours."
-    },
-    "info": { "title": "Contact information", "phone": "Phone", "email": "Email", "hours": "Working hours", "hoursValue": "Daily, 9am–11pm" },
-    "help": { "title": "Need quick help?", "description": "Browse frequently asked questions for immediate answers about orders, shipping, and returns." }
+      "submitting": "Sending message",
+      "successTitle": "Message sent",
+      "successBody": "Your message has been received successfully.",
+      "sendAnother": "Send another message",
+      "errors": {
+        "validation": "Check your details and try again.",
+        "rateLimited": "Too many attempts. Please try again later.",
+        "serviceFailure": "We couldn't confirm that your message was sent. Please try again later."
+      }
+    }
   },
   "staticPages": {
     "breadcrumbs": "Breadcrumb",

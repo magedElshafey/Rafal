@@ -569,6 +569,38 @@ Laravel Product DTO
   still renders semantic mock badges and must be migrated before real Laravel
   badge labels can be shown.
 
+### Public Contact messages
+
+The existing localized `/contact` page is public and server-rendered; only its
+`ContactForm` is interactive. The approved Contact task authorizes the feature-local
+browser -> `POST /api/contact-messages` -> Laravel `POST /contact-messages` boundary.
+Both hops use the shared HTTP transport with `retry: false`. No session lookup,
+Authorization, Cart/guest token, client persistence, cache refresh, or PII logging
+is involved. A synchronous in-flight guard and disabled Submit prevent concurrent
+submissions in the mounted form; they are not backend abuse protection or idempotency.
+
+The browser sends JSON containing exactly five required strings: `name`, `email`,
+`phone`, `subject`, `message`. Shared feature validation runs in browser and BFF;
+unknown fields are rejected. Trim each value, require non-empty text, reuse the
+existing simple email syntax/lowercasing and 254-character email ceiling, and use
+`normalizeSaudiMobile` to produce `+9665XXXXXXXX`. The UI reuses `SaudiMobileField`
+with its frozen `tel-national` autocomplete convention. Name/subject/message casing
+and internal content are preserved. Only those five fields reach Laravel;
+`Accept-Language` is validated against the application locale configuration and
+forwarded as a header. BFF responses use `private, no-store` and safe error codes.
+
+Contact-specific Postman/OpenAPI evidence was not available in the supplied
+artifact or repository docs during implementation. Multipart transport follows
+the existing public mutation convention, as the task permits when undocumented;
+it is an explicit assumption awaiting backend confirmation. The response boundary
+currently requires the repository's boolean `success: true` envelope, ignores
+private returned data/message, and fails closed for missing/false/malformed
+confirmation. This envelope also needs Contact-specific confirmation before release.
+Undocumented Laravel 422 keys deliberately become a generic form failure;
+locally validated field errors use localized copy. HTTP 429 has dedicated feedback.
+Confirm backend maximum lengths and abuse protection before release; no arbitrary
+text limits, CAPTCHA, support details, or response-time promises are invented.
+
 ## 11. Validation
 
 Business-critical input requires both backend validation and appropriate frontend validation.
