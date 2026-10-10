@@ -50,48 +50,6 @@ function deriveOptions(variants: readonly ProductVariantDto[]): ProductOption[] 
   }));
 }
 
-function haveEqualAttributes(
-  left: ProductVariantDto,
-  right: ProductVariantDto,
-): boolean {
-  const leftEntries = getVariantAttributeEntries(left.attributes);
-  const rightEntries = getVariantAttributeEntries(right.attributes);
-  return (
-    leftEntries.length === rightEntries.length &&
-    leftEntries.every(([key, value]) => right.attributes[key] === value)
-  );
-}
-
-function reportAmbiguousVariantCombinations(
-  product: ProductDto,
-  variants: readonly ProductVariantDto[],
-) {
-  const reported = new Set<number>();
-  for (let index = 0; index < variants.length; index += 1) {
-    if (reported.has(index)) continue;
-    const variant = variants[index];
-    if (!variant) continue;
-    const duplicateIndexes = variants.flatMap((candidate, candidateIndex) =>
-      candidateIndex > index && haveEqualAttributes(variant, candidate)
-        ? [candidateIndex]
-        : [],
-    );
-    if (duplicateIndexes.length === 0) continue;
-    duplicateIndexes.forEach((duplicateIndex) => reported.add(duplicateIndex));
-    console.error("[products:variant-contract] ambiguous variant combination", {
-      productId: product.id,
-      productSlug: product.slug,
-      variantIds: [
-        variant.id,
-        ...duplicateIndexes.flatMap((duplicateIndex) => {
-          const duplicate = variants[duplicateIndex];
-          return duplicate ? [duplicate.id] : [];
-        }),
-      ],
-    });
-  }
-}
-
 function mapVariant(
   variant: ProductVariantDto,
   product: ProductDto,
@@ -237,7 +195,6 @@ export function mapProductDtoToProductDetails(
   if (!product.category) return null;
 
   const variants = product.variants;
-  reportAmbiguousVariantCombinations(product, variants);
   const personalization = mapPersonalization(product);
   const mappedImages = mapProductImages(product);
   if (!personalization) return null;

@@ -1,32 +1,28 @@
 import type { ProductVariant } from "@/features/products/types/product-details.types";
-import { getVariantAttributeEntries } from "@/lib/variant-attributes";
+import type { VariantAttributes } from "@/lib/variant-attributes";
+import { resolveUniqueVariantByAttributes } from "@/features/products/utils/variant-combination";
 
 export type SelectedProductOptions = Readonly<Record<string, string>>;
 
+type VariantWithAttributes = {
+  attributes: VariantAttributes;
+};
+
 export function getSelectedOptionsFromVariant(
-  variant: ProductVariant,
+  variant: Pick<ProductVariant, "attributes">,
 ): SelectedProductOptions {
   return { ...variant.attributes };
 }
 
-export function resolveProductVariant(
-  variants: readonly ProductVariant[],
+export function resolveProductVariant<TVariant extends VariantWithAttributes>(
+  variants: readonly TVariant[],
   selectedOptions: SelectedProductOptions,
-): ProductVariant | null {
-  const selectedEntries = Object.entries(selectedOptions);
-  const matches = variants.filter((variant) => {
-    const attributes = getVariantAttributeEntries(variant.attributes);
-    return (
-      attributes.length === selectedEntries.length &&
-      attributes.every(([key, value]) => selectedOptions[key] === value)
-    );
-  });
-
-  return matches.length === 1 ? matches[0]! : null;
+): TVariant | null {
+  return resolveUniqueVariantByAttributes(variants, selectedOptions);
 }
 
 export function isProductOptionValueAvailable(
-  variants: readonly ProductVariant[],
+  variants: readonly VariantWithAttributes[],
   selectedOptions: SelectedProductOptions,
   optionId: string,
   valueId: string,

@@ -5,6 +5,8 @@ import {
   canStartQuickAdd,
   deriveListingQuickAdd,
   getDirectQuickAddInput,
+  getQuickAddActivation,
+  getQuickAddTriggerAccessibility,
 } from "./listing-quick-add.ts";
 
 const variant = (id) => ({ id });
@@ -36,12 +38,18 @@ test("multiple variants require selection and never produce an Add input", () =>
   });
   assert.deepEqual(quickAdd, { kind: "select-options" });
   assert.equal(getDirectQuickAddInput("product-7", quickAdd), null);
+  assert.equal(getQuickAddActivation(quickAdd, 11), "selector");
+  assert.equal(getQuickAddActivation(quickAdd, null), "pdp");
 });
 
 test("customization never produces an Add input", () => {
   assert.equal(
     getDirectQuickAddInput("product-7", { kind: "customize" }),
     null,
+  );
+  assert.equal(
+    getQuickAddActivation({ kind: "customize" }, 11),
+    "pdp",
   );
 });
 
@@ -59,4 +67,19 @@ test("city transition and pending activation independently block Quick Add", () 
   );
   assert.equal(canStartQuickAdd({ ...unlocked, pending: true }), false);
   assert.equal(canStartQuickAdd({ ...unlocked, activationLocked: true }), false);
+});
+
+test("an open selector preserves a focusable opener while activation stays blocked", () => {
+  assert.deepEqual(getQuickAddTriggerAccessibility(true, true), {
+    ariaDisabled: true,
+    disabled: false,
+  });
+  assert.deepEqual(getQuickAddTriggerAccessibility(true, false), {
+    ariaDisabled: true,
+    disabled: true,
+  });
+  assert.deepEqual(getQuickAddTriggerAccessibility(false, true), {
+    ariaDisabled: false,
+    disabled: false,
+  });
 });

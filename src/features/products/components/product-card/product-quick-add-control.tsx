@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
 import { useTranslations } from "next-intl";
-import { useRef, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import { IconButton } from "@/components/ui/icon-button";
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
@@ -13,10 +13,13 @@ import type {
   AddCartLineInput,
 } from "@/features/cart/types/cart.types";
 import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
+import { ProductQuickAddSheet } from "@/features/products/components/product-card/product-quick-add-sheet";
 import type { ListingQuickAdd } from "@/features/products/types/product-listing.types";
 import {
   canStartQuickAdd,
   getDirectQuickAddInput,
+  getQuickAddActivation,
+  getQuickAddTriggerAccessibility,
 } from "@/features/products/utils/listing-quick-add";
 import { useRouter } from "@/i18n/navigation";
 import { rafalToast } from "@/lib/rafal-toast";
@@ -66,8 +69,10 @@ export function ProductQuickAddControl({
   const queryClient = useQueryClient();
   const router = useRouter();
   const t = useTranslations("Common.productListing.quickAdd");
-  const { isChanging: cityTransitionLocked } = useBrowsingCity();
+  const { committedCity, isChanging: cityTransitionLocked } = useBrowsingCity();
   const activationLockedRef = useRef(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [selectorOpen, setSelectorOpen] = useState(false);
   const [isNavigating, startNavigation] = useTransition();
   const mutation = useMutation({
     mutationFn: (input: AddCartLineInput) => addCartLine(input, locale),
@@ -86,6 +91,10 @@ export function ProductQuickAddControl({
     },
   });
   const pending = mutation.isPending || isNavigating;
+  const triggerAccessibility = getQuickAddTriggerAccessibility(
+    disabled || cityTransitionLocked || pending,
+    selectorOpen,
+  );
   const label =
     quickAdd.kind === "direct"
       ? t("add", { name: productName })
@@ -105,10 +114,20 @@ export function ProductQuickAddControl({
       return;
     }
 
-    const input = getDirectQuickAddInput(productId, quickAdd);
-    if (input) {
+    const activation = getQuickAddActivation(
+      quickAdd,
+      committedCity?.id ?? null,
+    );
+    if (activation === "direct") {
+      const input = getDirectQuickAddInput(productId, quickAdd);
+      if (!input) return;
       activationLockedRef.current = true;
       mutation.mutate(input);
+      return;
+    }
+
+    if (activation === "selector") {
+      setSelectorOpen(true);
       return;
     }
 
@@ -116,18 +135,33 @@ export function ProductQuickAddControl({
   };
 
   return (
-    <IconButton
-      aria-label={pending ? t("pending", { name: productName }) : label}
-      aria-busy={pending || undefined}
-      className="absolute end-2 bottom-[var(--product-card-quick-add-offset-block-end)] z-20 bg-gold-500 text-gray-0 shadow-[var(--shadow-product-card-quick-add)]"
-      disabled={disabled || cityTransitionLocked || pending}
-      onClick={handleActivate}
-      size="sm"
-      variant="filled"
-    >
-      <span aria-hidden="true" className="type-body-lg font-bold leading-none">
-        +
-      </span>
-    </IconButton>
+    <>
+      <IconButton
+        ref={triggerRef}
+        aria-label={pending ? t("pending", { name: productName }) : label}
+        aria-busy={pending || undefined}
+        aria-disabled={triggerAccessibility.ariaDisabled || undefined}
+        className="absolute end-2 bottom-[var(--product-card-quick-add-offset-block-end)] z-20 bg-gold-500 text-gray-0 shadow-[var(--shadow-product-card-quick-add)] aria-disabled:bg-gray-100 aria-disabled:text-gray-400"
+        disabled={triggerAccessibility.disabled}
+        onClick={handleActivate}
+        size="sm"
+        variant="filled"
+      >
+        <span aria-hidden="true" className="type-body-lg font-bold leading-none">
+          +
+        </span>
+      </IconButton>
+      {selectorOpen && committedCity && quickAdd.kind === "select-options" ? (
+        <ProductQuickAddSheet
+          key={`${slug}:${committedCity.id}`}
+          cityId={committedCity.id}
+          locale={locale}
+          onOpenChange={setSelectorOpen}
+          productName={productName}
+          returnFocusRef={triggerRef}
+          slug={slug}
+        />
+      ) : null}
+    </>
   );
 }

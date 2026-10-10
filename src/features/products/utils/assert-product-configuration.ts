@@ -1,6 +1,25 @@
 import type { ProductDetails } from "@/features/products/types/product-details.types";
+import {
+  findAmbiguousVariantCombinations,
+  type AmbiguousVariantCombination,
+} from "@/features/products/utils/variant-combination";
 
 const SUPPORTED_PERSONALIZATION_LANGUAGES = new Set(["arabic", "english"]);
+
+export class ProductConfigurationError extends Error {
+  readonly code = "ambiguous-variant-combination" as const;
+
+  constructor(
+    readonly diagnostic: {
+      productId: string;
+      productSlug: string;
+      combinations: readonly AmbiguousVariantCombination[];
+    },
+  ) {
+    super("Product contains an ambiguous variant combination.");
+    this.name = "ProductConfigurationError";
+  }
+}
 
 export function assertProductConfiguration(product: ProductDetails): void {
   const optionValuesByOptionId = new Map(
@@ -114,6 +133,16 @@ export function assertProductConfiguration(product: ProductDetails): void {
         `Product variant "${variant.id}" references an unknown Product image.`,
       );
     }
+  }
 
+  const ambiguousCombinations = findAmbiguousVariantCombinations(
+    product.variants,
+  );
+  if (ambiguousCombinations.length > 0) {
+    throw new ProductConfigurationError({
+      combinations: ambiguousCombinations,
+      productId: product.id,
+      productSlug: product.slug,
+    });
   }
 }

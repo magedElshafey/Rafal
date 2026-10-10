@@ -21,6 +21,17 @@ export function getDirectQuickAddInput(
     : null;
 }
 
+export function getQuickAddActivation(
+  quickAdd: ListingQuickAdd,
+  committedCityId: number | null,
+): "direct" | "selector" | "pdp" {
+  if (quickAdd.kind === "direct") return "direct";
+  if (quickAdd.kind === "select-options" && committedCityId !== null) {
+    return "selector";
+  }
+  return "pdp";
+}
+
 export function canStartQuickAdd({
   activationLocked,
   cityTransitionLocked,
@@ -33,4 +44,14 @@ export function canStartQuickAdd({
   pending: boolean;
 }) {
   return !disabled && !cityTransitionLocked && !pending && !activationLocked;
+}
+
+export function getQuickAddTriggerAccessibility(
+  blocked: boolean,
+  selectorOpen: boolean,
+) {
+  return {
+    ariaDisabled: blocked,
+    disabled: blocked && !selectorOpen,
+  };
 }
