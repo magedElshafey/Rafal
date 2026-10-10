@@ -225,7 +225,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 searchPlaceholder: locationT("locationDialog.searchPlaceholder"),
                 searchNoResults: locationT("locationDialog.searchNoResults"),
               }}
-              initialCity={city}
               locale={locale}
             />
           ) : null

@@ -4,6 +4,8 @@ import Header from "@/components/shell/storefront/header/Header";
 import MobileBottomNavigation from "@/components/shell/storefront/mobile-navigation/MobileBottomNavigation";
 import QuickAccessHeader from "@/components/shell/storefront/quick-acess/QuickAccessHeader";
 import { resolveCurrentLocation } from "@/features/location/server/resolve-current-location";
+import { BrowsingCityProvider } from "@/features/location/components/browsing-city-provider";
+import { StorefrontSyncVeil } from "@/features/location/components/storefront-sync-veil";
 import { getCategoriesPage } from "@/features/categories/api/get-categories";
 import { mapCategoryNavigation } from "@/features/categories/utils/category-navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -36,7 +38,18 @@ export default async function StoreFontLayout({
 
   const initialCity = await resolveCurrentLocation(locale);
   return (
-    <div className="flex min-h-screen flex-col">
+    <BrowsingCityProvider
+      serverCity={initialCity}
+      copy={{
+        changing: t.raw("cityTransition.changing") as string,
+        syncing: t.raw("cityTransition.syncing") as string,
+        failed: t.raw("cityTransition.failed") as string,
+        failedWithoutCommittedCity: t.raw(
+          "cityTransition.failedWithoutCommittedCity",
+        ) as string,
+      }}
+    >
+      <div className="flex min-h-screen flex-col">
       <Header categories={categoriesPromise} />
       <QuickAccessHeader
         initialCity={initialCity}
@@ -69,11 +82,15 @@ export default async function StoreFontLayout({
         message="شحن مجاني للطلبات فوق ٢٠٠ ر.س"
         dismissible={true}
       />
-      <main className="flex-1 mt-5">{children}</main>
+      <main className="relative isolate mt-5 flex-1">
+        {children}
+        <StorefrontSyncVeil />
+      </main>
       <Footer shoppingLinks={footerShoppingLinksPromise} />
       <Suspense fallback={<MobileBottomNavigation categories={[]} />}>
         <MobileBottomNavigation categories={categoriesPromise} />
       </Suspense>
-    </div>
+      </div>
+    </BrowsingCityProvider>
   );
 }

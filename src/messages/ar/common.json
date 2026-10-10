@@ -608,6 +608,12 @@
     "deliveryLabel": "التوصيل إلى:",
     "selectCity": "اختر المدينة",
     "changeLocation": "تغيير موقع التوصيل",
+    "cityTransition": {
+      "changing": "جارٍ تغيير مدينة التوصيل إلى {city}...",
+      "syncing": "تم اختيار {city}. جارٍ تحديث المتجر...",
+      "failed": "تعذر تغيير المدينة. ما زالت {city} هي المدينة المختارة. حاول مرة أخرى.",
+      "failedWithoutCommittedCity": "تعذر تغيير المدينة. يرجى اختيار مدينة والمحاولة مرة أخرى."
+    },
     "searchLabel": "البحث عن المنتجات والهدايا",
     "searchPlaceholder": "ابحث عن هدية أو منتج...",
     "locationDialog": {

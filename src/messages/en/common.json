@@ -598,6 +598,12 @@
     "deliveryLabel": "Deliver to:",
     "selectCity": "Select city",
     "changeLocation": "Change delivery location",
+    "cityTransition": {
+      "changing": "Changing delivery city to {city}...",
+      "syncing": "{city} selected. Updating the storefront...",
+      "failed": "City change failed. {city} remains selected. Try again.",
+      "failedWithoutCommittedCity": "City change failed. Please choose a city and try again."
+    },
     "searchLabel": "Search products and gifts",
     "searchPlaceholder": "Search for a gift or product...",
     "locationDialog": {

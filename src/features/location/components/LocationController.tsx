@@ -2,14 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
 import { LocationSelector } from "@/components/shared/LocationSelector";
 import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
-import { setGuestCityId } from "@/features/location/actions/set-guest-city";
 import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
+import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
 import type { City } from "@/features/location/types";
-import { useRouter } from "@/i18n/navigation";
 
 export type LocationControllerCopy = {
   deliveryLabel: string;
@@ -27,52 +26,40 @@ export type LocationControllerCopy = {
 
 type LocationControllerProps = {
   copy: LocationControllerCopy;
-  initialCity: City | null;
   locale: Locale;
-  onLocationPersisted?: (city: City) => void | Promise<void>;
-  onLocationSelected?: (city: City) => void;
 };
 
 export function LocationController({
   copy,
-  initialCity,
   locale,
-  onLocationPersisted,
-  onLocationSelected,
 }: LocationControllerProps) {
-  const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
-  const [isOpen, setIsOpen] = useState(initialCity === null);
-  const [isPersisting, startTransition] = useTransition();
-  const router = useRouter();
+  const { committedCity, isChanging, selectCity, status, statusMessage } =
+    useBrowsingCity();
+  const [isOpen, setIsOpen] = useState(committedCity === null);
   const citiesQuery = useQuery({
     ...cityCatalogQueryOptions(locale),
     enabled: isOpen,
   });
 
   const handleSelect = (city: City) => {
-    if (isPersisting) return;
-    onLocationSelected?.(city);
-    setSelectedCity(city);
-    setIsOpen(false);
-    startTransition(async () => {
-      await setGuestCityId(city.id);
-      await onLocationPersisted?.(city);
-      router.refresh();
-    });
+    if (city.id === committedCity?.id || selectCity(city)) setIsOpen(false);
   };
 
   const handleOpen = () => {
+    if (isChanging) return;
     setIsOpen(true);
   };
 
   return (
-    <>
+    <div className="min-w-0">
       <LocationSelector
-        city={selectedCity?.name ?? copy.selectCity}
+        city={committedCity?.name ?? copy.selectCity}
         deliveryLabel={copy.deliveryLabel}
         accessibilityLabel={copy.changeLocation}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
+        aria-busy={isChanging}
+        aria-disabled={isChanging || undefined}
         onClick={handleOpen}
       />
       {isOpen ? (
@@ -90,11 +77,19 @@ export function LocationController({
           }}
           isLoading={citiesQuery.isPending}
           isOpen
-          selectedCityId={selectedCity?.id}
-          onClose={() => setIsOpen(false)}
+          selectedCityId={committedCity?.id}
+          onClose={() => {
+            if (!isChanging) setIsOpen(false);
+          }}
           onSelect={handleSelect}
         />
       ) : null}
-    </>
+      <p
+        aria-hidden="true"
+        className={`mt-1 min-h-4 type-caption ${status === "failed" ? "text-destructive" : "text-gray-500"}`}
+      >
+        {statusMessage || "\u00a0"}
+      </p>
+    </div>
   );
 }

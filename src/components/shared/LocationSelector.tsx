@@ -27,6 +27,7 @@ function LocationSelector({
         "inline-flex items-center gap-2 rounded-full",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "disabled:cursor-not-allowed disabled:opacity-50",
+        "aria-disabled:cursor-not-allowed aria-disabled:opacity-50",
         className,
       )}
       {...props}

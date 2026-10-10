@@ -28,7 +28,6 @@ function QuickAccessHeader({
         <div className="flex w-full items-center md:w-auto">
           <StorefrontLocationController
             copy={locationCopy}
-            initialCity={initialCity}
             locale={locale}
           />
         </div>
