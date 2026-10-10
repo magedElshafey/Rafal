@@ -47,6 +47,7 @@ interface ProductCardBaseProps {
   wishlistAction?: ProductCardAction;
   wishlistControl?: ReactNode;
   quickAddAction?: ProductCardAction;
+  quickAddControl?: ReactNode;
   imagePriority?: boolean;
   className?: string;
 }
@@ -62,6 +63,7 @@ interface ProductMediaProps extends Pick<
   "badge" | "image" | "imageAlt" | "imagePriority" | "imageSizes" | "secondaryImage"
 > {
   quickAddAction?: ProductCardAction;
+  quickAddControl?: ReactNode;
   unavailable: boolean;
   unavailableLabel?: ReactNode;
   wishlistAction?: ProductCardAction;
@@ -99,6 +101,7 @@ function ProductMedia({
   imageSizes,
   secondaryImage,
   quickAddAction,
+  quickAddControl,
   unavailable,
   unavailableLabel,
   wishlistAction,
@@ -158,23 +161,24 @@ function ProductMedia({
           <ProductCardWishlistButton {...wishlistAction} />
         ) : null)}
 
-      {quickAddAction && quickAddLabel ? (
-        <IconButton
-          {...quickAddButtonProps}
-          aria-label={quickAddLabel}
-          disabled={unavailable || quickAddAction.disabled}
-          size="sm"
-          variant="filled"
-          className="absolute end-2 bottom-[var(--product-card-quick-add-offset-block-end)] z-20 bg-gold-500 text-gray-0 shadow-[var(--shadow-product-card-quick-add)]"
-        >
-          <span
-            aria-hidden="true"
-            className="type-body-lg font-bold leading-none"
+      {quickAddControl ??
+        (quickAddAction && quickAddLabel ? (
+          <IconButton
+            {...quickAddButtonProps}
+            aria-label={quickAddLabel}
+            disabled={unavailable || quickAddAction.disabled}
+            size="sm"
+            variant="filled"
+            className="absolute end-2 bottom-[var(--product-card-quick-add-offset-block-end)] z-20 bg-gold-500 text-gray-0 shadow-[var(--shadow-product-card-quick-add)]"
           >
-            +
-          </span>
-        </IconButton>
-      ) : null}
+            <span
+              aria-hidden="true"
+              className="type-body-lg font-bold leading-none"
+            >
+              +
+            </span>
+          </IconButton>
+        ) : null)}
     </div>
   );
 }
@@ -221,6 +225,7 @@ export function ProductCard({
   originalPrice,
   price,
   quickAddAction,
+  quickAddControl,
   rating,
   title,
   unavailable = false,
@@ -243,6 +248,7 @@ export function ProductCard({
         imageSizes={imageSizes}
         secondaryImage={href ? secondaryImage : null}
         quickAddAction={quickAddAction}
+        quickAddControl={quickAddControl}
         unavailable={unavailable}
         unavailableLabel={unavailableLabel}
         wishlistAction={wishlistAction}

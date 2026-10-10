@@ -502,6 +502,23 @@
     "emptyTitle": "No products",
     "emptyDescription": "No products match the current filters.",
     "unavailable": "Unavailable",
+    "quickAdd": {
+      "add": "Add {name} to cart",
+      "customize": "Customize {name}",
+      "chooseOptions": "Choose options for {name}",
+      "pending": "Updating cart for {name}",
+      "success": "{name} was added to your cart.",
+      "errors": {
+        "locationRequired": "Select a delivery location before adding this product.",
+        "unavailableAtLocation": "This product is unavailable at your selected location.",
+        "outOfStock": "This product is out of stock.",
+        "quantityLimit": "You have reached the quantity limit for this product.",
+        "productUnavailable": "This product is currently unavailable.",
+        "variantInvalid": "This product option is no longer available.",
+        "cartSessionFailure": "We could not create your cart. Please try again.",
+        "serviceUnavailable": "The cart is temporarily unavailable. Please try again."
+      }
+    },
     "badges": {
       "discount": "Sale",
       "new": "New",

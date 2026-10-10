@@ -38,6 +38,11 @@ export type CatalogueSubcategoryOption = {
   value: string;
 };
 
+export type ListingQuickAdd =
+  | { kind: "direct"; variantId: string }
+  | { kind: "select-options" }
+  | { kind: "customize" };
+
 export type ListingProduct = {
   isWishlisted: boolean;
   badge?: "discount" | "new" | "personalization";
@@ -53,6 +58,7 @@ export type ListingProduct = {
   originalPrice?: number;
   personalizable: boolean;
   price: number;
+  quickAdd: ListingQuickAdd;
   ratingAverage: number;
   reviewsCount: number;
   salesCount: number;

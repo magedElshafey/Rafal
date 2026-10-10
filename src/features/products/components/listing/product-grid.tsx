@@ -5,6 +5,7 @@ import {
   ProductCard,
   type ProductCardAction,
 } from "@/features/products/components/product-card";
+import { ProductQuickAddControl } from "@/features/products/components/product-card/product-quick-add-control";
 import type { ListingProduct } from "@/features/products/types/product-listing.types";
 import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
 import { cn } from "@/lib/utils";
@@ -62,6 +63,16 @@ export function ListingProductCard({
       reviewsLabel: reviewsLabel(product.reviewsCount),
     },
     title: name,
+    quickAddControl: (
+      <ProductQuickAddControl
+        disabled={!product.inStock}
+        locale={locale}
+        productId={product.id}
+        productName={product.name}
+        quickAdd={product.quickAdd}
+        slug={product.slug}
+      />
+    ),
     wishlistAction: getWishlistAction?.(product),
     wishlistControl:
       !getWishlistAction && wishlistAccountId !== undefined ? (

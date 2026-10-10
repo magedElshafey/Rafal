@@ -2,6 +2,7 @@ import type { Locale } from "next-intl";
 
 import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
 import { ProductCard } from "@/features/products/components/product-card/product-card";
+import { ProductQuickAddControl } from "@/features/products/components/product-card/product-quick-add-control";
 import type { HomeProduct } from "@/features/home/types/home-product.types";
 
 type HomeProductCardLabels = {
@@ -63,6 +64,16 @@ export function HomeProductCard({
         reviewsLabel: labels.reviews(product.reviewsCount),
       }}
       title={product.name}
+      quickAddControl={
+        <ProductQuickAddControl
+          disabled={!product.inStock}
+          locale={locale}
+          productId={product.id}
+          productName={product.name}
+          quickAdd={product.quickAdd}
+          slug={product.slug}
+        />
+      }
     />
   );
 }

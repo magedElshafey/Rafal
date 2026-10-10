@@ -515,6 +515,23 @@
     "emptyTitle": "لا توجد منتجات",
     "emptyDescription": "لم نعثر على منتجات تطابق خيارات التصفية الحالية.",
     "unavailable": "غير متوفر",
+    "quickAdd": {
+      "add": "إضافة {name} إلى السلة",
+      "customize": "تخصيص {name}",
+      "chooseOptions": "اختيار خيارات {name}",
+      "pending": "جارٍ تحديث السلة للمنتج {name}",
+      "success": "تمت إضافة {name} إلى سلة التسوق.",
+      "errors": {
+        "locationRequired": "اختر موقع التوصيل قبل إضافة هذا المنتج.",
+        "unavailableAtLocation": "هذا المنتج غير متوفر في موقعك المحدد.",
+        "outOfStock": "نفد هذا المنتج من المخزون.",
+        "quantityLimit": "لقد وصلت إلى الحد الأقصى لكمية هذا المنتج.",
+        "productUnavailable": "هذا المنتج غير متوفر حاليًا.",
+        "variantInvalid": "خيار المنتج هذا لم يعد متاحًا.",
+        "cartSessionFailure": "تعذر إنشاء سلة التسوق. حاول مرة أخرى.",
+        "serviceUnavailable": "سلة التسوق غير متاحة مؤقتًا. حاول مرة أخرى."
+      }
+    },
     "badges": { "discount": "خصم", "new": "جديد", "personalization": "بالاسم" },
     "sort": {
       "label": "الترتيب:",

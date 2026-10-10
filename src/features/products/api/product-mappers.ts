@@ -20,6 +20,7 @@ import type {
   ProductPersonalizationConfig,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
+import { deriveListingQuickAdd } from "@/features/products/utils/listing-quick-add";
 import { getVariantAttributeEntries } from "@/lib/variant-attributes";
 
 type ProductImageMapping = {
@@ -221,6 +222,7 @@ export function mapProductDtoToListingProduct(
     originalPrice: price.original ?? undefined,
     personalizable: product.is_personalizable,
     price: price.current,
+    quickAdd: deriveListingQuickAdd(product),
     ratingAverage: product.rating_average,
     reviewsCount: product.reviews_count,
     salesCount: product.times_ordered,
