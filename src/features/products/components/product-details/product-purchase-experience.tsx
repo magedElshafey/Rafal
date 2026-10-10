@@ -240,8 +240,8 @@ export function ProductPurchaseExperience({
     presentationVariant?.imageIds,
   );
   if (validImageId !== selectedImageId) setSelectedImageId(validImageId);
-  const availability = presentationVariant
-    ? availabilityByVariantId[presentationVariant.id]
+  const availability = selectedVariant
+    ? availabilityByVariantId[selectedVariant.id]
     : { status: "purchase_unavailable" as const };
   const personalizationValidation =
     product.personalization.enabled && personalizationInput
@@ -356,9 +356,9 @@ export function ProductPurchaseExperience({
     resetAddToCartMutation,
   ]);
 
-  if (presentationVariant && !availability) {
+  if (selectedVariant && !availability) {
     throw new Error(
-      `Product variant "${presentationVariant.id}" is missing resolved availability.`,
+      `Product variant "${selectedVariant.id}" is missing resolved availability.`,
     );
   }
 

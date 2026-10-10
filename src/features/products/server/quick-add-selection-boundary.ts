@@ -7,10 +7,7 @@ import { readGuestCityId } from "@/features/location/server/guest-city-session";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsBySlug } from "@/features/products/server/product-boundary";
 import type { QuickAddSelectionResponse } from "@/features/products/types/quick-add-selection.types";
-import {
-  assertProductConfiguration,
-  ProductConfigurationError,
-} from "@/features/products/utils/assert-product-configuration";
+import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
 import {
   assertExpectedQuickAddCity,
   getRevalidatedQuickAddJourney,
@@ -54,17 +51,7 @@ export async function getQuickAddSelectionData({
 
   const product = await getProductDetailsBySlug(slug, locale, durableCityId);
   if (!product) throw new QuickAddSelectionError("product-unavailable");
-  try {
-    assertProductConfiguration(product);
-  } catch (error) {
-    if (
-      error instanceof ProductConfigurationError &&
-      error.code === "ambiguous-variant-combination"
-    ) {
-      throw new QuickAddSelectionError("product-configuration-invalid");
-    }
-    throw error;
-  }
+  assertProductConfiguration(product);
   const journey = getRevalidatedQuickAddJourney(
     product.personalization.enabled,
     product.variants.length,

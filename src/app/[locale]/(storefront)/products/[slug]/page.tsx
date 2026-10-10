@@ -19,7 +19,11 @@ import { ProductPurchaseExperience } from "@/features/products/components/produc
 import { ProductShareActions } from "@/features/products/components/product-details/product-share-actions";
 import { getResolvedVariantAvailability } from "@/features/products/server/product-availability-boundary";
 import { getProductDetailsBySlug } from "@/features/products/server/product-boundary";
-import { assertProductConfiguration } from "@/features/products/utils/assert-product-configuration";
+import {
+  analyzeProductConfiguration,
+  assertProductConfiguration,
+  reportProductConfigurationIssues,
+} from "@/features/products/utils/assert-product-configuration";
 import {
   createProductStructuredData,
   serializeStructuredData,
@@ -137,6 +141,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   assertProductConfiguration(product);
+  reportProductConfigurationIssues(
+    product,
+    analyzeProductConfiguration(product),
+  );
   const availabilityByVariantId =
     resolvedLocation?.inCoverage && resolvedLocation.warehouseId !== null
       ? await getResolvedVariantAvailability({

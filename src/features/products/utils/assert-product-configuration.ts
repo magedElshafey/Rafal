@@ -6,19 +6,41 @@ import {
 
 const SUPPORTED_PERSONALIZATION_LANGUAGES = new Set(["arabic", "english"]);
 
-export class ProductConfigurationError extends Error {
-  readonly code = "ambiguous-variant-combination" as const;
+export type ProductConfigurationIssue = {
+  kind: "ambiguous-variant-combination";
+  attributes: AmbiguousVariantCombination["attributes"];
+  variantIds: AmbiguousVariantCombination["variantIds"];
+};
 
-  constructor(
-    readonly diagnostic: {
-      productId: string;
-      productSlug: string;
-      combinations: readonly AmbiguousVariantCombination[];
-    },
-  ) {
-    super("Product contains an ambiguous variant combination.");
-    this.name = "ProductConfigurationError";
-  }
+export type ProductConfigurationAnalysis = {
+  issues: readonly ProductConfigurationIssue[];
+};
+
+export function analyzeProductConfiguration(
+  product: Pick<ProductDetails, "variants">,
+): ProductConfigurationAnalysis {
+  return {
+    issues: findAmbiguousVariantCombinations(product.variants).map(
+      ({ attributes, variantIds }) => ({
+        kind: "ambiguous-variant-combination" as const,
+        attributes,
+        variantIds,
+      }),
+    ),
+  };
+}
+
+export function reportProductConfigurationIssues(
+  product: Pick<ProductDetails, "id" | "slug">,
+  analysis: ProductConfigurationAnalysis,
+): void {
+  if (analysis.issues.length === 0) return;
+
+  console.error("[products:configuration] detected catalog data issues", {
+    productId: product.id,
+    productSlug: product.slug,
+    issues: analysis.issues,
+  });
 }
 
 export function assertProductConfiguration(product: ProductDetails): void {
@@ -133,16 +155,5 @@ export function assertProductConfiguration(product: ProductDetails): void {
         `Product variant "${variant.id}" references an unknown Product image.`,
       );
     }
-  }
-
-  const ambiguousCombinations = findAmbiguousVariantCombinations(
-    product.variants,
-  );
-  if (ambiguousCombinations.length > 0) {
-    throw new ProductConfigurationError({
-      combinations: ambiguousCombinations,
-      productId: product.id,
-      productSlug: product.slug,
-    });
   }
 }

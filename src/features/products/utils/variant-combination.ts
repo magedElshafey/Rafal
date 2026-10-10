@@ -26,7 +26,9 @@ export function findAmbiguousVariantCombinations(
   const groups = new Map<string, VariantWithIdentity[]>();
   for (const variant of variants) {
     const key = combinationKey(variant.attributes);
-    groups.set(key, [...(groups.get(key) ?? []), variant]);
+    const group = groups.get(key);
+    if (group) group.push(variant);
+    else groups.set(key, [variant]);
   }
 
   return Array.from(groups.values())
@@ -43,14 +45,10 @@ export function resolveUniqueVariantByAttributes<
   variants: readonly TVariant[],
   selectedOptions: Readonly<Record<string, string>>,
 ): TVariant | null {
-  const selectedEntries = Object.entries(selectedOptions);
-  const matches = variants.filter((variant) => {
-    const attributes = Object.entries(variant.attributes);
-    return (
-      attributes.length === selectedEntries.length &&
-      attributes.every(([key, value]) => selectedOptions[key] === value)
-    );
-  });
+  const selectedCombinationKey = combinationKey(selectedOptions);
+  const matches = variants.filter(
+    (variant) => combinationKey(variant.attributes) === selectedCombinationKey,
+  );
 
   return matches.length === 1 ? matches[0]! : null;
 }
