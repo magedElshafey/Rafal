@@ -282,9 +282,11 @@ function GiftEditor({
 }
 
 export function CartGift({
+  cityTransitionLocked,
   gift,
   locale,
 }: {
+  cityTransitionLocked: boolean;
   gift: CartSnapshot["gift"];
   locale: Locale;
 }) {
@@ -304,7 +306,7 @@ export function CartGift({
   });
 
   const runMutation = async (input: UpdateCartGiftInput): Promise<CartGiftError | null> => {
-    if (mutationInFlight.current) return null;
+    if (cityTransitionLocked || mutationInFlight.current) return null;
     mutationInFlight.current = true;
     setError(null);
     try {
@@ -330,6 +332,7 @@ export function CartGift({
 
   const checked = gift.isGift || editing === "new";
   const busy = mutation.isPending;
+  const writeDisabled = busy || cityTransitionLocked;
 
   return (
     <section
@@ -351,9 +354,10 @@ export function CartGift({
         <Switch
           id={`${id}-gift`}
           checked={checked}
-          disabled={busy}
+          disabled={writeDisabled}
           aria-describedby={`${id}-description`}
           onCheckedChange={(enabled) => {
+            if (cityTransitionLocked) return;
             if (enabled) {
               setError(null);
               setEditing("new");
@@ -394,7 +398,7 @@ export function CartGift({
           key={editing}
           initialDraft={editing === "new" ? emptyGiftDraft() : persistedGiftDraft(gift)}
           locale={locale}
-          busy={busy}
+          busy={writeDisabled}
           onCancel={() => {
             setEditing(null);
             setError(null);

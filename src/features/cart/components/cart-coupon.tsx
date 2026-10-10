@@ -49,6 +49,7 @@ export type CartCouponCopy = {
 
 type CartCouponProps = {
   availableCoupons: readonly Coupon[];
+  cityTransitionLocked: boolean;
   coupon: CartSnapshot["coupon"];
   copy: CartCouponCopy;
   currency: string;
@@ -117,6 +118,7 @@ function couponFormatters(locale: Locale, currency: string) {
 
 export function CartCoupon({
   availableCoupons,
+  cityTransitionLocked,
   coupon,
   copy,
   currency,
@@ -170,8 +172,9 @@ export function CartCoupon({
   });
 
   const busy = applyMutation.isPending || removeMutation.isPending;
+  const writeDisabled = busy || cityTransitionLocked;
   const applyCode = (couponCode: string) => {
-    if (busy) return;
+    if (writeDisabled) return;
     const normalizedCode = couponCode.trim();
     if (!normalizedCode) {
       setError(copy.invalid);
@@ -226,7 +229,7 @@ export function CartCoupon({
           placeholder={copy.codePlaceholder}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          disabled={busy}
+          disabled={writeDisabled}
           onChange={(event) => setCode(event.target.value)}
           className="min-w-0 flex-1 bg-gray-0"
         />
@@ -243,7 +246,8 @@ export function CartCoupon({
           }
           loadingLabel={copy.applying}
           disabled={
-            busy || (coupon?.applied === true && code.trim() === coupon.code)
+            writeDisabled ||
+            (coupon?.applied === true && code.trim() === coupon.code)
           }
           className="px-4"
         >
@@ -271,8 +275,9 @@ export function CartCoupon({
             size="sm"
             loading={removeMutation.isPending}
             loadingLabel={copy.removing}
-            disabled={busy}
+            disabled={writeDisabled}
             onClick={() => {
+              if (cityTransitionLocked) return;
               setError(null);
               removeMutation.mutate();
             }}
@@ -400,7 +405,7 @@ export function CartCoupon({
                     aria-label={`${copy.applyAction}: ${
                       availableCoupon.name || availableCoupon.code
                     }`}
-                    disabled={busy}
+                    disabled={writeDisabled}
                     className="self-center border-gold-500 text-gold-700"
                     onClick={() => applyCode(availableCoupon.code)}
                   >

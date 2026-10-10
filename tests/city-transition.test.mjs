@@ -35,6 +35,7 @@ const {
   canStartCityTransition,
   cityTransitionReducer,
   createCityTransitionState,
+  isBrowsingCityTransitionActive,
   shouldShowStorefrontSyncVeil,
 } = loadSource("src/features/location/city-transition-state");
 
@@ -169,6 +170,13 @@ test("the storefront sync veil is active only while syncing", () => {
   assert.equal(shouldShowStorefrontSyncVeil("failed"), false);
 });
 
+test("commerce transition lock covers persisting and syncing only", () => {
+  assert.equal(isBrowsingCityTransitionActive("idle"), false);
+  assert.equal(isBrowsingCityTransitionActive("persisting"), true);
+  assert.equal(isBrowsingCityTransitionActive("syncing"), true);
+  assert.equal(isBrowsingCityTransitionActive("failed"), false);
+});
+
 test("the storefront sync veil preserves its non-blocking accessibility contracts", () => {
   const veil = readFileSync(
     path.join(root, "src/features/location/components/storefront-sync-veil.tsx"),
@@ -227,20 +235,19 @@ test("changing state keeps the return-focus trigger natively enabled and interac
   assert.ok(selector.includes("aria-disabled:cursor-not-allowed aria-disabled:opacity-50"));
 });
 
-test("Cart compatibility notification is owned by the provider after persistence", () => {
+test("the provider refreshes after persistence without a legacy Cart event", () => {
   const provider = readFileSync(
     path.join(root, "src/features/location/components/browsing-city-provider.tsx"),
     "utf8",
   );
-  const controller = readFileSync(
-    path.join(root, "src/features/location/components/LocationController.tsx"),
-    "utf8",
-  );
   const success = provider.indexOf('type: "persistence-succeeded"');
-  const notification = provider.indexOf("notifyBrowsingCitySelected(city.id)");
-  assert.ok(success >= 0 && notification > success);
-  assert.equal(controller.includes("notifyBrowsingCitySelected"), false);
-  assert.equal(controller.includes("setGuestCityId"), false);
+  const refresh = provider.indexOf("router.refresh()", success);
+  assert.ok(success >= 0 && refresh > success);
+  assert.equal(provider.includes("notifyBrowsingCitySelected"), false);
+  assert.equal(
+    existsSync(path.join(root, "src/features/location/browsing-city-events.ts")),
+    false,
+  );
 });
 
 test("persistence rejection path neither publishes B nor refreshes for B", () => {
@@ -249,7 +256,6 @@ test("persistence rejection path neither publishes B nor refreshes for B", () =>
     "utf8",
   );
   const rejectionBranch = provider.slice(provider.indexOf("persistence-failed"));
-  assert.equal(rejectionBranch.includes("notifyBrowsingCitySelected"), false);
   assert.equal(rejectionBranch.includes("router.refresh"), false);
 });
 

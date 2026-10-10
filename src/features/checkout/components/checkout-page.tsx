@@ -13,6 +13,7 @@ import {
   removeCurrentCartQueries,
 } from "@/features/cart/api/cart-query";
 import { checkoutQuoteQueryKey } from "@/features/checkout/api/checkout-query";
+import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
 import {
   CheckoutBuyerSection,
   type CheckoutBuyerCopy,
@@ -101,6 +102,7 @@ export function CheckoutPage({
 }: CheckoutPageProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { isChanging: cityTransitionLocked } = useBrowsingCity();
   const placeMutation = useCheckoutPlace(locale);
   const placeInFlightRef = useRef(false);
   const recipientGiftPendingRef = useRef(false);
@@ -251,7 +253,8 @@ export function CheckoutPage({
       ? { destination, shippingMethodId, buyer }
       : null;
   const placeReady = Boolean(
-    placeRequest &&
+    !cityTransitionLocked &&
+      placeRequest &&
       quote &&
       quote.location.inCoverage &&
       quote.fulfillable &&
@@ -268,6 +271,7 @@ export function CheckoutPage({
     if (
       !placeReady ||
       !placeRequest ||
+      cityTransitionLocked ||
       placeInFlightRef.current ||
       recipientGiftPendingRef.current ||
       giftAddOnPendingRef.current
@@ -331,7 +335,7 @@ export function CheckoutPage({
             isAuthenticated={isAuthenticated}
             locale={locale}
             onCommit={commitDestination}
-            giftMutationDisabled={giftAddOnPending}
+            giftMutationDisabled={giftAddOnPending || cityTransitionLocked}
             onGiftPendingChange={setRecipientGiftMutationPending}
             onGiftPersisted={persistGiftDestination}
           />
@@ -360,7 +364,7 @@ export function CheckoutPage({
           <CheckoutGiftWrap
             config={giftWrapConfig}
             copy={copy.giftWrap}
-            disabled={recipientGiftPending}
+            disabled={recipientGiftPending || cityTransitionLocked}
             gift={gift}
             locale={locale}
             onMessageDirtyChange={setGiftMessageDirty}

@@ -48,7 +48,6 @@ export default async function CartRoute() {
         initialCart={cart}
         locale={locale}
         maxQuantity={settings.maxCartItemQuantity}
-        selectedCityId={selectedCityId}
         copy={{
           title: t("title"), emptyTitle: t("empty.title"), emptyDescription: t("empty.description"), continueShopping: t("empty.continueShopping"),
           clear: t("actions.clear"), clearing: t("actions.clearing"), remove: t("actions.remove"), removing: t("actions.removing"),

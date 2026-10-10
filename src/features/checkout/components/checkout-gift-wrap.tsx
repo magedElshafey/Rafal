@@ -133,7 +133,7 @@ export function CheckoutGiftWrap({
     input: UpdateCartGiftInput | null,
     refreshQuote: boolean,
   ) => {
-    if (!input || mutationInFlight.current) return;
+    if (!input || disabled || mutationInFlight.current) return;
     mutationInFlight.current = true;
     setError(null);
     onPendingChange(true);

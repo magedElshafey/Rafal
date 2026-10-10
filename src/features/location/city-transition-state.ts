@@ -49,6 +49,10 @@ export function shouldShowStorefrontSyncVeil(status: CityTransitionStatus) {
   return status === "syncing";
 }
 
+export function isBrowsingCityTransitionActive(status: CityTransitionStatus) {
+  return status === "persisting" || status === "syncing";
+}
+
 export function cityTransitionReducer(
   state: CityTransitionState,
   action: CityTransitionAction,

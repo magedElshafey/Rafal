@@ -26,6 +26,7 @@ import type {
 } from "@/features/cart/types/cart.types";
 
 type CartPageMutationOptions = {
+  cityTransitionLocked: boolean;
   fulfillmentCityId: number | null;
   locale: Locale;
   maxQuantity: number;
@@ -93,6 +94,7 @@ function visuallyEmpty(cart: CartSnapshot): CartSnapshot {
 }
 
 export function useCartPageMutations({
+  cityTransitionLocked,
   fulfillmentCityId,
   locale,
   maxQuantity,
@@ -367,7 +369,11 @@ export function useCartPageMutations({
 
   const changeQuantity = useCallback(
     (lineId: string, delta: -1 | 1) => {
-      if (clearPendingRef.current || removedLineIdsRef.current.has(lineId)) {
+      if (
+        cityTransitionLocked ||
+        clearPendingRef.current ||
+        removedLineIdsRef.current.has(lineId)
+      ) {
         return;
       }
 
@@ -404,12 +410,16 @@ export function useCartPageMutations({
         overlayPendingIntent,
       );
       void syncLine(lineId);
-    }, [cancelProjection, fulfillmentCityId, locale, markDirty, maxQuantity, overlayPendingIntent, queryClient, syncLine],
+    }, [cancelProjection, cityTransitionLocked, fulfillmentCityId, locale, markDirty, maxQuantity, overlayPendingIntent, queryClient, syncLine],
   );
 
   const removeLine = useCallback(
     (lineId: string) => {
-      if (clearPendingRef.current || removedLineIdsRef.current.has(lineId)) {
+      if (
+        cityTransitionLocked ||
+        clearPendingRef.current ||
+        removedLineIdsRef.current.has(lineId)
+      ) {
         return;
       }
 
@@ -456,11 +466,12 @@ export function useCartPageMutations({
       trackOperation,
       reportFailure,
       overlayPendingIntent,
+      cityTransitionLocked,
     ],
   );
 
   const clear = useCallback(() => {
-    if (clearPendingRef.current) return;
+    if (cityTransitionLocked || clearPendingRef.current) return;
 
     void cancelProjection();
     markDirty();
@@ -503,6 +514,7 @@ export function useCartPageMutations({
     markDirty,
     trackOperation,
     reportFailure,
+    cityTransitionLocked,
   ]);
 
   const flushPendingMutations = useCallback(async () => {

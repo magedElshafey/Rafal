@@ -12,11 +12,11 @@ import {
 } from "react";
 
 import { setGuestCityId } from "@/features/location/actions/set-guest-city";
-import { notifyBrowsingCitySelected } from "@/features/location/browsing-city-events";
 import {
   canStartCityTransition,
   cityTransitionReducer,
   createCityTransitionState,
+  isBrowsingCityTransitionActive,
   type CityTransitionStatus,
 } from "@/features/location/city-transition-state";
 import type { City } from "@/features/location/types";
@@ -91,7 +91,6 @@ export function BrowsingCityProvider({
         () => {
           if (activeGenerationRef.current !== generation) return;
           dispatch({ type: "persistence-succeeded", generation });
-          notifyBrowsingCitySelected(city.id);
           router.refresh();
         },
         () => {
@@ -121,7 +120,7 @@ export function BrowsingCityProvider({
       pendingCity: state.pendingCity,
       status: state.status,
       error: state.error,
-      isChanging: state.status === "persisting" || state.status === "syncing",
+      isChanging: isBrowsingCityTransitionActive(state.status),
       selectCity,
       statusMessage,
     }),

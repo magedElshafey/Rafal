@@ -17,6 +17,7 @@ import type {
   AddCartLineError,
   AddCartLineInput,
 } from "@/features/cart/types/cart.types";
+import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
 import { ProductGallery } from "@/features/products/components/product-details/product-gallery";
 import {
   ProductPurchasePanel,
@@ -179,6 +180,7 @@ export function ProductPurchaseExperience({
 }: ProductPurchaseExperienceProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { isChanging: cityTransitionLocked } = useBrowsingCity();
   const { data: currentCart } = useCurrentCart(locale);
   const initialVariant =
     product.variants.find(
@@ -274,6 +276,7 @@ export function ProductPurchaseExperience({
     (variantAvailability) => variantAvailability.status === "available",
   );
   const canAddToCart =
+    !cityTransitionLocked &&
     productIsAvailable &&
     selectedVariant !== null &&
     purchaseQuantity >= 1 &&
@@ -419,7 +422,12 @@ export function ProductPurchaseExperience({
 
   const handleAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
     lastAddToCartTriggerRef.current = event.currentTarget;
-    if (!canAddToCart || isAddingToCart || !selectedVariant) return;
+    if (
+      cityTransitionLocked ||
+      !canAddToCart ||
+      isAddingToCart ||
+      !selectedVariant
+    ) return;
 
     const input: AddCartLineInput = {
       productId: product.id,

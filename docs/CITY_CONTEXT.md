@@ -53,26 +53,46 @@ Phase B scope.
 ## Failure semantics
 
 - Persistence failure keeps the previous committed city, clears the pending target,
-  publishes no Cart notification, performs no target refresh, and exposes localized
-  recoverable feedback.
+  performs no target refresh, and exposes localized recoverable feedback.
 - Once persistence succeeds, the new cookie-backed city remains committed. A later
   region/query failure does not automatically write the former city back; the
   affected region owns its error and retry experience.
 
 Persistence is never silently retried.
 
-## Cart compatibility bridge
+## Commerce guards and Cart synchronization
 
-`rafal:browsing-city-selected` remains a compatibility notification for the current
-Cart listener. The coordinator emits it only after the cookie write succeeds. Cart
-projection work and `router.refresh()` then proceed independently; the global
-transition does not wait for TanStack Query. Cart continues to own canonical Cart
-identity and destination-city availability readiness.
+`BrowsingCityProvider` is the only client transition signal. PDP Add to Cart,
+Cart writes, Cart-to-Checkout navigation, and Checkout Place prevent new operations
+from starting during `persisting` or `syncing`. The storefront veil remains visual
+and non-blocking; protection is owned by each commerce handler and its controls.
+
+The ordinary Cart projects against the coordinator's committed Browsing City. It
+therefore remains on A during `persisting`, switches to the B projection after the
+cookie write commits B, and cannot use an A projection to enable Checkout for B.
+Persisted Gift recipient city still takes precedence for Gift Cart fulfillment.
+Cart continues to own canonical Cart identity, projection readiness, unavailable-line
+display, and its authoritative pre-navigation flush/refetch checks. Global RSC
+synchronization never waits for Cart projection readiness.
+
+Checkout Place also rejects a new start during the Browsing City transition, while
+its quote and request remain keyed exclusively by the explicit fulfillment
+destination. Browsing City changes do not rewrite saved, one-time, or Gift recipient
+destinations and do not invalidate destination-keyed quotes by themselves.
+
+Guards prevent new stale-context writes; operations already in flight are not
+cancelled and may settle normally. The authoritative Cart projection reconciles Cart
+results afterward. An already-started Place request may settle because its fulfillment
+destination is explicit and independent from Browsing City.
+
+The former `rafal:browsing-city-selected` window event had no consumer outside Cart.
+It has been removed along with Cart's local transition-city mirror, avoiding a second
+permanent transition source.
 
 ## Scope boundary
 
 There is no universal client city store, Redux/Zustand state, localStorage city, or
-global commerce store. Phase B will add commerce mutation guards. Phase A does not
-change PDP Add to Cart, Cart mutations/navigation, Checkout Place, reconciliation,
-pricing, coupons, quantities, or Gift recipient city.
+global commerce store. There is no global page lock, automatic Cart
+clearing/removal/repricing, or invented backend reconciliation behavior. Quick Add
+and unrelated commerce redesign remain outside this scope.
 

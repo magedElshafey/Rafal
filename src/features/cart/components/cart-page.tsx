@@ -6,6 +6,7 @@ import type { Locale } from "next-intl";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   useTransition,
@@ -23,7 +24,12 @@ import {
 } from "@/features/cart/components/cart-coupon";
 import { useCartPageMutations } from "@/features/cart/hooks/use-cart-page-mutations";
 import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
-import { browsingCitySelectedEvent } from "@/features/location/browsing-city-events";
+import {
+  canContinueCartCheckout,
+  createCartCheckoutContextSnapshot,
+  updateCartCheckoutContextSnapshot,
+} from "@/features/cart/utils/cart-checkout-context";
+import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
 import type {
   CartMoney,
   CartMutationError,
@@ -89,7 +95,6 @@ type CartPageProps = {
   initialCart: CartSnapshot;
   locale: Locale;
   maxQuantity: number;
-  selectedCityId: number | null;
 };
 
 function lineAvailabilityIssue(
@@ -263,24 +268,13 @@ export function CartPage({
   initialCart,
   locale,
   maxQuantity,
-  selectedCityId,
 }: CartPageProps) {
   const router = useRouter();
+  const { committedCity, isChanging: cityTransitionLocked, status } =
+    useBrowsingCity();
+  const browsingCityId = committedCity?.id ?? null;
   const [checkoutPreparing, setCheckoutPreparing] = useState(false);
   const [checkoutNavigationPending, startCheckoutNavigation] = useTransition();
-  const [transitionCity, setTransitionCity] = useState<number | null>(null);
-  const transitionCityRef = useRef<number | null>(null);
-  const currentCityRef = useRef(selectedCityId);
-  useEffect(() => { currentCityRef.current = selectedCityId; }, [selectedCityId]);
-  useEffect(() => {
-    const onCitySelected = (event: Event) => {
-      const cityId = (event as CustomEvent<number>).detail;
-      transitionCityRef.current = cityId;
-      setTransitionCity(cityId);
-    };
-    window.addEventListener(browsingCitySelectedEvent, onCitySelected);
-    return () => window.removeEventListener(browsingCitySelectedEvent, onCitySelected);
-  }, []);
   const {
     data: cart,
     fulfillmentCityId,
@@ -290,15 +284,32 @@ export function CartPage({
     projectionReady,
     projectionFetching,
     projectedCart,
-    usesGiftFulfillment,
-  } = useCurrentCart(locale, selectedCityId, initialCart);
-  const fulfillmentCityRef = useRef(fulfillmentCityId);
-  useEffect(() => {
-    fulfillmentCityRef.current = fulfillmentCityId;
-  }, [fulfillmentCityId]);
-  const cityTransitionPending = !usesGiftFulfillment &&
-    transitionCity !== null &&
-    transitionCity !== selectedCityId;
+  } = useCurrentCart(locale, browsingCityId, initialCart);
+  const checkoutContextRef = useRef(
+    createCartCheckoutContextSnapshot({
+      browsingCityId,
+      cityTransitionLocked,
+      cityTransitionStatus: status,
+      fulfillmentCityId,
+    }),
+  );
+  useLayoutEffect(() => {
+    checkoutContextRef.current = updateCartCheckoutContextSnapshot(
+      checkoutContextRef.current,
+      {
+        browsingCityId,
+        cityTransitionLocked,
+        cityTransitionStatus: status,
+        fulfillmentCityId,
+      },
+    );
+  }, [
+    browsingCityId,
+    cityTransitionLocked,
+    fulfillmentCityId,
+    status,
+  ]);
+  const cityTransitionPending = cityTransitionLocked;
   const [mutationError, setMutationError] = useState<string | null>(null);
   const handleMutationError = useCallback(
     (error: CartMutationError) =>
@@ -306,6 +317,7 @@ export function CartPage({
     [copy.errors],
   );
   const mutations = useCartPageMutations({
+    cityTransitionLocked,
     fulfillmentCityId,
     locale,
     maxQuantity,
@@ -327,6 +339,7 @@ export function CartPage({
   const summaryBusyVisible = summaryBusy && showSummaryBusy;
   const checkoutPending = checkoutPreparing || checkoutNavigationPending;
   const mutateQuantity = (lineId: string, delta: -1 | 1) => {
+    if (checkoutContextRef.current.cityTransitionLocked) return;
     setMutationError(null);
     mutations.changeQuantity(lineId, delta);
   };
@@ -394,7 +407,9 @@ export function CartPage({
         <Button
           variant="ghost"
           size="sm"
+          disabled={cityTransitionLocked}
           onClick={() => {
+            if (checkoutContextRef.current.cityTransitionLocked) return;
             setMutationError(null);
             mutations.clear();
           }}
@@ -532,7 +547,9 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={`${copy.remove}: ${line.product.name}`}
+                      disabled={cityTransitionLocked}
                       onClick={() => {
+                        if (checkoutContextRef.current.cityTransitionLocked) return;
                         setMutationError(null);
                         mutations.removeLine(line.id);
                       }}
@@ -546,7 +563,11 @@ export function CartPage({
                     <button
                       type="button"
                       aria-label={copy.decrease}
-                      disabled={line.quantity <= 1 || unavailable}
+                      disabled={
+                        cityTransitionLocked ||
+                        line.quantity <= 1 ||
+                        unavailable
+                      }
                       onClick={() => mutateQuantity(line.id, -1)}
                       className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
@@ -563,6 +584,7 @@ export function CartPage({
                       type="button"
                       aria-label={copy.increase}
                       disabled={
+                        cityTransitionLocked ||
                         line.quantity >= maxQuantity ||
                         unavailable ||
                         (!!availability &&
@@ -595,7 +617,11 @@ export function CartPage({
           );
         })}
       </ul>
-      <CartGift gift={cart.gift} locale={locale} />
+      <CartGift
+        cityTransitionLocked={cityTransitionLocked}
+        gift={cart.gift}
+        locale={locale}
+      />
     </section>
   );
 
@@ -620,6 +646,7 @@ export function CartPage({
           copy={copy.coupon}
           discoveryFailed={couponDiscoveryFailed}
           currency={cart.summary.total.currency}
+          cityTransitionLocked={cityTransitionLocked}
           locale={locale}
         />
       ) : null}
@@ -677,18 +704,24 @@ export function CartPage({
       <Button
         size="lg"
         className="mt-5 w-full"
-        disabled={!cartFulfillable || checkoutPending}
+        disabled={
+          cityTransitionLocked || !cartFulfillable || checkoutPending
+        }
         loading={checkoutPending}
         loadingLabel={copy.checkout}
         onClick={async () => {
-          if (checkoutPending) return;
+          if (
+            checkoutPending ||
+            checkoutContextRef.current.cityTransitionLocked
+          )
+            return;
+          const startedCheckoutContext = checkoutContextRef.current;
           setCheckoutPreparing(true);
           const fulfillmentIsCurrent = () =>
-            fulfillmentCityRef.current === fulfillmentCityId &&
-            (usesGiftFulfillment || (
-              currentCityRef.current === selectedCityId &&
-              (transitionCityRef.current === null || transitionCityRef.current === selectedCityId)
-            ));
+            canContinueCartCheckout(
+              startedCheckoutContext,
+              checkoutContextRef.current,
+            );
           try {
             if (!fulfillmentIsCurrent()) return;
             const result = await mutations.flushPendingMutations();
