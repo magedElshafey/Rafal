@@ -52,9 +52,9 @@
       "carouselLabel": "منتجات يمكنك تخصيصها"
     },
     "latest": {
-      "title": "أحدث المنتجات",
-      "carouselLabel": "أحدث منتجات رافال",
-      "filtersLabel": "تصفية أحدث المنتجات",
+      "title": "المضاف حديثاً",
+      "carouselLabel": "منتجات رافال المضافة حديثاً",
+      "filtersLabel": "تصفية المنتجات المضافة حديثاً",
       "emptyTitle": "لا توجد منتجات في هذا القسم",
       "emptyDescription": "جرّب اختيار تصنيف آخر لعرض المنتجات.",
       "filters": {

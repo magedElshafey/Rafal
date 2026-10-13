@@ -46,6 +46,7 @@ const HomePage = async () => {
       />
       <MensPromoBanner banner={home.banners.men} />
       <LatestProductsSection
+        key={`${city?.id ?? "unresolved"}:${home.location.warehouseId ?? "unresolved"}`}
         accountId={accountId}
         categories={home.categories}
         products={home.newArrivals}

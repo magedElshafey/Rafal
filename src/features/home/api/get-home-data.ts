@@ -260,9 +260,30 @@ function parseProducts(
   value: unknown,
   path: string,
 ): readonly ProductDto[] {
-  return array(value, path).map((product, index) =>
-    parseProductDto(product, path + "[" + index + "]"),
-  );
+  return parseSectionItems(value, path, parseProductDto);
+}
+
+// Home shelves are independent: keep valid rows in backend order while a bad
+// row/section is omitted. The response envelope and location stay strict.
+function parseSectionItems<T>(
+  value: unknown,
+  path: string,
+  parseItem: (value: unknown, path: string) => T,
+): readonly T[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) {
+    console.error("[home:contract] omitted malformed section", { path });
+    return [];
+  }
+  return value.flatMap((item, index) => {
+    const itemPath = `${path}[${index}]`;
+    try {
+      return [parseItem(item, itemPath)];
+    } catch {
+      console.error("[home:contract] omitted malformed item", { path: itemPath });
+      return [];
+    }
+  });
 }
 
 function parseTestimonial(value: unknown, path: string): TestimonialDto {
@@ -340,14 +361,8 @@ function parseHomeResponse(value: unknown): HomeResponseDto {
           "response.data.location.message",
         ),
       },
-      banners: array(data.banners, "response.data.banners").map(
-        (banner, index) =>
-          parseBanner(banner, "response.data.banners[" + index + "]"),
-      ),
-      categories: array(data.categories, "response.data.categories").map(
-        (category, index) =>
-          parseCategory(category, "response.data.categories[" + index + "]"),
-      ),
+      banners: parseSectionItems(data.banners, "response.data.banners", parseBanner),
+      categories: parseSectionItems(data.categories, "response.data.categories", parseCategory),
       new_arrivals: parseProducts(
         data.new_arrivals,
         "response.data.new_arrivals",
@@ -362,13 +377,8 @@ function parseHomeResponse(value: unknown): HomeResponseDto {
       ),
       featured: parseProducts(data.featured, "response.data.featured"),
       best_sellers: parseProducts(data.best_sellers, "response.data.best_sellers"),
-      testimonials: array(data.testimonials, "response.data.testimonials").map(
-        (item, index) =>
-          parseTestimonial(item, `response.data.testimonials[${index}]`),
-      ),
-      why_rafal: array(data.why_rafal, "response.data.why_rafal").map(
-        (item, index) => parseWhyRafal(item, `response.data.why_rafal[${index}]`),
-      ),
+      testimonials: parseSectionItems(data.testimonials, "response.data.testimonials", parseTestimonial),
+      why_rafal: parseSectionItems(data.why_rafal, "response.data.why_rafal", parseWhyRafal),
     },
   };
 }

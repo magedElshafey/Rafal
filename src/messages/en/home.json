@@ -52,9 +52,9 @@
       "carouselLabel": "Products you can personalize"
     },
     "latest": {
-      "title": "Latest products",
-      "carouselLabel": "Rafal's latest products",
-      "filtersLabel": "Filter latest products",
+      "title": "New Arrivals",
+      "carouselLabel": "Rafal's new arrivals",
+      "filtersLabel": "Filter new arrivals",
       "emptyTitle": "No products in this category",
       "emptyDescription": "Try another category to see available products.",
       "filters": {
