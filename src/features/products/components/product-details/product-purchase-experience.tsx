@@ -37,10 +37,6 @@ import type {
 } from "@/features/products/types/product-details.types";
 import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
 import { resolveGalleryImageId } from "@/features/products/utils/product-gallery";
-import {
-  getSelectedOptionsFromVariant,
-  resolveProductVariant,
-} from "@/features/products/utils/product-variant-resolver";
 import { validateProductPersonalization } from "@/features/products/utils/validate-product-personalization";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
 import { useRouter } from "@/i18n/navigation";
@@ -191,8 +187,8 @@ export function ProductPurchaseExperience({
   const lastAddToCartTriggerRef = useRef<HTMLElement | null>(null);
   const [isSuccessSheetOpen, setIsSuccessSheetOpen] = useState(false);
   const [isStickyPurchaseVisible, setIsStickyPurchaseVisible] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState(() =>
-    initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {},
+  const [selectedVariantId, setSelectedVariantId] = useState(() =>
+    initialVariant?.id ?? null,
   );
   const [selectedImageId, setSelectedImageId] = useState(() => initialImageId);
   const [quantity, setQuantity] = useState(1);
@@ -220,17 +216,13 @@ export function ProductPurchaseExperience({
       setQuantity(1);
       setPersonalizationInput(getInitialPersonalizationInput(product));
       setPersonalizationResetKey((currentKey) => currentKey + 1);
-      setSelectedOptions(
-        initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {},
-      );
+      setSelectedVariantId(initialVariant?.id ?? null);
       setSelectedImageId(getPreferredImageId(product, initialVariant));
       setIsSuccessSheetOpen(true);
     },
   });
-  const selectedVariant = resolveProductVariant(
-    product.variants,
-    selectedOptions,
-  );
+  const selectedVariant =
+    product.variants.find((variant) => variant.id === selectedVariantId) ?? null;
   const presentationVariant = selectedVariant ?? initialVariant;
   // Reconcile removed media at the existing selection owner before children
   // render. Do not keep a stale ID that could reappear on a later data update.
@@ -269,7 +261,7 @@ export function ProductPurchaseExperience({
       ? Math.max(0, availability.maxOrderQuantity - heldForVariant)
       : null;
   const purchaseQuantity =
-    remainingAddable === null || remainingAddable === 0
+    remainingAddable === null
       ? 1
       : Math.min(quantity, remainingAddable);
   const productIsAvailable = Object.values(availabilityByVariantId).some(
@@ -362,13 +354,9 @@ export function ProductPurchaseExperience({
     );
   }
 
-  const handleSelectOption = (optionId: string, valueId: string) => {
-    const nextSelection = { ...selectedOptions, [optionId]: valueId };
-    const nextVariant = resolveProductVariant(
-      product.variants,
-      nextSelection,
-    );
-    setSelectedOptions(nextSelection);
+  const handleSelectVariant = (variantId: string) => {
+    if (cityTransitionLocked) return;
+    const nextVariant = product.variants.find((variant) => variant.id === variantId);
     if (!nextVariant) return;
 
     const nextAvailability = availabilityByVariantId[nextVariant.id];
@@ -377,6 +365,8 @@ export function ProductPurchaseExperience({
         `Product variant "${nextVariant.id}" is missing resolved availability.`,
       );
     }
+    if (nextAvailability.status !== "available") return;
+    setSelectedVariantId(nextVariant.id);
     const nextHeld = currentCart
       ? currentCart.lines.reduce(
           (held, line) =>
@@ -474,6 +464,7 @@ export function ProductPurchaseExperience({
             addToCartErrorMessage={purchaseErrorMessage}
             addingToCartLabel={copy.purchase.adding}
             availability={availability}
+            availabilityByVariantId={availabilityByVariantId}
             bnplInformation={bnplInformation}
             canAddToCart={canAddToCart}
             copy={copy.panel}
@@ -489,7 +480,7 @@ export function ProductPurchaseExperience({
             onSelectPersonalizationLanguage={
               handleSelectPersonalizationLanguage
             }
-            onSelectOption={handleSelectOption}
+            onSelectVariant={handleSelectVariant}
             personalizationInput={personalizationInput}
             personalizationResetKey={personalizationResetKey}
             personalizationValidation={personalizationValidation}
@@ -498,7 +489,7 @@ export function ProductPurchaseExperience({
             quantity={purchaseQuantity}
             remainingAddable={remainingAddable}
             renderedAt={renderedAt}
-            selectedOptions={selectedOptions}
+            selectedVariantId={selectedVariantId}
             shareActions={shareActions}
             variant={presentationVariant}
           />

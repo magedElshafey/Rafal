@@ -103,6 +103,8 @@ export type EnabledProductPersonalizationConfig = Extract<
 // availability. Initial variant selection is presentation behavior and uses
 // the first valid variant; it is not a backend/domain identity field.
 export type ProductDetails = {
+  /** Absent uses selected warehouse stock; zero is an explicit limit. */
+  maxCartItemQuantity?: number;
   isWishlisted: boolean;
   id: string;
   slug: string;

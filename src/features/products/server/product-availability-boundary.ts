@@ -4,7 +4,7 @@ import type { VariantAvailabilityById } from "@/features/products/types/product-
 import type { ProductVariant } from "@/features/products/types/product-details.types";
 
 type ResolveVariantAvailabilityInput = {
-  maxOrderQuantity: number;
+  maxOrderQuantity?: number;
   variants: readonly ProductVariant[];
   warehouseId: number;
 };
@@ -27,7 +27,7 @@ export async function getResolvedVariantAvailability(
                 status: "available" as const,
                 maxOrderQuantity: Math.min(
                   stock.quantity,
-                  input.maxOrderQuantity,
+                  input.maxOrderQuantity ?? stock.quantity,
                 ),
               }
             : { status: "out_of_stock" as const },

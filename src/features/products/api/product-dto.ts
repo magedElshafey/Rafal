@@ -8,7 +8,7 @@ export type ProductCategoryDto = {
 
 export type ProductWarehouseStockDto = {
   warehouse_id: number;
-  /** Available physical stock; never a frontend purchase-limit value. */
+  /** Available physical stock; caps the PDP product limit. */
   quantity: number;
 };
 
@@ -28,6 +28,8 @@ export type ProductVariantDto = {
 
 export type ProductDto = {
   id: number;
+  /** Null or omitted means stock-only; zero prevents adding quantity. */
+  max_cart_item_quantity?: number | null;
   sku: string;
   name: string;
   description: string | null;

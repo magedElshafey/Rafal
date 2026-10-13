@@ -204,6 +204,7 @@ export function mapProductDtoToProductDetails(
     slug: product.slug,
     name: product.name,
     description: { html: product.description ?? "" },
+    maxCartItemQuantity: product.max_cart_item_quantity ?? undefined,
     isWishlisted: product.is_wishlist,
     category: {
       id: String(product.category.id),

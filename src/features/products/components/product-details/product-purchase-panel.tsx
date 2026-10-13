@@ -18,24 +18,24 @@ import {
 import { AnimatedProductMetric } from "@/features/products/components/product-details/animated-product-metric";
 import { ProductPriceBlock } from "@/features/products/components/product-details/product-price-block";
 import { ProductHeaderRating } from "@/features/products/components/product-details/product-header-rating";
-import type { ResolvedVariantAvailability } from "@/features/products/types/product-availability.types";
+import type {
+  ResolvedVariantAvailability,
+  VariantAvailabilityById,
+} from "@/features/products/types/product-availability.types";
 import type {
   PersonalizationCharacterPolicy,
   PersonalizationLanguage,
   ProductDetails,
-  ProductOption,
   ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
-import type { SelectedProductOptions } from "@/features/products/utils/product-variant-resolver";
-import { isProductOptionValueAvailable } from "@/features/products/utils/product-variant-resolver";
 import type {
   ProductPersonalizationValidationError,
   ProductPersonalizationValidationResult,
 } from "@/features/products/utils/validate-product-personalization";
 import { cn } from "@/lib/utils";
-import { getVariantAttributeLabel } from "@/lib/variant-attributes";
+
 
 export type ProductPurchasePanelCopy = {
   addToCart: string;
@@ -106,6 +106,7 @@ type ProductPurchasePanelProps = {
   addToCartErrorMessage: string | null;
   addingToCartLabel: string;
   availability: ResolvedVariantAvailability;
+  availabilityByVariantId: VariantAvailabilityById;
   canAddToCart: boolean;
   copy: ProductPurchasePanelCopy;
   isAddingToCart: boolean;
@@ -119,7 +120,7 @@ type ProductPurchasePanelProps = {
   onDecreaseQuantity: () => void;
   onIncreaseQuantity: () => void;
   onSelectPersonalizationLanguage: (language: PersonalizationLanguage) => void;
-  onSelectOption: (optionId: string, valueId: string) => void;
+  onSelectVariant: (variantId: string) => void;
   personalizationInput: ProductPersonalizationInput | null;
   personalizationResetKey: number;
   personalizationValidation: ProductPersonalizationValidationResult | null;
@@ -137,144 +138,95 @@ type ProductPurchasePanelProps = {
   remainingAddable: number | null;
   purchaseActionRef: Ref<HTMLDivElement>;
   renderedAt: number;
-  selectedOptions: SelectedProductOptions;
+  selectedVariantId: string | null;
   shareActions: ReactNode;
   variant: ProductVariant | null;
 };
 
-function getOptionLabel(
-  option: ProductOption,
-  locale: Locale,
-  copy: ProductPurchasePanelCopy["options"],
-): string {
-  const fallback = getVariantAttributeLabel(option.key, copy.labels);
-  const [firstCharacter, ...remainingCharacters] = fallback;
-  return firstCharacter
-    ? `${firstCharacter.toLocaleUpperCase(locale)}${remainingCharacters.join("")}`
-    : option.key;
-}
-
-function ProductOptions({
-  copy,
-  locale,
-  onSelectOption,
-  options,
-  selectedOptions,
-  variants,
+// Groups describe exact attribute keys; every control still selects a variant ID.
+// A multi-attribute variant appears in each associated group without creating
+// independent attribute selections or collapsing variants with duplicate values.
+function ProductVariants({
+  availabilityByVariantId,
+  onSelectVariant,
+  product,
+  selectedVariantId,
 }: {
-  copy: ProductPurchasePanelCopy["options"];
-  locale: Locale;
-  onSelectOption: (optionId: string, valueId: string) => void;
-  options: readonly ProductOption[];
-  selectedOptions: SelectedProductOptions;
-  variants: readonly ProductVariant[];
+  availabilityByVariantId: VariantAvailabilityById;
+  onSelectVariant: (variantId: string) => void;
+  product: Pick<ProductDetails, "id" | "name" | "variants">;
+  selectedVariantId: string | null;
 }) {
-  if (options.length === 0) return null;
+  if (
+    product.variants.length === 0 ||
+    (product.variants.length === 1 &&
+      Object.keys(product.variants[0]!.attributes).length === 0)
+  ) return null;
+
+  const groups = new Map<string | null, ProductVariant[]>();
+  for (const candidate of product.variants) {
+    const keys = Object.keys(candidate.attributes);
+    for (const key of keys.length > 0 ? keys : [null]) {
+      const variants = groups.get(key) ?? [];
+      variants.push(candidate);
+      groups.set(key, variants);
+    }
+  }
 
   return (
     <div className="space-y-5 border-t border-gray-200 pt-6">
-      {options.map((option, optionIndex) => {
-        const isColorOption = option.key === "color";
-        const isSizeOption = option.key === "size";
-        const optionLabel = getOptionLabel(option, locale, copy);
+      {Array.from(groups, ([key, variants]) => (
+        <fieldset key={JSON.stringify(key)}>
+          <legend className="type-body font-medium text-gray-900">
+            {key === null ? product.name : key.charAt(0).toUpperCase() + key.slice(1)}
+          </legend>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {variants.map((candidate) => {
+              const selectable =
+                availabilityByVariantId[candidate.id]?.status === "available";
+              const selected = selectedVariantId === candidate.id;
+              const value = key === null ? candidate.sku : candidate.attributes[key];
+              const duplicateValue = key !== null && variants.some(
+                (other) => other.id !== candidate.id && other.attributes[key] === value,
+              );
 
-        return (
-          <fieldset key={option.id}>
-            <legend className="type-body font-medium text-gray-900">
-              {optionLabel}
-            </legend>
-            <div className="mt-3 flex flex-wrap gap-3">
-              {option.values.map((value, valueIndex) => {
-                const selectable = isProductOptionValueAvailable(
-                  variants,
-                  selectedOptions,
-                  option.id,
-                  value.id,
-                );
-                const inputId = `product-option-${optionIndex}-${valueIndex}`;
-                const selected = selectedOptions[option.id] === value.id;
-                const accessibleLabel = isColorOption
-                  ? formatProductMessage(copy.colorOptionTemplate, {
-                      index: valueIndex + 1,
-                    })
-                  : `${optionLabel}: ${value.label}`;
-
-                return (
-                  <label
-                    key={value.id}
-                    htmlFor={inputId}
-                    className={cn(
-                      "relative",
-                      isColorOption &&
-                        "flex size-11 items-center justify-center",
-                      selectable ? "cursor-pointer" : "cursor-not-allowed",
-                    )}
-                  >
-                    <input
-                      id={inputId}
-                      type="radio"
-                      name={option.id}
-                      value={value.id}
-                      checked={selected}
-                      disabled={!selectable}
-                      aria-label={accessibleLabel}
-                      onChange={() => onSelectOption(option.id, value.id)}
-                      className="peer sr-only"
-                    />
-                    {isColorOption ? (
-                      <span
-                        className={cn(
-                          "relative flex size-10 items-center justify-center rounded-full border-2 border-transparent transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
-                          selected && "border-gold-500 ring-1 ring-gold-500",
-                          !selectable && "opacity-50",
-                        )}
-                      >
-                        <VariantColorSwatch className="size-8" value={value.id} />
-                        {selected ? (
-                          <span className="absolute -end-1 -top-1 flex size-4 items-center justify-center rounded-full bg-gold-700 text-gray-0">
-                            <CheckIcon aria-hidden="true" className="size-3" />
-                          </span>
-                        ) : null}
-                        {!selectable ? (
-                          <span
-                            aria-hidden="true"
-                            className="absolute h-0.5 w-9 rotate-45 rounded-full bg-gray-700"
-                          />
-                        ) : null}
-                      </span>
+              return (
+                <button
+                  key={candidate.id}
+                  type="button"
+                  value={candidate.id}
+                  aria-pressed={selected}
+                  disabled={!selectable}
+                  onClick={() => onSelectVariant(candidate.id)}
+                  className={cn(
+                    "flex min-h-11 items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
+                    selected && "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
+                    !selectable && "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400 opacity-60",
+                  )}
+                >
+                  <span className={cn("inline-flex items-center gap-2", !selectable && "line-through")}>
+                    {key === "color" ? (
+                      <>
+                        <VariantColorSwatch className="size-8" value={value} />
+                        <span className="sr-only">{value}</span>
+                      </>
                     ) : (
-                      <span
-                        className={cn(
-                          "flex min-h-11 items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 motion-reduce:transition-none",
-                          isSizeOption && "min-w-12",
-                          selected &&
-                            "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
-                          !selectable &&
-                            "border-gray-200 bg-gray-50 text-gray-400 opacity-60",
-                        )}
-                      >
-                        <span className={cn(!selectable && "line-through")}>
-                          {value.label}
-                        </span>
-                        {selected ? (
-                          <CheckIcon
-                            aria-hidden="true"
-                            className="size-4 shrink-0 text-gold-700"
-                          />
-                        ) : null}
-                      </span>
+                      <span>{value}</span>
                     )}
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
-        );
-      })}
+                    {key !== null ? (
+                      <span className={duplicateValue ? "type-caption" : "sr-only"}>{candidate.sku}</span>
+                    ) : null}
+                  </span>
+                  {selected ? <CheckIcon aria-hidden="true" className="size-4 shrink-0 text-gold-700" /> : null}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+      ))}
     </div>
   );
 }
-
 function ProductPersonalizationSummary({
   copy,
   locale,
@@ -538,6 +490,7 @@ export function ProductPurchasePanel({
   addToCartErrorMessage,
   addingToCartLabel,
   availability,
+  availabilityByVariantId,
   canAddToCart,
   copy,
   isAddingToCart,
@@ -550,7 +503,7 @@ export function ProductPurchasePanel({
   onDecreaseQuantity,
   onIncreaseQuantity,
   onSelectPersonalizationLanguage,
-  onSelectOption,
+  onSelectVariant,
   personalizationInput,
   personalizationResetKey,
   personalizationValidation,
@@ -559,7 +512,7 @@ export function ProductPurchasePanel({
   remainingAddable,
   purchaseActionRef,
   renderedAt,
-  selectedOptions,
+  selectedVariantId,
   shareActions,
   variant,
 }: ProductPurchasePanelProps) {
@@ -620,15 +573,12 @@ export function ProductPurchasePanel({
         locationName={locationName}
       />
 
-      <ProductOptions
-        copy={copy.options}
-        locale={locale}
-        onSelectOption={onSelectOption}
-        options={product.options}
-        selectedOptions={selectedOptions}
-        variants={product.variants}
+      <ProductVariants
+        availabilityByVariantId={availabilityByVariantId}
+        onSelectVariant={onSelectVariant}
+        product={product}
+        selectedVariantId={selectedVariantId}
       />
-
       <ProductPersonalizationSummary
         key={personalizationResetKey}
         copy={copy.personalization}

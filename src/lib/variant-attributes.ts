@@ -74,7 +74,10 @@ export function parseVariantAttributes(
   const entries = Object.entries(value);
   for (const [key, attributeValue] of entries) {
     if (key.trim() === "") {
-      throw new VariantAttributesContractError(path, "non-empty attribute keys");
+      throw new VariantAttributesContractError(
+        path,
+        "non-empty attribute keys",
+      );
     }
     if (DANGEROUS_ATTRIBUTE_KEYS.has(key)) {
       throw new VariantAttributesContractError(
@@ -128,10 +131,21 @@ export function resolveVariantColorSwatch(value: string): VariantColorSwatch {
     !reportedUnknownColorValues.has(value)
   ) {
     reportedUnknownColorValues.add(value);
-    console.error("[variants:color-presentation] using neutral fallback swatch", {
-      value,
-    });
+    console.error(
+      "[variants:color-presentation] using neutral fallback swatch",
+      {
+        value,
+      },
+    );
   }
 
   return { kind: "fallback", cssColor: UNKNOWN_COLOR_FALLBACK };
 }
+/**
+ *  {
+ * "id": 49,
+ *  "attributes": {
+ * "lenth": "60 cm"
+ *  }
+ * },
+ */

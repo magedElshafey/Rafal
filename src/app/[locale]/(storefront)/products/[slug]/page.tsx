@@ -28,7 +28,6 @@ import {
   createProductStructuredData,
   serializeStructuredData,
 } from "@/features/products/utils/create-product-structured-data";
-import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
 import { ProductReviewsSkeleton } from "@/features/reviews/components/product-reviews-skeleton";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
@@ -122,7 +121,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     { city, cityId, product, resolvedLocation },
     t,
     locationT,
-    publicSettings,
     user,
   ] =
     await Promise.all([
@@ -135,7 +133,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         locale,
         namespace: "Common.headerUtility",
       }),
-      getPublicSettings(),
       getCurrentUser(),
     ]);
   if (!product) notFound();
@@ -148,7 +145,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const availabilityByVariantId =
     resolvedLocation?.inCoverage && resolvedLocation.warehouseId !== null
       ? await getResolvedVariantAvailability({
-          maxOrderQuantity: publicSettings.maxCartItemQuantity,
+          maxOrderQuantity: product.maxCartItemQuantity,
           variants: product.variants,
           warehouseId: resolvedLocation.warehouseId,
         })

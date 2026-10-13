@@ -184,6 +184,17 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
   const slug = parseString(source.slug, `${path}.slug`);
   return {
     id,
+    ...(source.max_cart_item_quantity === undefined
+      ? {}
+      : {
+          max_cart_item_quantity:
+            source.max_cart_item_quantity === null
+              ? null
+              : nonNegativeInteger(
+                  source.max_cart_item_quantity,
+                  `${path}.max_cart_item_quantity`,
+                ),
+        }),
     sku: parseString(source.sku, `${path}.sku`),
     name: parseString(source.name, `${path}.name`),
     description: parseNullableString(source.description, `${path}.description`),
