@@ -206,9 +206,8 @@ function parseLocationEntity(
   };
 }
 
-function parseBannerPosition(value: unknown, path: string): BannerPosition | null {
+function parseBannerPosition(value: unknown, path: string): BannerPosition {
   if (
-    value === null ||
     value === "hero" ||
     value === "men" ||
     value === "gifts" ||
@@ -216,7 +215,21 @@ function parseBannerPosition(value: unknown, path: string): BannerPosition | nul
   ) {
     return value;
   }
-  throw new HomeContractError(path, '"hero", "men", "gifts", "loyalty", or null');
+  throw new HomeContractError(path, '"hero", "men", "gifts", or "loyalty"');
+}
+
+function parseBannerDestination(source: Record<string, unknown>, path: string) {
+  try {
+    return {
+      product_id: nullablePositiveInteger(source.product_id ?? null, path + ".product_id"),
+      category_id: nullablePositiveInteger(source.category_id ?? null, path + ".category_id"),
+      product_slug: nullableString(source.product_slug ?? null, path + ".product_slug"),
+      category_slug: nullableString(source.category_slug ?? null, path + ".category_slug"),
+    };
+  } catch {
+    // Invalid navigation must not discard an otherwise usable banner image.
+    return { product_id: null, category_id: null, product_slug: null, category_slug: null };
+  }
 }
 
 function parseBanner(value: unknown, path: string): BannerDto {
@@ -228,6 +241,7 @@ function parseBanner(value: unknown, path: string): BannerDto {
     link_url: nullableString(source.link_url, path + ".link_url"),
     sort_order: nonNegativeInteger(source.sort_order, path + ".sort_order"),
     position: parseBannerPosition(source.position, path + ".position"),
+    ...parseBannerDestination(source, path),
   };
 }
 

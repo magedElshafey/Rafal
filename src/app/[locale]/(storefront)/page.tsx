@@ -32,7 +32,7 @@ const HomePage = async () => {
   return (
     <div className="main-content-spacing section-spacing">
       <Suspense fallback={<HeroCarouselSkeleton />}>
-        <HomeHero banner={home.banners.hero} />
+        <HomeHero banners={home.banners.hero} />
       </Suspense>
       <Suspense fallback={<CategoriesCarouselSkeleton />}>
         <HomeCategories categories={home.categories} />
@@ -44,7 +44,7 @@ const HomePage = async () => {
         kind="featured"
         products={home.featured}
       />
-      <MensPromoBanner banner={home.banners.men} />
+      <MensPromoBanner banners={home.banners.men} />
       <LatestProductsSection
         key={`${city?.id ?? "unresolved"}:${home.location.warehouseId ?? "unresolved"}`}
         accountId={accountId}
@@ -61,11 +61,11 @@ const HomePage = async () => {
         kind="personalizable"
         products={home.personalizable}
       />
-      <GiftsPromoBanner banner={home.banners.gifts} />
+      <GiftsPromoBanner banners={home.banners.gifts} />
       <WhyRafalSection items={home.whyRafal} />
       <TestimonialsSection testimonials={home.testimonials} />
       <ShopByDepartmentSection categories={home.categories} />
-      <LoyaltyPromoBanner banner={home.banners.loyalty} />
+      <LoyaltyPromoBanner banners={home.banners.loyalty} />
     </div>
   );
 };

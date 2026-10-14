@@ -5,14 +5,25 @@ import type {
   BannerSlots,
 } from "@/features/home/types";
 
-function isSafeHref(value: string): boolean {
-  if (value.startsWith("/") && !value.startsWith("//")) return true;
+function destinationHref(dto: BannerDto): string | null {
+  const hasProduct = dto.product_id !== null || dto.product_slug !== null;
+  const hasCategory = dto.category_id !== null || dto.category_slug !== null;
+  // Ambiguous destinations remain visible without choosing a target.
+  if (hasProduct === hasCategory) return null;
+
+  const id = hasProduct ? dto.product_id : dto.category_id;
+  const slug = hasProduct ? dto.product_slug : dto.category_slug;
+  if (
+    id === null || !Number.isSafeInteger(id) || id <= 0 ||
+    !slug || slug === "." || slug === ".." ||
+    /[\s/\\?#%\u0000-\u001f\u007f]/u.test(slug)
+  ) return null;
 
   try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
+    // Match the existing ProductCard and category-navigation slug routes.
+    return `/${hasProduct ? "products" : "categories"}/${encodeURIComponent(slug)}`;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -21,35 +32,25 @@ export function mapBannerDto(dto: BannerDto): Banner {
     id: dto.id,
     title: dto.title,
     imageUrl: dto.image_url,
-    href: dto.link_url && isSafeHref(dto.link_url) ? dto.link_url : null,
+    href: destinationHref(dto),
     sortOrder: dto.sort_order,
     position: dto.position,
   };
 }
 
 export function resolveBannerSlots(banners: readonly BannerDto[]): BannerSlots {
-  const slots: BannerSlots = { hero: null, men: null, gifts: null, loyalty: null };
-  const unresolved: Banner[] = [];
+  const slots: Record<BannerPosition, Banner[]> = {
+    hero: [], men: [], gifts: [], loyalty: [],
+  };
 
   for (const dto of banners) {
     const banner = mapBannerDto(dto);
-    if (banner.position !== null && slots[banner.position] === null) {
-      slots[banner.position] = banner;
-    } else {
-      unresolved.push(banner);
-    }
+    slots[banner.position].push(banner);
   }
 
-  // Temporary fallback until backend position data is reliable. Explicit slots
-  // are reserved first; duplicate positions never replace their first owner.
-  unresolved.sort((left, right) => left.sortOrder - right.sortOrder);
-  const positions: readonly BannerPosition[] = ["hero", "men", "gifts", "loyalty"];
-  let fallbackIndex = 0;
-  for (const position of positions) {
-    if (slots[position] === null) {
-      const banner = unresolved[fallbackIndex++];
-      slots[position] = banner ? { ...banner, position } : null;
-    }
+  for (const group of Object.values(slots)) {
+    // Array.sort is stable, preserving API order for equal sort values.
+    group.sort((left, right) => left.sortOrder - right.sortOrder);
   }
   return slots;
 }

@@ -1,15 +1,12 @@
 import { HomePromoBanner } from "@/features/home/components/home-promo-banner";
 import type { Banner } from "@/features/home/types";
 
-export function MensPromoBanner({ banner }: { banner: Banner | null }) {
-  if (!banner) return null;
+export function MensPromoBanner({ banners }: { banners: readonly Banner[] }) {
 
   return (
     <HomePromoBanner
-      alt={banner.title}
+      banners={banners}
       aspectRatio="1320 / 403"
-      href={banner.href ?? undefined}
-      imageUrl={banner.imageUrl}
     />
   );
 }

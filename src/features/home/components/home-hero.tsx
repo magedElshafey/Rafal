@@ -1,5 +1,6 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 
+import { HomeBannerCarousel } from "@/features/home/components/home-banner-carousel";
 import {
   HomeHeroFrame,
   HomeHeroLayout,
@@ -7,39 +8,39 @@ import {
 import type { Banner } from "@/features/home/types";
 import { Link } from "@/i18n/navigation";
 
-export function HomeHero({ banner }: { banner: Banner | null }) {
-  if (!banner) return null;
-
-  const image = (
-    <Image
-      fill
-      alt={banner.title}
-      className="motion-banner-hero-image object-cover"
-      preload
-      sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1383px) calc(100vw - 64px), 1320px"
-      src={banner.imageUrl}
-    />
-  );
-  const linkClassName =
-    "block size-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
+export function HomeHero({ banners }: { banners: readonly Banner[] }) {
+  if (banners.length === 0) return null;
 
   return (
     <HomeHeroLayout>
-      <HomeHeroFrame>
-        {banner.href ? (
-          banner.href.startsWith("/") ? (
-            <Link href={banner.href} className={linkClassName}>
-              {image}
-            </Link>
-          ) : (
-            <a href={banner.href} className={linkClassName}>
-              {image}
-            </a>
-          )
-        ) : (
-          image
-        )}
-      </HomeHeroFrame>
+      <HomeBannerCarousel
+        banners={banners}
+        renderBanner={(banner, index, alt) => {
+          const image = (
+            <Image
+              fill
+              alt={alt}
+              className="motion-banner-hero-image object-cover"
+              preload={index === 0}
+              sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1383px) calc(100vw - 64px), 1320px"
+              src={banner.imageUrl}
+            />
+          );
+
+          return (
+            <HomeHeroFrame>
+              {banner.href ? (
+                <Link
+                  href={banner.href}
+                  className="block size-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                >
+                  {image}
+                </Link>
+              ) : image}
+            </HomeHeroFrame>
+          );
+        }}
+      />
     </HomeHeroLayout>
   );
 }
