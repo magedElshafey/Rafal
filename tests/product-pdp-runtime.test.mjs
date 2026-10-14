@@ -173,19 +173,19 @@ test("Product 33 composes metadata, PDP, selector and purchase; only stocked var
   assert.equal(panel.personalizationInput, null);
   const markup = renderToStaticMarkup(React.createElement(ProductPurchasePanel, panel));
   assert.ok(markup.includes(fixture.data.name));
-  assert.ok(markup.includes("RAF-dcb-3086يسيشي"));
-  assert.match(markup, /value="59"[^>]*disabled/);
+  assert.ok(!markup.includes("RAF-dcb-3086يسيشي"));
+  assert.match(markup, /value="25"[^>]*disabled/);
   assert.doesNotMatch(markup, /NaN|Invalid Date|configuration invariant/);
   assert.equal(attemptAdd(panel).variantId, "54");
-  panel.onSelectVariant("59");
+  panel.onSelectOption("width", "25");
   panel = render();
-  assert.equal(panel.selectedVariantId, "54");
+  assert.equal(panel.variant.id, "54");
   assert.equal(attemptAdd(panel).variantId, "54");
   const unavailable = render({});
   assert.equal(unavailable.availability.status, "purchase_unavailable");
   assert.equal(unavailable.canAddToCart, false);
   assert.equal(attemptAdd(unavailable), null);
-  assert.doesNotThrow(() => unavailable.onSelectVariant("59"));
+  assert.doesNotThrow(() => unavailable.onSelectOption("width", "25"));
 });
 
 test("PDP robustness matrix renders supported empty, Unicode, attributed and personalized products", async () => {
@@ -215,13 +215,12 @@ test("PDP robustness matrix renders supported empty, Unicode, attributed and per
     assert.equal(panel.canAddToCart, purchasable, name);
     assert.equal(attemptAdd(panel) !== null, purchasable, name);
     if (name.startsWith("duplicate")) {
-      panel.onSelectVariant("54");
-      panel.onSelectVariant("59");
+      panel.onSelectOption("width", "25");
       assert.equal(attemptAdd(render()), null, name);
       assert.equal(resolveProductVariant(purchase.product.variants, name.includes("full") ? { width: "25" } : {}), null);
     }
     if (name === "multiple attributed") {
-      panel.onSelectVariant("59");
+      panel.onSelectOption("width", "25");
       assert.equal(attemptAdd(render()).variantId, "59");
     }
     if (name === "valid personalization") {

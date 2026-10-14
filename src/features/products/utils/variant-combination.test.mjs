@@ -133,14 +133,14 @@ test("PDP analyzes and reports ambiguity without throwing it through the page", 
   assert.doesNotMatch(page, /ProductConfigurationError/);
 });
 
-test("PDP purchase composition resolves by variant ID and fails closed for missing identity", async () => {
+test("PDP purchase composition uses exact attribute resolution and submits only the resolved ID", async () => {
   const experience = await readFile(
     new URL("../components/product-details/product-purchase-experience.tsx", import.meta.url),
     "utf8",
   );
   assert.match(experience, /selectedVariant !== null/);
-  assert.match(experience, /variant\.id === selectedVariantId/);
-  assert.doesNotMatch(experience, /resolveProductVariant/);
+  assert.match(experience, /resolveProductVariant\(product\.variants, selectedOptions\)/);
+  assert.doesNotMatch(experience, /variant\.sku ===|variant\.id === selectedVariantId/);
   assert.match(experience, /variantId: selectedVariant\.id/);
   assert.match(
     experience,

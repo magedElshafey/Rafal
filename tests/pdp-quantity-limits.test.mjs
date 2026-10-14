@@ -192,7 +192,7 @@ function assertCap(harness, product, availability, remaining) {
   assert.equal(harness.submissions.length - before, remaining > 0 ? 2 : 0);
   for (const submission of harness.submissions.slice(before)) {
     assert.equal(submission.quantity, remaining);
-    assert.equal(submission.variantId, view.panel.selectedVariantId);
+    assert.equal(submission.variantId, view.panel.variant.id);
     assert.equal(submission.productId, product.id);
   }
   for (let i = 0; i < remaining + 3; i++) render().decrease.onClick();
@@ -262,10 +262,10 @@ test("switching variants recalculates stock and held quantities before Add", asy
   const availability = await harness.availability(product);
   harness.setCart([{ variant: { id: "9004" }, quantity: 1 }]);
   for (let i = 0; i < 8; i++) harness.render(product, availability).increase.onClick();
-  harness.render(product, availability).panel.onSelectVariant("9004");
+  harness.render(product, availability).panel.onSelectOption("size", "9004");
   assert.equal(harness.render(product, availability).output, 2);
   assertCap(harness, product, availability, 2);
-  harness.render(product, availability).panel.onSelectVariant("9003");
+  harness.render(product, availability).panel.onSelectOption("size", "9003");
   assertCap(harness, product, availability, 5);
 });
 

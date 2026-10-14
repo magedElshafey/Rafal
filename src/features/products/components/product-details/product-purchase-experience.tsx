@@ -36,6 +36,11 @@ import type {
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { getInitialProductVariant } from "@/features/products/utils/get-initial-product-variant";
+import {
+  getSelectedOptionsFromVariant,
+  resolveProductVariant,
+  type SelectedProductOptions,
+} from "@/features/products/utils/product-variant-resolver";
 import { resolveGalleryImageId } from "@/features/products/utils/product-gallery";
 import { validateProductPersonalization } from "@/features/products/utils/validate-product-personalization";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
@@ -187,8 +192,8 @@ export function ProductPurchaseExperience({
   const lastAddToCartTriggerRef = useRef<HTMLElement | null>(null);
   const [isSuccessSheetOpen, setIsSuccessSheetOpen] = useState(false);
   const [isStickyPurchaseVisible, setIsStickyPurchaseVisible] = useState(false);
-  const [selectedVariantId, setSelectedVariantId] = useState(() =>
-    initialVariant?.id ?? null,
+  const [selectedOptions, setSelectedOptions] = useState<SelectedProductOptions>(() =>
+    initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {},
   );
   const [selectedImageId, setSelectedImageId] = useState(() => initialImageId);
   const [quantity, setQuantity] = useState(1);
@@ -216,13 +221,12 @@ export function ProductPurchaseExperience({
       setQuantity(1);
       setPersonalizationInput(getInitialPersonalizationInput(product));
       setPersonalizationResetKey((currentKey) => currentKey + 1);
-      setSelectedVariantId(initialVariant?.id ?? null);
+      setSelectedOptions(initialVariant ? getSelectedOptionsFromVariant(initialVariant) : {});
       setSelectedImageId(getPreferredImageId(product, initialVariant));
       setIsSuccessSheetOpen(true);
     },
   });
-  const selectedVariant =
-    product.variants.find((variant) => variant.id === selectedVariantId) ?? null;
+  const selectedVariant = resolveProductVariant(product.variants, selectedOptions);
   const presentationVariant = selectedVariant ?? initialVariant;
   // Reconcile removed media at the existing selection owner before children
   // render. Do not keep a stale ID that could reappear on a later data update.
@@ -348,14 +352,22 @@ export function ProductPurchaseExperience({
     resetAddToCartMutation,
   ]);
 
-  const handleSelectVariant = (variantId: string) => {
+  const handleSelectOption = (optionId: string, valueId: string) => {
     if (cityTransitionLocked) return;
-    const nextVariant = product.variants.find((variant) => variant.id === variantId);
-    if (!nextVariant) return;
+    const option = product.options.find((candidate) => candidate.id === optionId);
+    if (!option?.values.some((value) => value.id === valueId)) return;
+    const selectable = product.variants.some(
+      (candidate) => candidate.attributes[optionId] === valueId &&
+        availabilityByVariantId[candidate.id]?.status === "available",
+    );
+    if (!selectable) return;
 
+    const nextOptions = { ...selectedOptions, [optionId]: valueId };
+    setSelectedOptions(nextOptions);
+    const nextVariant = resolveProductVariant(product.variants, nextOptions);
+    if (!nextVariant) return;
     const nextAvailability = availabilityByVariantId[nextVariant.id];
     if (nextAvailability?.status !== "available") return;
-    setSelectedVariantId(nextVariant.id);
     const nextHeld = currentCart
       ? currentCart.lines.reduce(
           (held, line) =>
@@ -469,7 +481,7 @@ export function ProductPurchaseExperience({
             onSelectPersonalizationLanguage={
               handleSelectPersonalizationLanguage
             }
-            onSelectVariant={handleSelectVariant}
+            onSelectOption={handleSelectOption}
             personalizationInput={personalizationInput}
             personalizationResetKey={personalizationResetKey}
             personalizationValidation={personalizationValidation}
@@ -478,7 +490,7 @@ export function ProductPurchaseExperience({
             quantity={purchaseQuantity}
             remainingAddable={remainingAddable}
             renderedAt={renderedAt}
-            selectedVariantId={selectedVariantId}
+            selectedOptions={selectedOptions}
             shareActions={shareActions}
             variant={presentationVariant}
           />

@@ -105,17 +105,27 @@ function productWithKeys(firstKey = "length", maxCartItemQuantity = 20) {
   });
 }
 
-async function renderOptions(product, warehouseId = 6, selectedVariantId = product.variants[0].id) {
+function productWithAttributes(attributes) {
+  const dto = productDtoWithKeys();
+  dto.variants = attributes.map((entry, index) => ({
+    ...dto.variants[0], id: 49 + index, sku: `INTERNAL-SKU-${index}`,
+    attributes: entry,
+  }));
+  return mapProductDtoToProductDetails(dto);
+}
+
+async function renderOptions(product, warehouseId = 6, selectedOptions = product.variants[0]?.attributes ?? {}, showHeader = false) {
   const availabilityByVariantId = await getResolvedVariantAvailability({
     variants: product.variants, warehouseId, maxOrderQuantity: product.maxCartItemQuantity,
   });
   const markup = renderToStaticMarkup(React.createElement(ProductPurchasePanel, {
     product, availabilityByVariantId, availability: availabilityByVariantId["49"],
-    selectedVariantId, variant: null,
+    selectedOptions, variant: showHeader ? product.variants[0] : null,
     locale: "en", remainingAddable: null, quantity: 1,
     copy: {
       availability: { availableTemplate: "Available {max}", outOfStock: "Unavailable" },
-      options: { labels: {} },
+      options: { labels: { size: "Size", color: "Color" }, colorOptionTemplate: "Color option {index}" },
+      price: {}, skuTemplate: "SKU {sku}",
       socialProof: { timesOrdered: "Ordered", viewersNow: "Viewing" },
       quantity: { labelTemplate: "{value}" },
     },
@@ -147,13 +157,13 @@ test("PDP disables zero stock and missing warehouse stock and updates on warehou
   }
 });
 
-test("supplied inconsistent keys allow selecting both stocked variants by their IDs", async () => {
+test("exact inconsistent keys remain distinct customer option groups", async () => {
   const product = productWithKeys("lenth");
   assert.deepEqual(Array.from(product.options, (option) => option.key), ["lenth", "length"]);
   const { inputs, availabilityByVariantId } = await renderOptions(product);
   assert.equal(availabilityByVariantId["50"].status, "available");
-  assert.match(inputs[0], /value="49"/);
-  assert.match(inputs[1], /value="50"/);
+  assert.match(inputs[0], /value="60 cm"/);
+  assert.match(inputs[1], /value="40cm"/);
   assert.ok(!inputs[1].includes("disabled"));
 });
 
@@ -163,10 +173,11 @@ test("ambiguous combinations are disabled while distinct disjoint maps remain se
     [[{ size: "M" }, { size: "M" }], true],
     [[{ material: "glass", height: "60" }, { finish: "matte", width: "40" }], false],
   ]) {
-    const product = productWithKeys();
-    product.variants.forEach((variant, index) => { variant.attributes = attributes[index]; });
+    const dto = productDtoWithKeys();
+    dto.variants.forEach((variant, index) => { variant.attributes = attributes[index]; });
+    const product = mapProductDtoToProductDetails(dto);
     const { inputs } = await renderOptions(product);
-    assert.equal(inputs.length, attributes.reduce((count, attrs) => count + Math.max(1, Object.keys(attrs).length), 0));
+    assert.equal(inputs.length, product.options.reduce((count, option) => count + option.values.length, 0));
     assert.ok(inputs.every((input) => input.includes("disabled") === ambiguous));
   }
 });
@@ -188,7 +199,7 @@ function createExperienceRenderer(product, availabilityByVariantId) {
       };
       visit(tree);
       return {
-        panel: elements.find((element) => element.props.onSelectVariant)?.props,
+        panel: elements.find((element) => element.props.onSelectOption)?.props,
         gallery: elements.find((element) => element.props.onSelectImage)?.props,
       };
     } finally { hooks = null; }
@@ -196,14 +207,14 @@ function createExperienceRenderer(product, availabilityByVariantId) {
 }
 
 test("PDP selection changes exact price, gallery, quantity cap and Add-to-Cart variant ID", async () => {
-  const product = productWithKeys("lenth");
+  const product = productWithKeys();
   product.variants[1].warehouseStocks[0].quantity = 3;
   const availabilityByVariantId = await getResolvedVariantAvailability({
     variants: product.variants, warehouseId: 6, maxOrderQuantity: product.maxCartItemQuantity,
   });
   const render = createExperienceRenderer(product, availabilityByVariantId);
   for (let count = 0; count < 5; count++) render().panel.onIncreaseQuantity();
-  render().panel.onSelectVariant("50");
+  render().panel.onSelectOption("length", "40cm");
   const { panel, gallery } = render();
   assert.equal(panel.variant.id, "50");
   assert.equal(panel.variant.pricing.current.amount, 104.65);
@@ -214,13 +225,14 @@ test("PDP selection changes exact price, gallery, quantity cap and Add-to-Cart v
   assert.equal(addedLine.variantId, "50");
   assert.equal(addedLine.quantity, 3);
   availabilityByVariantId["49"] = { status: "out_of_stock" };
-  render().panel.onSelectVariant("49");
+  render().panel.onSelectOption("length", "60 cm");
   assert.equal(render().panel.variant.id, "50");
 });
 
 test("exact case-sensitive keys create separate labeled groups and identical keys share one", async () => {
-  const product = productWithKeys("lenth");
-  product.variants.push({ ...product.variants[1], id: "51", attributes: { length: "20cm", Length: "upper" } });
+  const dto = productDtoWithKeys("lenth");
+  dto.variants.push({ ...dto.variants[1], id: 51, attributes: { length: "20cm", Length: "upper" } });
+  const product = mapProductDtoToProductDetails(dto);
   const { markup } = await renderOptions(product);
   const groups = [...markup.matchAll(/<fieldset[^>]*><legend[^>]*>(.*?)<\/legend>(.*?)<\/fieldset>/g)];
   assert.deepEqual(groups.map(([, label]) => label), ["Lenth", "Length", "Length"]);
@@ -232,16 +244,18 @@ test("exact case-sensitive keys create separate labeled groups and identical key
   assert.match(groups[2][2], /upper/);
 });
 
-test("selection across groups deselects the previous variant globally", async () => {
+test("selection retains exact keys and never guesses an identity for a disjoint combination", async () => {
   const product = productWithKeys("lenth");
   const { availabilityByVariantId } = await renderOptions(product);
   const render = createExperienceRenderer(product, availabilityByVariantId);
-  render().panel.onSelectVariant("50");
-  const { inputs } = await renderOptions(product, 6, render().panel.selectedVariantId);
-  assert.match(inputs[0], /aria-pressed="false"/);
+  render().panel.onSelectOption("length", "40cm");
+  const { inputs } = await renderOptions(product, 6, render().panel.selectedOptions);
+  assert.match(inputs[0], /aria-pressed="true"/);
   assert.match(inputs[1], /aria-pressed="true"/);
-  render().panel.onSelectVariant("49");
-  assert.equal(render().panel.selectedVariantId, "49");
+  assert.equal(render().panel.canAddToCart, false);
+  addedLine = null;
+  render().panel.onAddToCart({ currentTarget: {} });
+  assert.equal(addedLine, null);
 });
 
 test("Product limit parsing accepts null, missing, valid and zero; rejects malformed values", () => {
@@ -327,4 +341,64 @@ test("PDP reads Product Details limit and has no Settings dependency", () => {
   const page = readFileSync(path.join(root, "src/app/[locale]/(storefront)/products/[slug]/page.tsx"), "utf8");
   assert.match(page, /maxOrderQuantity: product\.maxCartItemQuantity/);
   assert.doesNotMatch(page, /getPublicSettings|publicSettings/);
+});
+
+test("Size selectors render each customer value once, with no SKU in text or accessible names", async () => {
+  const product = productWithAttributes([{ size: "S" }, { size: "M" }, { size: "L" }, { size: "L" }]);
+  const { markup, inputs } = await renderOptions(product);
+  assert.equal(inputs.length, 3);
+  assert.deepEqual(inputs.map((input) => /aria-label="([^"]+)"/.exec(input)[1]), ["Size S", "Size M", "Size L"]);
+  const values = [...markup.matchAll(/<button\b[^>]*aria-pressed[^>]*>(.*?)<\/button>/g)]
+    .map(([, body]) => body.replace(/<[^>]*>/g, ""));
+  assert.deepEqual(values, ["S", "M", "L"]);
+  assert.doesNotMatch(markup, /INTERNAL-SKU|title=/);
+  assert.match(inputs[2], /disabled/);
+  assert.equal(resolveProductVariant(product.variants, { size: "L" }), null);
+});
+
+test("Color remains swatch-only with numbered localized accessible names and no HEX text", async () => {
+  const product = productWithAttributes([{ color: "#FF0000" }, { color: "#0000FF" }]);
+  const { markup, inputs } = await renderOptions(product);
+  assert.deepEqual(inputs.map((input) => /aria-label="([^"]+)"/.exec(input)[1]), ["Color option 1", "Color option 2"]);
+  const visibleText = markup.replace(/<[^>]*>/g, "");
+  assert.doesNotMatch(visibleText, /#[0-9A-Fa-f]{6}|INTERNAL-SKU/);
+  assert.doesNotMatch(markup, /title=|aria-label="[^"]*(?:#|SKU)/);
+});
+
+test("SKU below the Product name remains, while default variants produce no SKU selector", async () => {
+  const product = productWithAttributes([{}]);
+  const { markup, inputs } = await renderOptions(product, 6, {}, true);
+  assert.equal(inputs.length, 0);
+  assert.match(markup, /<h1[^>]*>Product<\/h1><p[^>]*>SKU INTERNAL-SKU-0<\/p>/);
+  assert.equal((markup.match(/INTERNAL-SKU-0/g) ?? []).length, 1);
+});
+
+test("full customer combinations resolve exact IDs, retain other choices and block ambiguous Add", async () => {
+  const product = productWithAttributes([
+    { size: "S", color: "red" },
+    { size: "L", color: "red" },
+    { size: "L", color: "red" },
+    { size: "L", color: "blue" },
+  ]);
+  const { availabilityByVariantId } = await renderOptions(product);
+  const render = createExperienceRenderer(product, availabilityByVariantId);
+  render().panel.onSelectOption("size", "L");
+  assert.deepEqual({ ...render().panel.selectedOptions }, { size: "L", color: "red" });
+  assert.equal(render().panel.canAddToCart, false);
+  addedLine = null;
+  render().panel.onAddToCart({ currentTarget: {} });
+  assert.equal(addedLine, null);
+  render().panel.onSelectOption("color", "blue");
+  assert.deepEqual({ ...render().panel.selectedOptions }, { size: "L", color: "blue" });
+  assert.equal(render().panel.variant.id, "52");
+  assert.equal(render().panel.canAddToCart, true);
+  render().panel.onAddToCart({ currentTarget: {} });
+  assert.equal(addedLine.variantId, "52");
+  assert.equal("sku" in addedLine, false);
+  // Both values exist independently, but this full combination does not.
+  render().panel.onSelectOption("size", "S");
+  assert.equal(render().panel.canAddToCart, false);
+  addedLine = null;
+  render().panel.onAddToCart({ currentTarget: {} });
+  assert.equal(addedLine, null);
 });
