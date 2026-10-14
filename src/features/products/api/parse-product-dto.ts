@@ -9,7 +9,7 @@ import type {
   ProductWarehouseStockDto,
 } from "@/features/products/api/product-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
-import { parseVariantAttributes } from "@/lib/variant-attributes";
+import { parseVariantAttributes, VariantAttributesContractError } from "@/lib/variant-attributes";
 export class ProductContractError extends Error {
   constructor(path: string, expected: string) {
     super(`Invalid Product API payload at "${path}": expected ${expected}.`);
@@ -30,14 +30,14 @@ const {
 );
 
 function positiveInteger(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
     throw new ProductContractError(path, "a positive integer");
   }
   return value;
 }
 
 function nonNegativeInteger(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
     throw new ProductContractError(path, "a non-negative integer");
   }
   return value;
@@ -77,6 +77,22 @@ function parseImage(value: unknown, path: string): ProductImageDto {
   return parseNonEmptyString(value, path);
 }
 
+function parseImages(value: unknown, path: string): readonly ProductImageDto[] {
+  if (!Array.isArray(value)) {
+    console.error("[products:media] omitted malformed image collection", { path });
+    return [];
+  }
+  return value.flatMap((image, index) => {
+    try {
+      return [parseImage(image, `${path}[${index}]`)];
+    } catch (error) {
+      if (!(error instanceof ProductContractError)) throw error;
+      console.error("[products:media] omitted malformed image", { path, index });
+      return [];
+    }
+  });
+}
+
 function parseVariant(value: unknown, path: string): ProductVariantDto {
   const source = parseRecord(value, path);
   return {
@@ -99,9 +115,7 @@ function parseVariant(value: unknown, path: string): ProductVariantDto {
       source.discounted_price_incl_vat,
       `${path}.discounted_price_incl_vat`,
     ),
-    images: parseArray(source.images, `${path}.images`).map((image, index) =>
-      parseImage(image, `${path}.images[${index}]`),
-    ),
+    images: parseImages(source.images, `${path}.images`),
     warehouse_stocks: parseArray(
       source.warehouse_stocks ?? [],
       `${path}.warehouse_stocks`,
@@ -138,7 +152,8 @@ function reportMalformedVariant({
       typeof variantId === "number" || typeof variantId === "string"
         ? variantId
         : undefined,
-    reason: error instanceof Error ? error.message : `Invalid value at ${path}`,
+    path,
+    reason: error instanceof Error ? error.name : "invalid-variant",
   });
 }
 
@@ -147,11 +162,24 @@ function parseVariants(
   path: string,
   product: { id: number; slug: string },
 ): readonly ProductVariantDto[] {
-  return parseArray(value, path).flatMap((variant, index) => {
+  const rows = parseArray(value, path);
+  // Count raw IDs before isolation so a malformed duplicate cannot make a
+  // previously ambiguous ID appear unique. Never pick the first duplicate.
+  const idCounts = new Map<number, number>();
+  for (const row of rows) {
+    if (typeof row !== "object" || row === null || !("id" in row)) continue;
+    if (typeof row.id === "number") idCounts.set(row.id, (idCounts.get(row.id) ?? 0) + 1);
+  }
+  return rows.flatMap((variant, index) => {
     const variantPath = `${path}[${index}]`;
     try {
-      return [parseVariant(variant, variantPath)];
+      const parsed = parseVariant(variant, variantPath);
+      if (idCounts.get(parsed.id) !== 1) {
+        throw new ProductContractError(`${variantPath}.id`, "a unique variant ID");
+      }
+      return [parsed];
     } catch (error) {
+      if (!(error instanceof ProductContractError) && !(error instanceof VariantAttributesContractError)) throw error;
       reportMalformedVariant({
         error,
         index,
@@ -237,9 +265,7 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.reviews_count,
       `${path}.reviews_count`,
     ),
-    images: parseArray(source.images, `${path}.images`).map((image, index) =>
-      parseImage(image, `${path}.images[${index}]`),
-    ),
+    images: parseImages(source.images, `${path}.images`),
     category: parseCategory(source.category, `${path}.category`),
     variants: parseVariants(source.variants, `${path}.variants`, { id, slug }),
   };

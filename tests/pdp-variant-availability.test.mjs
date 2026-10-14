@@ -73,6 +73,7 @@ function loadSource(relativePath) {
 
 const { mapProductDtoToProductDetails } = loadSource("src/features/products/api/product-mappers");
 const { parseProductDto } = loadSource("src/features/products/api/parse-product-dto");
+const { parseVariantAttributes } = loadSource("src/lib/variant-attributes");
 const { getResolvedVariantAvailability } = loadSource("src/features/products/server/product-availability-boundary");
 const { resolveProductVariant } = loadSource("src/features/products/utils/product-variant-resolver");
 const { ProductPurchasePanel } = loadSource("src/features/products/components/product-details/product-purchase-panel");
@@ -156,17 +157,17 @@ test("supplied inconsistent keys allow selecting both stocked variants by their 
   assert.ok(!inputs[1].includes("disabled"));
 });
 
-test("duplicate, empty and disjoint multi-attribute maps retain distinct selectable variant IDs", async () => {
-  for (const attributes of [
-    [{}, {}],
-    [{ size: "M" }, { size: "M" }],
-    [{ material: "glass", height: "60" }, { finish: "matte", width: "40" }],
+test("ambiguous combinations are disabled while distinct disjoint maps remain selectable", async () => {
+  for (const [attributes, ambiguous] of [
+    [[{}, {}], true],
+    [[{ size: "M" }, { size: "M" }], true],
+    [[{ material: "glass", height: "60" }, { finish: "matte", width: "40" }], false],
   ]) {
     const product = productWithKeys();
     product.variants.forEach((variant, index) => { variant.attributes = attributes[index]; });
     const { inputs } = await renderOptions(product);
     assert.equal(inputs.length, attributes.reduce((count, attrs) => count + Math.max(1, Object.keys(attrs).length), 0));
-    assert.ok(inputs.every((input) => !input.includes("disabled")));
+    assert.ok(inputs.every((input) => input.includes("disabled") === ambiguous));
   }
 });
 
@@ -258,8 +259,12 @@ test("Product limit parsing accepts null, missing, valid and zero; rejects malfo
 test("effective limits use product limits or warehouse stock, preserve zero and update per warehouse", async () => {
   for (const [limit, expected] of [[undefined, 100], [null, 100], [7, 7], [150, 100], [0, 0]]) {
     const payload = productDtoWithKeys();
-    // Empty attributes are valid across the parser's isolated test realm.
-    payload.variants = payload.variants.map((variant) => ({ ...variant, attributes: null }));
+    // Preserve distinct combinations in the parser's isolated plain-object realm.
+    const prototype = Object.getPrototypeOf(parseVariantAttributes(null));
+    payload.variants = payload.variants.map((variant) => ({
+      ...variant,
+      attributes: Object.assign(Object.create(prototype), variant.attributes),
+    }));
     if (limit !== undefined) payload.max_cart_item_quantity = limit;
     const product = mapProductDtoToProductDetails(parseProductDto(payload));
     product.variants[0].warehouseStocks.push({ warehouseId: 7, quantity: 3 });

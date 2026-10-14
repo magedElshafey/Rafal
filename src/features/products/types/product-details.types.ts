@@ -110,7 +110,7 @@ export type ProductDetails = {
   slug: string;
   name: string;
   description: ProductDescription;
-  category: ProductCategoryReference;
+  category: ProductCategoryReference | null;
   images: readonly ProductImage[];
   options: readonly ProductOption[];
   variants: readonly ProductVariant[];

@@ -233,7 +233,7 @@ export function ProductPurchaseExperience({
   );
   if (validImageId !== selectedImageId) setSelectedImageId(validImageId);
   const availability = selectedVariant
-    ? availabilityByVariantId[selectedVariant.id]
+    ? availabilityByVariantId[selectedVariant.id] ?? { status: "purchase_unavailable" as const }
     : { status: "purchase_unavailable" as const };
   const personalizationValidation =
     product.personalization.enabled && personalizationInput
@@ -348,24 +348,13 @@ export function ProductPurchaseExperience({
     resetAddToCartMutation,
   ]);
 
-  if (selectedVariant && !availability) {
-    throw new Error(
-      `Product variant "${selectedVariant.id}" is missing resolved availability.`,
-    );
-  }
-
   const handleSelectVariant = (variantId: string) => {
     if (cityTransitionLocked) return;
     const nextVariant = product.variants.find((variant) => variant.id === variantId);
     if (!nextVariant) return;
 
     const nextAvailability = availabilityByVariantId[nextVariant.id];
-    if (!nextAvailability) {
-      throw new Error(
-        `Product variant "${nextVariant.id}" is missing resolved availability.`,
-      );
-    }
-    if (nextAvailability.status !== "available") return;
+    if (nextAvailability?.status !== "available") return;
     setSelectedVariantId(nextVariant.id);
     const nextHeld = currentCart
       ? currentCart.lines.reduce(

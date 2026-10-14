@@ -1,0 +1,53 @@
+{
+  "success": true,
+  "message": "Product retrieved successfully",
+  "data": {
+    "id": 33,
+    "sku": "TEST-ATOMIC-PRODUCT-001",
+    "name": "منتج اختبار تجميعي",
+    "description": "اختبار إنشاء منتج متكامل",
+    "slug": "mntg-akhtbar-tgmyaay-1",
+    "base_price": "100.00",
+    "price_incl_vat": "115.00",
+    "discount_percentage": null,
+    "discount_end_at": null,
+    "discounted_price": null,
+    "discounted_price_incl_vat": null,
+    "badges": [],
+    "is_personalizable": false,
+    "personalization_max_length": null,
+    "personalization_fee": null,
+    "personalization_languages": ["ar", "en"],
+    "viewers_now": 35664,
+    "times_ordered": 76095,
+    "rating_average": 0,
+    "reviews_count": 0,
+    "is_wishlist": false,
+    "images": ["https://api.rafal.shop/storage/77/logo.png"],
+    "category": null,
+    "variants": [
+      {
+        "id": 54,
+        "sku": "TEST-ATOMIC-VAR-001",
+        "attributes": [],
+        "effective_price": "100.00",
+        "effective_price_incl_vat": "115.00",
+        "discounted_price": null,
+        "discounted_price_incl_vat": null,
+        "images": [],
+        "warehouse_stocks": [{"warehouse_id": 7, "quantity": 10}]
+      },
+      {
+        "id": 59,
+        "sku": "RAF-dcb-3086يسيشي",
+        "attributes": {"width": "25"},
+        "effective_price": "100.00",
+        "effective_price_incl_vat": "115.00",
+        "discounted_price": null,
+        "discounted_price_incl_vat": null,
+        "images": [],
+        "warehouse_stocks": []
+      }
+    ]
+  }
+}

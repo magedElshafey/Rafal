@@ -192,8 +192,6 @@ export function mapProductDtoToListingProduct(
 export function mapProductDtoToProductDetails(
   product: ProductDto,
 ): ProductDetails | null {
-  if (!product.category) return null;
-
   const variants = product.variants;
   const personalization = mapPersonalization(product);
   const mappedImages = mapProductImages(product);
@@ -206,11 +204,11 @@ export function mapProductDtoToProductDetails(
     description: { html: product.description ?? "" },
     maxCartItemQuantity: product.max_cart_item_quantity ?? undefined,
     isWishlisted: product.is_wishlist,
-    category: {
+    category: product.category ? {
       id: String(product.category.id),
       name: product.category.name,
       slug: product.category.slug,
-    },
+    } : null,
     images: mappedImages.images,
     options: deriveOptions(variants),
     variants: variants.map((variant) =>

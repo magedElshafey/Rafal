@@ -50,7 +50,7 @@ export async function getQuickAddSelectionData({
   }
 
   const product = await getProductDetailsBySlug(slug, locale, durableCityId);
-  if (!product) throw new QuickAddSelectionError("product-unavailable");
+  if (!product || "unavailable" in product) throw new QuickAddSelectionError("product-unavailable");
   assertProductConfiguration(product);
   const journey = getRevalidatedQuickAddJourney(
     product.personalization.enabled,

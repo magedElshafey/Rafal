@@ -79,6 +79,7 @@ export async function generateMetadata({
   const { product } = await getProductPageData(slug, locale);
 
   if (!product) return {};
+  if ("unavailable" in product) return { robots: { index: false, follow: false } };
 
   const pathname = `/products/${product.slug}`;
   const canonicalUrl = new URL(`/${locale}${pathname}`, serverEnv.siteUrl);
@@ -136,15 +137,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
       getCurrentUser(),
     ]);
   if (!product) notFound();
+  if ("unavailable" in product) {
+    return (
+      <Container className="main-content-spacing">
+        <div role="alert" className="flex flex-col items-center rounded-lg border border-gray-200 bg-gray-50 p-6 text-center sm:p-8">
+          <h1 className="text-h3 font-bold text-gray-1000">{t("route.errorTitle")}</h1>
+          <p className="mt-2 max-w-xl type-body text-gray-600">{t("route.errorDescription")}</p>
+        </div>
+      </Container>
+    );
+  }
 
   assertProductConfiguration(product);
+  const configuration = analyzeProductConfiguration(product);
   reportProductConfigurationIssues(
     product,
-    analyzeProductConfiguration(product),
+    configuration,
   );
   const availabilityByVariantId =
     resolvedLocation?.inCoverage && resolvedLocation.warehouseId !== null
       ? await getResolvedVariantAvailability({
+          configuration,
           maxOrderQuantity: product.maxCartItemQuantity,
           variants: product.variants,
           warehouseId: resolvedLocation.warehouseId,
@@ -194,10 +207,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         label={t("breadcrumbs.label")}
         items={[
           { label: t("breadcrumbs.home"), href: "/" },
-          {
+          ...(product.category ? [{
             label: product.category.name,
             href: `/categories/${product.category.slug}`,
-          },
+          }] : []),
           { label: product.name },
         ]}
       />
