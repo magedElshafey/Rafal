@@ -8,7 +8,7 @@ import { useId, useRef, useState, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@/components/ui/icons";
 import { RafalModal } from "@/components/ui/rafal-modal";
-import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
+import { VariantColorSwatch } from "@/components/ui/variant-attribute-value";
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
 import {
   currentCartQueryOptions,
@@ -337,10 +337,9 @@ export function ProductQuickAddSheet({
                             value={value.id}
                           />
                           <span className="flex min-h-11 items-center gap-2 rounded-md border border-gray-300 bg-gray-0 py-2 pe-10 ps-4 type-body-sm peer-checked:border-gold-600 peer-checked:bg-gold-50 peer-checked:ring-1 peer-checked:ring-gold-600 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
-                            <VariantAttributeValue
-                              attributeKey={option.key}
-                              attributeValue={value.id}
-                            />
+                            {option.key === "color" ? (
+                              <VariantColorSwatch value={value.id} />
+                            ) : null}
                             {value.label}
                           </span>
                           <CheckIcon
