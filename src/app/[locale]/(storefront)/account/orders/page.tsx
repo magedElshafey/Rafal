@@ -75,6 +75,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   key={order.orderNumber}
                   order={order}
                   locale={locale}
+                  confirmedLabel={t("status.confirmed")}
                   detailsLabel={t("detailsLink", {
                     number: order.displayNumber,
                   })}

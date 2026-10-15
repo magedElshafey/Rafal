@@ -10,6 +10,7 @@ import {
 import { Link } from "@/i18n/navigation";
 
 type OrderListItemProps = {
+  confirmedLabel: string;
   detailsLabel: string;
   itemCountLabel: string;
   locale: Locale;
@@ -17,6 +18,7 @@ type OrderListItemProps = {
 };
 
 export function OrderListItem({
+  confirmedLabel,
   detailsLabel,
   itemCountLabel,
   locale,
@@ -44,7 +46,11 @@ export function OrderListItem({
 
         <div className="sm:col-start-2 sm:row-start-1">
           <OrderStatusBadge
-            label={order.statusLabel}
+            label={
+              order.statusLabel.trim().toLowerCase() === "confirmed"
+                ? confirmedLabel
+                : order.statusLabel
+            }
             status={order.customerStatus}
           />
         </div>

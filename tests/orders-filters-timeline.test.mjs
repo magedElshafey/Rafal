@@ -8,6 +8,7 @@ import vm from "node:vm";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
+import { createTranslator } from "next-intl";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const require = createRequire(import.meta.url);
@@ -48,6 +49,12 @@ function loadSource(relativePath) {
       URLSearchParams,
       fetch: (...args) => interceptedFetch(...args),
       require: (specifier) => {
+        if (specifier === "@/components/ui/icons") {
+          return { ChevronRightIcon: () => null };
+        }
+        if (specifier === "@/i18n/navigation") {
+          return { Link: ({ children, ...props }) => React.createElement("a", props, children) };
+        }
         if (specifier.startsWith("@/")) {
           return loadSource(`src/${specifier.slice(2)}`);
         }
@@ -84,6 +91,31 @@ const { OrderTimeline } = loadSource(
   "src/features/orders/components/order-timeline",
 );
 const { createHttpClient } = loadSource("src/lib/api/http-client");
+const { OrderListItem } = loadSource("src/features/orders/components/order-list-item");
+
+for (const [locale, expected] of [["ar", "تم التأكيد"], ["en", "Confirmed"]]) {
+  test(`Orders renders the Confirmed label in ${locale} independently of its filter bucket`, () => {
+    const messages = JSON.parse(readFileSync(path.join(root, `src/messages/${locale}/account.json`), "utf8"));
+    const t = createTranslator({ locale, messages, namespace: "orders" });
+    for (const statusLabel of ["Confirmed", "Shipped", "Custom backend label"]) {
+      const order = Object.freeze({
+        orderNumber: "ORD-1", displayNumber: "1",
+        placedAt: "2026-10-04T09:00:00+03:00",
+        customerStatus: "processing", statusLabel,
+        total: "100", currency: "SAR", itemsCount: 1,
+        firstItem: { name: "Product", imageUrl: null },
+      });
+      const html = renderToStaticMarkup(React.createElement(OrderListItem, {
+        order, locale, confirmedLabel: t("status.confirmed"),
+        detailsLabel: t("detailsLink", { number: "1" }),
+        itemCountLabel: t("itemCount", { count: 1 }),
+      }));
+      assert.ok(html.includes(`>${statusLabel === "Confirmed" ? expected : statusLabel}</span>`));
+      assert.equal(order.customerStatus, "processing");
+      assert.equal(order.statusLabel, statusLabel);
+    }
+  });
+}
 
 function detailResponse(timeline) {
   return {
