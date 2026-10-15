@@ -40,6 +40,7 @@ type ProfileFormProps = {
 export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
   const [values, setValues] = useState<AccountProfileInput>({
     firstName: profile.firstName,
+    email: profile.email,
     lastName: profile.lastName,
     phone: formatSaudiMobileForInput(profile.phone),
   });
@@ -133,8 +134,9 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
               dir="ltr"
               className="text-start"
               label={copy.email}
-              value={profile.email}
-              readOnly
+              value={values.email}
+              error={fieldError("email")}
+              onChange={(event) => updateField("email", event.target.value)}
             />
           </div>
           <div className="sm:col-span-2">
@@ -145,7 +147,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
               label={copy.phone}
               value={values.phone}
               error={fieldError("phone")}
-              onChange={(event) => updateField("phone", event.target.value)}
+              readOnly
             />
           </div>
         </div>

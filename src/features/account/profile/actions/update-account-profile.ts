@@ -15,6 +15,7 @@ import {
 } from "@/features/auth/actions/auth-action-utils";
 import { updateProfileDto } from "@/features/auth/api/auth-api.server";
 import { mapAuthUser } from "@/features/auth/api/parse-auth-dto";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getAccessToken } from "@/features/auth/server/auth-session";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
@@ -24,6 +25,7 @@ const updateProfileFieldMap = {
   first_name: "firstName",
   last_name: "lastName",
   phone: "phone",
+  email: "email",
 } as const;
 
 function parseActionInput(
@@ -35,6 +37,7 @@ function parseActionInput(
     !hasLocale(routing.locales, input.locale) ||
     typeof input.firstName !== "string" ||
     typeof input.lastName !== "string" ||
+    typeof input.email !== "string" ||
     typeof input.phone !== "string"
   ) {
     return null;
@@ -45,6 +48,7 @@ function parseActionInput(
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     phone: input.phone.trim(),
+    email: input.email.trim().toLowerCase(),
   };
 }
 
@@ -96,10 +100,19 @@ export async function updateAccountProfile(
   }
 
   try {
+    const identity = await getCurrentUser(locale);
+    const verifiedPhone = identity ? normalizeSaudiMobile(identity.phone) : null;
+    if (!verifiedPhone) {
+      return { ok: false, error: { code: "unauthorized" } };
+    }
+    if (phone !== verifiedPhone) {
+      return { ok: false, error: { code: "invalid-input", fields: { phone: "invalid" } } };
+    }
     const response = await updateProfileDto(locale, accessToken, {
       first_name: profile.firstName,
       last_name: profile.lastName,
-      phone,
+      phone: verifiedPhone,
+      ...(profile.email !== (identity?.email ?? "") ? { email: profile.email } : {}),
     });
     if (!response.success) {
       return { ok: false, error: { code: "service-unavailable" } };
@@ -112,7 +125,8 @@ export async function updateAccountProfile(
     if (
       user.firstName !== profile.firstName ||
       user.lastName !== profile.lastName ||
-      confirmedPhone !== phone
+      confirmedPhone !== phone ||
+      (user.email ?? "") !== profile.email
     ) {
       console.error(
         "[account-profile:update] backend did not confirm requested profile fields",
@@ -126,7 +140,8 @@ export async function updateAccountProfile(
       profile: {
         firstName: user.firstName,
         lastName: user.lastName,
-        phone: user.phone ?? "",
+        phone: user.phone,
+        email: user.email ?? "",
       },
     };
   } catch (error) {

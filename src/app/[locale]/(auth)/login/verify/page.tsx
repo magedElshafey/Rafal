@@ -2,7 +2,7 @@ import type { Locale } from "next-intl";
 
 import { OtpVerificationScreen } from "@/features/auth/components/OtpVerificationScreen";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
-import { getPendingOtpEmail } from "@/features/auth/server/auth-session";
+import { getPendingOtpPhone } from "@/features/auth/server/auth-session";
 import { getSafeInternalReturnTo } from "@/features/auth/utils/safe-return-to";
 import { getGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { redirect } from "@/i18n/navigation";
@@ -20,12 +20,12 @@ export default async function OtpVerificationPage({
   params,
   searchParams,
 }: OtpVerificationPageProps) {
-  const [{ locale }, query, user, pendingEmail, guestCartToken] =
+  const [{ locale }, query, user, pendingPhone, guestCartToken] =
     await Promise.all([
     params,
     searchParams,
     getCurrentUser(),
-    getPendingOtpEmail(),
+    getPendingOtpPhone(),
     getGuestCartToken(),
   ]);
   const returnTo = getSafeInternalReturnTo(firstValue(query.returnTo), "/");
@@ -41,11 +41,11 @@ export default async function OtpVerificationPage({
   if (user) {
     redirect({ href: { pathname: "/register", query: { returnTo } }, locale });
   }
-  if (!pendingEmail) {
+  if (!pendingPhone) {
     redirect({
       href: {
         pathname: "/login",
-        query: { returnTo, state: "missing-pending-email" },
+        query: { returnTo, state: "missing-pending-phone" },
       },
       locale,
     });

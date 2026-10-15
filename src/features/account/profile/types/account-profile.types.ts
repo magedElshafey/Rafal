@@ -4,15 +4,14 @@ export type AccountProfileInput = {
   firstName: string;
   lastName: string;
   phone: string;
+  email: string;
 };
 
 export type UpdateAccountProfileActionInput = AccountProfileInput & {
   locale: Locale;
 };
 
-export type AccountProfile = AccountProfileInput & {
-  email: string;
-};
+export type AccountProfile = AccountProfileInput;
 
 export type AccountProfileField = keyof AccountProfileInput;
 export type AccountProfileValidationError = "required" | "phone" | "invalid";

@@ -43,8 +43,8 @@ export default async function LoginPage({
   const state = firstValue(query.state);
   const t = await getTranslations("Common.auth.recovery");
   const notice =
-    state === "missing-pending-email"
-      ? t("missingPendingEmail")
+    state === "missing-pending-phone"
+      ? t("missingPendingPhone")
       : state === "session-expired" || state === "authentication-required"
         ? t("signInRequired")
         : undefined;

@@ -14,7 +14,7 @@ export async function OtpVerificationScreen({
 
   return (
     <div className="flex flex-col">
-      <AuthBackLink href="/login" label={t("backToEmail")} returnTo={returnTo} />
+      <AuthBackLink href="/login" label={t("backToPhone")} returnTo={returnTo} />
       <header className="mt-8 text-center">
         <h1 className="text-h2 font-bold text-gray-1000">{t("otp.title")}</h1>
         <p className="mt-1 type-body text-gray-600">
@@ -29,6 +29,8 @@ export async function OtpVerificationScreen({
           submit: t("otp.verify"),
           submitting: t("otp.submitting"),
           invalidCode: t("errors.invalidCode"),
+          rateLimited: t("errors.rateLimited"),
+          sessionFailed: t("errors.sessionFailed"),
           unavailable: t("errors.serviceUnavailable"),
         }}
       />

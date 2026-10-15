@@ -3,11 +3,12 @@ import type { Locale } from "next-intl";
 
 import { CompleteProfileForm } from "./CompleteProfileForm";
 
-type CompleteProfileScreenProps = { locale: Locale; returnTo: string };
+type CompleteProfileScreenProps = { locale: Locale; returnTo: string; phone: string };
 
 export async function CompleteProfileScreen({
   locale,
   returnTo,
+  phone,
 }: CompleteProfileScreenProps) {
   const t = await getTranslations("Common.auth");
 
@@ -25,6 +26,7 @@ export async function CompleteProfileScreen({
       <CompleteProfileForm
         locale={locale}
         returnTo={returnTo}
+        phone={phone}
         copy={{
           firstName: t("profile.firstName"),
           firstNamePlaceholder: t("profile.firstNamePlaceholder"),
@@ -40,6 +42,7 @@ export async function CompleteProfileScreen({
           invalidPhone: t("errors.invalidPhone"),
           termsRequired: t("errors.termsRequired"),
           unavailable: t("errors.serviceUnavailable"),
+          rateLimited: t("errors.rateLimited"),
         }}
       />
     </div>

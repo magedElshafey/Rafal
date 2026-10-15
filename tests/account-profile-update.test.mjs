@@ -144,6 +144,9 @@ function createActionHarness() {
           return { ok: false, error: { code: "service-unavailable" } };
         },
       },
+      "@/features/auth/server/auth-boundary": {
+        getCurrentUser: async () => ({ phone: "+966501234567", email: "old@example.test" }),
+      },
       "@/features/auth/server/auth-session": {
         clearAccessToken,
         getAccessToken: async () => "server-only-token",
@@ -174,6 +177,7 @@ const validActionInput = {
   firstName: "Maged",
   lastName: "Elshafey",
   phone: "050 123 4567",
+  email: "customer@example.test",
 };
 
 function plain(value) {
@@ -206,6 +210,7 @@ test("Edit Profile sends the exact multipart backend contract once", async () =>
     ["terms_accepted", "1"],
   ]);
   const headers = new Headers(init.headers);
+  assert.equal(headers.get("Accept"), "application/json");
   assert.equal(headers.get("Authorization"), "Bearer secret-token");
   assert.equal(headers.get("Accept-Language"), "en");
   assert.equal(headers.has("Content-Type"), false);
@@ -234,11 +239,47 @@ test("Edit Profile 422 is not retried and remains a rejected request", async () 
   assert.equal(callCount, 1);
 });
 
+test("Email edits use the existing multipart endpoint and preserve verified phone and terms", async () => {
+  const { updateProfileDto } = createApiHarness();
+  let body;
+  interceptedFetch = async (_url, init) => {
+    body = init.body;
+    return Response.json(successfulResponse());
+  };
+  await updateProfileDto("en", "secret", { first_name: "Maged", last_name: "Elshafey", phone: "+966501234567", email: "customer@example.test" });
+  assert.deepEqual(Object.fromEntries(body), { first_name: "Maged", last_name: "Elshafey", phone: "+966501234567", email: "customer@example.test", terms_accepted: "1" });
+
+  const h = createActionHarness();
+  h.setBehavior(async (_locale, _token, dto) => {
+    assert.equal(dto.email, "customer@example.test");
+    assert.equal(dto.phone, "+966501234567");
+    return successfulResponse();
+  });
+  assert.equal((await h.updateAccountProfile({ ...validActionInput, email: " Customer@Example.Test " })).ok, true);
+});
+
+test("Forged phone edits fail before mutation", async () => {
+  const h = createActionHarness();
+  let calls = 0;
+  h.setBehavior(async () => { calls++; return successfulResponse(); });
+  assert.equal((await h.updateAccountProfile({ ...validActionInput, phone: "+966599999999" })).ok, false);
+  assert.equal(calls, 0);
+});
+
+test("Unconfirmed email changes cannot show success", async () => {
+  const h = createActionHarness();
+  h.setBehavior(async () => successfulResponse({ email: "old@example.test" }));
+  assert.equal((await h.updateAccountProfile(validActionInput)).ok, false);
+  assert.deepEqual(h.revalidatedPaths, []);
+});
+
 test("Onboarding keeps its required multipart complete-profile contract", async () => {
   const { completeProfileDto } = createApiHarness();
   let requestBody;
+  let requestHeaders;
   interceptedFetch = async (_input, init) => {
     requestBody = init.body;
+    requestHeaders = new Headers(init.headers);
     return Response.json(successfulResponse());
   };
 
@@ -254,6 +295,11 @@ test("Onboarding keeps its required multipart complete-profile contract", async 
   assert.equal(requestBody.get("first_name"), "Maged");
   assert.equal(requestBody.get("last_name"), "Elshafey");
   assert.equal(requestBody.get("phone"), "+966501234567");
+  assert.equal(requestBody.has("email"), false);
+  assert.equal(requestHeaders.get("Authorization"), "Bearer secret-token");
+  assert.equal(requestHeaders.get("Accept"), "application/json");
+  assert.equal(requestHeaders.get("Accept-Language"), "ar");
+  assert.equal(requestHeaders.has("Content-Type"), false);
 });
 
 test("Malformed 200 profile response fails closed in the auth parser", async () => {
@@ -280,6 +326,7 @@ test("Confirmed backend user is the only success and revalidation path", async (
       firstName: "Maged",
       lastName: "Elshafey",
       phone: "+966501234567",
+      email: "customer@example.test",
     },
   });
   assert.deepEqual(harness.revalidatedPaths, ["/en/account/profile"]);
@@ -391,7 +438,7 @@ test("401 clears the protected session and returns unauthorized", async () => {
   assert.deepEqual(harness.revalidatedPaths, []);
 });
 
-test("Edit Profile exposes no terms or email mutation state and gates success toast", () => {
+test("Edit Profile keeps phone read-only, email editable, and gates success toast", () => {
   const formSource = readFileSync(
     path.join(root, "src/features/account/profile/components/profile-form.tsx"),
     "utf8",
@@ -404,7 +451,8 @@ test("Edit Profile exposes no terms or email mutation state and gates success to
   const successToast = formSource.indexOf("rafalToast.success", failureGuard);
 
   assert.ok(failureGuard >= 0 && successToast > failureGuard);
-  assert.doesNotMatch(typeSource, /termsAccepted|email.*AccountProfileInput/);
+  assert.doesNotMatch(typeSource, /termsAccepted/);
   assert.doesNotMatch(formSource, /name=["']termsAccepted["']/);
-  assert.match(formSource, /name="email"[\s\S]*?readOnly/);
+  assert.match(formSource, /name="email"[\s\S]*?updateField\("email"/);
+  assert.match(formSource, /name="phone"[\s\S]*?readOnly/);
 });

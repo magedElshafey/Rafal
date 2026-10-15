@@ -747,19 +747,10 @@
   },
   "auth": {
     "brandHome": "Rafal — home page",
-    "backToEmail": "Back to email entry",
-    "backToOtp": "Back to email verification",
-    "email": {
-      "title": "Welcome to Rafal",
-      "description": "Enter your email address to continue",
-      "label": "Email address",
-      "placeholder": "example@email.com",
-      "continue": "Continue",
-      "submitting": "Sending verification code"
-    },
+    "backToOtp": "Back to phone verification",
     "otp": {
-      "title": "Verify your email",
-      "description": "Enter the verification code sent to your email address.",
+      "title": "Verify your phone",
+      "description": "Enter the verification code sent to your phone",
       "label": "6-digit verification code",
       "verify": "Verify",
       "submitting": "Verifying code"
@@ -778,22 +769,32 @@
       "submitting": "Saving profile"
     },
     "recovery": {
-      "missingPendingEmail": "Your verification session is no longer available. Enter your email to request a new code.",
-      "signInRequired": "Sign in again to continue."
+      "signInRequired": "Sign in again to continue.",
+      "missingPendingPhone": "Enter your phone number to request a new code."
     },
     "cartMerge": {
       "retry": "Retry cart recovery",
       "retrying": "Recovering your cart"
     },
     "errors": {
-      "invalidEmail": "Enter a valid email address.",
       "invalidCode": "Enter the 6-digit verification code.",
       "required": "This field is required.",
       "invalidField": "Check this field and try again.",
       "invalidPhone": "Enter a valid Saudi mobile number.",
       "termsRequired": "You must accept the terms and privacy policy to continue.",
       "cartMergeUnavailable": "You are signed in, but we could not recover your guest cart. Your cart is safe. Please retry.",
-      "serviceUnavailable": "We could not complete this request. Please try again."
-    }
+      "serviceUnavailable": "We could not complete this request. Please try again.",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "sessionFailed": "Unable to establish your session. Please sign in again."
+    },
+    "phone": {
+      "title": "Welcome to Rafal",
+      "description": "Sign in with your Saudi phone number",
+      "label": "Phone number",
+      "placeholder": "Enter your phone number",
+      "continue": "Send verification code",
+      "submitting": "Sending verification code"
+    },
+    "backToPhone": "Change phone number"
   }
 }

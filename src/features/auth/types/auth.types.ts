@@ -1,6 +1,6 @@
 import type { AuthenticatedUser } from "@/features/auth/types/authenticated-user.types";
 
-export type RequestOtpInput = { email: string };
+export type RequestOtpInput = { phone: string };
 export type VerifyOtpInput = { code: string };
 export type CompleteProfileInput = {
   firstName: string;
@@ -12,7 +12,9 @@ export type CompleteProfileField = keyof CompleteProfileInput;
 
 export type AuthActionErrorCode =
   | "invalid-input"
-  | "pending-email-missing"
+  | "pending-phone-missing"
+  | "rate-limited"
+  | "session-failed"
   | "unauthorized"
   | "service-unavailable";
 

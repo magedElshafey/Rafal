@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ export type OtpVerificationFormCopy = {
   submitting: string;
   invalidCode: string;
   unavailable: string;
+  rateLimited: string;
+  sessionFailed: string;
 };
 
 type OtpVerificationFormProps = {
@@ -30,6 +32,7 @@ export function OtpVerificationForm({
   returnTo,
 }: OtpVerificationFormProps) {
   const router = useRouter();
+  const inFlight = useRef(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
@@ -37,20 +40,22 @@ export function OtpVerificationForm({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (inFlight.current) return;
     if (!/^\d{6}$/.test(code)) {
       setError(copy.invalidCode);
       return;
     }
 
     setError(undefined);
+    inFlight.current = true;
     startTransition(async () => {
       try {
         const result = await verifyOtp({ code }, locale);
         if (!result.ok) {
-          if (result.error.code === "pending-email-missing") {
+          if (result.error.code === "pending-phone-missing") {
             router.replace({
               pathname: "/login",
-              query: { returnTo, state: "missing-pending-email" },
+              query: { returnTo, state: "missing-pending-phone" },
             });
             return;
           }
@@ -58,7 +63,11 @@ export function OtpVerificationForm({
             result.error.code === "invalid-input" ||
               result.error.code === "unauthorized"
               ? copy.invalidCode
-              : copy.unavailable,
+              : result.error.code === "rate-limited"
+                ? copy.rateLimited
+                : result.error.code === "session-failed"
+                  ? copy.sessionFailed
+                  : copy.unavailable,
           );
           return;
         }
@@ -70,6 +79,8 @@ export function OtpVerificationForm({
         router.replace({ pathname: "/register", query: { returnTo } });
       } catch {
         setError(copy.unavailable);
+      } finally {
+        inFlight.current = false;
       }
     });
   };

@@ -45,5 +45,5 @@ export default async function RegisterPage({
     });
   }
 
-  return <CompleteProfileScreen locale={locale} returnTo={returnTo} />;
+  return <CompleteProfileScreen locale={locale} returnTo={returnTo} phone={user.phone} />;
 }

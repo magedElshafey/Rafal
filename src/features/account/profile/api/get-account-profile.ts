@@ -9,7 +9,7 @@ export async function getAccountProfile(): Promise<AccountProfile> {
   return {
     firstName: user.firstName,
     lastName: user.lastName,
-    email: user.email,
+    email: user.email ?? "",
     phone: user.phone ?? "",
   };
 }

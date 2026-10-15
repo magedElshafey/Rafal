@@ -34,7 +34,7 @@ Relevant storefront/customer capabilities include:
 - gift-recipient flow;
 - coupons;
 - gift wrapping;
-- passwordless email + OTP authentication;
+- passwordless Saudi phone + OTP authentication;
 - customer profile and addresses;
 - order history/tracking;
 - guest order lookup;
@@ -75,12 +75,13 @@ Login is not a prerequisite for purchase.
 ### Authentication
 Customer authentication is passwordless:
 
-1. enter email;
-2. verify OTP sent by email;
-3. existing account → login;
-4. new email → collect registration profile data.
+1. enter a Saudi phone number;
+2. verify OTP sent to that phone;
+3. establish the existing secure session;
+4. route using the backend profile-completion flag.
 
-Phone number is profile/contact data and is not the primary authentication identity.
+Approved 2026-10-15 migration: phone is the authentication identity; email is
+nullable, editable profile data. See `ARCHITECTURE.md` for transport and session details.
 
 ### Location and warehouse
 The user's selected city/location affects the responsible warehouse and therefore storefront availability.

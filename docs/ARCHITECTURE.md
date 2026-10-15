@@ -275,7 +275,50 @@ Do not choose persistence rules from the frontend alone. The implementation must
 
 ### Auth state
 
-Authentication uses email + OTP and no password.
+Authentication uses Saudi phone + OTP and no password (approved migration,
+2026-10-15). `SaudiMobileField` and `normalizeSaudiMobile` accept the existing
+Saudi formats and transport the canonical `+9665XXXXXXXX` identity. Email is
+nullable, editable profile data, never a session/guard requirement.
+
+The existing `/login`, `/login/verify`, and `/register` routes and Server Action
+boundary remain. OTP requests use `POST /auth/phone/otp/request` with exactly
+`{ phone }`; verification uses `POST /auth/phone/otp/verify` with exactly
+`{ phone, otp }`. Both explicitly disable retries and require boolean success.
+The runtime parser accepts nullable email/first/last names and requires user,
+token, and boolean `data.profile_complete`. That top-level completion flag is
+the post-verification routing authority, independent of the nested user flag.
+
+Token ownership is unchanged: the server stores the token in the existing
+HttpOnly cookie (seven days, SameSite=Lax, Secure in production). The existing
+ten-minute HttpOnly OTP handoff now stores normalized phone instead of email;
+legacy pending-email cookies are no longer read. No phone, OTP, or token enters
+URLs, browser persistent storage, or logs. Session persistence completes before
+the action reports success. Synchronous form guards prevent duplicate requests;
+429, validation, service, and session-persistence failures have safe feedback.
+
+Incomplete profiles go to `/register`; completed profiles retain the existing
+Cart merge/recovery flow before the validated intended destination, with Home
+as fallback. Return URLs reject external/protocol-relative URLs, backslashes,
+control characters, malformed escapes, and normalized protocol-relative paths.
+Complete Profile still collects names and consent, with the verified phone
+visible/read-only and no new email requirement. Profile mutations resolve the
+phone from the authenticated user on the server; browser edits cannot replace it.
+Complete Profile and Edit Profile actions pass their validated locale into
+`getCurrentUser(locale)`. Its no-argument fallback is for route rendering:
+`getLocale()` reaches `next/root-params` through the i18n request configuration,
+which Next.js rejects during Server Actions (E1014), before an upstream read.
+Edit Profile shows read-only phone and editable email. Changed email uses the
+confirmed `email` multipart field on the existing endpoint; unchanged email is
+omitted. Non-empty email uses the existing trim/lowercase, simple syntax, and
+254-character conventions. Null email renders as an empty field.
+
+Contract debts: the existing six-digit OTP UI remains, but the phone contract
+does not explicitly confirm OTP length/expiry/resend policy. Confirm backend
+email clearing/nullability and uniqueness rules; blank edits are submitted as
+empty multipart strings and backend rejection remains a safe field error.
+No email requirement, verification flow, international phone support, or resend
+endpoint is inferred. The supplied task and follow-up confirmation are the API
+evidence; no live OTP requests or browser QA were performed.
 
 Frontend authorization state must reflect server/backend identity. Do not treat client storage as an authentication authority.
 

@@ -37,8 +37,8 @@ function parseUser(value: unknown, path: string): AuthUserDto {
     id: positiveInteger(source.id, `${path}.id`),
     first_name: parseNullableString(source.first_name, `${path}.first_name`),
     last_name: parseNullableString(source.last_name, `${path}.last_name`),
-    email: parseNonEmptyString(source.email, `${path}.email`),
-    phone: parseNullableString(source.phone, `${path}.phone`),
+    email: parseNullableString(source.email, `${path}.email`),
+    phone: parseNonEmptyString(source.phone, `${path}.phone`),
     profile_complete: parseBoolean(
       source.profile_complete,
       `${path}.profile_complete`,
@@ -65,12 +65,6 @@ export function parseVerifyOtpResponse(value: unknown): VerifyOtpResponseDto {
     data.profile_complete,
     "response.data.profile_complete",
   );
-  if (profileComplete !== user.profile_complete) {
-    throw new AuthContractError(
-      "response.data.profile_complete",
-      "the same value as response.data.user.profile_complete",
-    );
-  }
   return {
     success: parseBoolean(source.success, "response.success"),
     message: parseString(source.message, "response.message"),

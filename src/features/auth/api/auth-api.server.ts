@@ -15,6 +15,7 @@ import {
   parseVerifyOtpResponse,
 } from "@/features/auth/api/parse-auth-dto";
 import { serverApi } from "@/lib/api/server-api";
+import { ApiError } from "@/lib/api/api-error";
 
 function authHeaders(locale: Locale, accessToken?: string): HeadersInit {
   return {
@@ -24,13 +25,14 @@ function authHeaders(locale: Locale, accessToken?: string): HeadersInit {
 }
 
 function buildProfileFormData(
-  body: Pick<CompleteProfileDto, "first_name" | "last_name" | "phone">,
+  body: Pick<CompleteProfileDto, "first_name" | "last_name" | "phone"> & { email?: string },
   termsAccepted: boolean,
 ): FormData {
   const formData = new FormData();
   formData.append("first_name", body.first_name);
   formData.append("last_name", body.last_name);
   formData.append("phone", body.phone);
+  if (body.email !== undefined) formData.append("email", body.email);
   formData.append("terms_accepted", termsAccepted ? "1" : "0");
   return formData;
 }
@@ -41,6 +43,7 @@ export async function requestOtpDto(locale: Locale, body: RequestOtpDto) {
     method: "POST",
     headers: authHeaders(locale),
     body,
+    retry: false,
   });
   return parseAuthMessageResponse(payload);
 }
@@ -51,6 +54,7 @@ export async function verifyOtpDto(locale: Locale, body: VerifyOtpDto) {
     method: "POST",
     headers: authHeaders(locale),
     body,
+    retry: false,
   });
   return parseVerifyOtpResponse(payload);
 }
@@ -60,13 +64,49 @@ export async function completeProfileDto(
   accessToken: string,
   body: CompleteProfileDto,
 ) {
-  const payload = await serverApi.request<unknown, FormData>({
-    path: authEndpoints.completeProfile,
-    method: "POST",
-    headers: authHeaders(locale, accessToken),
-    body: buildProfileFormData(body, body.terms_accepted),
+  // Temporary integration diagnostics: never include values, errors, or bodies.
+  console.info("[auth:complete-profile]", { stage: "request" });
+  let payload: unknown;
+  try {
+    payload = await serverApi.request<unknown, FormData>({
+      path: authEndpoints.completeProfile,
+      method: "POST",
+      headers: authHeaders(locale, accessToken),
+      body: buildProfileFormData(body, body.terms_accepted),
+      retry: false,
+    });
+  } catch (error) {
+    console.error("[auth:complete-profile]", {
+      stage: "request",
+      upstreamStatus: error instanceof ApiError ? error.status : null,
+      category: error instanceof ApiError ? "http" : "transport-or-response-read",
+    });
+    throw error;
+  }
+
+  const response = typeof payload === "object" && payload !== null
+    ? payload as Record<string, unknown>
+    : null;
+  const data = typeof response?.data === "object" && response.data !== null
+    ? response.data as Record<string, unknown>
+    : null;
+  console.info("[auth:complete-profile]", {
+    stage: "response-parse",
+    // The shared client exposes error statuses, not successful response statuses.
+    upstreamStatus: null,
+    successPresent: response !== null && Object.hasOwn(response, "success"),
+    dataPresent: response !== null && Object.hasOwn(response, "data"),
+    profileCompleteIsBoolean: typeof data?.profile_complete === "boolean",
   });
-  return parseAuthUserResponse(payload);
+  try {
+    return parseAuthUserResponse(payload);
+  } catch (error) {
+    console.error("[auth:complete-profile]", {
+      stage: "response-parse",
+      category: "invalid-contract",
+    });
+    throw error;
+  }
 }
 
 export async function updateProfileDto(
@@ -79,6 +119,7 @@ export async function updateProfileDto(
     method: "POST",
     headers: authHeaders(locale, accessToken),
     body: buildProfileFormData(body, true),
+    retry: false,
   });
   return parseAuthUserResponse(payload);
 }

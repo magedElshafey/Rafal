@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/components/ui/input";
+import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 import { requestOtp } from "@/features/auth/actions/request-otp";
 import { useRouter } from "@/i18n/navigation";
 
@@ -13,8 +14,9 @@ export type EmailEntryFormCopy = {
   placeholder: string;
   submit: string;
   submitting: string;
-  invalidEmail: string;
+  invalidPhone: string;
   unavailable: string;
+  rateLimited: string;
 };
 
 type EmailEntryFormProps = {
@@ -23,38 +25,45 @@ type EmailEntryFormProps = {
   returnTo: string;
 };
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const inFlight = useRef(false);
+  const [formError, setFormError] = useState<string>();
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!EMAIL_PATTERN.test(normalizedEmail)) {
-      setError(copy.invalidEmail);
+    if (inFlight.current) return;
+    const normalizedPhone = normalizeSaudiMobile(phone);
+    if (!normalizedPhone) {
+      setError(copy.invalidPhone);
       return;
     }
 
     setError(undefined);
+    setFormError(undefined);
+    inFlight.current = true;
     startTransition(async () => {
       try {
-        const result = await requestOtp({ email: normalizedEmail }, locale);
+        const result = await requestOtp({ phone: normalizedPhone }, locale);
         if (!result.ok) {
-          setError(
-            result.error.code === "invalid-input"
-              ? copy.invalidEmail
-              : copy.unavailable,
-          );
+          if (result.error.code === "invalid-input") {
+            setError(copy.invalidPhone);
+          } else {
+            setFormError(
+              result.error.code === "rate-limited" ? copy.rateLimited : copy.unavailable,
+            );
+          }
           return;
         }
 
         router.replace({ pathname: "/login/verify", query: { returnTo } });
       } catch {
-        setError(copy.unavailable);
+        setFormError(copy.unavailable);
+      } finally {
+        inFlight.current = false;
       }
     });
   };
@@ -62,21 +71,23 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
   return (
     <form className="flex flex-col gap-5" noValidate onSubmit={handleSubmit}>
       <fieldset disabled={pending} className="contents">
-        <InputField
-          id="auth-email"
-          name="email"
-          type="email"
-          autoComplete="email"
+        <SaudiMobileField
+          id="auth-phone"
+          name="phone"
           required
           label={copy.label}
           placeholder={copy.placeholder}
-          value={email}
+          value={phone}
           error={error}
           onChange={(event) => {
-            setEmail(event.target.value);
+            setPhone(event.target.value);
+            setFormError(undefined);
             setError(undefined);
           }}
         />
+        {formError ? (
+          <p role="alert" className="type-caption text-destructive">{formError}</p>
+        ) : null}
         <Button
           type="submit"
           size="lg"

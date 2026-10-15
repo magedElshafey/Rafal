@@ -8,11 +8,12 @@ import {
 import { verifyOtpDto } from "@/features/auth/api/auth-api.server";
 import { mapAuthUser } from "@/features/auth/api/parse-auth-dto";
 import {
-  clearPendingOtpEmail,
-  getPendingOtpEmail,
+  clearPendingOtpPhone,
+  getPendingOtpPhone,
   setAccessToken,
 } from "@/features/auth/server/auth-session";
 import type { AuthenticatedActionResult } from "@/features/auth/types/auth.types";
+import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 export async function verifyOtp(
   input: unknown,
@@ -27,23 +28,27 @@ export async function verifyOtp(
     return { ok: false, error: { code: "invalid-input" } };
   }
 
-  const email = await getPendingOtpEmail();
-  if (!email) {
-    return { ok: false, error: { code: "pending-email-missing" } };
+  const phone = await getPendingOtpPhone();
+  if (!phone) {
+    return { ok: false, error: { code: "pending-phone-missing" } };
   }
 
   try {
-    const response = await verifyOtpDto(locale, { email, otp: code });
-    if (!response.success) {
+    const response = await verifyOtpDto(locale, { phone, otp: code });
+    if (!response.success || normalizeSaudiMobile(response.data.user.phone) !== phone) {
       return { ok: false, error: { code: "service-unavailable" } };
     }
-    await setAccessToken(response.data.token);
-    await clearPendingOtpEmail();
+    try {
+      await setAccessToken(response.data.token);
+      await clearPendingOtpPhone();
+    } catch {
+      return { ok: false, error: { code: "session-failed" } };
+    }
     const user = mapAuthUser(response.data.user);
     return {
       ok: true,
       user,
-      profileComplete: user.profileComplete,
+      profileComplete: response.data.profile_complete,
     };
   } catch (error) {
     return mapPublicAuthActionError(error);

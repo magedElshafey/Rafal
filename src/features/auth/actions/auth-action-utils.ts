@@ -14,6 +14,9 @@ export function parseAuthLocale(value: unknown): Locale | null {
 }
 
 export function mapPublicAuthActionError(error: unknown): AuthActionFailure {
+  if (error instanceof ApiError && error.status === 429) {
+    return { ok: false, error: { code: "rate-limited" } };
+  }
   if (error instanceof ApiError && error.status === 401) {
     return { ok: false, error: { code: "unauthorized" } };
   }
@@ -26,6 +29,9 @@ export function mapPublicAuthActionError(error: unknown): AuthActionFailure {
 export async function mapProtectedAuthActionError(
   error: unknown,
 ): Promise<AuthActionFailure> {
+  if (error instanceof ApiError && error.status === 403) {
+    return { ok: false, error: { code: "unauthorized" } };
+  }
   if (error instanceof ApiError && error.status === 401) {
     await clearAccessToken();
     return { ok: false, error: { code: "unauthorized" } };

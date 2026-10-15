@@ -13,12 +13,13 @@ import { redirect } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
 
 export const getCurrentUser = cache(
-  async (): Promise<AuthenticatedUser | null> => {
+  async (requestLocale?: Locale): Promise<AuthenticatedUser | null> => {
     const accessToken = await getAccessToken();
     if (!accessToken) return null;
 
     try {
-      const locale = await getLocale();
+      // Actions already validate locale; route-only root params are unavailable there.
+      const locale = requestLocale ?? (await getLocale());
       const response = await getMeDto(locale, accessToken);
       return response.success ? mapAuthUser(response.data) : null;
     } catch (error) {

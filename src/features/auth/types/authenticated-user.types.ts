@@ -2,8 +2,8 @@ export type AuthenticatedUser = {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
-  phone: string | null;
+  email: string | null;
+  phone: string;
   profileComplete: boolean;
   createdAt: string;
 };

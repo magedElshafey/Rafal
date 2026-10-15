@@ -4,7 +4,7 @@ import { hasLocale } from "next-intl";
 
 import {
   clearAccessToken,
-  clearPendingOtpEmail,
+  clearPendingOtpPhone,
 } from "@/features/auth/server/auth-session";
 import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -16,7 +16,7 @@ export async function logoutAccount(formData: FormData): Promise<never> {
   }
 
   await clearAccessToken();
-  await clearPendingOtpEmail();
+  await clearPendingOtpPhone();
 
   return redirect({ href: "/login", locale });
 }

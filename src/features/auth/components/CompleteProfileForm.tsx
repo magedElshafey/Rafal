@@ -10,7 +10,7 @@ import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { completeProfile } from "@/features/auth/actions/complete-profile";
 import { usePostAuthCartMerge } from "@/features/auth/hooks/use-post-auth-cart-merge";
 import { useRouter } from "@/i18n/navigation";
-import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
+import { formatSaudiMobileForInput, isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 
 export type CompleteProfileFormCopy = {
@@ -28,12 +28,14 @@ export type CompleteProfileFormCopy = {
   invalidPhone: string;
   termsRequired: string;
   unavailable: string;
+  rateLimited: string;
 };
 
 type CompleteProfileFormProps = {
   copy: CompleteProfileFormCopy;
   locale: Locale;
   returnTo: string;
+  phone: string;
 };
 
 type ProfileValues = { firstName: string; lastName: string; phone: string };
@@ -45,12 +47,13 @@ export function CompleteProfileForm({
   copy,
   locale,
   returnTo,
+  phone,
 }: CompleteProfileFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<ProfileValues>({
     firstName: "",
     lastName: "",
-    phone: "",
+    phone: formatSaudiMobileForInput(phone),
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState<ProfileErrors>({});
@@ -111,7 +114,9 @@ export function CompleteProfileForm({
           setFormError(
             result.error.code === "invalid-input"
               ? copy.invalidField
-              : copy.unavailable,
+              : result.error.code === "rate-limited"
+                ? copy.rateLimited
+                : copy.unavailable,
           );
           return;
         }
@@ -155,7 +160,7 @@ export function CompleteProfileForm({
           placeholder={copy.phonePlaceholder}
           value={values.phone}
           error={errors.phone}
-          onChange={(event) => updateValue("phone", event.target.value)}
+          readOnly
         />
 
         <div className="mt-1">

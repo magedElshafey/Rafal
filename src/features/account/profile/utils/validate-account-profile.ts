@@ -16,5 +16,10 @@ export function validateAccountProfile(
   if (!phone) errors.phone = "required";
   else if (!isValidSaudiMobile(phone)) errors.phone = "phone";
 
+  const email = profile.email.trim();
+  if (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    errors.email = "invalid";
+  }
+
   return errors;
 }

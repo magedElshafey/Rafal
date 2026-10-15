@@ -28,9 +28,9 @@ export async function EmailEntryScreen({
       </div>
       <header className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-foreground">
-          {t("email.title")}
+          {t("phone.title")}
         </h1>
-        <p className="mt-1 text-sm text-gray-600">{t("email.description")}</p>
+        <p className="mt-1 text-sm text-gray-600">{t("phone.description")}</p>
       </header>
 
       {notice ? (
@@ -42,11 +42,12 @@ export async function EmailEntryScreen({
         locale={locale}
         returnTo={returnTo}
         copy={{
-          label: t("email.label"),
-          placeholder: t("email.placeholder"),
-          submit: t("email.continue"),
-          submitting: t("email.submitting"),
-          invalidEmail: t("errors.invalidEmail"),
+          label: t("phone.label"),
+          placeholder: t("phone.placeholder"),
+          submit: t("phone.continue"),
+          submitting: t("phone.submitting"),
+          invalidPhone: t("errors.invalidPhone"),
+          rateLimited: t("errors.rateLimited"),
           unavailable: t("errors.serviceUnavailable"),
         }}
       />

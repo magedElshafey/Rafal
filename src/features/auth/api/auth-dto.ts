@@ -1,6 +1,6 @@
 export const authEndpoints = {
-  requestOtp: "/auth/otp/request",
-  verifyOtp: "/auth/otp/verify",
+  requestOtp: "/auth/phone/otp/request",
+  verifyOtp: "/auth/phone/otp/verify",
   completeProfile: "/auth/complete-profile",
   me: "/auth/me",
 } as const;
@@ -9,14 +9,14 @@ export type AuthUserDto = {
   id: number;
   first_name: string | null;
   last_name: string | null;
-  email: string;
-  phone: string | null;
+  email: string | null;
+  phone: string;
   profile_complete: boolean;
   created_at: string;
 };
 
-export type RequestOtpDto = { email: string };
-export type VerifyOtpDto = { email: string; otp: string };
+export type RequestOtpDto = { phone: string };
+export type VerifyOtpDto = { phone: string; otp: string };
 export type CompleteProfileDto = {
   first_name: string;
   last_name: string;
@@ -24,6 +24,7 @@ export type CompleteProfileDto = {
   terms_accepted: boolean;
 };
 export type UpdateProfileDto = {
+  email?: string;
   first_name: string;
   last_name: string;
   phone: string;
