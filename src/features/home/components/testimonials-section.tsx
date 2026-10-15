@@ -29,16 +29,18 @@ export async function TestimonialsSection({
   return (
     <Section spacing="none" aria-labelledby="testimonials-title">
       <Container>
-        <h2
-          id="testimonials-title"
-          className="text-h3 font-medium text-foreground"
-        >
-          {t("title")}
-        </h2>
-        <AppCarousel className="mt-5" deferUntilNearViewport direction={direction} label={t("carouselLabel")}>
-          <div className="mb-3 hidden justify-end gap-3 p-1 md:flex">
-            <AppCarouselPrevious label={t("previous")} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
-            <AppCarouselNext label={t("next")} size="md" variant="outline" className="duration-[var(--motion-duration-fast)]" />
+        <AppCarousel deferUntilNearViewport direction={direction} label={t("carouselLabel")}>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <h2
+              id="testimonials-title"
+              className="text-h3 font-medium text-foreground"
+            >
+              {t("title")}
+            </h2>
+            <div className="flex shrink-0 gap-3 p-1">
+              <AppCarouselPrevious label={t("previous")} size="md" variant="outline" />
+              <AppCarouselNext label={t("next")} size="md" variant="outline" />
+            </div>
           </div>
           <AppCarouselViewport>
             <AppCarouselContent className="-ms-4">

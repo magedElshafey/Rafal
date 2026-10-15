@@ -513,15 +513,10 @@ export function ProductPurchasePanel({
       <div>
         <h1
           id="product-title"
-          className="text-h1 break-words font-bold text-gray-900"
+          className="max-w-prose text-h2 break-words font-bold text-gray-900 sm:text-h1"
         >
           {product.name}
         </h1>
-        {variant ? (
-          <p className="mt-2 type-body-sm text-gray-400">
-            {formatProductMessage(copy.skuTemplate, { sku: variant.sku })}
-          </p>
-        ) : null}
         {product.ratingSummary ? (
           <ProductHeaderRating
             summary={product.ratingSummary}
@@ -529,6 +524,11 @@ export function ProductPurchasePanel({
             ratingLabelTemplate={copy.ratingLabelTemplate}
             ratingSummaryTemplate={copy.ratingSummaryTemplate}
           />
+        ) : null}
+        {variant ? (
+          <p className="mt-2 break-words type-body text-muted-foreground">
+            {formatProductMessage(copy.skuTemplate, { sku: `\u2068${variant.sku}\u2069` })}
+          </p>
         ) : null}
       </div>
 

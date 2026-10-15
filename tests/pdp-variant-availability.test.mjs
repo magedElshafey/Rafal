@@ -369,7 +369,7 @@ test("SKU below the Product name remains, while default variants produce no SKU 
   const product = productWithAttributes([{}]);
   const { markup, inputs } = await renderOptions(product, 6, {}, true);
   assert.equal(inputs.length, 0);
-  assert.match(markup, /<h1[^>]*>Product<\/h1><p[^>]*>SKU INTERNAL-SKU-0<\/p>/);
+  assert.match(markup, /<h1[^>]*>Product<\/h1><p[^>]*>SKU \u2068INTERNAL-SKU-0\u2069<\/p>/);
   assert.equal((markup.match(/INTERNAL-SKU-0/g) ?? []).length, 1);
 });
 

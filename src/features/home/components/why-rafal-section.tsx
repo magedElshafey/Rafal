@@ -20,18 +20,18 @@ export async function WhyRafalSection({
         <Container>
           <h2
             id="why-rafal-title"
-            className="text-h3 font-medium text-foreground"
+            className="text-h2 font-bold text-foreground"
           >
             {t("title")}
           </h2>
-          <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <li
                 key={item.key}
-                className="flex flex-col items-center text-center"
+                className="flex flex-col items-start gap-3 rounded-lg border border-border bg-gray-50 p-6 text-start transition-colors duration-[var(--motion-duration-fast)] hover:border-gold-200 motion-reduce:transition-none"
               >
                 {item.iconUrl ? (
-                  <span className="flex size-12 items-center justify-center rounded-full bg-gold-50 text-gold-500">
+                  <span className="flex size-10 items-center justify-center rounded-md bg-gold-50 text-gold-500">
                     <Image
                       src={item.iconUrl}
                       alt=""
@@ -42,12 +42,12 @@ export async function WhyRafalSection({
                   </span>
                 ) : null}
                 {item.title ? (
-                  <h3 className="mt-3 type-body font-bold text-foreground">
+                  <h3 className="text-h4 font-bold text-foreground">
                     {item.title}
                   </h3>
                 ) : null}
                 {item.subtitle ? (
-                  <p className="mt-1 max-w-56 type-body-sm text-muted-foreground">
+                  <p className="type-body leading-relaxed text-muted-foreground">
                     {item.subtitle}
                   </p>
                 ) : null}

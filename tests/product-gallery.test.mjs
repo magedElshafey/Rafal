@@ -263,7 +263,7 @@ test("viewer is opt-in; default dialog and bottom sheet retain their chrome and 
   const viewer = markup("image-viewer");
   assert.match(viewer, /bg-gray-1000\/80/);
   assert.match(viewer, /h-dvh/);
-  assert.match(viewer, /size-12 rounded-full/);
+  assert.match(viewer, /after:min-h-11 after:min-w-11/);
   assert.match(viewer, /data-surface="modal"/);
   assert.match(viewer, /<h2[^>]*class="sr-only"[^>]*>Named dialog<\/h2>/);
   // This installed Radix version registers titlePresent in a layout effect,

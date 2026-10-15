@@ -40,7 +40,7 @@ type ProductGalleryProps = {
 // PDP Container: 2rem mobile / 3rem tablet padding, 7.5rem desktop
 // padding, 1440px cap; the gallery occupies 44% of its content width.
 const PRIMARY_SIZES =
-  "(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1439px) calc(44vw - 3.3rem), 581px";
+  "(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 512px, (max-width: 1279px) calc(44vw - 3.3rem), 512px";
 
 export function ProductGallery({
   copy,
@@ -142,13 +142,13 @@ export function ProductGallery({
       total: images.length,
     });
   const navigation = (announce: boolean) => canNavigate ? (
-    <div className="mt-4 flex items-center justify-center gap-4">
+    <div className="flex min-h-12 items-center justify-between gap-3 px-1 pt-2">
       <IconButton
         data-gallery-control
         aria-label={copy.previousImage}
         onClick={() => selectRelativeImage(-1)}
-        size="lg"
-        variant="outline"
+        size="md"
+        variant="media"
       >
         <PreviousIcon aria-hidden="true" />
       </IconButton>
@@ -157,14 +157,15 @@ export function ProductGallery({
         aria-atomic="true"
         className="min-w-20 text-center type-body-sm text-gray-600"
       >
-        {position(selectedImageIndex)}
+        <span className="sr-only">{position(selectedImageIndex)}</span>
+        <bdi dir="ltr" aria-hidden="true">{selectedImageIndex + 1} / {images.length}</bdi>
       </p>
       <IconButton
         data-gallery-control
         aria-label={copy.nextImage}
         onClick={() => selectRelativeImage(1)}
-        size="lg"
-        variant="outline"
+        size="md"
+        variant="media"
       >
         <NextIcon aria-hidden="true" />
       </IconButton>
@@ -176,7 +177,7 @@ export function ProductGallery({
       ref={galleryRef}
       dir={direction}
       tabIndex={-1}
-      className="min-w-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="mx-auto w-full min-w-0 max-w-lg rounded-lg border border-border bg-gray-50 p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4 lg:ms-0"
       aria-label={productName}
       onKeyDown={handleKeyDown}
     >
@@ -199,22 +200,22 @@ export function ProductGallery({
               fit="contain"
               sizes={PRIMARY_SIZES}
               preload={selectedImage.src === initialImageSrc}
-              frameClassName="rounded-lg"
+              frameClassName="rounded-md bg-gray-0"
             />
-            <span className="absolute end-4 bottom-4 inline-flex size-11 items-center justify-center rounded-full bg-gray-0/90 text-gray-900 shadow-[var(--shadow-product-card-wishlist)] transition-opacity group-hover:opacity-90 motion-reduce:transition-none">
-              <EyeIcon aria-hidden="true" className="size-5" />
+            <span className="absolute end-3 bottom-3 inline-flex size-10 items-center justify-center rounded-full border border-border bg-gray-0 text-gray-700 transition-colors duration-[var(--motion-duration-fast)] group-hover:border-gold-500 motion-reduce:transition-none">
+              <EyeIcon aria-hidden="true" className="size-4" />
             </span>
           </button>
           {navigation(false)}
           {canNavigate ? (
             <ul
               ref={thumbnailsRef}
-              className="mt-4 flex max-w-full gap-3 overflow-x-auto overscroll-x-contain p-1"
+              className="mt-2 flex max-w-full gap-3 overflow-x-auto overscroll-x-contain p-1"
             >
               {images.map((image, index) => {
                 const isSelected = image.id === selectedImage.id;
                 return (
-                  <li key={image.id} className="w-22 shrink-0 sm:w-26 lg:w-30">
+                  <li key={image.id} className="w-16 shrink-0 sm:w-20">
                     <button
                       type="button"
                       data-gallery-control
@@ -229,7 +230,7 @@ export function ProductGallery({
                         alt=""
                         aspectRatio="1 / 1"
                         fit="contain"
-                        sizes="(max-width: 639px) 84px, (max-width: 1023px) 100px, 116px"
+                        sizes="(max-width: 639px) 60px, 76px"
                         loading="lazy"
                       />
                       <span
@@ -283,7 +284,7 @@ export function ProductGallery({
               data-gallery-control
               tabIndex={0}
               aria-label={position(selectedImageIndex)}
-              className="relative mt-4 min-h-0 flex-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="relative mt-2 min-h-0 flex-1 rounded-lg pb-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-16 sm:pb-0"
             >
               <AppImage
                 key={selectedImage.src}
@@ -291,8 +292,8 @@ export function ProductGallery({
                 alt={selectedImage.alt}
                 aspectRatio="auto"
                 fit="contain"
-                sizes="(max-width: 639px) calc(100vw - 2rem), calc(100vw - 4rem)"
-                frameClassName="h-full w-full rounded-lg"
+                sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1279px) calc(100vw - 14rem), 1120px"
+                frameClassName="h-full w-full rounded-md bg-transparent"
               />
               {canNavigate ? (
                 <>
@@ -300,9 +301,9 @@ export function ProductGallery({
                     data-gallery-control
                     aria-label={copy.previousImage}
                     onClick={() => selectRelativeImage(-1)}
-                    size="lg"
-                    variant="outline"
-                    className="absolute start-2 top-1/2 -translate-y-1/2 border-gray-300 bg-gray-0"
+                    size="md"
+                    variant="media"
+                    className="absolute start-1 bottom-0 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2"
                   >
                     <PreviousIcon aria-hidden="true" />
                   </IconButton>
@@ -310,9 +311,9 @@ export function ProductGallery({
                     data-gallery-control
                     aria-label={copy.nextImage}
                     onClick={() => selectRelativeImage(1)}
-                    size="lg"
-                    variant="outline"
-                    className="absolute end-2 top-1/2 -translate-y-1/2 border-gray-300 bg-gray-0"
+                    size="md"
+                    variant="media"
+                    className="absolute end-1 bottom-0 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2"
                   >
                     <NextIcon aria-hidden="true" />
                   </IconButton>

@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useRef, type ReactNode, type RefObject } from "react";
 
 import { Button } from "@/components/ui/button";
+import { iconButtonVariants } from "@/components/ui/icon-button";
 import { XIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
@@ -99,7 +100,7 @@ export function RafalModal({
           className={cn(
             "motion-surface fixed z-50 outline-none",
             isImageViewer
-              ? "inset-0 h-dvh overflow-hidden bg-gray-100 pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] sm:inset-4 sm:h-[calc(100dvh-2rem)] sm:rounded-lg"
+              ? "inset-0 h-dvh overflow-hidden bg-gray-900 pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] sm:inset-x-8 sm:inset-y-[6dvh] sm:mx-auto sm:h-[88dvh] sm:max-w-7xl sm:rounded-lg"
               : cn(
                   "inset-x-0 bottom-0 max-h-[calc(100dvh-env(safe-area-inset-top))] overflow-y-auto rounded-t-xl bg-gray-0 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-modal)]",
                   variant === "bottom-sheet"
@@ -115,14 +116,14 @@ export function RafalModal({
               className={cn(
                 "absolute inline-flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 isImageViewer
-                  ? "top-[max(1rem,env(safe-area-inset-top))] end-[max(1rem,env(safe-area-inset-right))] z-10 size-12 rounded-full border border-gray-200 bg-gray-0 text-gray-1000 transition-opacity hover:opacity-90 motion-reduce:transition-none rtl:end-[max(1rem,env(safe-area-inset-left))]"
+                  ? cn(iconButtonVariants({ size: "md", variant: "media" }), "absolute top-[max(1rem,env(safe-area-inset-top))] end-[max(1rem,env(safe-area-inset-right))] z-10 rtl:end-[max(1rem,env(safe-area-inset-left))]")
                   : "top-4 end-4 size-8 rounded-md text-gray-600 hover:bg-gray-100",
               )}
             >
               <XIcon
                 aria-hidden="true"
                 className={
-                  isImageViewer ? "size-[var(--icon-button-art-lg)]" : "size-4"
+                  "size-4"
                 }
               />
             </DialogPrimitive.Close>

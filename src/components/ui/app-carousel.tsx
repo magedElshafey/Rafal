@@ -377,6 +377,7 @@ function AppCarouselPrevious({
   children,
   disabled,
   label,
+  variant = "outline",
   ...props
 }: CarouselButtonProps) {
   const { canScrollPrevious, direction, scrollPrevious } = useAppCarousel();
@@ -385,6 +386,7 @@ function AppCarouselPrevious({
   return (
     <IconButton
       {...props}
+      variant={variant === "outline" ? "media" : variant}
       aria-label={label}
       disabled={disabled || !canScrollPrevious}
       onClick={scrollPrevious}
@@ -398,6 +400,7 @@ function AppCarouselNext({
   children,
   disabled,
   label,
+  variant = "outline",
   ...props
 }: CarouselButtonProps) {
   const { canScrollNext, direction, scrollNext } = useAppCarousel();
@@ -406,6 +409,7 @@ function AppCarouselNext({
   return (
     <IconButton
       {...props}
+      variant={variant === "outline" ? "media" : variant}
       aria-label={label}
       disabled={disabled || !canScrollNext}
       onClick={scrollNext}

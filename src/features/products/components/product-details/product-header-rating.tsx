@@ -18,8 +18,9 @@ export function ProductHeaderRating({
   const numbers = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
   const average = summary.count === 0 ? 0 : summary.average;
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-2">
+    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
       <Rating
+        size="detail"
         value={average}
         label={formatProductMessage(ratingLabelTemplate, {
           value: numbers.format(average),
@@ -27,7 +28,7 @@ export function ProductHeaderRating({
       />
       <a
         href="#reviews"
-        className="rounded-sm type-body-sm text-gray-500 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="inline-flex min-h-11 items-center rounded-sm type-body text-gray-700 underline decoration-gray-300 underline-offset-4 hover:text-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
         {formatProductMessage(ratingSummaryTemplate, {
           average: numbers.format(average),

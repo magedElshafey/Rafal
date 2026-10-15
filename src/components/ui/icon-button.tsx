@@ -8,6 +8,8 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
+        media:
+          "border border-border bg-gray-0 text-gray-700 transition-colors duration-[var(--motion-duration-fast)] hover:border-gold-500 hover:bg-gold-50 hover:text-gold-700 hover:opacity-100 disabled:border-border disabled:bg-gray-50 disabled:text-gray-400",
         filled:
           "bg-gray-1000 text-gray-0 disabled:bg-gray-100 disabled:text-gray-400",
         outline:

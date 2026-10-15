@@ -5,9 +5,10 @@ export interface RatingProps {
   value: number;
   label: string;
   className?: string;
+  size?: "card" | "detail";
 }
 
-export function Rating({ className, label, value }: RatingProps) {
+export function Rating({ className, label, value, size = "card" }: RatingProps) {
   const normalizedValue = Number.isFinite(value)
     ? Math.max(0, Math.min(5, value))
     : 0;
@@ -19,6 +20,7 @@ export function Rating({ className, label, value }: RatingProps) {
       data-rating-value={normalizedValue}
       className={cn(
         "inline-flex w-[var(--rating-width)] justify-between",
+        size === "detail" && "[--rating-width:6rem] [--rating-star-size:1rem]",
         className,
       )}
     >
@@ -29,7 +31,7 @@ export function Rating({ className, label, value }: RatingProps) {
           <span
             key={index}
             aria-hidden="true"
-            className="relative size-[var(--rating-star-size)] shrink-0 text-gray-100"
+            className={cn("relative size-[var(--rating-star-size)] shrink-0", size === "detail" ? "text-gray-400" : "text-gray-100")}
           >
             <RatingStarIcon className="absolute inset-0 size-full" />
             {fill > 0 ? (
