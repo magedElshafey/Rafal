@@ -322,6 +322,27 @@ evidence; no live OTP requests or browser QA were performed.
 
 Frontend authorization state must reflect server/backend identity. Do not treat client storage as an authentication authority.
 
+Profile lifecycle hardening (2026-10-16): `/auth/me.profile_complete`, already
+required by the Auth parser and retained as `profileComplete`, is authoritative
+for navigation. `getCurrentUser` and `requireUser` retain authentication-only
+semantics so incomplete customers can complete their profile. The storefront
+route-group server layout calls `requireProfileCompletion` before rendering its
+shell: guests and completed customers proceed; incomplete customers return to
+localized `/register`. Existing Login, Verify, Register, and Cart Recovery page
+guards retain their lifecycle routing. The existing localization proxy overwrites
+`x-rafal-request-path` with the request pathname solely to preserve the intended
+destination; it makes no auth decisions. Query strings are deliberately not
+copied into this header. The destination still passes the safe-return helper.
+
+OTP and logout Server Actions already mutate HttpOnly cookies, which invalidate
+the Next.js Router Cache. Confirmed Complete Profile success now revalidates the
+root layout because it changes backend state without changing a session cookie.
+This removes cached incomplete route snapshots across locales before existing
+Cart merge/recovery continues. Failed completion does not revalidate or promote
+state. No duplicate completion cookie, client authority, history interception,
+Cart contract change, or backend authorization replacement is introduced.
+Complete Profile exposes the existing logout Server Action as a native form.
+
 Account Edit currently reuses Laravel's `POST /auth/complete-profile`
 endpoint. The live endpoint requires multipart profile fields plus
 `terms_accepted=1`; the Account Profile UI does not recollect consent, so the

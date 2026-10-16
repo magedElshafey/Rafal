@@ -1,4 +1,5 @@
 import AnnouncmentBanner from "@/components/shell/storefront/announcment-banner/AnnouncmentBanner";
+import { requireProfileCompletion } from "@/features/auth/server/profile-completion-gate";
 import Footer from "@/components/shell/storefront/footer/Footer";
 import Header from "@/components/shell/storefront/header/Header";
 import MobileBottomNavigation from "@/components/shell/storefront/mobile-navigation/MobileBottomNavigation";
@@ -22,6 +23,7 @@ export default async function StoreFontLayout({
     getTranslations("Common.headerUtility"),
     getLocale(),
   ]);
+  await requireProfileCompletion(locale);
   const categoriesPagePromise = getCategoriesPage(locale);
   const categoriesPromise = categoriesPagePromise.then(
     (page) => mapCategoryNavigation(page.items),

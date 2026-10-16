@@ -45,6 +45,7 @@ function createLoader(overrides = {}, runtimeConsole = console) {
         process,
         require: (specifier) => {
           if (specifier in overrides) return overrides[specifier];
+          if (specifier === "next/cache") return { revalidatePath() {} };
           if (specifier.startsWith("@/")) {
             return loadSource(`src/${specifier.slice(2)}`);
           }
@@ -430,4 +431,151 @@ test("Auth guard considers token and backend user with null email authenticated"
   assert.equal(result.email, null);
   assert.equal(result.phone, phone);
 });
+
+function lifecycleHarness(locale) {
+  const values = new Map(), writes = [], invalidations = [], requests = [];
+  let current = { ...user }, pathname = `/${locale}/`, completeSucceeds = false;
+  const translations = Object.assign((key) => key, { raw: () => ({}) });
+  const shellModules = [
+    "@/components/shell/storefront/announcment-banner/AnnouncmentBanner",
+    "@/components/shell/storefront/footer/Footer",
+    "@/components/shell/storefront/header/Header",
+    "@/components/shell/storefront/mobile-navigation/MobileBottomNavigation",
+    "@/components/shell/storefront/quick-acess/QuickAccessHeader",
+    "@/features/location/components/browsing-city-provider",
+    "@/features/location/components/storefront-sync-veil",
+  ];
+  const load = createLoader({
+    ...Object.fromEntries(shellModules.map((name) => [name, {}])),
+    "server-only": {},
+    react: { cache: (fn) => fn, Suspense: "suspense" },
+    "next/cache": { revalidatePath: (...args) => invalidations.push(args) },
+    "next/headers": {
+      cookies: async () => ({
+        get: (name) => ({ value: values.get(name) }),
+        set: (name, value, options) => { values.set(name, value); writes.push({ name, value, options }); },
+      }),
+      headers: async () => new Headers({ "x-rafal-request-path": pathname }),
+    },
+    "next-intl": { hasLocale: (locales, value) => locales.includes(value) },
+    "next-intl/server": { getLocale: async () => locale, getTranslations: async () => translations },
+    "@/i18n/routing": { routing: { locales: ["ar", "en"] } },
+    "@/i18n/navigation": { redirect: (route) => { throw Object.assign(new Error("redirect"), { route }); } },
+    "@/features/location/server/resolve-current-location": { resolveCurrentLocation: async () => null },
+    "@/features/categories/api/get-categories": { getCategoriesPage: async () => ({ items: [] }) },
+    "@/features/categories/utils/category-navigation": { mapCategoryNavigation: () => [] },
+    "@/features/cart/server/guest-cart-session": { getGuestCartToken: async () => "guest-cart" },
+    "@/features/auth/components/CompleteProfileScreen": { CompleteProfileScreen: "complete-profile" },
+    "@/features/auth/components/EmailEntryScreen": { EmailEntryScreen: "login" },
+    "@/features/auth/components/OtpVerificationScreen": { OtpVerificationScreen: "otp" },
+    "@/features/auth/components/PostAuthCartMergeRecovery": { PostAuthCartMergeRecovery: "merge-recovery" },
+    "@/lib/api/server-api": { serverApi: { request: async (request) => {
+      requests.push(request.path);
+      if (request.path.endsWith("/request")) return { success: true, message: "ok" };
+      if (request.path.endsWith("/verify")) return { ...envelope(current.profile_complete), data: { ...envelope(current.profile_complete).data, user: current } };
+      if (request.path === "/auth/complete-profile" && completeSucceeds) {
+        current = { ...current, first_name: "A", last_name: "B", profile_complete: true };
+      }
+      return { success: true, message: "ok", data: current };
+    } } },
+  }, { info() {}, error() {} });
+  return {
+    load, values, writes, invalidations, requests,
+    setPath: (value) => { pathname = value; },
+    complete: () => { completeSucceeds = true; },
+    existingCustomer: () => { current = { ...current, profile_complete: true }; },
+    storefront: () => load("src/app/[locale]/(storefront)/layout").default({ children: "page" }),
+    page: (name, returnTo = "/checkout") => load(`src/app/[locale]/(auth)/${name}/page`).default({
+      params: Promise.resolve({ locale }), searchParams: Promise.resolve({ returnTo }),
+    }),
+  };
+}
+
+test("locale proxy overwrites a forged destination and preserves localization without forwarding query secrets", () => {
+  const { NextRequest } = require("next/server");
+  const load = createLoader({
+    "next-intl/middleware": { __esModule: true, default: () => (request) => request },
+    "@/i18n/routing": { routing: { locales: ["ar", "en"] } },
+  });
+  for (const locale of ["ar", "en"]) {
+    const request = new NextRequest(`https://store.test/${locale}/checkout?private=value`, {
+      headers: { "x-rafal-request-path": "//evil.example" },
+    });
+    const forwarded = load("src/proxy").default(request);
+    assert.equal(forwarded.headers.get("x-rafal-request-path"), `/${locale}/checkout`);
+    assert.equal(forwarded.nextUrl.search, "?private=value");
+  }
+});
+
+for (const locale of ["ar", "en"]) {
+  test(`${locale}: real OTP/session/current-user/storefront lifecycle gates incomplete users until confirmed completion`, async () => {
+    const h = lifecycleHarness(locale);
+    // Guest Home and Checkout remain available, without a current-user request.
+    for (const path of ["/", "/checkout"]) {
+      h.setPath(`/${locale}${path}`);
+      await h.storefront();
+    }
+    assert.equal(h.requests.length, 0);
+    assert.equal((await h.page("login")).type, "login");
+    await h.load("src/features/auth/actions/request-otp").requestOtp(input({ phone }), locale);
+    const result = await h.load("src/features/auth/actions/verify-otp").verifyOtp(input({ code: "123456" }), locale);
+    assert.equal(result.ok, true);
+    assert.equal(result.profileComplete, false);
+    assert.equal(h.values.get("rafal_auth_access_token"), "private-token");
+    assert.equal(h.writes.find((entry) => entry.name === "rafal_auth_access_token").options.httpOnly, true);
+    assert.equal((await h.page("register")).type, "complete-profile");
+    for (const name of ["login", "login/verify", "auth/cart-recovery"]) {
+      await assert.rejects(() => h.page(name), (error) => {
+        assert.deepEqual(plain(error.route), { locale, href: { pathname: "/register", query: { returnTo: "/checkout" } } });
+        return true;
+      });
+    }
+    // Re-enter the actual server layout for direct, refresh, and history request sequences.
+    // Browser Router Cache/BFCache itself remains manual QA; this is server execution.
+    const paths = ["/", "/account/profile", "/account/orders", "/checkout", "/cart", "/account/profile", "/", "/checkout"];
+    for (const path of paths) {
+      h.setPath(`/${locale}${path}`);
+      await assert.rejects(() => h.storefront(), (error) => {
+        assert.deepEqual(plain(error.route), { locale, href: { pathname: "/register", query: { returnTo: path } } });
+        return true;
+      });
+    }
+    const complete = () => h.load("src/features/auth/actions/complete-profile").completeProfile(input({ firstName: "A", lastName: "B", termsAccepted: true }), locale);
+    assert.equal((await complete()).ok, false);
+    assert.deepEqual(h.invalidations, []);
+    await assert.rejects(() => h.storefront(), (error) => error.route.href.pathname === "/register");
+    h.complete();
+    assert.equal((await complete()).ok, true);
+    assert.deepEqual(h.invalidations, [["/", "layout"]]);
+    for (const path of paths) { h.setPath(`/${locale}${path}`); await h.storefront(); }
+    // Existing guest Cart recovery remains ahead of the safe intended destination.
+    await assert.rejects(() => h.page("register"), (error) => {
+      assert.deepEqual(plain(error.route), { locale, href: { pathname: "/auth/cart-recovery", query: { returnTo: "/checkout" } } });
+      return true;
+    });
+    assert.equal(h.requests.some((path) => path.includes("cart")), false);
+  });
+
+  test(`${locale}: incomplete logout clears session, completed login and safe return destinations remain intact`, async () => {
+    const h = lifecycleHarness(locale);
+    const session = h.load("src/features/auth/server/auth-session");
+    await session.setAccessToken("private-token");
+    await session.setPendingOtpPhone(phone);
+    for (const unsafe of ["https://evil.example", "//evil.example", "javascript:alert(1)"]) {
+      await assert.rejects(() => h.page("login", unsafe), (error) => error.route.href.query.returnTo === "/");
+    }
+    const form = new FormData(); form.set("locale", locale);
+    await assert.rejects(() => h.load("src/features/auth/actions/logout-account").logoutAccount(form), (error) => error.route.href === "/login");
+    assert.equal(await session.getAccessToken(), null);
+    assert.equal(await session.getPendingOtpPhone(), null);
+    await h.storefront();
+    h.existingCustomer();
+    await session.setPendingOtpPhone(phone);
+    const result = await h.load("src/features/auth/actions/verify-otp").verifyOtp(input({ code: "123456" }), locale);
+    assert.equal(result.profileComplete, true);
+    h.setPath(`/${locale}/checkout`);
+    await h.storefront();
+    await assert.rejects(() => h.page("login", "/account/orders"), (error) => error.route.href.query.returnTo === "/account/orders");
+  });
+}
 

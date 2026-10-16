@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import {
   isPlainRecord,
   mapProtectedAuthActionError,
@@ -88,6 +90,8 @@ export async function completeProfile(
       return { ok: false, error: { code: "service-unavailable" } };
     }
     console.info("[auth:complete-profile]", { stage, category: "confirmed" });
+    // No cookie changes here: evict incomplete RSC/history snapshots explicitly.
+    revalidatePath("/", "layout");
     return { ok: true, user, profileComplete: user.profileComplete };
   } catch (error) {
     if (stage === "identity") {
