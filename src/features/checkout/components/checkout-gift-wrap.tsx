@@ -5,6 +5,7 @@ import type { Locale } from "next-intl";
 import { type FormEvent, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -247,11 +248,9 @@ export function CheckoutGiftWrap({
       <p aria-live="polite" className="mt-2 min-h-5 type-caption text-gray-500">
         {mutation.isPending ? copy.updating : ""}
       </p>
-      {error ? (
-        <p role="alert" className="type-body-sm text-destructive">
-          {errorMessage(error, copy)}
-        </p>
-      ) : null}
+      <FieldFeedback role="alert" reserve={[copy.validationError, copy.sessionError, copy.serviceError]}>
+        {error ? errorMessage(error, copy) : null}
+      </FieldFeedback>
     </section>
   );
 }

@@ -6,6 +6,7 @@ import type { Locale } from "next-intl";
 import { type FormEvent, useId, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { ChevronDownIcon, PlusIcon } from "@/components/ui/icons";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -131,10 +132,11 @@ export function CartCoupon({
   const errorId = useId();
   const availableId = useId();
   const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setError] = useState<CartCouponError | null>(null);
+  const error = failure ? couponErrorMessage(failure, copy) : null;
 
   const handleMutationError = (couponError: CartCouponError) => {
-    setError(couponErrorMessage(couponError, copy));
+    setError(couponError);
     if (couponError.code === "unauthorized") router.refresh();
   };
 
@@ -152,7 +154,7 @@ export function CartCoupon({
       }
       handleMutationError(result.error);
     },
-    onError: () => setError(copy.serviceError),
+    onError: () => setError({ code: "service-unavailable" }),
   });
 
   const removeMutation = useMutation({
@@ -168,7 +170,7 @@ export function CartCoupon({
       }
       handleMutationError(result.error);
     },
-    onError: () => setError(copy.serviceError),
+    onError: () => setError({ code: "service-unavailable" }),
   });
 
   const busy = applyMutation.isPending || removeMutation.isPending;
@@ -177,7 +179,7 @@ export function CartCoupon({
     if (writeDisabled) return;
     const normalizedCode = couponCode.trim();
     if (!normalizedCode) {
-      setError(copy.invalid);
+      setError({ code: "invalid-input" });
       return;
     }
     if (coupon?.applied && normalizedCode === coupon.code) return;
@@ -287,15 +289,13 @@ export function CartCoupon({
         </div>
       ) : null}
 
-      {error ? (
-        <p
+      <FieldFeedback
           id={errorId}
           role="alert"
-          className="mt-2 type-caption text-destructive"
-        >
+          className="mt-2"
+         reserve={[copy.invalid, copy.serviceError, copy.sessionExpired]}>
           {error}
-        </p>
-      ) : null}
+        </FieldFeedback>
 
       {discoveryFailed ? (
         <p className="mt-4 type-caption text-gray-500">{copy.discoveryError}</p>

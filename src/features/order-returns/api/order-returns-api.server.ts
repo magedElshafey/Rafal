@@ -19,7 +19,7 @@ export async function getOrderReturnDto(
   accessToken: string,
   orderNumber: string,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/orders/${encodeURIComponent(orderNumber)}/return-request`,
     headers: authHeaders(locale, accessToken),
   });
@@ -34,7 +34,7 @@ export async function createOrderReturnDto(
   reason: OrderReturnReason,
   signal?: AbortSignal,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/orders/${encodeURIComponent(orderNumber)}/return-request`,
     method: "POST",
     headers: authHeaders(locale, accessToken),

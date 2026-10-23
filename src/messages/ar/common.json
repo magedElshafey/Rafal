@@ -1,4 +1,24 @@
 {
+  "feedback": {
+    "notFoundTitle": "الصفحة غير موجودة",
+    "notFoundDescription": "هذه الصفحة غير متاحة أو ربما تغير رابطها.",
+    "home": "العودة للرئيسية",
+    "errorTitle": "تعذر تحميل الصفحة",
+    "errorDescription": "يرجى المحاولة مرة أخرى. إذا استمرت المشكلة، حاول لاحقًا.",
+    "retry": "إعادة المحاولة",
+    "notifications": "الإشعارات",
+    "dismiss": "إغلاق الإشعار",
+    "review": {
+      "info": "معلومة", "confirm": "تأكيد", "success": "نجاح",
+      "error": "خطأ", "warning": "تنبيه", "notification": "إشعار",
+      "okay": "حسنًا", "cancel": "إلغاء",
+      "successMessage": "تم حفظ التغييرات بنجاح.",
+      "errorMessage": "تعذر حفظ التغييرات. يرجى المحاولة مرة أخرى.",
+      "warningMessage": "يرجى مراجعة بياناتك قبل المتابعة.",
+      "infoMessage": "جارٍ تحديث طلبك.",
+      "confirmMessage": "هل أنت متأكد من المتابعة؟"
+    }
+  },
   "LocaleSwitcher": {
     "label": "اللغة"
   },

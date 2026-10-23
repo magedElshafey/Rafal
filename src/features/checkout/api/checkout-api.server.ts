@@ -46,7 +46,7 @@ export async function quoteCheckout(
     body.append(field, value);
   }
 
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: checkoutContractEndpoints.quote,
     method: "POST",
     headers: {
@@ -77,7 +77,7 @@ export async function placeCheckout(
     if (value !== undefined) body.append(field, value);
   }
 
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: checkoutContractEndpoints.place,
     method: "POST",
     headers: {
@@ -121,7 +121,7 @@ export async function verifyCheckoutOrder(
   body.append("email", serialized.email);
   body.append("otp", serialized.otp);
 
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: checkoutContractEndpoints.verifyOrder(input.orderNumber),
     method: "POST",
     headers: { "Accept-Language": locale },

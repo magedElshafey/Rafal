@@ -40,7 +40,7 @@ function resolvedWarehouseId(
 }
 
 export async function getCities(locale: Locale): Promise<readonly City[]> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: "/regions",
     headers: { "Accept-Language": locale },
   });
@@ -54,7 +54,7 @@ export const resolveLocationByCityId = cache(async function resolveLocationByCit
   cityId: number,
   locale: Locale,
 ): Promise<ResolvedLocation> {
-  const payload = await serverApi.request<unknown, { city_id: number }>({
+  const payload = await serverApi.request<unknown, { city_id: number }>({ locale,
     path: "/locations/resolve",
     method: "POST",
     headers: { "Accept-Language": locale },

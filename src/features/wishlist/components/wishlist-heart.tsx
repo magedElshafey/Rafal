@@ -15,7 +15,7 @@ import {
 } from "@/features/wishlist/hooks/use-wishlist-mutation";
 import { useWishlistSessionExpiry } from "@/features/wishlist/hooks/use-wishlist-session-expiry";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 
 type HeartProps = {
   accountId: string | null;
@@ -89,6 +89,7 @@ function AuthenticatedHeart({
   isWishlisted,
   variant,
 }: HeartProps & { accountId: string }) {
+  const rafalToast = useRafalToast();
   const locale = useLocale();
   const t = useTranslations("Account.wishlist");
   const queryClient = useQueryClient();

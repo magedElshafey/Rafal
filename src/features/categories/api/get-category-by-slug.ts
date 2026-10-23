@@ -13,7 +13,7 @@ export async function getCategoryBySlug(
   slug: string,
   locale: Locale,
 ): Promise<Category> {
-  const response = await serverApi.request<CategoryResponseDto>({
+  const response = await serverApi.request<CategoryResponseDto>({ locale,
     path: `/categories/${encodeURIComponent(slug)}`,
     headers: { "Accept-Language": locale },
   });

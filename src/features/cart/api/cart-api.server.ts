@@ -48,7 +48,7 @@ async function cartRequest<TBody = unknown>({
   diagnostics?: CartAddDiagnostics;
 }): Promise<CartResponseDto> {
   diagnostics?.stage("laravel-request-start");
-  const payload = await serverApi.request<unknown, TBody>({
+  const payload = await serverApi.request<unknown, TBody>({ locale,
     path,
     method,
     headers: { ...getIdentityHeaders(identity), "Accept-Language": locale },
@@ -134,7 +134,7 @@ export async function mergeGuestCartDto(
   guestCartToken: string,
   locale: Locale,
 ): Promise<CartResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: cartContractEndpoints.merge,
     method: "POST",
     headers: {

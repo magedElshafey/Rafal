@@ -10,6 +10,7 @@ import type { Locale } from "next-intl";
 import { type ChangeEvent, type FormEvent, useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
@@ -27,7 +28,7 @@ import type {
   UpdateAddressInput,
 } from "@/features/addresses/types/address.types";
 import { useRouter } from "@/i18n/navigation";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 import {
   formatSaudiMobileForInput,
   isValidSaudiMobile,
@@ -150,11 +151,13 @@ export function AddressForm({
   open,
   returnFocusRef,
 }: AddressFormProps) {
+  const rafalToast = useRafalToast();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [draft, setDraft] = useState(() => initialDraft(address));
   const [errors, setErrors] = useState<AddressValidationErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
+  const [formErrorKey, setFormError] = useState<"validationError" | "notFound" | "serviceError" | null>(null);
+  const formError = formErrorKey ? copy[formErrorKey] : null;
   const labelId = useId();
   const nameId = useId();
   const phoneId = useId();
@@ -198,11 +201,11 @@ export function AddressForm({
               result.error.fields.map((field) => [field, "rejected"]),
             ) as AddressValidationErrors,
           );
-          setFormError(copy.validationError);
+          setFormError("validationError");
         } else if (result.error.code === "not-found") {
-          setFormError(copy.notFound);
+          setFormError("notFound");
         } else {
-          setFormError(copy.serviceError);
+          setFormError("serviceError");
         }
         if (result.error.code === "unauthorized") router.refresh();
         return;
@@ -242,7 +245,7 @@ export function AddressForm({
       }
       onClose();
     },
-    onError: () => setFormError(copy.serviceError),
+    onError: () => setFormError("serviceError"),
   });
 
   const updateField = <Field extends Exclude<keyof AddressDraft, "city">>(
@@ -278,7 +281,7 @@ export function AddressForm({
     const nextErrors = validateDraft(draft);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setFormError(copy.validationError);
+      setFormError("validationError");
       return;
     }
 
@@ -313,6 +316,7 @@ export function AddressForm({
           <fieldset disabled={mutation.isPending}>
             <div className="grid gap-4 sm:grid-cols-2">
               <InputField
+                feedbackMessages={[copy.required, copy.rejected]}
                 id={labelId}
                 name="addressLabel"
                 label={copy.fields.label}
@@ -322,6 +326,7 @@ export function AddressForm({
                 onChange={(event) => updateField("label", event.target.value)}
               />
               <InputField
+                feedbackMessages={[copy.required, copy.rejected]}
                 id={nameId}
                 name="recipientName"
                 autoComplete="name"
@@ -332,6 +337,7 @@ export function AddressForm({
                 onChange={(event) => updateField("recipientName", event.target.value)}
               />
               <SaudiMobileField
+                feedbackMessages={[copy.required, copy.rejected]}
                 id={phoneId}
                 name="recipientPhone"
                 className="text-start"
@@ -400,20 +406,7 @@ export function AddressForm({
                   ))}
                 </select>
                 <div className="flex min-h-11 items-center justify-between gap-2">
-                  {cityInlineMessage ? (
-                    <p
-                      id={cityErrorId}
-                      role={citiesQuery.isError ? "alert" : undefined}
-                      className={cn(
-                        "type-caption",
-                        errors.cityId || citiesQuery.isError
-                          ? "text-destructive"
-                          : "text-gray-500",
-                      )}
-                    >
-                      {cityInlineMessage}
-                    </p>
-                  ) : null}
+                  <FieldFeedback id={cityErrorId} reserve={[copy.required, copy.rejected, copy.cityOptions.unavailable, copy.cityOptions.empty]}>{cityInlineMessage}</FieldFeedback>
                   {citiesQuery.isError ? (
                     <Button
                       type="button"
@@ -431,6 +424,7 @@ export function AddressForm({
                 </div>
               </div>
               <InputField
+                feedbackMessages={[copy.required, copy.rejected]}
                 id={districtId}
                 name="district"
                 autoComplete="address-level3"
@@ -441,6 +435,7 @@ export function AddressForm({
                 onChange={(event) => updateField("district", event.target.value)}
               />
               <InputField
+                feedbackMessages={[copy.required, copy.rejected]}
                 id={streetId}
                 name="streetDetails"
                 autoComplete="street-address"
@@ -464,14 +459,7 @@ export function AddressForm({
                   >
                     {copy.defaultAddress.helper}
                   </p>
-                  {errors.isDefault ? (
-                    <p
-                      id={defaultErrorId}
-                      className="mt-1 type-caption text-destructive"
-                    >
-                      {fieldError("isDefault")}
-                    </p>
-                  ) : null}
+                  <FieldFeedback id={defaultErrorId} className="mt-1" reserve={[copy.rejected]}>{fieldError("isDefault")}</FieldFeedback>
                 </div>
                 <Switch
                   id={defaultId}
@@ -491,11 +479,9 @@ export function AddressForm({
             </div>
           </fieldset>
 
-          {formError ? (
-            <p role="alert" className="mt-4 type-body-sm text-destructive">
+          <FieldFeedback role="alert" className="mt-4" reserve={[copy.validationError, copy.notFound, copy.serviceError]}>
               {formError}
-            </p>
-          ) : null}
+            </FieldFeedback>
 
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button

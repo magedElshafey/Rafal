@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/rafal-modal";
 import { cancelOrderFromBrowser } from "@/features/orders/api/cancel-order";
 import { useRouter } from "@/i18n/navigation";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 
 export type CancelOrderCopy = Readonly<{
   action: string;
@@ -31,24 +31,26 @@ export function CancelOrderAction({
   locale,
   orderNumber,
 }: CancelOrderActionProps) {
+  const rafalToast = useRafalToast();
   const router = useRouter();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const submissionPendingRef = useRef(false);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setError] = useState(false);
+  const error = failed ? copy.error : null;
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (submissionPendingRef.current) return;
     setOpen(nextOpen);
-    if (!nextOpen) setError(null);
+    if (!nextOpen) setError(false);
   };
 
   const handleConfirm = async () => {
     if (submissionPendingRef.current) return;
     submissionPendingRef.current = true;
     setPending(true);
-    setError(null);
+    setError(false);
 
     try {
       await cancelOrderFromBrowser(locale, orderNumber);
@@ -56,7 +58,7 @@ export function CancelOrderAction({
       rafalToast.success(copy.success);
       router.refresh();
     } catch {
-      setError(copy.error);
+      setError(true);
       router.refresh();
     } finally {
       submissionPendingRef.current = false;

@@ -4,6 +4,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputField } from "@/components/ui/input";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
@@ -40,7 +41,7 @@ type CompleteProfileFormProps = {
 
 type ProfileValues = { firstName: string; lastName: string; phone: string };
 type ProfileErrors = Partial<
-  Record<keyof ProfileValues | "termsAccepted", string>
+  Record<keyof ProfileValues | "termsAccepted", "required" | "invalidPhone" | "termsRequired" | "invalidField">
 >;
 
 export function CompleteProfileForm({
@@ -56,8 +57,15 @@ export function CompleteProfileForm({
     phone: formatSaudiMobileForInput(phone),
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [errors, setErrors] = useState<ProfileErrors>({});
-  const [formError, setFormError] = useState<string>();
+  const [errorKeys, setErrors] = useState<ProfileErrors>({});
+  const errors = {
+    firstName: errorKeys.firstName ? copy[errorKeys.firstName] : undefined,
+    lastName: errorKeys.lastName ? copy[errorKeys.lastName] : undefined,
+    phone: errorKeys.phone ? copy[errorKeys.phone] : undefined,
+    termsAccepted: errorKeys.termsAccepted ? copy[errorKeys.termsAccepted] : undefined,
+  };
+  const [formErrorKey, setFormError] = useState<"invalidField" | "rateLimited" | "unavailable">();
+  const formError = formErrorKey ? copy[formErrorKey] : undefined;
   const [pending, startTransition] = useTransition();
   const { mergeAndContinue } = usePostAuthCartMerge(locale, returnTo);
 
@@ -70,13 +78,13 @@ export function CompleteProfileForm({
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors: ProfileErrors = {};
-    if (!values.firstName.trim()) nextErrors.firstName = copy.required;
-    if (!values.lastName.trim()) nextErrors.lastName = copy.required;
-    if (!values.phone.trim()) nextErrors.phone = copy.required;
+    if (!values.firstName.trim()) nextErrors.firstName = "required";
+    if (!values.lastName.trim()) nextErrors.lastName = "required";
+    if (!values.phone.trim()) nextErrors.phone = "required";
     else if (!isValidSaudiMobile(values.phone)) {
-      nextErrors.phone = copy.invalidPhone;
+      nextErrors.phone = "invalidPhone";
     }
-    if (!termsAccepted) nextErrors.termsAccepted = copy.termsRequired;
+    if (!termsAccepted) nextErrors.termsAccepted = "termsRequired";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -102,10 +110,10 @@ export function CompleteProfileForm({
             for (const field of result.error.fields) {
               backendErrors[field] =
                 field === "phone"
-                  ? copy.invalidPhone
+                  ? "invalidPhone"
                   : field === "termsAccepted"
-                    ? copy.termsRequired
-                    : copy.invalidField;
+                    ? "termsRequired"
+                    : "invalidField";
             }
             setErrors(backendErrors);
             setFormError(undefined);
@@ -113,16 +121,16 @@ export function CompleteProfileForm({
           }
           setFormError(
             result.error.code === "invalid-input"
-              ? copy.invalidField
+              ? "invalidField"
               : result.error.code === "rate-limited"
-                ? copy.rateLimited
-                : copy.unavailable,
+                ? "rateLimited"
+                : "unavailable",
           );
           return;
         }
         await mergeAndContinue();
       } catch {
-        setFormError(copy.unavailable);
+        setFormError("unavailable");
       }
     });
   };
@@ -131,6 +139,7 @@ export function CompleteProfileForm({
     <form className="flex flex-col gap-4" noValidate onSubmit={handleSubmit}>
       <fieldset disabled={pending} className="contents">
         <InputField
+          feedbackMessages={[copy.required, copy.invalidField]}
           id="first-name"
           name="firstName"
           autoComplete="given-name"
@@ -142,6 +151,7 @@ export function CompleteProfileForm({
           onChange={(event) => updateValue("firstName", event.target.value)}
         />
         <InputField
+          feedbackMessages={[copy.required, copy.invalidField]}
           id="last-name"
           name="lastName"
           autoComplete="family-name"
@@ -153,6 +163,7 @@ export function CompleteProfileForm({
           onChange={(event) => updateValue("lastName", event.target.value)}
         />
         <SaudiMobileField
+          feedbackMessages={[copy.required, copy.invalidField, copy.invalidPhone]}
           id="mobile-number"
           name="phone"
           required
@@ -189,21 +200,17 @@ export function CompleteProfileForm({
               {copy.terms}
             </label>
           </div>
-          {errors.termsAccepted ? (
-            <p
+          <FieldFeedback
               id="accept-terms-error"
-              className="mt-1.5 type-caption text-destructive"
-            >
+              className="mt-1.5"
+             reserve={[copy.termsRequired]}>
               {errors.termsAccepted}
-            </p>
-          ) : null}
+            </FieldFeedback>
         </div>
 
-        {formError ? (
-          <p role="alert" className="type-caption text-destructive">
+        <FieldFeedback role="alert" reserve={[copy.invalidField, copy.rateLimited, copy.unavailable]}>
             {formError}
-          </p>
-        ) : null}
+          </FieldFeedback>
         <Button
           type="submit"
           size="lg"

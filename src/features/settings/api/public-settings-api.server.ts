@@ -1,4 +1,5 @@
 import "server-only";
+import type { Locale } from "next-intl";
 
 import type { PublicSettings } from "@/features/settings/types/public-settings.types";
 import { serverApi } from "@/lib/api/server-api";
@@ -30,8 +31,8 @@ function string(value: unknown, field: string): string {
   return value;
 }
 
-export async function getPublicSettingsFromApi(): Promise<PublicSettings> {
-  const response = record(await serverApi.request<unknown>({ path: "/settings/public" }), "response");
+export async function getPublicSettingsFromApi(locale: Locale): Promise<PublicSettings> {
+  const response = record(await serverApi.request<unknown>({ locale, path: "/settings/public" }), "response");
   if (boolean(response.success, "response.success") !== true) {
     throw new Error("The Public Settings API returned an unsuccessful response.");
   }

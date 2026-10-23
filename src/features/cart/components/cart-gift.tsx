@@ -5,6 +5,7 @@ import { type Locale, useTranslations } from "next-intl";
 import { type FormEvent, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
@@ -39,7 +40,7 @@ type GiftDraft = GiftRecipientDraft & {
 
 type GiftEditingMode = "new" | "existing";
 type GiftDraftField = keyof GiftDraft;
-type GiftDraftErrors = Partial<Record<GiftDraftField, string>>;
+type GiftDraftErrors = Partial<Record<GiftDraftField, "required" | "invalidField">>;
 
 const backendFields: Record<GiftDraftField, string> = {
   name: "recipient.name",
@@ -147,7 +148,16 @@ function GiftEditor({
   const t = useTranslations("Common.cartPage.gift");
   const id = useId();
   const [draft, setDraft] = useState(initialDraft);
-  const [fieldErrors, setFieldErrors] = useState<GiftDraftErrors>({});
+  const [errorKeys, setFieldErrors] = useState<GiftDraftErrors>({});
+  const fieldErrors = {
+    name: errorKeys.name ? t(errorKeys.name) : undefined,
+    phone: errorKeys.phone ? t(errorKeys.phone) : undefined,
+    city: errorKeys.city ? t(errorKeys.city) : undefined,
+    district: errorKeys.district ? t(errorKeys.district) : undefined,
+    streetDetails: errorKeys.streetDetails ? t(errorKeys.streetDetails) : undefined,
+    message: errorKeys.message ? t(errorKeys.message) : undefined,
+    isAnonymous: errorKeys.isAnonymous ? t(errorKeys.isAnonymous) : undefined,
+  };
 
   const updateDraft = <Field extends GiftDraftField>(
     field: Field,
@@ -171,8 +181,8 @@ function GiftEditor({
     const nextErrors: GiftDraftErrors = {
       ...validateGiftRecipientDraft(
         draft,
-        t("required"),
-        t("invalidField"),
+        "required",
+        "invalidField",
       ),
     };
     setFieldErrors(nextErrors);
@@ -192,7 +202,7 @@ function GiftEditor({
         failure.fields.includes(backendFields[field]) ||
         (failure.fields.includes("recipient") && backendFields[field].startsWith("recipient."))
       ) {
-        rejectedFields[field] = t("invalidField");
+        rejectedFields[field] = "invalidField";
       }
     }
     setFieldErrors(rejectedFields);
@@ -204,6 +214,7 @@ function GiftEditor({
         <legend className="text-h4 font-bold text-gray-1000">{t("recipientTitle")}</legend>
         <div className="mt-4">
           <GiftRecipientFields
+            feedbackMessages={[t("required"), t("invalidField")]}
             busy={busy}
             copy={{
               name: t("name"),
@@ -232,6 +243,7 @@ function GiftEditor({
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <InputField
+              feedbackMessages={[t("required"), t("invalidField")]}
               id={`${id}-message`}
               name="giftMessage"
               label={t("message")}
@@ -258,11 +270,9 @@ function GiftEditor({
                 onCheckedChange={(isAnonymous) => updateDraft("isAnonymous", isAnonymous)}
               />
             </div>
-            {fieldErrors.isAnonymous ? (
-              <p id={`${id}-anonymous-error`} className="mt-1.5 type-caption text-destructive">
+            <FieldFeedback id={`${id}-anonymous-error`} className="mt-1.5" reserve={[t("invalidField")]}>
                 {fieldErrors.isAnonymous}
-              </p>
-            ) : null}
+              </FieldFeedback>
           </div>
         </div>
         </div>
@@ -419,15 +429,13 @@ export function CartGift({
         />
       ) : null}
 
-      {error ? (
-        <p role="alert" className="mt-4 type-body-sm text-destructive">
-          {error.code === "validation-rejected" || error.code === "invalid-input"
+      <FieldFeedback role="alert" className="mt-4" reserve={[t("validationError"), t("sessionError"), t("serviceError")]}>
+          {error ? error.code === "validation-rejected" || error.code === "invalid-input"
             ? t("validationError")
             : error.code === "unauthorized" || error.code === "cart-session-failure"
               ? t("sessionError")
-              : t("serviceError")}
-        </p>
-      ) : null}
+              : t("serviceError") : null}
+      </FieldFeedback>
     </section>
   );
 }

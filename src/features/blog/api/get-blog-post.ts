@@ -18,7 +18,7 @@ export const getBlogPostForRequest = cache(async (
 ): Promise<BlogPostReadResult> => {
   let response: unknown;
   try {
-    response = await serverApi.request<unknown>({
+    response = await serverApi.request<unknown>({ locale,
       path: "/blog/" + encodeURIComponent(slug),
       headers: { "Accept-Language": locale },
     });

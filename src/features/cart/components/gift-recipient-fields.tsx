@@ -5,6 +5,7 @@ import type { Locale } from "next-intl";
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { CityPickerDialog } from "@/components/ui/city-picker-dialog";
 import { InputField } from "@/components/ui/input";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
@@ -71,12 +72,12 @@ export function giftRecipientDraft(
   };
 }
 
-export function validateGiftRecipientDraft(
+export function validateGiftRecipientDraft<ErrorKey extends string>(
   draft: GiftRecipientDraft,
-  requiredMessage: string,
-  invalidPhoneMessage: string,
-): GiftRecipientDraftErrors {
-  const errors: GiftRecipientDraftErrors = {};
+  requiredMessage: ErrorKey,
+  invalidPhoneMessage: ErrorKey,
+): Partial<Record<GiftRecipientDraftField, ErrorKey>> {
+  const errors: Partial<Record<GiftRecipientDraftField, ErrorKey>> = {};
   if (!draft.name.trim()) errors.name = requiredMessage;
   if (!draft.phone.trim()) errors.phone = requiredMessage;
   else if (!normalizeSaudiMobile(draft.phone)) {
@@ -108,6 +109,8 @@ export function GiftRecipientFields({
   copy,
   draft,
   errors,
+  feedbackMessages,
+  phoneFeedbackMessages = feedbackMessages,
   locale,
   onChange,
 }: {
@@ -115,6 +118,8 @@ export function GiftRecipientFields({
   copy: GiftRecipientFieldsCopy;
   draft: GiftRecipientDraft;
   errors: GiftRecipientDraftErrors;
+  feedbackMessages: readonly string[];
+  phoneFeedbackMessages?: readonly string[];
   locale: Locale;
   onChange: <Field extends GiftRecipientDraftField>(
     field: Field,
@@ -131,6 +136,7 @@ export function GiftRecipientFields({
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <InputField
+        feedbackMessages={feedbackMessages}
         id={`${id}-name`}
         name="name"
         autoComplete="name"
@@ -141,6 +147,7 @@ export function GiftRecipientFields({
         onChange={(event) => onChange("name", event.target.value)}
       />
       <SaudiMobileField
+        feedbackMessages={phoneFeedbackMessages}
         id={`${id}-phone`}
         name="phone"
         label={copy.phone}
@@ -167,13 +174,12 @@ export function GiftRecipientFields({
         >
           {draft.city?.name ?? copy.selectCity}
         </Button>
-        {errors.city ? (
-          <p id={`${id}-city-error`} className="type-caption text-destructive">
+        <FieldFeedback id={`${id}-city-error`} reserve={feedbackMessages}>
             {errors.city}
-          </p>
-        ) : null}
+          </FieldFeedback>
       </div>
       <InputField
+        feedbackMessages={feedbackMessages}
         id={`${id}-district`}
         name="district"
         autoComplete="address-level3"
@@ -184,6 +190,7 @@ export function GiftRecipientFields({
         onChange={(event) => onChange("district", event.target.value)}
       />
       <InputField
+        feedbackMessages={feedbackMessages}
         id={`${id}-street-details`}
         name="streetDetails"
         autoComplete="street-address"

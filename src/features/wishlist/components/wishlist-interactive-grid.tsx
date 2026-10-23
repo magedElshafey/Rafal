@@ -18,7 +18,7 @@ import { wishlistInfiniteQueryOptions } from "@/features/wishlist/api/wishlist-q
 import type { WishlistPage } from "@/features/wishlist/types/wishlist.types";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 
 export type WishlistInteractiveGridCopy = {
   actions: {
@@ -66,6 +66,7 @@ export function WishlistInteractiveGrid({
   initialPage,
   locale,
 }: WishlistInteractiveGridProps) {
+  const rafalToast = useRafalToast();
   const t = useTranslations("Account.wishlist");
   const { expired, expiredRef, handleUnauthorized } =
     useWishlistSessionExpiry(accountId);

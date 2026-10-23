@@ -1,5 +1,5 @@
 import { useId } from "react";
-
+import { FieldFeedback } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import type {
   ListingSubcategoryOption,
@@ -128,15 +128,13 @@ export function ListingFilters({
             }
           />
         </div>
-        {!priceRangeIsValid ? (
-          <p
+        <FieldFeedback
             id={priceRangeErrorId}
-            className="mt-2 type-body-sm text-destructive"
+            className="mt-2"
             role="alert"
-          >
-            {copy.invalidPriceRange}
-          </p>
-        ) : null}
+           reserve={[copy.invalidPriceRange]}>
+            {!priceRangeIsValid ? copy.invalidPriceRange : null}
+          </FieldFeedback>
       </fieldset>
       <fieldset className="border-t border-border pt-6">
         <legend className="text-h4 font-medium">{copy.additional}</legend>

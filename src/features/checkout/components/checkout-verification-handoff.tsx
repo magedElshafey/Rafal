@@ -4,6 +4,7 @@ import type { Locale } from "next-intl";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { InfoIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OtpInput } from "@/features/auth/components/OtpInput";
@@ -156,15 +157,13 @@ function CheckoutOrderVerificationForm({
             onInput();
           }}
         />
-        {validationMessage ? (
-          <p
+        <FieldFeedback
             id="checkout-order-otp-error"
             role="alert"
-            className="mt-2 type-caption text-destructive"
-          >
+            className="mt-2"
+           reserve={[copy.required, copy.incomplete]}>
             {validationMessage}
-          </p>
-        ) : null}
+          </FieldFeedback>
 
         {remainingSeconds !== null ? (
           expired ? (
@@ -179,15 +178,13 @@ function CheckoutOrderVerificationForm({
           )
         ) : null}
 
-        {error ? (
-          <p
+        <FieldFeedback
             id="checkout-order-verification-error"
             role="alert"
-            className="mt-4 type-body-sm text-destructive"
-          >
+            className="mt-4"
+           reserve={[copy.verificationFailed]}>
             {error}
-          </p>
-        ) : null}
+          </FieldFeedback>
 
         <Button
           type="submit"
@@ -219,7 +216,8 @@ export function CheckoutVerificationHandoff({
   const [context, setContext] = useState<
     VerificationContext | null | undefined
   >(undefined);
-  const [requestError, setRequestError] = useState<string | null>(null);
+  const [requestErrorKey, setRequestError] = useState<"verificationFailed" | null>(null);
+  const requestError = requestErrorKey ? copy[requestErrorKey] : null;
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -242,7 +240,7 @@ export function CheckoutVerificationHandoff({
         `/orders/${encodeURIComponent(result.orderNumber)}/confirmation`,
       );
     } catch {
-      setRequestError(copy.verificationFailed);
+      setRequestError("verificationFailed");
     } finally {
       verifyInFlightRef.current = false;
     }

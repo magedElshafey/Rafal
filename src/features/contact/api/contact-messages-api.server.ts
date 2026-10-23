@@ -14,7 +14,7 @@ export async function submitContactMessage(
   // Public mutation convention pending a Contact-specific backend artifact.
   const body = new FormData();
   for (const field of contactFields) body.set(field, input[field]);
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: "/contact-messages",
     method: "POST",
     headers: { "Accept-Language": locale },

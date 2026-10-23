@@ -688,9 +688,9 @@ test("browser submission makes one JSON BFF request without auth or Cart headers
   assert.equal(requests.length, 1);
   assert.equal(String(requests[0][0]), "https://store.test/api/products/17/reviews");
   assert.equal(requests[0][1].method, "POST");
-  assert.equal(requests[0][1].headers["Accept-Language"], "ar");
-  assert.equal(requests[0][1].headers.Authorization, undefined);
-  assert.equal(requests[0][1].headers["X-Cart-Token"], undefined);
+  assert.equal(new Headers(requests[0][1].headers).get("Accept-Language"), "ar");
+  assert.equal(new Headers(requests[0][1].headers).get("Authorization"), null);
+  assert.equal(new Headers(requests[0][1].headers).get("X-Cart-Token"), null);
   assert.deepEqual(JSON.parse(requests[0][1].body), {
     rating: 5,
     comment: "great",

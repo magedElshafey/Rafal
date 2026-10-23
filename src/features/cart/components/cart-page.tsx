@@ -310,11 +310,12 @@ export function CartPage({
     status,
   ]);
   const cityTransitionPending = cityTransitionLocked;
-  const [mutationError, setMutationError] = useState<string | null>(null);
+  const [mutationFailure, setMutationError] = useState<CartMutationError | null>(null);
+  const mutationError = mutationFailure ? errorMessage(mutationFailure, copy.errors) : null;
   const handleMutationError = useCallback(
     (error: CartMutationError) =>
-      setMutationError(errorMessage(error, copy.errors)),
-    [copy.errors],
+      setMutationError(error),
+    [],
   );
   const mutations = useCartPageMutations({
     cityTransitionLocked,
@@ -736,7 +737,7 @@ export function CartPage({
             }
           } catch (error) {
             if (isCancelledError(error) || (error instanceof DOMException && error.name === "AbortError")) return;
-            setMutationError(copy.errors.generic);
+            setMutationError({ code: "service-unavailable" });
           } finally {
             setCheckoutPreparing(false);
           }

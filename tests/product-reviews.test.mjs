@@ -30,7 +30,7 @@ function sourceLoader(overrides = {}, globals = {}) {
     const loaded = { exports: {} };
     modules.set(filename, loaded);
     vm.runInNewContext(outputText, {
-      module: loaded, exports: loaded.exports, URL, Request, Response, AbortController, AbortSignal, DOMException, FormData, setTimeout, ...globals,
+      module: loaded, exports: loaded.exports, URL, Request, Response, AbortController, AbortSignal, DOMException, FormData, Headers, setTimeout, ...globals,
       console: overrides.console ?? console,
       require: (specifier) => {
         if (specifier in overrides) return overrides[specifier];
@@ -615,9 +615,9 @@ test("browser public request uses internal URL and one attempt on HTTP/network f
     if (failure) await assert.rejects(read); else assert.equal((await read).reviews[0].id, "8");
     assert.equal(requests.length, 1);
     assert.equal(requests[0].url, "https://store.test/api/products/42/reviews?page=2");
-    assert.equal(requests[0].options.headers["Accept-Language"], "ar");
-    assert.equal(requests[0].options.headers.Authorization, undefined);
-    assert.equal(requests[0].options.headers["X-Cart-Token"], undefined);
+    assert.equal(new Headers(requests[0].options.headers).get("Accept-Language"), "ar");
+    assert.equal(new Headers(requests[0].options.headers).get("Authorization"), null);
+    assert.equal(new Headers(requests[0].options.headers).get("X-Cart-Token"), null);
   }
 });
 

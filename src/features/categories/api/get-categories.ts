@@ -28,7 +28,7 @@ export function getCategoriesPage(
 // React cache is render/request scoped, not a persistent taxonomy cache.
 const readCategoriesPage = cache(
   async (locale: Locale, page: number): Promise<PaginatedCategories> => {
-    const response = await serverApi.request<CategoriesResponseDto>({
+    const response = await serverApi.request<CategoriesResponseDto>({ locale,
       path: "/categories",
       headers: { "Accept-Language": locale },
       query: { page },

@@ -22,7 +22,7 @@ import {
   getQuickAddTriggerAccessibility,
 } from "@/features/products/utils/listing-quick-add";
 import { useRouter } from "@/i18n/navigation";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 
 type ProductQuickAddControlProps = {
   disabled?: boolean;
@@ -66,6 +66,7 @@ export function ProductQuickAddControl({
   quickAdd,
   slug,
 }: ProductQuickAddControlProps) {
+  const rafalToast = useRafalToast();
   const queryClient = useQueryClient();
   const router = useRouter();
   const t = useTranslations("Common.productListing.quickAdd");

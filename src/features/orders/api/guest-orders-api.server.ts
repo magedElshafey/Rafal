@@ -12,7 +12,7 @@ export async function lookupGuestOrderDto(
   input: GuestOrderLookupInput,
   signal?: AbortSignal,
 ) {
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: "/orders/lookup",
     method: "POST",
     headers: { "Accept-Language": locale },

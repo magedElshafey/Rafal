@@ -27,7 +27,7 @@ export async function getProductReviews({
   signal?: AbortSignal;
   retry?: false;
 }) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/products/${encodeURIComponent(productId)}/reviews`,
     headers: { "Accept-Language": locale },
     query: { page },
@@ -61,7 +61,7 @@ export async function submitProductReview({
   body.append("rating", String(input.rating));
   if (input.comment) body.append("comment", input.comment);
 
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: `/products/${encodeURIComponent(productId)}/reviews`,
     method: "POST",
     headers: {

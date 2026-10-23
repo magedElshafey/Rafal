@@ -5,7 +5,7 @@ import type { Locale } from "next-intl";
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldFeedback, FieldLabel } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
@@ -91,7 +91,7 @@ type AddressDraft = {
 };
 
 type DraftField = Exclude<keyof AddressDraft, "city"> | "city";
-type DraftErrors = Partial<Record<DraftField, string>>;
+type DraftErrors = Partial<Record<DraftField, "required" | "invalidPhone">>;
 
 const emptyDraft: AddressDraft = {
   recipientName: "",
@@ -174,8 +174,16 @@ function OneTimeAddressForm({
   const [draft, setDraft] = useState<AddressDraft>(() =>
     draftFromCommittedAddress(committedAddress),
   );
-  const [errors, setErrors] = useState<DraftErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
+  const [errorKeys, setErrors] = useState<DraftErrors>({});
+  const errors = {
+    recipientName: errorKeys.recipientName ? copy.errors[errorKeys.recipientName] : undefined,
+    recipientPhone: errorKeys.recipientPhone ? copy.errors[errorKeys.recipientPhone] : undefined,
+    city: errorKeys.city ? copy.errors[errorKeys.city] : undefined,
+    district: errorKeys.district ? copy.errors[errorKeys.district] : undefined,
+    streetDetails: errorKeys.streetDetails ? copy.errors[errorKeys.streetDetails] : undefined,
+  };
+  const [formErrorKey, setFormError] = useState<"validation" | null>(null);
+  const formError = formErrorKey ? copy.errors[formErrorKey] : null;
   const citiesQuery = useQuery(cityCatalogQueryOptions(locale));
   const cities = citiesQuery.data ?? [];
   const draftMatchesCommitted =
@@ -200,24 +208,24 @@ function OneTimeAddressForm({
     event.preventDefault();
     const nextErrors: DraftErrors = {};
     if (!draft.recipientName.trim()) {
-      nextErrors.recipientName = copy.errors.required;
+      nextErrors.recipientName = "required";
     }
 
     const normalizedPhone = normalizeSaudiMobile(draft.recipientPhone);
     if (!draft.recipientPhone.trim()) {
-      nextErrors.recipientPhone = copy.errors.required;
+      nextErrors.recipientPhone = "required";
     } else if (!normalizedPhone) {
-      nextErrors.recipientPhone = copy.errors.invalidPhone;
+      nextErrors.recipientPhone = "invalidPhone";
     }
-    if (!draft.city) nextErrors.city = copy.errors.required;
-    if (!draft.district.trim()) nextErrors.district = copy.errors.required;
+    if (!draft.city) nextErrors.city = "required";
+    if (!draft.district.trim()) nextErrors.district = "required";
     if (!draft.streetDetails.trim()) {
-      nextErrors.streetDetails = copy.errors.required;
+      nextErrors.streetDetails = "required";
     }
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0 || !draft.city || !normalizedPhone) {
-      setFormError(copy.errors.validation);
+      setFormError("validation");
       return;
     }
 
@@ -244,6 +252,7 @@ function OneTimeAddressForm({
     <form noValidate onSubmit={submit} className="rounded-md bg-gray-50 p-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <InputField
+          feedbackMessages={[copy.errors.required]}
           id="checkout-recipient-name"
           name="recipientName"
           autoComplete="name"
@@ -256,6 +265,7 @@ function OneTimeAddressForm({
           }
         />
         <SaudiMobileField
+          feedbackMessages={[copy.errors.required, copy.errors.invalidPhone]}
           id="checkout-recipient-phone"
           name="recipientPhone"
           required
@@ -304,9 +314,7 @@ function OneTimeAddressForm({
               </option>
             ))}
           </NativeSelect>
-          {cityMessage ? (
-            <FieldError id="checkout-city-message">{cityMessage}</FieldError>
-          ) : null}
+          <FieldFeedback id="checkout-city-message" reserve={[copy.errors.required, copy.cityOptions.unavailable, copy.cityOptions.empty]}>{cityMessage}</FieldFeedback>
           {citiesQuery.isError ? (
             <Button
               type="button"
@@ -322,6 +330,7 @@ function OneTimeAddressForm({
           ) : null}
         </Field>
         <InputField
+          feedbackMessages={[copy.errors.required]}
           id="checkout-district"
           name="district"
           autoComplete="address-level3"
@@ -333,6 +342,7 @@ function OneTimeAddressForm({
         />
         <div className="sm:col-span-2">
           <InputField
+            feedbackMessages={[copy.errors.required]}
             id="checkout-street-details"
             name="streetDetails"
             autoComplete="street-address"
@@ -346,11 +356,9 @@ function OneTimeAddressForm({
           />
         </div>
       </div>
-      {formError ? (
-        <p role="alert" className="mt-4 type-body-sm text-destructive">
+      <FieldFeedback role="alert" className="mt-4" reserve={[copy.errors.validation]}>
           {formError}
-        </p>
-      ) : null}
+        </FieldFeedback>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Button type="submit">{copy.oneTime.submit}</Button>
         {draftMatchesCommitted ? (

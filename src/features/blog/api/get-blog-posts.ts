@@ -6,7 +6,7 @@ import { mapBlogList } from "@/features/blog/api/blog-mappers";
 import { BLOG_PAGE_SIZE } from "@/features/blog/api/blog-query";
 
 export async function getBlogPosts({ locale, page }: { locale: Locale; page: number }) {
-  const response = await serverApi.request<unknown>({
+  const response = await serverApi.request<unknown>({ locale,
     path: "/blog", headers: { "Accept-Language": locale }, query: { page, per_page: BLOG_PAGE_SIZE },
   });
   return mapBlogList(parseBlogListDto(response));

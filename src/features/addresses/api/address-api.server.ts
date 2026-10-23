@@ -34,7 +34,7 @@ export async function getAddressPageDto(
   accessToken: string,
   page: number,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: "/addresses",
     headers: authHeaders(locale, accessToken),
     query: { page, per_page: ADDRESS_PAGE_SIZE },
@@ -47,7 +47,7 @@ export async function createAddressDto(
   accessToken: string,
   input: CreateAddressInput,
 ) {
-  const payload = await serverApi.request<unknown, CreateAddressDto>({
+  const payload = await serverApi.request<unknown, CreateAddressDto>({ locale,
     path: "/addresses",
     method: "POST",
     headers: authHeaders(locale, accessToken),
@@ -62,7 +62,7 @@ export async function updateAddressDto(
   addressId: number,
   input: UpdateAddressInput,
 ) {
-  const payload = await serverApi.request<unknown, UpdateAddressDto>({
+  const payload = await serverApi.request<unknown, UpdateAddressDto>({ locale,
     path: `/addresses/${addressId}`,
     method: "PUT",
     headers: authHeaders(locale, accessToken),
@@ -76,7 +76,7 @@ export async function deleteAddressDto(
   accessToken: string,
   addressId: number,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/addresses/${addressId}`,
     method: "DELETE",
     headers: authHeaders(locale, accessToken),

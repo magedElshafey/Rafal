@@ -35,7 +35,7 @@ import {
 } from "@/features/products/utils/product-variant-resolver";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 import { cn } from "@/lib/utils";
 import { getVariantAttributeLabel } from "@/lib/variant-attributes";
 
@@ -105,6 +105,7 @@ export function ProductQuickAddSheet({
   returnFocusRef,
   slug,
 }: ProductQuickAddSheetProps) {
+  const rafalToast = useRafalToast();
   const t = useTranslations("Common.productListing.quickAdd");
   const optionInputPrefix = useId();
   const queryClient = useQueryClient();

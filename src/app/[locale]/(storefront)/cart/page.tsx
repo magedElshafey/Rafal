@@ -31,7 +31,7 @@ export default async function CartRoute() {
   });
   const [cart, settings, t, attributeT, user, couponDiscovery] = await Promise.all([
     getCurrentCart(locale, selectedCityId ?? undefined),
-    getPublicSettings(),
+    getPublicSettings(locale),
     getTranslations({ locale, namespace: "Common.cartPage" }),
     getTranslations({ locale, namespace: "Common.productDetails.options" }),
     userPromise,

@@ -418,9 +418,15 @@ Runtime-specific values are injected by `server-api.ts` or `client-api.ts`.
 
 ### 10.3 Locale headers
 
-The standard locale request header is `Accept-Language`.
+The standard locale request header is `Accept-Language`. The approved
+2026-10-23 backend contract additionally requires `X-Locale` on every RAFAL
+backend request. Existing server/client adapters inject both from the explicit
+configured Locale through `backend-request.ts`; active locale overrides caller
+header values. Server requests require locale, including public settings.
+Internal Next.js hops and third-party requests are excluded. The transport core
+remains runtime-neutral; backend locale validation uses i18n routing configuration.
 
-- Server feature boundaries resolve or receive locale through the established `next-intl` server API and pass `Accept-Language` explicitly when an endpoint needs it.
+- Server feature boundaries resolve or receive locale through the established `next-intl` server API and pass locale explicitly on every backend request; adapters enforce both locale headers.
 - `server-api.ts` must remain independent of route context and must not resolve locale implicitly.
 - Client code resolves locale through `useLocale()` and passes that locale into the client API factory/configuration.
 - Do not hard-code `ar` inside the shared HTTP client.

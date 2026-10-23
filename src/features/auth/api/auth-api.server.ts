@@ -38,7 +38,7 @@ function buildProfileFormData(
 }
 
 export async function requestOtpDto(locale: Locale, body: RequestOtpDto) {
-  const payload = await serverApi.request<unknown, RequestOtpDto>({
+  const payload = await serverApi.request<unknown, RequestOtpDto>({ locale,
     path: authEndpoints.requestOtp,
     method: "POST",
     headers: authHeaders(locale),
@@ -49,7 +49,7 @@ export async function requestOtpDto(locale: Locale, body: RequestOtpDto) {
 }
 
 export async function verifyOtpDto(locale: Locale, body: VerifyOtpDto) {
-  const payload = await serverApi.request<unknown, VerifyOtpDto>({
+  const payload = await serverApi.request<unknown, VerifyOtpDto>({ locale,
     path: authEndpoints.verifyOtp,
     method: "POST",
     headers: authHeaders(locale),
@@ -68,7 +68,7 @@ export async function completeProfileDto(
   console.info("[auth:complete-profile]", { stage: "request" });
   let payload: unknown;
   try {
-    payload = await serverApi.request<unknown, FormData>({
+    payload = await serverApi.request<unknown, FormData>({ locale,
       path: authEndpoints.completeProfile,
       method: "POST",
       headers: authHeaders(locale, accessToken),
@@ -114,7 +114,7 @@ export async function updateProfileDto(
   accessToken: string,
   body: UpdateProfileDto,
 ) {
-  const payload = await serverApi.request<unknown, FormData>({
+  const payload = await serverApi.request<unknown, FormData>({ locale,
     path: authEndpoints.completeProfile,
     method: "POST",
     headers: authHeaders(locale, accessToken),
@@ -125,7 +125,7 @@ export async function updateProfileDto(
 }
 
 export async function getMeDto(locale: Locale, accessToken: string) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: authEndpoints.me,
     headers: authHeaders(locale, accessToken),
   });

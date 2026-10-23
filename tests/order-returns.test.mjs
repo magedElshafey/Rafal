@@ -452,8 +452,8 @@ test("form has no preselected reason, exactly five options, no comment, and sync
   assert.ok(guard >= 0 && lock > guard && request > lock);
   const catchBlock = source.slice(source.indexOf("} catch (submissionError)"), source.indexOf("} finally"));
   assert.doesNotMatch(catchBlock, /setReason\(/);
-  assert.match(catchBlock, /setReasonError\(copy\.errors\.invalidReason\)/);
-  assert.match(catchBlock, /setFormError\(copy\.errors\[key\]\)/);
+  assert.match(catchBlock, /setReasonError\("invalid"\)/);
+  assert.match(catchBlock, /setFormError\(key\)/);
 });
 
 test("OrderReturnAction renders a serializable string context in its modal description", () => {
@@ -471,6 +471,10 @@ test("OrderReturnAction renders a serializable string context in its modal descr
   function FieldError({ children, ...props }) {
     return React.createElement("p", props, children);
   }
+  function FieldFeedback({ children, reserve, ...props }) {
+    void reserve;
+    return React.createElement("p", props, children);
+  }
   function NativeSelect({ children, invalid, ...props }) {
     return React.createElement("select", { ...props, "data-invalid": invalid }, children);
   }
@@ -486,7 +490,7 @@ test("OrderReturnAction renders a serializable string context in its modal descr
   }
   const actionLoad = sourceLoader({
     "@/components/ui/button": { Button },
-    "@/components/ui/field": { Field, FieldError, FieldLabel },
+    "@/components/ui/field": { Field, FieldError, FieldFeedback, FieldLabel },
     "@/components/ui/native-select": { NativeSelect },
     "@/components/ui/rafal-modal": { RafalModal },
     "@/features/order-returns/components/order-return-summary-card": {

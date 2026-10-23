@@ -16,7 +16,7 @@ export const getStaticPageForRequest = cache(async (
   const { backendSlug } = staticPageRegistry[pageKey];
   let response: unknown;
   try {
-    response = await serverApi.request<unknown>({
+    response = await serverApi.request<unknown>({ locale,
       path: "/pages/" + encodeURIComponent(backendSlug),
       headers: { "Accept-Language": locale },
     });

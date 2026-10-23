@@ -29,7 +29,7 @@ export default async function AddressesPage() {
 
   const [initialPage, settings, t] = await Promise.all([
     getInitialAddressPage(locale),
-    getPublicSettings(),
+    getPublicSettings(locale),
     getTranslations("Account.addresses"),
   ]);
   const copy: AddressPageCopy = {

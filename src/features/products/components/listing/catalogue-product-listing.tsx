@@ -15,6 +15,7 @@ import type { Locale } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadMoreButton } from "@/components/ui/load-more-button";
@@ -259,15 +260,13 @@ function PriceRangeFilters({
           onKeyDown={handleEnter}
         />
       </div>
-      {rangeIsInvalid ? (
-        <p
+      <FieldFeedback
           id={errorId}
-          className="mt-2 type-body-sm text-destructive"
+          className="mt-2"
           role="alert"
-        >
-          {copy.invalidPriceRange}
-        </p>
-      ) : null}
+         reserve={[copy.invalidPriceRange]}>
+            {rangeIsInvalid ? copy.invalidPriceRange : null}
+          </FieldFeedback>
     </fieldset>
   );
 }
@@ -320,7 +319,7 @@ function CatalogueFilters({
         filters={filters}
         onChange={onPriceChange}
       />
-      <fieldset className="">
+      <fieldset>
         <legend className="text-h4 font-medium border-b border-border pb-3 block w-full">
           {copy.additional}
         </legend>

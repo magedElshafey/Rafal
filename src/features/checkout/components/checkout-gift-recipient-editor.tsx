@@ -5,6 +5,7 @@ import type { Locale } from "next-intl";
 import { type FormEvent, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
 import {
@@ -20,7 +21,6 @@ import {
   GiftRecipientFields,
   giftRecipientDraft,
   type GiftRecipientDraft,
-  type GiftRecipientDraftErrors,
   type GiftRecipientDraftField,
   type GiftRecipientFieldsCopy,
   validateGiftRecipientDraft,
@@ -82,7 +82,15 @@ export function CheckoutGiftRecipientEditor({
   const editButtonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<GiftRecipientDraft | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<GiftRecipientDraftErrors>({});
+  type ErrorKeys = Partial<Record<GiftRecipientDraftField, "required" | "invalidPhone" | "validationError">>;
+  const [errorKeys, setFieldErrors] = useState<ErrorKeys>({});
+  const fieldErrors = {
+    name: errorKeys.name ? copy[errorKeys.name] : undefined,
+    phone: errorKeys.phone ? copy[errorKeys.phone] : undefined,
+    city: errorKeys.city ? copy[errorKeys.city] : undefined,
+    district: errorKeys.district ? copy[errorKeys.district] : undefined,
+    streetDetails: errorKeys.streetDetails ? copy[errorKeys.streetDetails] : undefined,
+  };
   const [error, setError] = useState<CartGiftError | null>(null);
   const mutation = useMutation({
     mutationKey: cartMutationKey,
@@ -114,8 +122,8 @@ export function CheckoutGiftRecipientEditor({
 
     const nextErrors = validateGiftRecipientDraft(
       draft,
-      copy.required,
-      copy.invalidPhone,
+      "required",
+      "invalidPhone",
     );
     setFieldErrors(nextErrors);
     const canonicalDraft = canonicalGiftRecipientDraft(draft);
@@ -140,7 +148,7 @@ export function CheckoutGiftRecipientEditor({
       if (!result.ok) {
         setError(result.error);
         if (result.error.code === "validation-rejected") {
-          const rejected: GiftRecipientDraftErrors = {};
+          const rejected: ErrorKeys = {};
           for (const field of Object.keys(
             backendFields,
           ) as GiftRecipientDraftField[]) {
@@ -148,7 +156,7 @@ export function CheckoutGiftRecipientEditor({
               result.error.fields.includes(backendFields[field]) ||
               result.error.fields.includes("recipient")
             ) {
-              rejected[field] = copy.validationError;
+              rejected[field] = "validationError";
             }
           }
           setFieldErrors(rejected);
@@ -205,6 +213,8 @@ export function CheckoutGiftRecipientEditor({
           <form className="pt-2" noValidate onSubmit={submit}>
             <fieldset disabled={mutation.isPending || disabled}>
               <GiftRecipientFields
+                feedbackMessages={[copy.required, copy.validationError]}
+                phoneFeedbackMessages={[copy.required, copy.invalidPhone, copy.validationError]}
                 busy={mutation.isPending}
                 copy={copy.fields}
                 draft={draft}
@@ -212,11 +222,9 @@ export function CheckoutGiftRecipientEditor({
                 locale={locale}
                 onChange={updateDraft}
               />
-              {error ? (
-                <p role="alert" className="mt-4 type-body-sm text-destructive">
-                  {errorMessage(error, copy)}
-                </p>
-              ) : null}
+              <FieldFeedback role="alert" className="mt-4" reserve={[copy.validationError, copy.sessionError, copy.serviceError]}>
+                {error ? errorMessage(error, copy) : null}
+              </FieldFeedback>
               <div className="sticky bottom-0 -mx-6 mt-5 flex flex-wrap gap-3 border-t border-gray-200 bg-gray-0 px-6 pt-4 pb-[env(safe-area-inset-bottom)] sm:static sm:mx-0 sm:px-0 sm:pb-0">
                 <Button
                   type="submit"

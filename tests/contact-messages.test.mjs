@@ -97,14 +97,12 @@ test("shared Saudi phone normalization supports only established formats", () =>
 function transportHarness(upstream) {
   const requests = [];
   const logs = [];
-  let api;
   const source = loader({
-    "@/lib/api/server-api": { serverApi: { request: (...args) => api.request(...args) } },
+    "@/config/server-env": { serverEnv: { apiBaseUrl: new URL("https://backend.test/api/") } },
   }, {
     fetch: async (...args) => { requests.push(args); return upstream(...args); },
     console: { error: (...args) => logs.push(args), warn: (...args) => logs.push(args), log: (...args) => logs.push(args) },
   });
-  api = source("src/lib/api/http-client").createHttpClient({ baseUrl: new URL("https://backend.test/api/") });
   return { POST: source("src/app/api/contact-messages/route").POST, requests, logs };
 }
 
@@ -125,8 +123,9 @@ test("public BFF uses one multipart Laravel POST, exact fields and locale, no id
     assert.equal(String(url), "https://backend.test/api/contact-messages");
     assert.equal(options.method, "POST");
     assert.deepEqual(Object.fromEntries(options.body.entries()), valid);
-    assert.deepEqual(Object.keys(options.headers).sort(), ["Accept", "Accept-Language"]);
-    assert.equal(options.headers["Accept-Language"], locale);
+    assert.deepEqual([...options.headers.keys()].sort(), ["accept", "accept-language", "x-locale"]);
+    assert.equal(options.headers.get("Accept-Language"), locale);
+    assert.equal(options.headers.get("X-Locale"), locale);
     assert.ok(options.signal instanceof AbortSignal);
   }
   assert.equal(h.requests.length, 2);
@@ -189,7 +188,7 @@ test("browser sends exactly five normalized JSON fields through shared HTTP tran
   assert.equal(String(url), "https://store.test/api/contact-messages");
   assert.equal(options.method, "POST");
   assert.deepEqual(JSON.parse(options.body), valid);
-  assert.deepEqual(plain(options.headers), { Accept: "application/json", "Content-Type": "application/json", "Accept-Language": "en" });
+  assert.deepEqual(Object.fromEntries(options.headers), { accept: "application/json", "content-type": "application/json", "accept-language": "en" });
 });
 
 test("browser response parser rejects false success and sanitizes validation details", async () => {
@@ -308,7 +307,7 @@ test("rapid duplicate submit makes one call, retains failure values, then confir
   find(success, (node) => node.props.onClick)?.props.onClick();
   const reset = renderToStaticMarkup(h.render());
   assert.match(reset, /<form/);
-  assert.doesNotMatch(reset, /role="alert"|aria-invalid="true"|value="[^"]+"/);
+  assert.doesNotMatch(reset, /aria-invalid="true"|value="[^"]+"/);
 });
 
 test("validation errors target only invalid controls and prevent requests", async () => {
@@ -322,7 +321,7 @@ test("validation errors target only invalid controls and prevent requests", asyn
   assert.equal((html.match(/aria-invalid="true"/g) ?? []).length, 2);
   assert.match(html, /aria-describedby="contact-email-description"/);
   assert.match(html, /aria-describedby="contact-message-error"/);
-  assert.doesNotMatch(html, /role="alert"/);
+  assert.match(html, /role="alert"><\/p>/);
 });
 
 test("Contact restores the wider two-column composition with factual server-rendered support cards", async () => {

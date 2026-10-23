@@ -54,9 +54,9 @@ async function readAddresses(
   }
 }
 
-async function readGiftWrapConfig(): Promise<CheckoutGiftWrapConfig | null> {
+async function readGiftWrapConfig(locale: Awaited<ReturnType<typeof getLocale>>): Promise<CheckoutGiftWrapConfig | null> {
   try {
-    const settings = await getPublicSettings();
+    const settings = await getPublicSettings(locale);
     return {
       enabled: settings.giftWrapEnabled,
       fee: settings.giftWrapFee,
@@ -74,7 +74,7 @@ export default async function CheckoutRoute() {
     getCurrentUser(),
     getTranslations({ locale, namespace: "Common.checkoutPage" }),
     getTranslations({ locale, namespace: "Common.productDetails.options" }),
-    readGiftWrapConfig(),
+    readGiftWrapConfig(locale),
   ]);
   const giftRecipient = cart.gift.isGift ? cart.gift.recipient : null;
   const addressState =

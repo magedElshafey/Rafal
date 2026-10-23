@@ -3,6 +3,7 @@
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { CheckoutStepSection } from "@/features/checkout/components/checkout-step-section";
@@ -27,7 +28,7 @@ export type CheckoutBuyerCopy = {
   validation: string;
 };
 
-type BuyerErrors = Partial<Record<keyof CheckoutGuestBuyerDraft, string>>;
+type BuyerErrors = Partial<Record<keyof CheckoutGuestBuyerDraft, "required" | "invalidEmail" | "invalidPhone">>;
 
 const emptyDraft: CheckoutGuestBuyerDraft = { name: "", email: "", phone: "" };
 
@@ -43,8 +44,14 @@ export function CheckoutBuyerSection({
   ) => void;
 }) {
   const [draft, setDraft] = useState(emptyDraft);
-  const [errors, setErrors] = useState<BuyerErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
+  const [errorKeys, setErrors] = useState<BuyerErrors>({});
+  const errors = {
+    name: errorKeys.name ? copy[errorKeys.name] : undefined,
+    email: errorKeys.email ? copy[errorKeys.email] : undefined,
+    phone: errorKeys.phone ? copy[errorKeys.phone] : undefined,
+  };
+  const [formErrorKey, setFormError] = useState<"validation" | null>(null);
+  const formError = formErrorKey ? copy[formErrorKey] : null;
   const draftMatchesCommitted =
     committedBuyer !== null &&
     draft.name.trim() === committedBuyer.name &&
@@ -61,19 +68,19 @@ export function CheckoutBuyerSection({
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors: BuyerErrors = {};
-    if (!draft.name.trim()) nextErrors.name = copy.required;
-    if (!draft.email.trim()) nextErrors.email = copy.required;
+    if (!draft.name.trim()) nextErrors.name = "required";
+    if (!draft.email.trim()) nextErrors.email = "required";
     else if (!isValidCheckoutEmail(draft.email)) {
-      nextErrors.email = copy.invalidEmail;
+      nextErrors.email = "invalidEmail";
     }
-    if (!draft.phone.trim()) nextErrors.phone = copy.required;
+    if (!draft.phone.trim()) nextErrors.phone = "required";
     else if (!normalizeSaudiMobile(draft.phone)) {
-      nextErrors.phone = copy.invalidPhone;
+      nextErrors.phone = "invalidPhone";
     }
     setErrors(nextErrors);
     const buyer = checkoutGuestBuyerFromDraft(draft);
     if (Object.keys(nextErrors).length > 0 || !buyer) {
-      setFormError(copy.validation);
+      setFormError("validation");
       return;
     }
     setFormError(null);
@@ -85,6 +92,7 @@ export function CheckoutBuyerSection({
       <form noValidate onSubmit={submit}>
         <div className="grid gap-4 sm:grid-cols-2">
           <InputField
+            feedbackMessages={[copy.required]}
             id="checkout-buyer-name"
             name="buyerName"
             autoComplete="name"
@@ -95,6 +103,7 @@ export function CheckoutBuyerSection({
             onChange={(event) => update("name", event.target.value)}
           />
           <InputField
+            feedbackMessages={[copy.required, copy.invalidEmail]}
             id="checkout-buyer-email"
             name="buyerEmail"
             type="email"
@@ -109,6 +118,7 @@ export function CheckoutBuyerSection({
           />
           <div className="sm:col-span-2">
             <SaudiMobileField
+              feedbackMessages={[copy.required, copy.invalidPhone]}
               id="checkout-buyer-phone"
               name="buyerPhone"
               required
@@ -119,11 +129,9 @@ export function CheckoutBuyerSection({
             />
           </div>
         </div>
-        {formError ? (
-          <p role="alert" className="mt-4 type-body-sm text-destructive">
+        <FieldFeedback role="alert" className="mt-4" reserve={[copy.validation]}>
             {formError}
-          </p>
-        ) : null}
+          </FieldFeedback>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button type="submit">{copy.submit}</Button>
           {draftMatchesCommitted ? (

@@ -32,7 +32,7 @@ export async function getWishlistPageDto(
   locale: Locale,
   page: number,
 ): Promise<WishlistPageResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: wishlistEndpoint,
     headers: authenticatedHeaders(accessToken, locale),
     query: { page, per_page: WISHLIST_PAGE_SIZE },
@@ -45,7 +45,7 @@ export async function addWishlistProductDto(
   locale: Locale,
   productId: number,
 ): Promise<WishlistMutationResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `${wishlistEndpoint}/${productId}`,
     method: "POST",
     headers: authenticatedHeaders(accessToken, locale),
@@ -58,7 +58,7 @@ export async function removeWishlistProductDto(
   locale: Locale,
   productId: number,
 ): Promise<WishlistMutationResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `${wishlistEndpoint}/${productId}`,
     method: "DELETE",
     headers: authenticatedHeaders(accessToken, locale),
@@ -70,7 +70,7 @@ export async function getWishlistCountDto(
   accessToken: string,
   locale: Locale,
 ): Promise<WishlistCountResponseDto> {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `${wishlistEndpoint}/count`,
     headers: authenticatedHeaders(accessToken, locale),
   });

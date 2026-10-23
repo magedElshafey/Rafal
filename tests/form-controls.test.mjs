@@ -67,7 +67,9 @@ test("InputField preserves label, ref, native props and message precedence", () 
   assert.match(html, /required=""/);
   assert.match(html, /autoComplete="email"/i);
   assert.match(html, /<p[^>]*id="email-feedback"[^>]*>Invalid email<\/p>/);
-  assert.ok(!html.includes(">Help<"));
+  assert.match(html, /<p aria-hidden="true"[^>]*>Help<\/p>/);
+  const accessibleMarkup = html.replace(/<p aria-hidden="true"[^>]*>[\s\S]*?<\/p>/g, "");
+  assert.ok(!accessibleMarkup.includes(">Help<"));
   assert.ok(!html.includes('role="alert"'));
   const ref = { current: null };
   const field = InputField.render(props, ref);

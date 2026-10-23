@@ -4,6 +4,7 @@ import { useRef, useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { verifyOtp } from "@/features/auth/actions/verify-otp";
 import { usePostAuthCartMerge } from "@/features/auth/hooks/use-post-auth-cart-merge";
 import { useRouter } from "@/i18n/navigation";
@@ -34,7 +35,8 @@ export function OtpVerificationForm({
   const router = useRouter();
   const inFlight = useRef(false);
   const [code, setCode] = useState("");
-  const [error, setError] = useState<string>();
+  const [errorKey, setError] = useState<keyof Pick<OtpVerificationFormCopy, "invalidCode" | "rateLimited" | "sessionFailed" | "unavailable">>();
+  const error = errorKey ? copy[errorKey] : undefined;
   const [pending, startTransition] = useTransition();
   const { mergeAndContinue } = usePostAuthCartMerge(locale, returnTo);
 
@@ -42,7 +44,7 @@ export function OtpVerificationForm({
     event.preventDefault();
     if (inFlight.current) return;
     if (!/^\d{6}$/.test(code)) {
-      setError(copy.invalidCode);
+      setError("invalidCode");
       return;
     }
 
@@ -62,12 +64,12 @@ export function OtpVerificationForm({
           setError(
             result.error.code === "invalid-input" ||
               result.error.code === "unauthorized"
-              ? copy.invalidCode
+              ? "invalidCode"
               : result.error.code === "rate-limited"
-                ? copy.rateLimited
+                ? "rateLimited"
                 : result.error.code === "session-failed"
-                  ? copy.sessionFailed
-                  : copy.unavailable,
+                  ? "sessionFailed"
+                  : "unavailable",
           );
           return;
         }
@@ -78,7 +80,7 @@ export function OtpVerificationForm({
         }
         router.replace({ pathname: "/register", query: { returnTo } });
       } catch {
-        setError(copy.unavailable);
+        setError("unavailable");
       } finally {
         inFlight.current = false;
       }
@@ -103,15 +105,13 @@ export function OtpVerificationForm({
             setError(undefined);
           }}
         />
-        {error ? (
-          <p
+        <FieldFeedback
             id="auth-otp-error"
             role="alert"
-            className="mt-2 type-caption text-destructive"
-          >
+            className="mt-2"
+           reserve={[copy.invalidCode, copy.unavailable, copy.rateLimited, copy.sessionFailed]}>
             {error}
-          </p>
-        ) : null}
+          </FieldFeedback>
         <Button
           type="submit"
           size="lg"

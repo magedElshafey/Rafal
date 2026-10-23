@@ -68,6 +68,7 @@ export default async function LocaleLayout({
   }
 
   const direction = locale === "ar" ? "rtl" : "ltr";
+  const feedback = await getTranslations({ locale, namespace: "Common.feedback" });
 
   return (
     <html className="overflow-x-hidden" lang={locale} dir={direction}>
@@ -75,7 +76,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <QueryProvider>{children}</QueryProvider>
         </NextIntlClientProvider>
-        <RafalToaster direction={direction} />
+        <RafalToaster direction={direction} label={feedback("notifications")} dismissLabel={feedback("dismiss")} />
       </body>
     </html>
   );

@@ -7,10 +7,10 @@ import { Container } from "@/components/ui/container";
 
 type ProductErrorProps = {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 };
 
-export default function ProductError({ reset }: ProductErrorProps) {
+export default function ProductError({ retry }: ProductErrorProps) {
   const t = useTranslations("Common.productDetails.route");
 
   return (
@@ -25,7 +25,7 @@ export default function ProductError({ reset }: ProductErrorProps) {
         <p className="mt-2 max-w-xl type-body text-gray-600">
           {t("errorDescription")}
         </p>
-        <Button className="mt-4" onClick={reset}>
+        <Button className="mt-4" onClick={retry}>
           {t("retry")}
         </Button>
       </div>

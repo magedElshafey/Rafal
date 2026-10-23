@@ -30,6 +30,7 @@ import type {
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
+import { FieldFeedback } from "@/components/ui/field";
 import type { SelectedProductOptions } from "@/features/products/utils/product-variant-resolver";
 import type {
   ProductPersonalizationValidationError,
@@ -339,11 +340,16 @@ function ProductPersonalizationSummary({
             })}
           </span>
         </div>
-        {showError && errorMessage ? (
-          <p id={errorId} className="mt-2 type-caption text-destructive">
-            {errorMessage}
-          </p>
-        ) : null}
+        <FieldFeedback id={errorId} className="mt-2" reserve={[
+          copy.errors.required,
+          copy.errors.unsupportedLanguage,
+          copy.errors.invalidCharacters,
+          formatProductMessage(copy.errors.tooLongTemplate, { max: product.personalization.maxLength }),
+          ...product.personalization.allowedLanguages.map((language) =>
+            formatProductMessage(copy.errors.languageScriptMismatchTemplate, { language: copy.languages[language] })),
+        ]}>
+          {showError ? errorMessage : null}
+        </FieldFeedback>
       </div>
     </section>
   );

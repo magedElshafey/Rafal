@@ -15,7 +15,7 @@ import type {
   AccountProfileValidationErrors,
 } from "@/features/account/profile/types/account-profile.types";
 import { validateAccountProfile } from "@/features/account/profile/utils/validate-account-profile";
-import { rafalToast } from "@/lib/rafal-toast";
+import { useRafalToast } from "@/lib/rafal-toast";
 import { formatSaudiMobileForInput } from "@/lib/phone/saudi-mobile";
 
 export type ProfileFormCopy = {
@@ -38,6 +38,7 @@ type ProfileFormProps = {
 };
 
 export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
+  const rafalToast = useRafalToast();
   const [values, setValues] = useState<AccountProfileInput>({
     firstName: profile.firstName,
     email: profile.email,
@@ -107,6 +108,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
       >
         <div className="grid gap-5 sm:grid-cols-2">
           <InputField
+            feedbackMessages={[copy.validation.required, copy.validation.invalid]}
             id="account-first-name"
             name="firstName"
             autoComplete="given-name"
@@ -116,6 +118,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
             onChange={(event) => updateField("firstName", event.target.value)}
           />
           <InputField
+            feedbackMessages={[copy.validation.required, copy.validation.invalid]}
             id="account-last-name"
             name="lastName"
             autoComplete="family-name"
@@ -126,6 +129,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
           />
           <div className="sm:col-span-2">
             <InputField
+              feedbackMessages={[copy.validation.invalid]}
               id="account-email"
               name="email"
               type="email"
@@ -141,6 +145,7 @@ export function ProfileForm({ copy, locale, profile }: ProfileFormProps) {
           </div>
           <div className="sm:col-span-2">
             <SaudiMobileField
+              feedbackMessages={[copy.validation.required, copy.validation.phone, copy.validation.invalid]}
               id="account-phone"
               name="phone"
               className="text-start"

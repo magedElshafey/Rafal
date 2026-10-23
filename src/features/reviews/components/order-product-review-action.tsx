@@ -4,8 +4,8 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { CheckIcon, InfoIcon } from "@/components/ui/icons/interface-icons";
+import { Field, FieldFeedback, FieldLabel } from "@/components/ui/field";
+import { CheckIcon } from "@/components/ui/icons/interface-icons";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { Textarea } from "@/components/ui/textarea";
 import { submitProductReviewFromBrowser } from "@/features/reviews/api/submit-product-review.client";
@@ -45,17 +45,17 @@ type OrderProductReviewActionProps = {
   productName: string;
 };
 
-function submissionError(copy: OrderProductReviewCopy, error: unknown): string {
-  if (!(error instanceof ApiError)) return copy.errors.service;
-  if (error.code === "auth-required") return copy.errors.auth;
-  if (error.code === "invalid-input") return copy.errors.validation;
-  if (error.code === "review-not-allowed") return copy.errors.notAllowed;
-  if (error.code === "rate-limited") return copy.errors.rateLimited;
-  return copy.errors.service;
+function submissionError(error: unknown): keyof OrderProductReviewCopy["errors"] {
+  if (!(error instanceof ApiError)) return "service";
+  if (error.code === "auth-required") return "auth";
+  if (error.code === "invalid-input") return "validation";
+  if (error.code === "review-not-allowed") return "notAllowed";
+  if (error.code === "rate-limited") return "rateLimited";
+  return "service";
 }
 
 type SubmissionFailure = Readonly<{
-  customerMessage: string;
+  messageKey: keyof OrderProductReviewCopy["errors"];
   developmentDiagnostic?: string;
 }>;
 
@@ -101,7 +101,8 @@ export function OrderProductReviewAction({
   const [submitted, setSubmitted] = useState(false);
   const [rating, setRating] = useState<ProductReviewSubmissionRating | null>(null);
   const [comment, setComment] = useState("");
-  const [ratingError, setRatingError] = useState<string>();
+  const [ratingInvalid, setRatingError] = useState(false);
+  const ratingError = ratingInvalid ? copy.ratingRequired : undefined;
   const [formError, setFormError] = useState<SubmissionFailure>();
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -110,7 +111,7 @@ export function OrderProductReviewAction({
     if (!nextOpen && !submitted) {
       setRating(null);
       setComment("");
-      setRatingError(undefined);
+      setRatingError(false);
       setFormError(undefined);
     }
   };
@@ -119,13 +120,13 @@ export function OrderProductReviewAction({
     event.preventDefault();
     if (submissionPendingRef.current) return;
     if (rating === null) {
-      setRatingError(copy.ratingRequired);
+      setRatingError(true);
       return;
     }
 
     submissionPendingRef.current = true;
     setPending(true);
-    setRatingError(undefined);
+    setRatingError(false);
     setFormError(undefined);
     try {
       const trimmedComment = comment.trim();
@@ -141,7 +142,7 @@ export function OrderProductReviewAction({
     } catch (error) {
       const developmentDiagnostic = formatDevelopmentDiagnostic(error);
       setFormError({
-        customerMessage: submissionError(copy, error),
+        messageKey: submissionError(error),
         ...(developmentDiagnostic ? { developmentDiagnostic } : {}),
       });
     } finally {
@@ -241,9 +242,10 @@ export function OrderProductReviewAction({
               ratingLabelTemplate={copy.ratingLabel}
               value={rating}
               error={ratingError}
+              requiredMessage={copy.ratingRequired}
               onChange={(nextRating) => {
                 setRating(nextRating);
-                setRatingError(undefined);
+                setRatingError(false);
                 setFormError(undefined);
               }}
             />
@@ -264,17 +266,10 @@ export function OrderProductReviewAction({
                 }}
               />
             </Field>
-            {formError ? (
-              <div
-                id={`${formId}-error`}
-                role="alert"
-                className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2.5"
-              >
-                <p className="flex items-start gap-2 type-body-sm font-medium text-destructive">
-                  <InfoIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-                  <span>{formError.customerMessage}</span>
-                </p>
-                {formError.developmentDiagnostic ? (
+            <FieldFeedback id={`${formId}-error`} role="alert" reserve={Object.values(copy.errors)}>
+              {formError ? copy.errors[formError.messageKey] : null}
+            </FieldFeedback>
+                {formError?.developmentDiagnostic ? (
                   <p className="mt-2 border-t border-destructive/15 pt-2 type-caption text-gray-600">
                     <span className="font-medium">
                       {copy.developmentDiagnostic}:
@@ -282,8 +277,6 @@ export function OrderProductReviewAction({
                     <bdi>{formError.developmentDiagnostic}</bdi>
                   </p>
                 ) : null}
-              </div>
-            ) : null}
           </form>
         )}
       </RafalModal>

@@ -344,6 +344,21 @@ focused, error, disabled, and read-only states are supported. `InputField` owns
 `aria-describedby` wiring; callers provide a stable `id` and localized copy.
 Phone-specific business structure is intentionally not part of this generic API.
 
+The 2026-10-23 feedback task adds `feedbackMessages` to InputField and
+PhoneInputField. Supply the possible localized validation messages to reserve
+their natural wrapped height (plain strings only, specific to that field) through the shared `FieldFeedback` grid. Specialized
+controls reuse `FieldFeedback` directly. Invisible sizing copies are excluded
+from accessibility; the visible message retains its ID and caller-owned
+announcement semantics. Do not replace this with fixed heights or clipped text.
+
+The same task updates `RafalToaster` to a light gray-0 surface, gray-200 border,
+existing toast shadow and lg radius. Notifications sit at top inline-end with
+safe-area margins. Use `useRafalToast` for success, error, warning and info; it
+retains Sonner and prevents late old-locale notifications. Feature translations
+remain caller-owned. Independent notifications receive separate Sonner IDs. Supply an explicit ID
+only when repeated notifications update the same logical operation. See `FEEDBACK_AUDIT.md` for
+timing, accessibility, verification and remaining contract gaps.
+
 `PhoneInputField` is the separate DS-02 compound control shown under Figma Auth
 Components. It composes a 44px field, 78px country-prefix region, 22x16px flag,
 24px divider, country code, and native `tel` input. Its country data is supplied

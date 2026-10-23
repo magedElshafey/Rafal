@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FieldFeedback } from "@/components/ui/field";
 
 import { RatingStarIcon } from "@/components/ui/icons/rating-star-icon";
 import type { ProductReviewSubmissionRating } from "@/features/reviews/types/product-review.types";
@@ -10,6 +11,7 @@ const ratingValues = [1, 2, 3, 4, 5] as const;
 
 type ProductReviewRatingInputProps = {
   error?: string;
+  requiredMessage: string;
   legend: string;
   name: string;
   onChange: (rating: ProductReviewSubmissionRating) => void;
@@ -19,6 +21,7 @@ type ProductReviewRatingInputProps = {
 
 export function ProductReviewRatingInput({
   error,
+  requiredMessage,
   legend,
   name,
   onChange,
@@ -32,7 +35,7 @@ export function ProductReviewRatingInput({
   const visibleRating = preview ?? value ?? 0;
 
   return (
-    <fieldset aria-describedby={error ? errorId : undefined}>
+    <fieldset aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error) || undefined}>
       <legend className="type-label font-medium text-gray-800">{legend}</legend>
       <div
         className="mt-3 flex w-fit items-center gap-1"
@@ -82,11 +85,9 @@ export function ProductReviewRatingInput({
           );
         })}
       </div>
-      {error ? (
-        <p id={errorId} className="mt-1.5 type-caption text-destructive">
+      <FieldFeedback id={errorId} className="mt-1.5" reserve={[requiredMessage]}>
           {error}
-        </p>
-      ) : null}
+        </FieldFeedback>
     </fieldset>
   );
 }

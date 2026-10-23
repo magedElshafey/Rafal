@@ -68,7 +68,7 @@ export async function getQuickAddSelectionData({
 
   const [location, settings] = await Promise.all([
     resolveLocationByCityId(durableCityId, locale),
-    getPublicSettings(),
+    getPublicSettings(locale),
   ]);
 
   const availabilityByVariantId =

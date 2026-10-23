@@ -1,6 +1,6 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 
-import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldFeedback, FieldLabel } from "@/components/ui/field";
 import { formControlStyles } from "@/components/ui/form-control-styles";
 import { cn } from "@/lib/utils";
 
@@ -32,11 +32,12 @@ export interface InputFieldProps extends Omit<InputProps, "aria-describedby"> {
   helperText?: ReactNode;
   error?: ReactNode;
   descriptionId?: string;
+  feedbackMessages?: readonly string[];
 }
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   (
-    { className, descriptionId, error, helperText, id, label, ...props },
+    { className, descriptionId, error, feedbackMessages, helperText, id, label, ...props },
     ref,
   ) => {
     const message = error ?? helperText;
@@ -60,13 +61,11 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           className={className}
           {...props}
         />
-        {message ? (
-          error ? (
-            <FieldError id={messageId}>{message}</FieldError>
-          ) : (
-            <FieldDescription id={messageId}>{message}</FieldDescription>
-          )
-        ) : null}
+        <FieldFeedback
+          id={messageId}
+          reserve={[...(typeof helperText === "string" ? [helperText] : []), ...(feedbackMessages ?? [])]}
+          style={!error ? { color: "var(--color-gray-600)" } : undefined}
+        >{message}</FieldFeedback>
       </Field>
     );
   },
@@ -84,6 +83,7 @@ export interface PhoneInputFieldProps extends Omit<
   countryFlag: ReactNode;
   error?: ReactNode;
   descriptionId?: string;
+  feedbackMessages?: readonly string[];
 }
 
 export const PhoneInputField = forwardRef<
@@ -98,6 +98,7 @@ export const PhoneInputField = forwardRef<
       descriptionId,
       disabled,
       error,
+      feedbackMessages,
       id,
       label,
       ...props
@@ -123,7 +124,7 @@ export const PhoneInputField = forwardRef<
           dir="ltr"
           className={cn(
             "flex h-11 w-full items-center overflow-hidden rounded-md border border-gray-200 bg-gray-0",
-            "focus-within:border-[length:var(--border-width-emphasis)] focus-within:border-gold-500",
+            "focus-within:border-gold-500 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
             error && "border-destructive focus-within:border-destructive",
             disabled && "cursor-not-allowed bg-gray-100 text-gray-400",
           )}
@@ -158,11 +159,9 @@ export const PhoneInputField = forwardRef<
             {...props}
           />
         </div>
-        {error ? (
-          <p id={messageId} className="type-caption text-destructive">
-            {error}
-          </p>
-        ) : null}
+        <FieldFeedback id={messageId} reserve={feedbackMessages}>
+          {error}
+        </FieldFeedback>
       </div>
     );
   },

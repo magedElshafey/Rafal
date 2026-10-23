@@ -4,6 +4,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { GuestOrderResult } from "@/features/orders/components/guest-order-result";
@@ -15,8 +16,8 @@ import { parseGuestOrderLookupInput } from "@/features/orders/utils/guest-order-
 import type { Locale } from "next-intl";
 
 type FieldErrors = Readonly<{
-  identity?: string;
-  orderNumber?: string;
+  identity?: "invalidEmail" | "invalidPhone";
+  orderNumber?: "invalidOrderNumber";
 }>;
 
 export function GuestOrderLookup() {
@@ -30,7 +31,7 @@ export function GuestOrderLookup() {
   const [orderNumber, setOrderNumber] = useState("");
   const [identities, setIdentities] = useState({ email: "", phone: "" });
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  const [responseError, setResponseError] = useState<string>();
+  const [responseError, setResponseError] = useState<"rateLimited" | "mismatch" | "service">();
   const [pending, setPending] = useState(false);
   const [order, setOrder] = useState<OrderDetails>();
 
@@ -110,14 +111,14 @@ export function GuestOrderLookup() {
     });
     const nextErrors: FieldErrors = {
       ...(!rawOrderNumber || rawOrderNumber.length > 100
-        ? { orderNumber: t("errors.invalidOrderNumber") }
+        ? { orderNumber: "invalidOrderNumber" }
         : {}),
       ...(!identityIsValid
         ? {
             identity:
               method === "email"
-                ? t("errors.invalidEmail")
-                : t("errors.invalidPhone"),
+                ? "invalidEmail"
+                : "invalidPhone",
           }
         : {}),
     };
@@ -135,15 +136,17 @@ export function GuestOrderLookup() {
       if (!result.ok) {
         setResponseError(
           result.code === "rate-limited"
-            ? t("errors.rateLimited")
+            ? "rateLimited"
             : result.code === "lookup-mismatch"
-              ? t("errors.mismatch")
-              : t("errors.service"),
+              ? "mismatch"
+              : "service",
         );
         return;
       }
       setOrder(result.order);
       requestAnimationFrame(() => resultHeadingRef.current?.focus());
+    } catch {
+      setResponseError("service");
     } finally {
       submittingRef.current = false;
       setPending(false);
@@ -198,6 +201,8 @@ export function GuestOrderLookup() {
         </div>
 
         <InputField
+
+          feedbackMessages={[t("errors.invalidOrderNumber")]}
           ref={orderNumberRef}
           id="guest-order-number"
           name="orderNumber"
@@ -207,7 +212,7 @@ export function GuestOrderLookup() {
           required
           label={t("orderNumber")}
           value={orderNumber}
-          error={fieldErrors.orderNumber}
+          error={fieldErrors.orderNumber ? t(`errors.${fieldErrors.orderNumber}`) : undefined}
           onChange={(event) => {
             setOrderNumber(event.target.value);
             setFieldErrors((current) => ({ ...current, orderNumber: undefined }));
@@ -217,6 +222,7 @@ export function GuestOrderLookup() {
 
         {method === "email" ? (
           <InputField
+            feedbackMessages={[t("errors.invalidEmail")]}
             id="guest-order-email"
             name="email"
             type="email"
@@ -225,7 +231,7 @@ export function GuestOrderLookup() {
             required
             label={t("email")}
             value={identities.email}
-            error={fieldErrors.identity}
+            error={fieldErrors.identity ? t(`errors.${fieldErrors.identity}`) : undefined}
             onChange={(event) => {
               setIdentities((current) => ({ ...current, email: event.target.value }));
               setFieldErrors((current) => ({ ...current, identity: undefined }));
@@ -234,13 +240,14 @@ export function GuestOrderLookup() {
           />
         ) : (
           <SaudiMobileField
+            feedbackMessages={[t("errors.invalidPhone")]}
             id="guest-order-phone"
             name="phone"
             maxLength={20}
             required
             label={t("phone")}
             value={identities.phone}
-            error={fieldErrors.identity}
+            error={fieldErrors.identity ? t(`errors.${fieldErrors.identity}`) : undefined}
             onChange={(event) => {
               setIdentities((current) => ({ ...current, phone: event.target.value }));
               setFieldErrors((current) => ({ ...current, identity: undefined }));
@@ -249,11 +256,9 @@ export function GuestOrderLookup() {
           />
         )}
 
-        {responseError ? (
-          <p role="alert" className="type-body-sm text-destructive">
-            {responseError}
-          </p>
-        ) : null}
+        <FieldFeedback role="alert" reserve={[t("errors.rateLimited"), t("errors.mismatch"), t("errors.service")]}>
+            {responseError ? t(`errors.${responseError}`) : null}
+          </FieldFeedback>
         <p className="sr-only" role="status" aria-live="polite">
           {pending ? t("tracking") : ""}
         </p>

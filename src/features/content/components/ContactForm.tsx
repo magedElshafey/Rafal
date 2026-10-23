@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useLocale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldFeedback, FieldLabel } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { Textarea } from "@/components/ui/textarea";
@@ -99,17 +99,30 @@ export function ContactForm({ copy }: { copy: ContactFormCopy }) {
           {copy.sendAnother}
         </Button>
       ) : (
-        <form ref={formRef} method="post" noValidate onSubmit={handleSubmit} aria-describedby="contact-form-required">
+        <form ref={formRef} method="post" noValidate onSubmit={handleSubmit} aria-describedby="contact-form-required"
+          onInput={(event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+            const field = contactFields.find((name) => name === target.name);
+            if (!field || submitting) return;
+            setFieldErrors((current) => ({ ...current, [field]: undefined }));
+            setFormError(null);
+            setState("idle");
+          }}>
           <fieldset disabled={submitting} className="min-w-0">
             <legend className="text-h3 font-bold text-gray-1000">{copy.title}</legend>
             <p id="contact-form-required" className="mt-2 type-body-sm text-muted-foreground">{copy.required}</p>
             <div className="mt-5 space-y-4">
-              <InputField id="contact-name" name="name" label={copy.labels.name} autoComplete="name" dir="auto" required error={fieldError("name")} />
+              <InputField
+                feedbackMessages={[copy.validation.name]} id="contact-name" name="name" label={copy.labels.name} autoComplete="name" dir="auto" required error={fieldError("name")} />
               <div className="min-w-0 space-y-4">
-                <InputField id="contact-email" name="email" type="email" label={copy.labels.email} autoComplete="email" dir="ltr" required error={fieldError("email")} />
-                <SaudiMobileField id="contact-phone" name="phone" label={copy.labels.phone} disabled={submitting} required error={fieldError("phone")} />
+                <InputField
+                  feedbackMessages={[copy.validation.email]} id="contact-email" name="email" type="email" label={copy.labels.email} autoComplete="email" dir="ltr" required error={fieldError("email")} />
+                <SaudiMobileField
+                  feedbackMessages={[copy.validation.phone]} id="contact-phone" name="phone" label={copy.labels.phone} disabled={submitting} required error={fieldError("phone")} />
               </div>
-              <InputField id="contact-subject" name="subject" label={copy.labels.subject} dir="auto" required error={fieldError("subject")} />
+              <InputField
+                feedbackMessages={[copy.validation.subject]} id="contact-subject" name="subject" label={copy.labels.subject} dir="auto" required error={fieldError("subject")} />
               <Field>
                 <FieldLabel htmlFor="contact-message">{copy.labels.message}</FieldLabel>
                 <Textarea
@@ -121,11 +134,11 @@ export function ContactForm({ copy }: { copy: ContactFormCopy }) {
                   invalid={Boolean(fieldErrors.message)}
                   aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
                 />
-                {fieldErrors.message ? <FieldError id="contact-message-error">{copy.validation.message}</FieldError> : null}
+                <FieldFeedback id="contact-message-error" reserve={[copy.validation.message]}>{fieldErrors.message ? copy.validation.message : null}</FieldFeedback>
               </Field>
             </div>
           </fieldset>
-          {formError ? <p role="alert" className="mt-5 type-body text-destructive">{copy.errors[formError]}</p> : null}
+          <FieldFeedback role="alert" className="mt-5" reserve={Object.values(copy.errors)}>{formError ? copy.errors[formError] : null}</FieldFeedback>
           <Button type="submit" size="lg" loading={submitting} loadingLabel={copy.submitting} disabled={submitting} className="mt-5 w-full">
             {copy.submit}
           </Button>

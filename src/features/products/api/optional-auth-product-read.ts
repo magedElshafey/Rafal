@@ -20,7 +20,7 @@ export async function optionalAuthProductRead(
   const accessToken = await getAccessToken();
   const headers = { "Accept-Language": locale };
   try {
-    return await serverApi.request<unknown>({
+    return await serverApi.request<unknown>({ locale,
       ...request,
       headers: accessToken
         ? { ...headers, Authorization: `Bearer ${accessToken}` }
@@ -31,6 +31,6 @@ export async function optionalAuthProductRead(
       throw error;
     }
     // One guest read only; do not change cookies or global auth behavior here.
-    return serverApi.request<unknown>({ ...request, headers });
+    return serverApi.request<unknown>({ locale, ...request, headers });
   }
 }

@@ -98,8 +98,8 @@ export const OtpInput = forwardRef<HTMLInputElement, OtpInputProps>(
             className={cn(
               "flex h-[var(--otp-cell-height)] min-w-0 items-center justify-center rounded-md border bg-gray-0 text-h4 font-bold text-gray-1000",
               invalid ? "border-destructive" : "border-gray-200",
-              focused && activeCell === index && !invalid
-                ? "border-[length:var(--border-width-emphasis)] border-gold-500"
+              focused && activeCell === index
+                ? "ring-2 ring-ring ring-offset-2"
                 : null,
               disabled && "bg-gray-100 text-gray-400",
             )}

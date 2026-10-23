@@ -8,7 +8,7 @@ type QueryValue = string | number | boolean | null | undefined;
 
 type QueryParams = Record<string, QueryValue | QueryValue[]>;
 
-type RequestConfig<TBody = unknown> = {
+export type RequestConfig<TBody = unknown> = {
   path: string;
   method?: HttpMethod;
   headers?: HeadersInit;
@@ -25,12 +25,6 @@ type CreateHttpClientOptions = {
   timeoutMs?: number;
   maxRetries?: number;
   getDefaultHeaders?: () => HeadersInit | Promise<HeadersInit>;
-};
-
-type ErrorResponse = {
-  message?: string;
-  code?: string;
-  errors?: unknown;
 };
 
 function buildUrl(path: string, baseUrl: URL, query?: QueryParams): URL {
@@ -134,18 +128,18 @@ export function createHttpClient({
       : timeoutSignal;
 
     const formDataBody = isFormData(body);
+    const requestHeaders = new Headers({ Accept: "application/json" });
+    if (!formDataBody) requestHeaders.set("Content-Type", "application/json");
+    for (const source of [dynamicHeaders, headers]) {
+      new Headers(source).forEach((value, key) => requestHeaders.set(key, value));
+    }
 
     const requestMaxRetries = retry === false ? 0 : maxRetries;
     for (let attempt = 0; attempt <= requestMaxRetries; attempt++) {
       try {
         const response = await fetch(url, {
           method,
-          headers: {
-            Accept: "application/json",
-            ...(formDataBody ? {} : { "Content-Type": "application/json" }),
-            ...dynamicHeaders,
-            ...headers,
-          },
+          headers: requestHeaders,
           body:
             body === undefined
               ? undefined
@@ -166,7 +160,7 @@ export function createHttpClient({
             continue;
           }
 
-          let errorBody: ErrorResponse | undefined;
+          let errorBody: unknown;
 
           try {
             errorBody = await response.json();
@@ -174,13 +168,17 @@ export function createHttpClient({
             // Response body may be empty or not JSON.
           }
 
+          const envelope = typeof errorBody === "object" && errorBody !== null && !Array.isArray(errorBody)
+            ? errorBody as Record<string, unknown>
+            : undefined;
+
           throw new ApiError({
             status: response.status,
             message:
-              errorBody?.message ??
-              `Request failed with status ${response.status}`,
-            code: errorBody?.code,
-            details: errorBody?.errors,
+              typeof envelope?.message === "string" ? envelope.message :
+                `Request failed with status ${response.status}`,
+            code: typeof envelope?.code === "string" ? envelope.code : undefined,
+            details: envelope?.errors,
           });
         }
 

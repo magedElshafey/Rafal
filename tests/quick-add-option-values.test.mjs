@@ -53,7 +53,7 @@ function loadSource(relativePath) {
       }, props.children) };
       if (specifier === "@/components/ui/icons") return { CheckIcon: () => null };
       if (specifier === "@/i18n/navigation") return { Link: ({ children, ...props }) => React.createElement("a", props, children) };
-      if (specifier === "@/lib/rafal-toast") return {};
+      if (specifier === "@/lib/rafal-toast") return { useRafalToast: () => ({ success() {}, error() {} }) };
       if (specifier.startsWith("@/")) return loadSource(`src/${specifier.slice(2)}`);
       return require(specifier);
     },

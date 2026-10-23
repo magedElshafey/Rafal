@@ -4,9 +4,9 @@ import { CatalogueListingError } from "@/features/products/components/listing/ca
 
 type CategoryErrorProps = {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 };
 
-export default function CategoryError({ reset }: CategoryErrorProps) {
-  return <CatalogueListingError retry={reset} />;
+export default function CategoryError({ retry }: CategoryErrorProps) {
+  return <CatalogueListingError retry={retry} />;
 }

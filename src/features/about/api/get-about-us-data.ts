@@ -7,7 +7,7 @@ import { serverApi } from "@/lib/api/server-api";
 import { ApiError } from "@/lib/api/api-error";
 
 export async function getAboutUsData(locale: Locale) {
-  const response = await serverApi.request<unknown>({
+  const response = await serverApi.request<unknown>({ locale,
     path: "/about-us",
     headers: { "Accept-Language": locale },
   });

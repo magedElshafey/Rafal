@@ -4,6 +4,7 @@ import { useRef, useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { FieldFeedback } from "@/components/ui/field";
 import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import { normalizeSaudiMobile } from "@/lib/phone/saudi-mobile";
 import { requestOtp } from "@/features/auth/actions/request-otp";
@@ -29,8 +30,10 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const inFlight = useRef(false);
-  const [formError, setFormError] = useState<string>();
-  const [error, setError] = useState<string>();
+  const [formErrorKey, setFormError] = useState<keyof Pick<EmailEntryFormCopy, "rateLimited" | "unavailable">>();
+  const formError = formErrorKey ? copy[formErrorKey] : undefined;
+  const [errorKey, setError] = useState<keyof Pick<EmailEntryFormCopy, "invalidPhone">>();
+  const error = errorKey ? copy[errorKey] : undefined;
   const [pending, startTransition] = useTransition();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -38,7 +41,7 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
     if (inFlight.current) return;
     const normalizedPhone = normalizeSaudiMobile(phone);
     if (!normalizedPhone) {
-      setError(copy.invalidPhone);
+      setError("invalidPhone");
       return;
     }
 
@@ -50,10 +53,10 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
         const result = await requestOtp({ phone: normalizedPhone }, locale);
         if (!result.ok) {
           if (result.error.code === "invalid-input") {
-            setError(copy.invalidPhone);
+            setError("invalidPhone");
           } else {
             setFormError(
-              result.error.code === "rate-limited" ? copy.rateLimited : copy.unavailable,
+              result.error.code === "rate-limited" ? "rateLimited" : "unavailable",
             );
           }
           return;
@@ -61,7 +64,7 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
 
         router.replace({ pathname: "/login/verify", query: { returnTo } });
       } catch {
-        setFormError(copy.unavailable);
+        setFormError("unavailable");
       } finally {
         inFlight.current = false;
       }
@@ -72,6 +75,7 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
     <form className="flex flex-col gap-5" noValidate onSubmit={handleSubmit}>
       <fieldset disabled={pending} className="contents">
         <SaudiMobileField
+          feedbackMessages={[copy.invalidPhone]}
           id="auth-phone"
           name="phone"
           required
@@ -85,9 +89,7 @@ export function EmailEntryForm({ copy, locale, returnTo }: EmailEntryFormProps) 
             setError(undefined);
           }}
         />
-        {formError ? (
-          <p role="alert" className="type-caption text-destructive">{formError}</p>
-        ) : null}
+        <FieldFeedback role="alert" reserve={[copy.unavailable, copy.rateLimited]}>{formError}</FieldFeedback>
         <Button
           type="submit"
           size="lg"

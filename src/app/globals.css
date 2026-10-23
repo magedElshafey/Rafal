@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+/* Scope overrides to the Rafal provider; retain Sonner's swipe, timing and
+   live-region behavior. Logical positioning keeps the dismissal inside RTL. */
+.rafal-toaster[data-sonner-toaster] { font-family: var(--font-tajawal), sans-serif; }
+.rafal-toast [data-close-button].rafal-toast-dismiss {
+  position: absolute;
+  inset-block-start: 0.25rem;
+  inset-inline-start: auto;
+  inset-inline-end: 0.25rem;
+  transform: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-gray-600);
+  cursor: pointer;
+}
+.rafal-toast [data-close-button].rafal-toast-dismiss:hover { background: var(--color-gray-100); }
+.rafal-toast [data-close-button].rafal-toast-dismiss:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rafal-toaster [data-sonner-toast] { transition: none !important; animation: none !important; }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #000000;

@@ -5,7 +5,7 @@ import { useId, useRef, useState } from "react";
 import type { Locale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldFeedback, FieldLabel } from "@/components/ui/field";
 import { NativeSelect } from "@/components/ui/native-select";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { createOrderReturnFromBrowser } from "@/features/order-returns/api/create-order-return";
@@ -49,8 +49,10 @@ export function OrderReturnAction({
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<OrderReturnReason | "">("");
   const [pending, setPending] = useState(false);
-  const [reasonError, setReasonError] = useState<string | null>(null);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [reasonErrorKey, setReasonError] = useState<"required" | "invalid" | null>(null);
+  const reasonError = reasonErrorKey === "required" ? copy.reasonRequired : reasonErrorKey === "invalid" ? copy.errors.invalidReason : null;
+  const [formErrorKey, setFormError] = useState<keyof typeof copy.errors | null>(null);
+  const formError = formErrorKey ? copy.errors[formErrorKey] : null;
   const [submitted, setSubmitted] = useState<OrderReturnRequest | null>(null);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -71,7 +73,7 @@ export function OrderReturnAction({
     event.preventDefault();
     if (submissionPendingRef.current) return;
     if (!reason) {
-      setReasonError(copy.reasonRequired);
+      setReasonError("required");
       setFormError(null);
       return;
     }
@@ -91,9 +93,9 @@ export function OrderReturnAction({
     } catch (submissionError) {
       const key = errorKey(submissionError);
       if (key === "invalidReason") {
-        setReasonError(copy.errors.invalidReason);
+        setReasonError("invalid");
       } else {
-        setFormError(copy.errors[key]);
+        setFormError(key);
       }
     } finally {
       submissionPendingRef.current = false;
@@ -178,7 +180,7 @@ export function OrderReturnAction({
             />
           </div>
         ) : (
-          <form id={formId} onSubmit={handleSubmit} className="pt-2">
+          <form id={formId} noValidate onSubmit={handleSubmit} className="pt-2">
             <Field>
               <FieldLabel htmlFor={fieldId}>{copy.reasonLabel}</FieldLabel>
               <NativeSelect
@@ -211,17 +213,13 @@ export function OrderReturnAction({
                   </option>
                 ))}
               </NativeSelect>
-              {reasonError ? (
-                <FieldError id={`${fieldId}-error`} role="alert">
+              <FieldFeedback id={`${fieldId}-error`} role="alert" reserve={[copy.reasonRequired, copy.errors.invalidReason]}>
                   {reasonError}
-                </FieldError>
-              ) : null}
+                </FieldFeedback>
             </Field>
-            {formError ? (
-              <p className="mt-3 type-body-sm text-destructive" role="alert">
+            <FieldFeedback className="mt-3" role="alert" reserve={Object.values(copy.errors)}>
                 {formError}
-              </p>
-            ) : null}
+              </FieldFeedback>
           </form>
         )}
       </RafalModal>

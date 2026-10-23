@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Copy } from "lucide-react";
-import { toast } from "sonner";
+import { useRafalToast } from "@/lib/rafal-toast";
 
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +19,7 @@ export function CopyCouponButton({
   copied,
   failed,
 }: CopyCouponButtonProps) {
+  const rafalToast = useRafalToast();
   const locked = useRef(false);
   const [pending, setPending] = useState(false);
 
@@ -33,9 +34,9 @@ export function CopyCouponButton({
     try {
       await navigator.clipboard.writeText(code);
 
-      toast.success(copied);
+      rafalToast.success(copied, { id: `coupon-copy:${code}` });
     } catch {
-      toast.error(failed);
+      rafalToast.error(failed, { id: `coupon-copy:${code}` });
     } finally {
       locked.current = false;
       setPending(false);

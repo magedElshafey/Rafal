@@ -1,15 +1,18 @@
 // src/lib/api/client-api.ts
 
 import { clientEnv } from "@/config/client-env";
-import { createHttpClient } from "./http-client";
+import { createHttpClient, type RequestConfig } from "./http-client";
+import { backendRequest } from "./backend-request";
 import type { Locale } from "next-intl";
 
-export function createClientApi(lang: Locale = "ar") {
-  return createHttpClient({
+export function createClientApi(lang: Locale) {
+  const transport = createHttpClient({
     baseUrl: clientEnv.apiBaseUrl,
 
-    getDefaultHeaders: () => ({
-      "Accept-Language": lang,
-    }),
   });
+  return {
+    request<TResponse, TBody = unknown>(request: RequestConfig<TBody>) {
+      return transport.request<TResponse, TBody>(backendRequest(lang, request));
+    },
+  };
 }

@@ -16,7 +16,7 @@ export async function getOrdersPageDto(
   page: number,
   customerStatuses?: readonly OrderCustomerStatus[],
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: "/orders",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -33,7 +33,7 @@ export async function getOrderDetailsDto(
   accessToken: string,
   orderNumber: string,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/orders/${encodeURIComponent(orderNumber)}`,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -50,7 +50,7 @@ export async function cancelOrderDto(
   orderNumber: string,
   signal?: AbortSignal,
 ) {
-  const payload = await serverApi.request<unknown>({
+  const payload = await serverApi.request<unknown>({ locale,
     path: `/orders/${encodeURIComponent(orderNumber)}/cancel`,
     method: "POST",
     headers: {
