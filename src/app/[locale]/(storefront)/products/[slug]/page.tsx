@@ -30,6 +30,8 @@ import {
 } from "@/features/products/utils/create-product-structured-data";
 import { ProductReviewsSection } from "@/features/reviews/components/product-reviews-section";
 import { ProductReviewsSkeleton } from "@/features/reviews/components/product-reviews-skeleton";
+import { ProductRecommendationsSection } from "@/features/products/components/recommendations/product-recommendations-section";
+import { RecommendationRowSkeleton } from "@/features/products/components/recommendations/recommendation-row";
 import { getLocalizedAlternates } from "@/lib/seo/alternates";
 import { sanitizeHtmlToText } from "@/lib/security/sanitize-html";
 
@@ -426,6 +428,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ProductReviewsSection productId={product.id} locale={locale} />
         </Suspense>
       </div>
+      <Suspense key={product.id} fallback={
+        <RecommendationRowSkeleton title={t("discovery.relatedTitle")} loadingLabel={t("discovery.loading")} />
+      }>
+        <ProductRecommendationsSection slug={product.slug} productId={product.id} locale={locale}
+          accountId={user?.id ?? null} title={t("discovery.relatedTitle")} />
+      </Suspense>
     </Container>
   );
 }

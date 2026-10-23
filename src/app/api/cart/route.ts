@@ -1,6 +1,8 @@
 import { hasLocale } from "next-intl";
+import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 
 import { getCurrentCart } from "@/features/cart/server/cart-boundary";
+import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import { routing } from "@/i18n/routing";
 
 const PRIVATE_NO_STORE_HEADERS = {
@@ -30,8 +32,16 @@ export async function GET(request: Request) {
   }
 
   try {
+    const reconcile = request.headers.get("X-Recommendation-Reconcile") === "1";
+    const guest = reconcile && request.headers.get("X-Rafal-Cart-Mode") === "guest";
+    const identity = guest ? await resolveCartTransportIdentity() : null;
+    const user = reconcile && !guest ? await getCurrentUser(locale) : null;
+    if (reconcile && (guest ? identity?.kind !== "guest" || !identity.token : !user)) {
+      return Response.json({ code: "account-unconfirmed" }, { status: 401, headers: PRIVATE_NO_STORE_HEADERS });
+    }
     return Response.json(await getCurrentCart(locale, cityId), {
-      headers: PRIVATE_NO_STORE_HEADERS,
+      headers: { ...PRIVATE_NO_STORE_HEADERS, ...(user ? { "X-Rafal-Account-Id": user.id } : {}),
+        ...(reconcile ? { "X-Rafal-Cart-Mode": guest ? "guest" : "authenticated" } : {}) },
     });
   } catch {
     return Response.json(

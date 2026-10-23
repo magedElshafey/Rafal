@@ -5,6 +5,8 @@ import type { Locale } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { clearCart } from "@/features/cart/actions/clear-cart";
+import { invalidateCartRecommendations } from "@/features/cart/api/cart-recommendations-query";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import { removeCartLine } from "@/features/cart/actions/remove-cart-line";
 import { updateCartLine } from "@/features/cart/actions/update-cart-line";
 import {
@@ -440,6 +442,7 @@ export function useCartPageMutations({
           removedLineIdsRef.current.delete(lineId);
           if (result.ok) {
             applyCanonicalCart(result.cart);
+            void invalidateCartRecommendations(queryClient);
           } else {
             reportFailure(result.error);
             await recoverAuthoritativeCart();
@@ -485,11 +488,15 @@ export function useCartPageMutations({
       visuallyEmpty,
     );
 
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     const promise = (async () => {
       try {
+        await recommendationTransition.ready;
         const result = await clearMutation.mutateAsync();
         clearPendingRef.current = false;
-        if (result.ok) applyCanonicalCart(result.cart);
+        if (result.ok) {
+          applyCanonicalCart(result.cart);
+        }
         else {
           reportFailure(result.error);
           await recoverAuthoritativeCart();
@@ -500,6 +507,8 @@ export function useCartPageMutations({
         reportFailure(serviceUnavailable);
         await recoverAuthoritativeCart();
         return false;
+      } finally {
+        recommendationTransition.finish();
       }
     })();
     trackOperation(promise);

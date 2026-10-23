@@ -209,6 +209,7 @@
     "missingDescription": "تعرض هذه الصفحة فقط تفاصيل طلب مؤكد بنجاح ضمن جلسة المتصفح الحالية."
   },
   "cartPage": {
+    "recommendations": { "frequentlyOrderedWith": "غالبًا ما يُطلب مع هذه المنتجات" },
     "breadcrumbs": { "label": "مسار التنقل", "home": "الرئيسية" },
     "title": "سلة التسوق",
     "empty": {
@@ -434,7 +435,8 @@
       "copyFailed": "تعذر نسخ الرابط. يمكنك نسخه من المتصفح."
     },
     "discovery": {
-      "relatedTitle": "قد يعجبك أيضًا",
+      "relatedTitle": "قد يعجبك أيضاً",
+      "loading": "جارٍ تحميل المنتجات المقترحة",
       "complementaryTitle": "غالبًا ما يُطلب مع هذا المنتج",
       "complementaryCarouselLabel": "منتجات مكملة",
       "previous": "المنتجات السابقة",

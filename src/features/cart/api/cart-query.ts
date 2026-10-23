@@ -52,17 +52,22 @@ async function fetchCurrentCart({
   locale,
   cityId,
   signal,
+  onResponse,
+  recommendationMode,
 }: {
   locale: Locale;
   cityId: number | null;
   signal?: AbortSignal;
+  onResponse?: (response: Response) => void;
+  recommendationMode?: "guest" | "authenticated";
 }): Promise<CartSnapshot> {
   const searchParams = new URLSearchParams({ locale });
   if (cityId !== null) searchParams.set("cityId", String(cityId));
   const response = await fetch(`/api/cart?${searchParams}`, {
     cache: "no-store",
     credentials: "same-origin",
-    headers: { Accept: "application/json" },
+    headers: { Accept: "application/json", ...(onResponse ? { "X-Recommendation-Reconcile": "1",
+      "X-Rafal-Cart-Mode": recommendationMode ?? "authenticated" } : {}) },
     signal,
   });
 
@@ -70,7 +75,24 @@ async function fetchCurrentCart({
     throw new ApiError({ status: response.status, message: "Current Cart request failed." });
   }
 
+  onResponse?.(response);
   return response.json() as Promise<CartSnapshot>;
+}
+
+export async function reconcileRecommendationCart(locale: Locale, cityId: number, signal: AbortSignal, expectedAccountId: string | null) {
+  let accountId: string | null = null;
+  const guest = expectedAccountId === null;
+  const cart = await fetchCurrentCart({ locale, cityId, signal, recommendationMode: guest ? "guest" : "authenticated", onResponse(response) {
+    accountId = response.headers.get("X-Rafal-Account-Id");
+    if (guest ? response.headers.get("X-Rafal-Cart-Mode") !== "guest" || accountId !== null :
+      !accountId || accountId !== expectedAccountId || response.headers.get("X-Rafal-Cart-Mode") === "guest") {
+      throw new ApiError({ status: 401, code: "account-unconfirmed", message: "Cart account could not be confirmed." });
+    }
+  } });
+  if (!hasCartProjection(cart, cityId)) {
+    throw new ApiError({ status: 502, code: "invalid-cart-projection", message: "Cart availability could not be confirmed." });
+  }
+  return { cart, accountId };
 }
 
 export function currentCartQueryOptions(

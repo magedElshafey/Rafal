@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FieldFeedback } from "@/components/ui/field";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import {
   cartMutationKey,
   cartMutationScope,
@@ -131,7 +132,9 @@ export function CheckoutGiftRecipientEditor({
 
     setError(null);
     onPendingChange(true);
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     try {
+      await recommendationTransition.ready;
       const result = await mutation.mutateAsync({
           kind: "recipient",
           giftWrap: gift.giftWrap,
@@ -176,6 +179,7 @@ export function CheckoutGiftRecipientEditor({
     } catch {
       setError({ code: "service-unavailable" });
     } finally {
+      recommendationTransition.finish();
       onPendingChange(false);
     }
   };

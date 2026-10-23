@@ -18,12 +18,14 @@ import { TruckIcon, XIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
 import { CartGift } from "@/features/cart/components/cart-gift";
+import { CartRecommendationRows } from "@/features/cart/components/cart-recommendations";
 import {
   CartCoupon,
   type CartCouponCopy,
 } from "@/features/cart/components/cart-coupon";
 import { useCartPageMutations } from "@/features/cart/hooks/use-cart-page-mutations";
 import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
+import { useCartRecommendations } from "@/features/cart/hooks/use-cart-recommendations";
 import {
   canContinueCartCheckout,
   createCartCheckoutContextSnapshot,
@@ -88,6 +90,7 @@ export type CartPageCopy = {
 };
 
 type CartPageProps = {
+  accountId?: string | null;
   availableCoupons: readonly Coupon[];
   canUseCoupons: boolean;
   copy: CartPageCopy;
@@ -261,6 +264,7 @@ function FreeShippingStatus({
 }
 
 export function CartPage({
+  accountId = null,
   availableCoupons,
   canUseCoupons,
   copy,
@@ -285,6 +289,9 @@ export function CartPage({
     projectionFetching,
     projectedCart,
   } = useCurrentCart(locale, browsingCityId, initialCart);
+  const recommendationRead = useCartRecommendations({ locale, accountId, browsingCityId, fulfillmentCityId,
+    contextReady: !cityTransitionLocked && fulfillmentCityId !== null, projectionReady,
+    empty: !cart?.lines.length });
   const checkoutContextRef = useRef(
     createCartCheckoutContextSnapshot({
       browsingCityId,
@@ -771,6 +778,11 @@ export function CartPage({
         {linesSection}
         {summarySection}
       </div>
+      {/* Phase 4C must establish session cleanup before supplying query results.
+          Use one cartRecommendationsQueryOptions query for both rows then. */}
+      <CartRecommendationRows cart={cart} locale={locale} accountId={accountId}
+        contextReady={!cityTransitionLocked && fulfillmentCityId !== null && projectionReady}
+        read={recommendationRead} />
     </div>
   );
 }

@@ -5,10 +5,12 @@ import type { Locale } from "next-intl";
 import type {
   ProductDetailsResponseDto,
   ProductListResponseDto,
+  ProductRecommendationsResponseDto,
 } from "@/features/products/api/product-dto";
 import {
   parseProductDetailsResponse,
   parseProductListResponse,
+  parseProductRecommendationsResponse,
 } from "@/features/products/api/parse-product-dto";
 import {
   createProductListQuery,
@@ -75,4 +77,20 @@ export async function getProductBySlugDto({
   });
 
   return parseProductDetailsResponse(payload);
+}
+
+export async function getRelatedProductsDto({
+  slug,
+  locale,
+  signal,
+}: {
+  slug: string;
+  locale: Locale;
+  signal?: AbortSignal;
+}): Promise<ProductRecommendationsResponseDto> {
+  const payload = await optionalAuthProductRead(locale, {
+    path: `/products/${encodeURIComponent(slug)}/related`,
+    signal,
+  });
+  return parseProductRecommendationsResponse(payload);
 }

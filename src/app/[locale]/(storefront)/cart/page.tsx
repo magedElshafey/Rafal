@@ -42,6 +42,7 @@ export default async function CartRoute() {
     <Container className="main-content-spacing pb-12 lg:px-[3.75rem]">
       <Breadcrumbs className="mb-6" label={t("breadcrumbs.label")} items={[{ label: t("breadcrumbs.home"), href: "/" }, { label: t("title") }]} />
       <CartPage
+        accountId={user?.id ?? null}
         canUseCoupons={user !== null}
         availableCoupons={couponDiscovery.coupons}
         couponDiscoveryFailed={couponDiscovery.failed}

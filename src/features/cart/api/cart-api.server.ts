@@ -18,6 +18,7 @@ import {
   type CartAddDiagnostics,
 } from "@/features/cart/server/cart-add-diagnostics";
 import { serverApi } from "@/lib/api/server-api";
+import { parseCartRecommendationsResponse } from "./parse-cart-recommendations";
 
 export type CartTransportIdentity =
   | { kind: "guest"; token: string | null }
@@ -72,6 +73,20 @@ export function getCartDto(
     path: cartContractEndpoints.current,
     query: cityId === undefined ? undefined : { city_id: cityId },
   });
+}
+
+export async function getCartRecommendationsDto(
+  identity: CartTransportIdentity,
+  locale: Locale,
+  signal?: AbortSignal,
+) {
+  const payload = await serverApi.request<unknown>({
+    locale,
+    path: "/cart/recommendations",
+    headers: getIdentityHeaders(identity),
+    signal,
+  });
+  return parseCartRecommendationsResponse(payload);
 }
 
 export function addCartItemDto(

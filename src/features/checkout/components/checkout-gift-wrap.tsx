@@ -10,6 +10,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import {
   cartMutationKey,
   cartMutationScope,
@@ -138,7 +139,9 @@ export function CheckoutGiftWrap({
     mutationInFlight.current = true;
     setError(null);
     onPendingChange(true);
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     try {
+      await recommendationTransition.ready;
       const result = await mutation.mutateAsync(input);
       if (!result.ok) {
         setError(result.error);
@@ -153,6 +156,7 @@ export function CheckoutGiftWrap({
     } catch {
       setError({ code: "service-unavailable" });
     } finally {
+      recommendationTransition.finish();
       mutationInFlight.current = false;
       onPendingChange(false);
     }

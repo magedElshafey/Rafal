@@ -12,6 +12,8 @@ import {
 
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
 import { setCurrentCartQueryData } from "@/features/cart/api/cart-query";
+import { invalidateCartRecommendations } from "@/features/cart/api/cart-recommendations-query";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import { useCurrentCart } from "@/features/cart/hooks/use-current-cart";
 import type {
   AddCartLineError,
@@ -213,11 +215,18 @@ export function ProductPurchaseExperience({
     reset: resetAddToCartMutation,
   } = useMutation({
     mutationFn: (input: AddCartLineInput) => addCartLine(input, locale),
+    onMutate: async () => {
+      const transition = beginRecommendationTransition(queryClient);
+      await transition.ready;
+      return transition;
+    },
+    onSettled: (_data, _error, _variables, transition) => transition?.finish(),
     retry: false,
     onSuccess: (result) => {
       if (!result.ok) return;
 
       setCurrentCartQueryData(queryClient, locale, result.cart);
+      void invalidateCartRecommendations(queryClient);
       setQuantity(1);
       setPersonalizationInput(getInitialPersonalizationInput(product));
       setPersonalizationResetKey((currentKey) => currentKey + 1);

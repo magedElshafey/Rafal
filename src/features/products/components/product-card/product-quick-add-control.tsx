@@ -8,12 +8,14 @@ import { useRef, useState, useTransition } from "react";
 import { IconButton } from "@/components/ui/icon-button";
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
 import { setCurrentCartQueryData } from "@/features/cart/api/cart-query";
+import { invalidateCartRecommendations } from "@/features/cart/api/cart-recommendations-query";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import type {
   AddCartLineError,
   AddCartLineInput,
 } from "@/features/cart/types/cart.types";
 import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
-import { ProductQuickAddSheet } from "@/features/products/components/product-card/product-quick-add-sheet";
+import { ProductQuickAddSheet, type QuickAddSuccessHandler } from "@/features/products/components/product-card/product-quick-add-sheet";
 import type { ListingQuickAdd } from "@/features/products/types/product-listing.types";
 import {
   canStartQuickAdd,
@@ -25,6 +27,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useRafalToast } from "@/lib/rafal-toast";
 
 type ProductQuickAddControlProps = {
+  onAdded?: QuickAddSuccessHandler;
   disabled?: boolean;
   locale: Locale;
   productId: string;
@@ -59,6 +62,7 @@ function errorKey(error: AddCartLineError) {
 }
 
 export function ProductQuickAddControl({
+  onAdded,
   disabled = false,
   locale,
   productId,
@@ -77,6 +81,11 @@ export function ProductQuickAddControl({
   const [isNavigating, startNavigation] = useTransition();
   const mutation = useMutation({
     mutationFn: (input: AddCartLineInput) => addCartLine(input, locale),
+    onMutate: async () => {
+      const transition = beginRecommendationTransition(queryClient);
+      await transition.ready;
+      return transition;
+    },
     retry: false,
     onSuccess: (result) => {
       if (!result.ok) {
@@ -84,10 +93,13 @@ export function ProductQuickAddControl({
         return;
       }
       setCurrentCartQueryData(queryClient, locale, result.cart);
-      rafalToast.success(t("success", { name: productName }));
+      void invalidateCartRecommendations(queryClient);
+      if (onAdded) onAdded(result.cart, triggerRef.current);
+      else rafalToast.success(t("success", { name: productName }));
     },
     onError: () => rafalToast.error(t("errors.serviceUnavailable")),
-    onSettled: () => {
+    onSettled: (_data, _error, _variables, transition) => {
+      transition?.finish();
       activationLockedRef.current = false;
     },
   });
@@ -154,6 +166,7 @@ export function ProductQuickAddControl({
       </IconButton>
       {selectorOpen && committedCity && quickAdd.kind === "select-options" ? (
         <ProductQuickAddSheet
+          onAdded={onAdded}
           key={`${slug}:${committedCity.id}`}
           cityId={committedCity.id}
           locale={locale}

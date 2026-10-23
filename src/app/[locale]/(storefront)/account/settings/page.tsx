@@ -4,7 +4,7 @@ import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { ChevronLeftIcon } from "@/components/ui/icons";
 import { Switch } from "@/components/ui/switch";
 import { appVersion } from "@/config/app-metadata";
-import { logoutAccount } from "@/features/auth/actions/logout-account";
+import { LogoutForm } from "@/features/auth/components/logout-form";
 import {
   AccountPreferencesSection,
   type AccountPreferencesSectionCopy,
@@ -96,7 +96,7 @@ export default async function AccountSettingsPage() {
               </span>
             </div>
 
-            <form action={logoutAccount}>
+            <LogoutForm>
               <input type="hidden" name="locale" value={locale} />
               <button
                 type="submit"
@@ -108,7 +108,7 @@ export default async function AccountSettingsPage() {
                   className="size-4 shrink-0 ltr:rotate-180"
                 />
               </button>
-            </form>
+            </LogoutForm>
           </div>
         </section>
       </div>

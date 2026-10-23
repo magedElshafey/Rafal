@@ -247,3 +247,11 @@ export function mapProductDetailsResponse(
 ): ProductDetails | null {
   return mapProductDtoToProductDetails(response.data);
 }
+
+// Same nullable listing projection as catalogue reads; retain backend order.
+export function mapRecommendationProducts(products: readonly ProductDto[]): ListingProduct[] {
+  return products.flatMap((product) => {
+    const mapped = mapProductDtoToListingProduct(product);
+    return mapped ? [mapped] : [];
+  });
+}

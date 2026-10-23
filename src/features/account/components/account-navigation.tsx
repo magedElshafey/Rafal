@@ -5,7 +5,7 @@ import type { Locale } from "next-intl";
 import { ArrowLeftIcon } from "@/components/ui/icons";
 import { accountNavigationItems } from "@/features/account/navigation/account-navigation-config";
 import type { AccountNavigationCopy } from "@/features/account/navigation/account-navigation.types";
-import { logoutAccount } from "@/features/auth/actions/logout-account";
+import { LogoutForm } from "@/features/auth/components/logout-form";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +47,7 @@ export function AccountNavigation({ copy, locale }: AccountNavigationProps) {
         })}
       </ul>
 
-      <form action={logoutAccount} className="border-t border-gray-200">
+      <LogoutForm className="border-t border-gray-200">
         <input type="hidden" name="locale" value={locale} />
         <button
           type="submit"
@@ -59,7 +59,7 @@ export function AccountNavigation({ copy, locale }: AccountNavigationProps) {
           <span>{copy.logout}</span>
           <ArrowLeftIcon aria-hidden="true" className="size-5 shrink-0" />
         </button>
-      </form>
+      </LogoutForm>
     </nav>
   );
 }

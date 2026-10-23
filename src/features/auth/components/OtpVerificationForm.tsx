@@ -2,6 +2,8 @@
 
 import { useRef, useState, useTransition, type FormEvent } from "react";
 import type { Locale } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 
 import { Button } from "@/components/ui/button";
 import { FieldFeedback } from "@/components/ui/field";
@@ -33,6 +35,7 @@ export function OtpVerificationForm({
   returnTo,
 }: OtpVerificationFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const inFlight = useRef(false);
   const [code, setCode] = useState("");
   const [errorKey, setError] = useState<keyof Pick<OtpVerificationFormCopy, "invalidCode" | "rateLimited" | "sessionFailed" | "unavailable">>();
@@ -50,8 +53,10 @@ export function OtpVerificationForm({
 
     setError(undefined);
     inFlight.current = true;
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     startTransition(async () => {
       try {
+        await recommendationTransition.ready;
         const result = await verifyOtp({ code }, locale);
         if (!result.ok) {
           if (result.error.code === "pending-phone-missing") {
@@ -82,6 +87,7 @@ export function OtpVerificationForm({
       } catch {
         setError("unavailable");
       } finally {
+        recommendationTransition.finish();
         inFlight.current = false;
       }
     });

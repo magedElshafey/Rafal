@@ -45,6 +45,7 @@ function loadSource(relativePath) {
       if (specifier === "@/features/products/api/quick-add-selection.client") return { quickAddSelectionQueryOptions: () => ({ kind: "selection" }) };
       if (specifier === "@/features/cart/api/cart-query") return { currentCartQueryOptions: () => ({ kind: "cart" }) };
       if (specifier === "@/features/cart/actions/add-cart-line") return {};
+      if (specifier === "@/features/cart/api/cart-recommendation-lifecycle") return {};
       if (specifier === "@/features/location/components/browsing-city-provider") return { useBrowsingCity: () => ({ committedCity: { id: 27 }, isChanging: false }) };
       if (specifier === "@/components/ui/rafal-modal") return { RafalModal: ({ children }) => React.createElement("div", null, children) };
       if (specifier === "@/components/ui/button") return { Button: (props) => React.createElement("button", {

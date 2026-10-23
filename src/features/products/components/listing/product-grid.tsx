@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import type { ReactNode } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -26,6 +27,7 @@ const productGridClassName =
   "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4";
 
 export function ListingProductCard({
+  quickAddControl,
   badgeLabels,
   getWishlistAction,
   wishlistAccountId,
@@ -36,6 +38,7 @@ export function ListingProductCard({
   unavailableLabel,
 }: Omit<ProductGridProps, "className" | "products"> & {
   product: ListingProduct;
+  quickAddControl?: ReactNode;
 }) {
   const currency = new Intl.NumberFormat(locale, {
     style: "currency",
@@ -63,7 +66,7 @@ export function ListingProductCard({
       reviewsLabel: reviewsLabel(product.reviewsCount),
     },
     title: name,
-    quickAddControl: (
+    quickAddControl: quickAddControl ?? (
       <ProductQuickAddControl
         disabled={!product.inStock}
         locale={locale}

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
 
 import { mergeCartAfterAuth } from "@/features/cart/actions/merge-cart-after-auth";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import {
   invalidateCurrentCartQueries,
   setCurrentCartQueryData,
@@ -17,7 +18,9 @@ export function usePostAuthCartMerge(locale: Locale, returnTo: string) {
   const [retryPending, startRetryTransition] = useTransition();
 
   const mergeAndContinue = useCallback(async () => {
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     try {
+      await recommendationTransition.ready;
       const result = await mergeCartAfterAuth(locale);
       if (!result.ok) {
         router.replace({
@@ -38,6 +41,8 @@ export function usePostAuthCartMerge(locale: Locale, returnTo: string) {
         pathname: "/auth/cart-recovery",
         query: { returnTo },
       });
+    } finally {
+      recommendationTransition.finish();
     }
   }, [locale, queryClient, returnTo, router]);
 

@@ -70,3 +70,9 @@ export type ProductDetailsResponseDto = {
   message: string;
   data: ProductDto;
 };
+
+export type ProductRecommendationsResponseDto = {
+  success: boolean;
+  message: string;
+  data: readonly ProductDto[];
+};

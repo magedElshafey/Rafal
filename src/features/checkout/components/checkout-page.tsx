@@ -1,5 +1,7 @@
 "use client";
 
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
+
 import { useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
 import { useRef, useState } from "react";
@@ -277,8 +279,10 @@ export function CheckoutPage({
       giftAddOnPendingRef.current
     ) return;
     placeInFlightRef.current = true;
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     placeMutation.reset();
     try {
+      await recommendationTransition.ready;
       const result = await placeMutation.mutateAsync(placeRequest);
       try {
         await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
@@ -314,6 +318,7 @@ export function CheckoutPage({
         void quoteQuery.refetch();
       }
     } finally {
+      recommendationTransition.finish();
       placeInFlightRef.current = false;
     }
   };

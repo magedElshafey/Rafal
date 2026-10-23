@@ -5,6 +5,7 @@ import type {
   ProductImageDto,
   ProductListMetaDto,
   ProductListResponseDto,
+  ProductRecommendationsResponseDto,
   ProductVariantDto,
   ProductWarehouseStockDto,
 } from "@/features/products/api/product-dto";
@@ -303,5 +304,18 @@ export function parseProductDetailsResponse(
     success: parseBoolean(source.success, "response.success"),
     message: parseString(source.message, "response.message"),
     data: parseProductDto(source.data, "response.data"),
+  };
+}
+
+export function parseProductRecommendationsResponse(
+  value: unknown,
+): ProductRecommendationsResponseDto {
+  const source = parseRecord(value, "response");
+  return {
+    success: parseBoolean(source.success, "response.success"),
+    message: parseString(source.message, "response.message"),
+    data: parseArray(source.data, "response.data").map((product, index) =>
+      parseProductDto(product, `response.data[${index}]`),
+    ),
   };
 }

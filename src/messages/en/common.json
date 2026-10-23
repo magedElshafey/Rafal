@@ -209,6 +209,7 @@
     "missingDescription": "This confirmation can only display details from a successfully confirmed order in the current browser session."
   },
   "cartPage": {
+    "recommendations": { "frequentlyOrderedWith": "Often ordered with these products" },
     "breadcrumbs": { "label": "Breadcrumb", "home": "Home" },
     "title": "Shopping cart",
     "empty": {
@@ -422,6 +423,7 @@
     },
     "discovery": {
       "relatedTitle": "You may also like",
+      "loading": "Loading recommended products",
       "complementaryTitle": "Often ordered with this product",
       "complementaryCarouselLabel": "Complementary products",
       "previous": "Previous products",

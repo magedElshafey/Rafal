@@ -10,6 +10,8 @@ import { CheckIcon } from "@/components/ui/icons";
 import { RafalModal } from "@/components/ui/rafal-modal";
 import { VariantColorSwatch } from "@/components/ui/variant-attribute-value";
 import { addCartLine } from "@/features/cart/actions/add-cart-line";
+import { invalidateCartRecommendations } from "@/features/cart/api/cart-recommendations-query";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import {
   currentCartQueryOptions,
   currentCartQueryKey,
@@ -18,6 +20,7 @@ import {
 import type {
   AddCartLineError,
   AddCartLineInput,
+  CartSnapshot,
 } from "@/features/cart/types/cart.types";
 import { useBrowsingCity } from "@/features/location/components/browsing-city-provider";
 import { quickAddSelectionQueryOptions } from "@/features/products/api/quick-add-selection.client";
@@ -39,7 +42,10 @@ import { useRafalToast } from "@/lib/rafal-toast";
 import { cn } from "@/lib/utils";
 import { getVariantAttributeLabel } from "@/lib/variant-attributes";
 
+export type QuickAddSuccessHandler = (cart: CartSnapshot, trigger: HTMLButtonElement | null) => void;
+
 type ProductQuickAddSheetProps = {
+  onAdded?: QuickAddSuccessHandler;
   cityId: number;
   locale: Locale;
   onOpenChange: (open: boolean) => void;
@@ -98,6 +104,7 @@ function formatPrice(locale: Locale, variant: QuickAddSelectionVariant) {
 }
 
 export function ProductQuickAddSheet({
+  onAdded,
   cityId,
   locale,
   onOpenChange,
@@ -114,6 +121,7 @@ export function ProductQuickAddSheet({
     useState<SelectedProductOptions>({});
   const [quantity, setQuantity] = useState(1);
   const activationLockedRef = useRef(false);
+  const pendingSuccessRef = useRef<(() => void) | null>(null);
   const selectionQueryOptions = quickAddSelectionQueryOptions(
     locale,
     slug,
@@ -150,6 +158,11 @@ export function ProductQuickAddSheet({
   );
   const mutation = useMutation({
     mutationFn: (input: AddCartLineInput) => addCartLine(input, locale),
+    onMutate: async () => {
+      const transition = beginRecommendationTransition(queryClient);
+      await transition.ready;
+      return transition;
+    },
     retry: false,
     onSuccess: (result) => {
       if (!result.ok) {
@@ -171,12 +184,17 @@ export function ProductQuickAddSheet({
         return;
       }
       setCurrentCartQueryData(queryClient, locale, result.cart);
+      void invalidateCartRecommendations(queryClient);
+      if (onAdded) {
+        pendingSuccessRef.current = () => onAdded(result.cart, returnFocusRef.current);
+      }
       onOpenChange(false);
-      rafalToast.success(
+      if (!onAdded) rafalToast.success(
         t("success", { name: selection?.product.name ?? productName }),
       );
     },
-    onSettled: () => {
+    onSettled: (_data, _error, _variables, transition) => {
+      transition?.finish();
       activationLockedRef.current = false;
     },
   });
@@ -245,6 +263,11 @@ export function ProductQuickAddSheet({
 
   return (
     <RafalModal
+      onAfterClose={onAdded ? () => {
+        const notify = pendingSuccessRef.current;
+        pendingSuccessRef.current = null;
+        notify?.();
+      } : undefined}
       className="sm:max-w-lg"
       closeLabel={t("sheet.close")}
       onOpenChange={onOpenChange}

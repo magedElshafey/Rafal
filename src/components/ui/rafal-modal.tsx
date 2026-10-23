@@ -20,6 +20,7 @@ type RafalModalProps = {
   showClose?: boolean;
   className?: string;
   returnFocusRef?: RefObject<HTMLElement | null>;
+  onAfterClose?: () => void;
   variant?: "modal" | "bottom-sheet" | "image-viewer";
 };
 
@@ -33,6 +34,7 @@ export function RafalModal({
   onOpenChange,
   open,
   returnFocusRef,
+  onAfterClose,
   showClose = false,
   title,
   variant = "modal",
@@ -64,10 +66,15 @@ export function RafalModal({
           }}
           onCloseAutoFocus={(event) => {
             const target = returnFocusRef?.current ?? previousFocusRef.current;
-            if (!target?.isConnected) return;
-
-            event.preventDefault();
-            target.focus();
+            if (target?.isConnected) {
+              event.preventDefault();
+              target.focus();
+            }
+            // A following dialog must open after this focus scope releases.
+            if (onAfterClose) {
+              event.preventDefault();
+              onAfterClose();
+            }
           }}
           // Radix releases its focus trap at open=false, before Presence unmounts.
           // Keep focus inside the still-visible exit surface; restore it on unmount.

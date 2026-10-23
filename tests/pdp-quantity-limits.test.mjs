@@ -54,6 +54,8 @@ function createHarness() {
     },
     "@/features/cart/actions/add-cart-line": { addCartLine: forbidden },
     "@/features/cart/api/cart-query": { setCurrentCartQueryData: forbidden },
+    "@/features/cart/api/cart-recommendations-query": { invalidateCartRecommendations: forbidden },
+    "@/features/cart/api/cart-recommendation-lifecycle": { beginRecommendationTransition: forbidden },
     "@/features/cart/hooks/use-current-cart": {
       useCurrentCart: () => ({ data: { lines: cartLines } }),
     },

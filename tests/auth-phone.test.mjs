@@ -327,18 +327,23 @@ test("safe return destination preserves local paths and rejects malformed/extern
 
 function formHarness(file, exportName, value, actionName, result) {
   let stateIndex = 0;
-  const tasks = [], calls = [], routes = [], merges = [];
+  const tasks = [], calls = [], routes = [], merges = [], transitions = [];
   const load = createLoader({
     react: { useState: (initial) => [stateIndex++ === 0 ? value : initial, () => {}], useRef: (value) => ({ current: value }), useTransition: () => [false, (task) => tasks.push(task())] },
     "@/components/ui/button": { Button: "button" },
     "@/components/ui/saudi-mobile-field": { SaudiMobileField: "saudi-field" },
     "./OtpInput": { OtpInput: "otp-field" },
+    "@tanstack/react-query": { useQueryClient: () => ({}) },
+    "@/features/cart/api/cart-recommendation-lifecycle": { beginRecommendationTransition: () => {
+      transitions.push("blocked");
+      return { ready: Promise.resolve(), finish: () => transitions.push("finished") };
+    } },
     "@/i18n/navigation": { useRouter: () => ({ replace: (route) => routes.push(route) }) },
-    [`@/features/auth/actions/${actionName}`]: { [actionName === "request-otp" ? "requestOtp" : "verifyOtp"]: async (...args) => { calls.push(args); return result; } },
+    [`@/features/auth/actions/${actionName}`]: { [actionName === "request-otp" ? "requestOtp" : "verifyOtp"]: async (...args) => { transitions.push(actionName); calls.push(args); return result; } },
     "@/features/auth/hooks/use-post-auth-cart-merge": { usePostAuthCartMerge: () => ({ mergeAndContinue: async () => merges.push(true) }) },
   });
   const tree = load(file)[exportName]({ locale: "en", returnTo: "/checkout", copy: {} });
-  return { tree, tasks, calls, routes, merges };
+  return { tree, tasks, calls, routes, merges, transitions };
 }
 
 test("Login reuses Saudi field and synchronous double submit produces one request", async () => {
@@ -357,6 +362,7 @@ test("Verification double submit runs once and selects existing merge or registr
     h.tree.props.onSubmit({ preventDefault() {} }); h.tree.props.onSubmit({ preventDefault() {} });
     await Promise.all(h.tasks);
     assert.equal(h.calls.length, 1);
+    assert.deepEqual(h.transitions, ["blocked", "verify-otp", "finished"]);
     assert.equal(h.merges.length, complete ? 1 : 0);
     if (!complete) assert.equal(h.routes[0].pathname, "/register");
   }

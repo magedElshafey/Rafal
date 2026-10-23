@@ -144,6 +144,8 @@ export async function updateCurrentCartLine(
   const backendLineId = positiveBackendId(lineId);
   if (!backendLineId) return { ok: false, error: { code: "invalid-input" } };
   const identity = await resolveCartTransportIdentity();
+  // Editing an existing line must never establish a replacement Guest Cart.
+  if (identity.kind === "guest" && !identity.token) return { ok: false, error: { code: "cart-session-failure" } };
   const response = assertSuccessfulResponse(
     await updateCartItemDto(identity, locale, backendLineId, { quantity }),
   );
@@ -158,6 +160,7 @@ export async function removeCurrentCartLine(
   const backendLineId = positiveBackendId(lineId);
   if (!backendLineId) return { ok: false, error: { code: "invalid-input" } };
   const identity = await resolveCartTransportIdentity();
+  if (identity.kind === "guest" && !identity.token) return { ok: false, error: { code: "cart-session-failure" } };
   const response = assertSuccessfulResponse(
     await removeCartItemDto(identity, locale, backendLineId),
   );

@@ -9,6 +9,7 @@ import { FieldFeedback } from "@/components/ui/field";
 import { InputField } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { updateCartGift } from "@/features/cart/actions/update-cart-gift";
+import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 import {
   cartMutationKey,
   cartMutationScope,
@@ -319,7 +320,9 @@ export function CartGift({
     if (cityTransitionLocked || mutationInFlight.current) return null;
     mutationInFlight.current = true;
     setError(null);
+    const recommendationTransition = beginRecommendationTransition(queryClient);
     try {
+      await recommendationTransition.ready;
       const result = await mutation.mutateAsync(input);
       if (!result.ok) {
         setError(result.error);
@@ -336,6 +339,7 @@ export function CartGift({
       setError(failure);
       return failure;
     } finally {
+      recommendationTransition.finish();
       mutationInFlight.current = false;
     }
   };
