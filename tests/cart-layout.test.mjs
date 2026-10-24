@@ -81,6 +81,16 @@ function nodes(tree) {
 }
 const checkout = (tree) => nodes(tree).filter((node) => node.type === "button" && node.props.children === copy.checkout);
 
+test("checkout stacking adjustment is scoped to mobile Cart and preserves main isolation", () => {
+  // Structural guard only; real-browser hit-testing verifies painting and pointer targets.
+  const layout = readFileSync(new URL("../src/app/[locale]/(storefront)/layout.tsx", import.meta.url), "utf8");
+  const mainClass = layout.match(/<main className="([^"]+)"/)[1];
+  assert.ok(mainClass.split(" ").includes("isolate"));
+  assert.deepEqual(mainClass.split(" ").filter((token) => token.includes("z-")), ["max-md:has-[[data-cart-page]]:z-10"]);
+  assert.equal(harness().render().props["data-cart-page"], true);
+  assert.equal(harness({ cart: { ...cart, lines: [] } }).render().props["data-cart-page"], undefined);
+});
+
 test("Cart DOM order is shipping, items, eligible coupon, gift, summary, then full-width recommendations in AR/EN", () => {
   for (const locale of ["ar", "en"]) for (const eligible of [true, false]) {
     const h = harness(), tree = h.render({ locale, canUseCoupons: eligible }), all = nodes(tree);
