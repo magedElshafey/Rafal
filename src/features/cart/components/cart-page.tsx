@@ -346,6 +346,19 @@ export function CartPage({
   }, [summaryBusy]);
   const summaryBusyVisible = summaryBusy && showSummaryBusy;
   const checkoutPending = checkoutPreparing || checkoutNavigationPending;
+  const measureCheckoutBar = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const page = node.closest<HTMLElement>("[data-cart-page]");
+    if (!page) return;
+    const measure = () => page.style.setProperty("--cart-checkout-height", `${node.getBoundingClientRect().height}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      page.style.removeProperty("--cart-checkout-height");
+    };
+  }, []);
   const mutateQuantity = (lineId: string, delta: -1 | 1) => {
     if (checkoutContextRef.current.cityTransitionLocked) return;
     setMutationError(null);
@@ -355,7 +368,7 @@ export function CartPage({
   const mutationErrorNotice = mutationError ? (
     <p
       role="alert"
-      className="fixed inset-x-4 bottom-20 z-50 mx-auto max-w-xl rounded-md border border-destructive/20 bg-gray-0 px-4 py-3 type-body-sm text-destructive shadow-lg md:bottom-6"
+      className="fixed inset-x-4 bottom-[calc(var(--cart-checkout-height,0px)+var(--mobile-bottom-navigation-height)+env(safe-area-inset-bottom)+1rem)] z-50 mx-auto max-w-xl rounded-md border border-destructive/20 bg-gray-0 px-4 py-3 type-body-sm text-destructive shadow-lg md:bottom-6"
     >
       {mutationError}
     </p>
@@ -625,6 +638,19 @@ export function CartPage({
           );
         })}
       </ul>
+      {canUseCoupons ? (
+        <div className="mt-6 rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-5">
+          <CartCoupon
+            availableCoupons={availableCoupons}
+            coupon={cart.coupon}
+            copy={copy.coupon}
+            discoveryFailed={couponDiscoveryFailed}
+            currency={cart.summary.total.currency}
+            cityTransitionLocked={cityTransitionLocked}
+            locale={locale}
+          />
+        </div>
+      ) : null}
       <CartGift
         cityTransitionLocked={cityTransitionLocked}
         gift={cart.gift}
@@ -635,6 +661,7 @@ export function CartPage({
 
   const cartFulfillable = projectionReady && !isError && !cityTransitionPending && !mutations.projectionDirty &&
     !mutations.projectionPending && isCartFulfillable(cart, fulfillmentCityId);
+  const checkoutUnavailable = !cartFulfillable && !mutations.projectionPending && !projectionFetching && !cityTransitionPending;
 
   const summarySection = (
     <aside
@@ -647,17 +674,6 @@ export function CartPage({
         <h2 id="cart-summary-title" className="text-h3 font-bold text-gray-1000">
           {copy.summary}
         </h2>
-      {canUseCoupons ? (
-        <CartCoupon
-          availableCoupons={availableCoupons}
-          coupon={cart.coupon}
-          copy={copy.coupon}
-          discoveryFailed={couponDiscoveryFailed}
-          currency={cart.summary.total.currency}
-          cityTransitionLocked={cityTransitionLocked}
-          locale={locale}
-        />
-      ) : null}
       <dl className="mt-6 space-y-4 type-body text-gray-600">
         <SummaryRow
           label={copy.subtotal}
@@ -709,9 +725,18 @@ export function CartPage({
           <bdi>{formatMoney(locale, cart.summary.total)}</bdi>
         </strong>
       </div>
+      <div
+        ref={measureCheckoutBar}
+        className="fixed inset-x-0 bottom-[calc(var(--mobile-bottom-navigation-height)+env(safe-area-inset-bottom))] z-30 flex items-center gap-4 border-t border-gray-200 bg-gray-0 py-3 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] md:static md:mt-5 md:block md:border-0 md:bg-transparent md:p-0"
+      >
+      <div className="min-w-0 flex-1 md:hidden">
+        <span className="block type-caption text-gray-600">{copy.total}</span>
+        <strong className="block type-body-lg text-gray-1000"><bdi>{formatMoney(locale, cart.summary.total)}</bdi></strong>
+      </div>
       <Button
         size="lg"
-        className="mt-5 w-full"
+        className="h-auto min-h-13 max-w-[60%] shrink-0 whitespace-normal py-3 md:h-13 md:max-w-none md:w-full md:py-0"
+        aria-describedby={checkoutUnavailable ? "cart-checkout-unavailable" : undefined}
         disabled={
           cityTransitionLocked || !cartFulfillable || checkoutPending
         }
@@ -752,8 +777,9 @@ export function CartPage({
       >
         {copy.checkout}
       </Button>
-      <p className={cn("mt-3 min-h-10 type-caption text-destructive",
-        (cartFulfillable || mutations.projectionPending || projectionFetching || cityTransitionPending) && "invisible")}
+      </div>
+      <p id="cart-checkout-unavailable" className={cn("mt-3 min-h-10 type-caption text-destructive",
+        !checkoutUnavailable && "invisible")}
       >
         {copy.availability.checkoutUnavailable}
         </p>
@@ -767,7 +793,7 @@ export function CartPage({
   );
 
   return (
-    <div>
+    <div data-cart-page className="pb-[calc(var(--cart-checkout-height,7rem)+var(--mobile-bottom-navigation-height)+env(safe-area-inset-bottom))] **:scroll-mb-[calc(var(--cart-checkout-height,7rem)+var(--mobile-bottom-navigation-height)+env(safe-area-inset-bottom)+1rem)] md:pb-0 md:**:scroll-mb-4">
       {mutationErrorNotice}
       <h1 className="text-h2 font-bold text-gray-1000">{cartTitle}</h1>
       <FreeShippingStatus cart={cart} copy={copy} locale={locale} />
@@ -778,8 +804,6 @@ export function CartPage({
         {linesSection}
         {summarySection}
       </div>
-      {/* Phase 4C must establish session cleanup before supplying query results.
-          Use one cartRecommendationsQueryOptions query for both rows then. */}
       <CartRecommendationRows cart={cart} locale={locale} accountId={accountId}
         contextReady={!cityTransitionLocked && fulfillmentCityId !== null && projectionReady}
         read={recommendationRead} />
