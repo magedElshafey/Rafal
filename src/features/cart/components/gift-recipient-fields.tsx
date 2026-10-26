@@ -12,6 +12,9 @@ import { SaudiMobileField } from "@/components/ui/saudi-mobile-field";
 import type { CartGiftRecipient } from "@/features/cart/types/cart.types";
 import { cityCatalogQueryOptions } from "@/features/location/api/city-query";
 import type { City } from "@/features/location/types";
+import { AddressMapPicker } from "@/features/addresses/components/address-map-picker";
+import { createAddressSuggestionGuard } from "@/features/addresses/utils/merge-address-suggestion";
+import { cityOptionLabel } from "@/features/location/city-option-label";
 import {
   formatSaudiMobileForInput,
   normalizeSaudiMobile,
@@ -128,6 +131,7 @@ export function GiftRecipientFields({
 }) {
   const id = useId();
   const [cityOpen, setCityOpen] = useState(false);
+  const [mapFields] = useState(() => createAddressSuggestionGuard(draft));
   const cities = useQuery({
     ...cityCatalogQueryOptions(locale),
     enabled: cityOpen,
@@ -187,7 +191,7 @@ export function GiftRecipientFields({
         required
         value={draft.district}
         error={errors.district}
-        onChange={(event) => onChange("district", event.target.value)}
+        onChange={(event) => { mapFields.manual("district"); onChange("district", event.target.value); }}
       />
       <InputField
         feedbackMessages={feedbackMessages}
@@ -198,12 +202,18 @@ export function GiftRecipientFields({
         required
         value={draft.streetDetails}
         error={errors.streetDetails}
-        onChange={(event) => onChange("streetDetails", event.target.value)}
+        onChange={(event) => { mapFields.manual("streetDetails"); onChange("streetDetails", event.target.value); }}
       />
 
+      <AddressMapPicker cityId={draft.city?.id ?? null} disabled={busy} onSuggestion={(suggestion, replace) => {
+        const patch = mapFields.merge(draft, suggestion, replace);
+        if (patch.district !== undefined) onChange("district", patch.district);
+        if (patch.streetDetails !== undefined) onChange("streetDetails", patch.streetDetails);
+      }} />
       {cityOpen ? (
         <CityPickerDialog
           cities={cities.data ?? []}
+          getOptionLabel={(city) => cityOptionLabel(city, cities.data ?? [])}
           copy={{
             title: copy.cityDialog.title,
             description: copy.cityDialog.description,

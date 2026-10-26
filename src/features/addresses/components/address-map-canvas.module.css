@@ -1,0 +1,20 @@
+.root { min-width: 0; }
+.canvas {
+  height: 20rem;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  touch-action: pan-y;
+  border-radius: var(--radius-md);
+}
+.canvas:focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
+.marker { background: transparent; border: 0; }
+.marker span {
+  display: block;
+  width: 100%; height: 100%;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--color-gold-500);
+  border: 3px solid var(--color-gray-1000);
+}
+.canvas :global(.leaflet-control-attribution) { white-space: normal; }

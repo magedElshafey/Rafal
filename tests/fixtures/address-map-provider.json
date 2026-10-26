@@ -1,0 +1,7 @@
+{
+  "Riyadh": { "address": { "road": "Test Riyadh Road", "suburb": "Test Riyadh District", "city": "Riyadh", "province": "Riyadh", "state": "Riyadh Region", "postcode": "00000", "country": "Saudi Arabia", "country_code": "sa" } },
+  "Jeddah": { "address": { "road": "Test Jeddah Road", "neighbourhood": "Test Jeddah District", "city": "Jeddah", "province": "Jeddah", "state": "Makkah Region", "postcode": "00000", "country": "Saudi Arabia", "country_code": "sa" } },
+  "Dammam": { "address": { "road": "Test Dammam Road", "neighbourhood": "Test Dammam District", "city": "Dammam", "province": "Dammam", "state": "Eastern Region", "postcode": "00000", "country": "Saudi Arabia", "country_code": "sa" } },
+  "Remote": { "address": { "province": "Test Province", "state": "Test Region", "country": "Saudi Arabia", "country_code": "sa" } },
+  "Outside": { "address": { "road": "Test Road", "suburb": "Test District", "city": "Dubai", "state": "Dubai", "country": "United Arab Emirates", "country_code": "ae" } }
+}

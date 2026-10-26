@@ -1,6 +1,7 @@
 export type City = {
   id: number;
   regionId: number;
+  regionName?: string;
   name: string;
 };
 

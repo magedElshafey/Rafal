@@ -132,7 +132,9 @@ export function createHttpClient({
 
     const formDataBody = isFormData(body);
     const requestHeaders = new Headers({ Accept: "application/json" });
-    if (!formDataBody) requestHeaders.set("Content-Type", "application/json");
+    if (body !== undefined && !formDataBody) {
+      requestHeaders.set("Content-Type", "application/json");
+    }
     for (const source of [dynamicHeaders, headers]) {
       new Headers(source).forEach((value, key) => requestHeaders.set(key, value));
     }

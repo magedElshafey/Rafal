@@ -35,6 +35,9 @@ import {
   normalizeSaudiMobile,
 } from "@/lib/phone/saudi-mobile";
 import { cn } from "@/lib/utils";
+import { AddressMapPicker } from "@/features/addresses/components/address-map-picker";
+import { createAddressSuggestionGuard } from "@/features/addresses/utils/merge-address-suggestion";
+import { cityOptionLabel } from "@/features/location/city-option-label";
 
 export type AddressFormCopy = {
   addTitle: string;
@@ -155,6 +158,7 @@ export function AddressForm({
   const queryClient = useQueryClient();
   const router = useRouter();
   const [draft, setDraft] = useState(() => initialDraft(address));
+  const [mapFields] = useState(() => createAddressSuggestionGuard(initialDraft(address)));
   const [errors, setErrors] = useState<AddressValidationErrors>({});
   const [formErrorKey, setFormError] = useState<"validationError" | "notFound" | "serviceError" | null>(null);
   const formError = formErrorKey ? copy[formErrorKey] : null;
@@ -252,6 +256,7 @@ export function AddressForm({
     field: Field,
     value: AddressDraft[Field],
   ) => {
+    mapFields.manual(field);
     setDraft((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
     setFormError(null);
@@ -401,7 +406,7 @@ export function AddressForm({
                   ) : null}
                   {cities.map((city) => (
                     <option key={city.id} value={String(city.id)}>
-                      {city.name}
+                      {cityOptionLabel(city, cities)}
                     </option>
                   ))}
                 </select>
@@ -445,6 +450,12 @@ export function AddressForm({
                 error={fieldError("streetDetails")}
                 onChange={(event) => updateField("streetDetails", event.target.value)}
               />
+              <AddressMapPicker cityId={draft.city?.id ?? null} disabled={mutation.isPending}
+                onSuggestion={(suggestion, replace) => {
+                  // The picker invokes the latest committed callback. Keep the guard's
+                  // bookkeeping outside React's replayable state updater.
+                  setDraft({ ...draft, ...mapFields.merge(draft, suggestion, replace) });
+                }} />
               <div className="flex min-h-20 items-center justify-between gap-5 sm:col-span-2">
                 <div className="min-w-0 py-3">
                   <label

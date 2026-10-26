@@ -63,10 +63,11 @@ export function parseRegionsResponse(value: unknown): RegionsResponseDto {
   };
 }
 
-export function mapCityDto(city: CityDto): City {
+export function mapCityDto(city: CityDto, regionName?: string): City {
   return {
     id: city.id,
     regionId: city.region_id,
     name: city.name,
+    ...(regionName ? { regionName } : {}),
   };
 }

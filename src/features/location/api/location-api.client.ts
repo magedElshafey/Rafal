@@ -12,5 +12,5 @@ export async function getCitiesClient(
     path: "/regions",
     signal,
   });
-  return parseRegionsResponse(payload).data.flatMap((region) => region.cities.map(mapCityDto));
+  return parseRegionsResponse(payload).data.flatMap((region) => region.cities.map(city => mapCityDto(city, region.name)));
 }

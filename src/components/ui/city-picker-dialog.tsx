@@ -25,6 +25,7 @@ type CityPickerOption = {
 
 type CityPickerDialogProps<Option extends CityPickerOption> = {
   cities: readonly Option[];
+  getOptionLabel?: (city: Option) => string;
   copy: {
     title: string;
     description: string;
@@ -53,6 +54,7 @@ const FOCUSABLE_SELECTOR = [
 
 export function CityPickerDialog<Option extends CityPickerOption>({
   cities,
+  getOptionLabel,
   copy,
   isLoading,
   isOpen,
@@ -75,9 +77,9 @@ export function CityPickerDialog<Option extends CityPickerOption>({
     if (!normalizedQuery) return cities;
 
     return cities.filter((city) =>
-      city.name.toLocaleLowerCase().includes(normalizedQuery),
+      (getOptionLabel?.(city) ?? city.name).toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [cities, query]);
+  }, [cities, query, getOptionLabel]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -277,7 +279,7 @@ export function CityPickerDialog<Option extends CityPickerOption>({
                           selected && "bg-gold-50",
                         )}
                       >
-                        <span>{city.name}</span>
+                        <span>{getOptionLabel?.(city) ?? city.name}</span>
                         {selected ? (
                           <CheckIcon size={18} className="text-gold-700" />
                         ) : null}

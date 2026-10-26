@@ -509,3 +509,13 @@ Detailed reference and recorded implementation gaps: [docs/MOTION_SYSTEM.md](doc
 - **Carousels:** AppCarousel owns Embla. Preserve RTL, keyboard, touch, reduced motion, and opt-in below-fold runtime deferral; Home Categories remains eager. Do not introduce competing sliders.
 - **Performance:** Prioritize correctness, performance, accessibility, UX quality, then polish. Accept only small, measured costs for meaningful UX improvements. Preserve CLS, avoid unnecessary hydration, and require before/after checks for performance-sensitive batches. No dependency without a concrete requirement.
 - **Manual QA reporting:** Every visual/interactive task must end with a `### Manual QA Needed` section listing exact outstanding manual tests (or explicitly none). Use the detailed reference's relevant device, input, RTL, reduced-motion, network, and performance groups.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

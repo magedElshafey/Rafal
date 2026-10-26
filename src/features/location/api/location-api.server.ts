@@ -46,7 +46,7 @@ export async function getCities(locale: Locale): Promise<readonly City[]> {
   });
 
   return parseRegionsResponse(payload).data.flatMap((region) =>
-    region.cities.map(mapCityDto),
+    region.cities.map(city => mapCityDto(city, region.name)),
   );
 }
 

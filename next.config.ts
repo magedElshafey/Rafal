@@ -15,6 +15,10 @@ function getApiStoragePattern(): URL[] {
 }
 
 const nextConfig: NextConfig = {
+  ...(process.env.RAFAL_MAP_E2E === "1" ? {
+    distDir: ".next-map-e2e",
+    typescript: { tsconfigPath: "tests/e2e/tsconfig.json" },
+  } : {}),
   images: {
     remotePatterns: getApiStoragePattern(),
   },

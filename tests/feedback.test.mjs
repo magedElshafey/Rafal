@@ -157,7 +157,7 @@ test("backend adapters enforce current locale on actual fetch headers for all me
           assert.equal([...options.headers.keys()].filter(k => k === "x-locale").length, 1);
           assert.equal(options.headers.get("Authorization"), "Bearer test");
           assert.equal(options.headers.get("X-Cart-Token"), "guest-test");
-          assert.equal(options.headers.get("Content-Type"), "application/json");
+          assert.equal(options.headers.get("Content-Type"), body === undefined ? null : "application/json");
           assert.equal(options.body, body ? JSON.stringify(body) : undefined);
         }
       }
@@ -180,6 +180,44 @@ test("backend adapters enforce current locale on actual fetch headers for all me
   for (const base of ["https://store.test/api/", "https://external.test/"]) {
     await createHttpClient({ baseUrl: new URL(base) }).request({ path: "/test" });
     assert.equal(requests.at(-1).options.headers.has("X-Locale"), false);
+  }
+});
+
+test("HTTP Content-Type defaults follow the body and preserve explicit caller headers", async () => {
+  const requests = [];
+  const load = loader({}, { fetch: async (url, options) => {
+    requests.push(options);
+    return Response.json({ ok: true });
+  } });
+  const { createHttpClient } = load("src/lib/api/http-client.ts");
+  const api = createHttpClient({ baseUrl: new URL("https://backend.test/api/") });
+  await api.request({ path: "/test" });
+  assert.deepEqual([...requests.at(-1).headers], [["accept", "application/json"]]);
+  assert.equal(requests.at(-1).body, undefined);
+  assert.equal(requests.at(-1).credentials, undefined);
+  for (const headers of [{ "Content-Type": "application/custom" }, new Headers({ "content-type": "application/custom" }), [["Content-Type", "application/custom"]]]) {
+    await api.request({ path: "/test", method: "GET", headers });
+    assert.equal(requests.at(-1).headers.get("Content-Type"), "application/custom");
+  }
+  const defaults = createHttpClient({ baseUrl: new URL("https://backend.test/api/"), getDefaultHeaders: async () => ({ "Content-Type": "application/default" }) });
+  await defaults.request({ path: "/test" });
+  assert.equal(requests.at(-1).headers.get("Content-Type"), "application/default");
+  await defaults.request({ path: "/test", headers: { "Content-Type": "application/override" } });
+  assert.equal(requests.at(-1).headers.get("Content-Type"), "application/override");
+  for (const method of ["POST", "PUT", "PATCH"]) {
+    for (const body of [{ value: 1 }, null, false, 0, ""]) {
+      await api.request({ path: "/test", method, body });
+      assert.equal(requests.at(-1).headers.get("Content-Type"), "application/json");
+      assert.equal(requests.at(-1).body, JSON.stringify(body));
+    }
+    const form = new FormData(); form.set("field", "value");
+    await api.request({ path: "/test", method, body: form });
+    const options = requests.at(-1);
+    assert.equal(options.body, form);
+    assert.equal(options.headers.has("Content-Type"), false);
+    const wireRequest = new Request("https://backend.test/api/test", options);
+    assert.match(wireRequest.headers.get("Content-Type"), /^multipart\/form-data; boundary=.+/);
+    assert.equal((await wireRequest.formData()).get("field"), "value");
   }
 });
 

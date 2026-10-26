@@ -28,6 +28,9 @@ import {
   normalizeSaudiMobile,
 } from "@/lib/phone/saudi-mobile";
 import { cn } from "@/lib/utils";
+import { AddressMapPicker } from "@/features/addresses/components/address-map-picker";
+import { createAddressSuggestionGuard } from "@/features/addresses/utils/merge-address-suggestion";
+import { cityOptionLabel } from "@/features/location/city-option-label";
 
 export type CheckoutDestinationCopy = {
   title: string;
@@ -175,6 +178,7 @@ function OneTimeAddressForm({
     draftFromCommittedAddress(committedAddress),
   );
   const [errorKeys, setErrors] = useState<DraftErrors>({});
+  const [mapFields] = useState(() => createAddressSuggestionGuard(draftFromCommittedAddress(committedAddress)));
   const errors = {
     recipientName: errorKeys.recipientName ? copy.errors[errorKeys.recipientName] : undefined,
     recipientPhone: errorKeys.recipientPhone ? copy.errors[errorKeys.recipientPhone] : undefined,
@@ -199,6 +203,7 @@ function OneTimeAddressForm({
     field: FieldName,
     value: AddressDraft[FieldName],
   ) => {
+    mapFields.manual(field);
     setDraft((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
     setFormError(null);
@@ -310,7 +315,7 @@ function OneTimeAddressForm({
             </option>
             {cities.map((city) => (
               <option key={city.id} value={city.id}>
-                {city.name}
+                {cityOptionLabel(city, cities)}
               </option>
             ))}
           </NativeSelect>
@@ -356,6 +361,9 @@ function OneTimeAddressForm({
           />
         </div>
       </div>
+      <AddressMapPicker cityId={draft.city?.id ?? null} onSuggestion={(suggestion, replace) => {
+        setDraft({ ...draft, ...mapFields.merge(draft, suggestion, replace) });
+      }} />
       <FieldFeedback role="alert" className="mt-4" reserve={[copy.errors.validation]}>
           {formError}
         </FieldFeedback>
