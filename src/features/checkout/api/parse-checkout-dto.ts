@@ -11,7 +11,7 @@ import type {
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 
 export class CheckoutContractError extends Error {
-  constructor(path: string, expected: string) {
+  constructor(readonly path: string, readonly expected: string) {
     super(`Invalid Checkout API payload at "${path}": expected ${expected}.`);
     this.name = "CheckoutContractError";
   }

@@ -1,5 +1,5 @@
 import type { CheckoutVerifyRequest } from "@/features/checkout/types/checkout.types";
-import { isValidCheckoutEmail } from "@/features/checkout/utils/checkout-buyer";
+import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
 
 const OTP_PATTERN = /^\d{6}$/;
 
@@ -15,15 +15,14 @@ export function parseCheckoutVerifyRequest(
     typeof orderNumber !== "string" ||
     !orderNumber.trim() ||
     !isRecord(value) ||
-    Object.keys(value).some((key) => key !== "email" && key !== "otp") ||
-    typeof value.email !== "string" ||
+    Object.keys(value).some((key) => key !== "phone" && key !== "otp") ||
+    typeof value.phone !== "string" ||
     typeof value.otp !== "string"
   ) {
     return null;
   }
 
-  const email = value.email.trim();
-  return isValidCheckoutEmail(email) && OTP_PATTERN.test(value.otp)
-    ? { orderNumber: orderNumber.trim(), email, otp: value.otp }
+  return isValidSaudiMobile(value.phone) && OTP_PATTERN.test(value.otp)
+    ? { orderNumber: orderNumber.trim(), phone: value.phone, otp: value.otp }
     : null;
 }

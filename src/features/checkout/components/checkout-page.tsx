@@ -4,7 +4,7 @@ import { beginRecommendationTransition } from "@/features/cart/api/cart-recommen
 
 import { useQueryClient } from "@tanstack/react-query";
 import type { Locale } from "next-intl";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
@@ -53,9 +53,14 @@ import {
 } from "@/features/checkout/utils/checkout-handoff";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
+import { CheckoutPaymentLoading, CheckoutPaymentRead, type CheckoutPaymentCopy } from "@/features/checkout/components/checkout-payment-section";
+import { canSelectCheckoutPayment, canSubmitCheckoutPayment, legacyCheckoutPaymentMethod, type CheckoutPaymentCode } from "@/features/checkout/utils/checkout-payment-presentation";
+import type { CheckoutPaymentDiscovery } from "@/features/checkout/types/checkout.types";
+import { isDefinitivePrePlaceRejection } from "@/features/checkout/utils/checkout-place-attempt";
 
 export type CheckoutPageCopy = {
   title: string;
+  payment: CheckoutPaymentCopy;
   emptyCart: {
     title: string;
     description: string;
@@ -70,6 +75,8 @@ export type CheckoutPageCopy = {
     submit: string;
     submitting: string;
     error: string;
+    outcomeUnknown: string;
+    orderCreated: string;
     checkoutChanged: string;
     unavailableTitle: string;
     unavailableDescription: string;
@@ -82,6 +89,7 @@ type CheckoutPageProps = {
   addressesUnavailable: boolean;
   cartEmpty: boolean;
   copy: CheckoutPageCopy;
+  paymentDiscovery: Promise<CheckoutPaymentDiscovery>;
   giftWrapConfig: CheckoutGiftWrapConfig | null;
   initialGift: CartSnapshot["gift"];
   initialDestination: CheckoutDestination | null;
@@ -95,6 +103,7 @@ export function CheckoutPage({
   addressesUnavailable,
   cartEmpty,
   copy,
+  paymentDiscovery,
   giftWrapConfig,
   initialGift,
   initialDestination,
@@ -107,6 +116,8 @@ export function CheckoutPage({
   const { isChanging: cityTransitionLocked } = useBrowsingCity();
   const placeMutation = useCheckoutPlace(locale);
   const placeInFlightRef = useRef(false);
+  // Mount-local duplicate protection only; never a substitute for backend idempotency.
+  const placeAttemptLockedRef = useRef(false);
   const recipientGiftPendingRef = useRef(false);
   const giftAddOnPendingRef = useRef(false);
   const [destination, setDestination] =
@@ -122,6 +133,11 @@ export function CheckoutPage({
     readonly CheckoutUnavailableLine[]
   >([]);
   const [placeCompleted, setPlaceCompleted] = useState(false);
+  const [placeOutcome, setPlaceOutcome] = useState<
+    { kind: "unknown" } | { kind: "created"; orderNumber: string } | null
+  >(null);
+  // Presentation only: the existing Place serializer still owns the fixed card value.
+  const [selectedPaymentCode, setSelectedPaymentCode] = useState<CheckoutPaymentCode>(legacyCheckoutPaymentMethod);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
   const request: CheckoutQuoteRequest | null = destination
     ? {
@@ -254,8 +270,14 @@ export function CheckoutPage({
     destination && shippingMethodId !== null && buyer
       ? { destination, shippingMethodId, buyer }
       : null;
+  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode);
+  // Mutation error state can arrive before placeOrder records the outcome.
+  const uncertainPlaceError =
+    placeMutation.isError &&
+    !isDefinitivePrePlaceRejection(placeMutation.error);
   const placeReady = Boolean(
     !cityTransitionLocked &&
+      paymentReady &&
       placeRequest &&
       quote &&
       quote.location.inCoverage &&
@@ -266,6 +288,8 @@ export function CheckoutPage({
       (!gift.isGift || !giftMessageDirty) &&
       placeUnavailableLines.length === 0 &&
       !placeCompleted &&
+      placeOutcome === null &&
+      !uncertainPlaceError &&
       !placeMutation.isPending,
   );
 
@@ -275,15 +299,26 @@ export function CheckoutPage({
       !placeRequest ||
       cityTransitionLocked ||
       placeInFlightRef.current ||
+      placeAttemptLockedRef.current ||
       recipientGiftPendingRef.current ||
       giftAddOnPendingRef.current
     ) return;
     placeInFlightRef.current = true;
     const recommendationTransition = beginRecommendationTransition(queryClient);
     placeMutation.reset();
+    let requestStarted = false;
+    let createdOrderNumber: string | null = null;
     try {
       await recommendationTransition.ready;
+      requestStarted = true;
+      placeAttemptLockedRef.current = true;
       const result = await placeMutation.mutateAsync(placeRequest);
+      // Keep the browser protocol narrow until pending-order cleanup is agreed.
+      if (result.kind !== "verification-required" && result.kind !== "confirmed") {
+        throw new Error("Unsupported Checkout result.");
+      }
+      createdOrderNumber = result.orderNumber;
+      setPlaceOutcome({ kind: "created", orderNumber: result.orderNumber });
       try {
         await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
       } catch {
@@ -293,16 +328,27 @@ export function CheckoutPage({
       setPlaceCompleted(true);
       const encodedOrderNumber = encodeURIComponent(result.orderNumber);
       if (result.kind === "verification-required") {
-        storeCheckoutVerificationHandoff(
+        const stored = storeCheckoutVerificationHandoff(
           result,
-          placeRequest.buyer.kind === "guest" ? placeRequest.buyer.email : "",
+          placeRequest.buyer.kind === "guest" ? placeRequest.buyer.phone : "",
         );
+        if (!stored) throw new Error("Checkout handoff unavailable.");
         router.push(`/orders/${encodedOrderNumber}/verify`);
       } else {
-        storeCheckoutConfirmationHandoff(result);
+        const stored = storeCheckoutConfirmationHandoff(result);
+        if (!stored) throw new Error("Checkout handoff unavailable.");
         router.push(`/orders/${encodedOrderNumber}/confirmation`);
       }
     } catch (error) {
+      if (requestStarted && createdOrderNumber === null) {
+        if (isDefinitivePrePlaceRejection(error)) {
+          placeAttemptLockedRef.current = false;
+        } else {
+          // Includes malformed successes and backend HTTP errors: neither proves
+          // that no order exists. Edits/mutation.reset must not unlock this attempt.
+          setPlaceOutcome({ kind: "unknown" });
+        }
+      }
       if (error instanceof ApiError && error.code === "unavailable-lines") {
         const lines = Array.isArray(error.details)
           ? error.details.filter(
@@ -366,6 +412,15 @@ export function CheckoutPage({
               }}
             />
           ) : null}
+          <Suspense fallback={<CheckoutPaymentLoading copy={copy.payment} step={isAuthenticated ? "3" : "4"} />}>
+            <CheckoutPaymentRead
+              discovery={paymentDiscovery}
+              copy={copy.payment}
+              step={isAuthenticated ? "3" : "4"}
+              selectedCode={selectedPaymentCode}
+              onSelect={(code) => { if (canSelectCheckoutPayment(code)) setSelectedPaymentCode(code); }}
+            />
+          </Suspense>
           <CheckoutGiftWrap
             config={giftWrapConfig}
             copy={copy.giftWrap}
@@ -386,7 +441,13 @@ export function CheckoutPage({
             locale={locale}
             placeAction={
               <div>
-                {placeUnavailableLines.length > 0 ? (
+                {placeOutcome !== null ? (
+                  <p role="status" className="mb-3 type-body-sm text-gray-700">
+                    {placeOutcome.kind === "unknown" ? copy.place.outcomeUnknown : (
+                      <>{copy.place.orderCreated} <bdi>{placeOutcome.orderNumber}</bdi></>
+                    )}
+                  </p>
+                ) : placeUnavailableLines.length > 0 ? (
                   <div
                     role="alert"
                     className="mb-4 rounded-md border border-destructive/20 bg-destructive/5 p-4"
@@ -413,14 +474,18 @@ export function CheckoutPage({
                   </div>
                 ) : placeMutation.isError ? (
                   <p role="alert" className="mb-3 type-body-sm text-destructive">
-                    {placeMutation.error instanceof ApiError &&
-                    placeMutation.error.code === "checkout-changed"
-                      ? copy.place.checkoutChanged
-                      : copy.place.error}
+                    {uncertainPlaceError ? copy.place.outcomeUnknown : copy.place.error}
                   </p>
+                ) : null}
+                <p id="checkout-submitted-payment" className="mb-3 type-body-sm text-gray-600">
+                  {copy.payment.submissionNotice}
+                </p>
+                {!paymentReady ? (
+                  <p role="alert" className="mb-3 type-body-sm text-destructive">{copy.payment.selectionUnavailable}</p>
                 ) : null}
                 <Button
                   size="lg"
+                  aria-describedby="checkout-submitted-payment"
                   className="w-full"
                   disabled={!placeReady}
                   loading={placeMutation.isPending}

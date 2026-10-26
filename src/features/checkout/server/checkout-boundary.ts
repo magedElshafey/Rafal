@@ -6,6 +6,7 @@ import {
   placeCheckout,
   quoteCheckout,
   verifyCheckoutOrder,
+  getCheckoutPaymentMethods,
 } from "@/features/checkout/api/checkout-api.server";
 import type {
   CheckoutPlaceRequest,
@@ -14,8 +15,27 @@ import type {
   CheckoutQuoteRequest,
   CheckoutVerifyRequest,
   CheckoutVerifyResult,
+  CheckoutPaymentDiscovery,
 } from "@/features/checkout/types/checkout.types";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
+import type { CheckoutPlaceDiagnostics } from "./checkout-place-diagnostics";
+
+// Optional, request-local presentation data. Discovery is not payment eligibility
+// authority and is not reused to authorize Place after Cart/city changes.
+export async function readCurrentCheckoutPaymentMethods(locale: Locale): Promise<CheckoutPaymentDiscovery> {
+  try {
+    const identity = await resolveCartTransportIdentity();
+    if (identity.kind === "guest" && !identity.token) return { kind: "unavailable" };
+    const methods = await getCheckoutPaymentMethods(
+      identity.kind === "authenticated" ? identity : { kind: "guest", token: identity.token! },
+      locale,
+    );
+    return { kind: "ready", methods };
+  } catch {
+    // Do not serialize backend errors or credentials into the streamed result.
+    return { kind: "unavailable" };
+  }
+}
 
 export class CheckoutCartSessionError extends Error {
   constructor() {
@@ -58,14 +78,16 @@ export async function placeCurrentCheckout(
   locale: Locale,
   request: CheckoutPlaceRequest,
   signal?: AbortSignal,
+  diagnostics?: CheckoutPlaceDiagnostics,
 ): Promise<CheckoutPlaceResult> {
+  diagnostics?.stage("identity-resolution");
   const identity = await resolveCartTransportIdentity();
 
   if (identity.kind === "authenticated") {
     if (request.buyer.kind !== "authenticated") {
       throw new CheckoutIdentityMismatchError();
     }
-    return placeCheckout(identity, locale, request, signal);
+    return placeCheckout(identity, locale, request, signal, diagnostics);
   }
 
   if (!identity.token) throw new CheckoutCartSessionError();
@@ -77,6 +99,7 @@ export async function placeCurrentCheckout(
     locale,
     request,
     signal,
+    diagnostics,
   );
 }
 

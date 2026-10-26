@@ -1,0 +1,45 @@
+{
+    "success":  true,
+    "message":  "Order verified. Complete payment.",
+    "data":  {
+                 "id":  9001,
+                 "order_number":  "RF-TEST-9001",
+                 "display_number":  "#RF-TEST-9001",
+                 "status":  "pending_verification",
+                 "requires_verification":  true,
+                 "placed_at":  "2026-10-26T12:00:00+03:00",
+                 "shipping_address":  {
+                                          "recipient_name":  "Example Recipient",
+                                          "recipient_phone":  "[redacted]",
+                                          "city":  {
+                                                       "id":  1,
+                                                       "name":  "Riyadh"
+                                                   },
+                                          "district":  "Example District",
+                                          "street_details":  "Example Street"
+                                      },
+                 "money":  {
+                               "subtotal":  "100.00",
+                               "discount_total":  "0.00",
+                               "shipping_fee":  "25.00",
+                               "personalization_total":  "0.00",
+                               "gift_wrap_fee":  "15.00",
+                               "vat_amount":  "18.26",
+                               "total":  "140.00",
+                               "currency":  "SAR"
+                           },
+                 "payment":  {
+                                 "method":  "card",
+                                 "status":  "pending",
+                                 "paid_at":  null
+                             },
+                 "verification_expires_at":  null
+             },
+    "meta":  {
+                 "payment":  {
+                                 "payment_url":  "https://checkout.tap.company/pay?token=SYNTHETIC_PAYMENT_TOKEN",
+                                 "expires_at":  "2099-01-01T00:00:00Z",
+                                 "charge_id":  "chg_SYNTHETIC"
+                             }
+             }
+}

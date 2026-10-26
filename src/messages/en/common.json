@@ -42,6 +42,22 @@
   },
   "checkoutPage": {
     "title": "Checkout",
+    "payment": {
+      "title": "Payment options preview",
+      "notice": "This list previews payment options. Your order uses the current card option even if it is not shown here. Other payment options are not available yet.",
+      "submissionNotice": "This order will use the current card / Mada option. Other payment methods cannot be used for this order.",
+      "selectionUnavailable": "The selected payment method cannot be used. Choose the current card option before placing your order.",
+      "loading": "Loading payment methods",
+      "unavailable": "Payment options could not be displayed. The current checkout option is unchanged.",
+      "empty": "No additional payment options are available to display. The current checkout option is unchanged.",
+      "disabled": "Not available for checkout yet",
+      "methods": {
+        "card": { "label": "Card / Mada", "description": "Current checkout option" },
+        "apple_pay": { "label": "Apple Pay", "description": "Apple Pay payment option" },
+        "bank_transfer": { "label": "Bank transfer", "description": "Pay by bank transfer" },
+        "tap": { "label": "Tap", "description": "Hosted payment option" }
+      }
+    },
     "emptyCart": {
       "title": "There are no items to check out",
       "description": "Add products to your shopping cart before continuing to checkout.",
@@ -173,6 +189,8 @@
     "place": {
       "submit": "Place order",
       "submitting": "Placing order",
+      "outcomeUnknown": "We could not confirm whether your order was created. Do not submit again or refresh to retry. Check your order status or contact support before making another attempt.",
+      "orderCreated": "Your order was created. If the next page does not open, do not place it again. Order reference:",
       "error": "The order could not be placed. Your Checkout is still available; try again when ready.",
       "checkoutChanged": "Checkout details changed. Review the refreshed quote before trying again.",
       "unavailableTitle": "Some products are no longer available",
@@ -181,8 +199,8 @@
     }
   },
   "checkoutVerification": {
-    "title": "Verify your order email",
-    "description": "Your order was created but is not confirmed yet. Enter the six-digit code sent to your email.",
+    "title": "Verify your order phone number",
+    "description": "Your order was created but is not confirmed yet. Enter the six-digit code sent to your phone.",
     "sentTo": "Code sent to",
     "orderNumber": "Order number",
     "otpLabel": "Verification code",
@@ -193,7 +211,12 @@
     "expired": "This verification code has expired.",
     "verify": "Verify order",
     "verifying": "Verifying order",
-    "verificationFailed": "The order could not be verified. Check the code and try again.",
+      "verificationFailed": "The order could not be verified. Check the code and try again.",
+      "paymentPending": "Payment pending",
+      "paymentDescription": "Your verification is complete. Continue to the secure payment page to pay for your order.",
+      "continuePayment": "Continue to payment",
+      "openingPayment": "Opening payment page",
+      "paymentHandoffFailed": "The payment page could not be opened. You can try opening it again without verifying your order again. If the link has expired, contact support with your order reference.",
     "missingTitle": "Order verification context is unavailable",
     "missingDescription": "The details needed to verify this order are unavailable in the current browser session.",
     "returnToCheckout": "Return to Checkout"

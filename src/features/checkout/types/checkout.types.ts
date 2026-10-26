@@ -49,7 +49,7 @@ export type CheckoutPlaceRequest = Readonly<{
 
 export type CheckoutVerifyRequest = Readonly<{
   orderNumber: string;
-  email: string;
+  phone: string;
   otp: string;
 }>;
 
@@ -144,11 +144,12 @@ export type CheckoutPlacedMoney = Readonly<{
   shippingFee: string;
   personalizationTotal: string;
   giftWrapFee: string;
-  taxableAmount: string;
-  vat: Readonly<{ rate: string; amount: string }>;
   total: string;
   currency: string;
-}>;
+}> & (
+  | Readonly<{ taxableAmount: string; vat: Readonly<{ rate: string; amount: string }>; vatAmount?: never }>
+  | Readonly<{ vatAmount: string; taxableAmount?: never; vat?: never }>
+);
 
 export type CheckoutPlacedShippingAddress = Readonly<{
   recipientName: string;
@@ -175,7 +176,46 @@ export type CheckoutPlaceResult =
         verificationExpiresAt: string | null;
       }>);
 
-export type CheckoutVerifyResult = Extract<
+export type CheckoutHostedPaymentResult = Readonly<{
+  kind: "hosted-payment-required";
+  orderNumber: string;
+  displayNumber: string;
+  handoff: Readonly<{ paymentUrl: string; chargeId: string; expiresAt: string }>;
+}>;
+
+export type CheckoutVerifyResult = CheckoutHostedPaymentResult | Extract<
   CheckoutPlaceResult,
   { kind: "confirmed" }
 >;
+
+export type CheckoutPaymentMethod = Readonly<{ code: string; label: string; icon: string }>;
+
+export type CheckoutPaymentDiscovery =
+  | Readonly<{ kind: "ready"; methods: readonly CheckoutPaymentMethod[] }>
+  | Readonly<{ kind: "unavailable" }>;
+
+export type CheckoutPaymentOutcomeContext = Readonly<{
+  order: Readonly<{ id: number; orderNumber: string; displayNumber: string; status: string; placedAt: string }>;
+  payment: Readonly<{ method: string; status: string; paidAt: string | null }> | null;
+  verification: Readonly<{
+    required: boolean | null;
+    metadataRequired: boolean | null;
+    expiresAt: string | null;
+  }>;
+  money: Omit<CheckoutPlacedMoney, "taxableAmount" | "vat" | "vatAmount"> & (
+    | Readonly<{ format: "nested-vat"; taxableAmount: string; vat: { rate: string; amount: string } }>
+    | Readonly<{ format: "vat-amount"; vatAmount: string }>
+  );
+}>;
+
+// Contract classification only: this is deliberately not the browser Place result.
+export type CheckoutPaymentOutcome = CheckoutPaymentOutcomeContext & (
+  | Readonly<{ kind: "verification-required"; nextAction: "verify-otp" }>
+  | Readonly<{ kind: "paid"; nextAction: "confirm" }>
+  | Readonly<{
+      kind: "hosted-payment-pending";
+      nextAction: "hosted-payment";
+      handoff: Readonly<{ paymentUrl: string; chargeId: string; expiresAt: string }>;
+    }>
+  | Readonly<{ kind: "unresolved"; nextAction: "none"; reason: "unsuccessful" | "contradictory" | "missing-payment" | "unsupported" | "missing-handoff" }>
+);

@@ -117,6 +117,7 @@ export type CheckoutQuoteResponseDto =
   CheckoutApiResponse<CheckoutQuoteDataDto>;
 
 export const checkoutContractEndpoints = {
+  paymentMethods: "/checkout/payment-methods",
   quote: "/checkout/quote",
   place: "/checkout/place",
   verifyOrder: (orderNumber: string) =>

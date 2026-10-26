@@ -1,0 +1,77 @@
+{
+    "success":  true,
+    "message":  "Order created. Complete the payment on the secure payment page.",
+    "data":  {
+                 "id":  373,
+                 "order_number":  "RF-10373",
+                 "display_number":  "#RF-10373",
+                 "status":  "new",
+                 "customer_status":  "processing",
+                 "requires_verification":  false,
+                 "placed_at":  "2026-10-21T20:27:51+03:00",
+                 "shipping_address":  {
+                                          "recipient_name":  "API Test",
+                                          "recipient_phone":  "[redacted]",
+                                          "city":  null,
+                                          "district":  "Al Olaya",
+                                          "street_details":  "King Fahd Rd, Building 12"
+                                      },
+                 "shipping_method":  {
+                                         "id":  1,
+                                         "code":  "standard",
+                                         "name":  "Ø´Ø­Ù† Ø¹Ø§Ø¯ÙŠ"
+                                     },
+                 "money":  {
+                               "subtotal":  "399.98",
+                               "discount_total":  "0.00",
+                               "shipping_fee":  "25.00",
+                               "personalization_total":  "0.00",
+                               "gift_wrap_fee":  "0.00",
+                               "taxable_amount":  "424.98",
+                               "vat":  {
+                                           "rate":  "15.00",
+                                           "amount":  "63.75"
+                                       },
+                               "total":  "488.73",
+                               "currency":  "SAR"
+                           },
+                 "payment":  {
+                                 "method":  "tap",
+                                 "status":  "pending",
+                                 "paid_at":  null
+                             },
+                 "verification_expires_at":  null,
+                 "timeline":  [
+                                  {
+                                      "step":  "Confirmed",
+                                      "reached":  false,
+                                      "reached_at":  null
+                                  },
+                                  {
+                                      "step":  "Processing",
+                                      "reached":  false,
+                                      "reached_at":  null
+                                  },
+                                  {
+                                      "step":  "Shipped",
+                                      "reached":  false,
+                                      "reached_at":  null
+                                  },
+                                  {
+                                      "step":  "Delivered",
+                                      "reached":  false,
+                                      "reached_at":  null
+                                  }
+                              ],
+                 "can_cancel":  false,
+                 "can_reorder":  false,
+                 "can_request_return":  false
+             },
+    "meta":  {
+                 "payment":  {
+                                 "payment_url":  "https://payments.example.invalid/checkout?token=synthetic-test-only",
+                                 "charge_id":  "chg_EXAMPLE",
+                                 "expires_at":  "2026-10-21T20:57:56+03:00"
+                             }
+             }
+}

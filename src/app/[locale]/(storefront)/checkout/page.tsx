@@ -18,6 +18,7 @@ import type {
   CheckoutGiftWrapConfig,
 } from "@/features/checkout/types/checkout.types";
 import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
+import { readCurrentCheckoutPaymentMethods } from "@/features/checkout/server/checkout-boundary";
 import {
   getVariantAttributeEntries,
   getVariantAttributeLabel,
@@ -69,6 +70,7 @@ async function readGiftWrapConfig(locale: Awaited<ReturnType<typeof getLocale>>)
 
 export default async function CheckoutRoute() {
   const locale = await getLocale();
+  const paymentDiscovery = readCurrentCheckoutPaymentMethods(locale);
   const [cart, user, t, attributeT, giftWrapConfig] = await Promise.all([
     getCurrentCart(locale),
     getCurrentUser(),
@@ -107,6 +109,22 @@ export default async function CheckoutRoute() {
 
   const copy: CheckoutPageCopy = {
     title: t("title"),
+    payment: {
+      title: t("payment.title"),
+      notice: t("payment.notice"),
+      submissionNotice: t("payment.submissionNotice"),
+      selectionUnavailable: t("payment.selectionUnavailable"),
+      loading: t("payment.loading"),
+      unavailable: t("payment.unavailable"),
+      empty: t("payment.empty"),
+      disabled: t("payment.disabled"),
+      methods: {
+        card: { label: t("payment.methods.card.label"), description: t("payment.methods.card.description") },
+        apple_pay: { label: t("payment.methods.apple_pay.label"), description: t("payment.methods.apple_pay.description") },
+        bank_transfer: { label: t("payment.methods.bank_transfer.label"), description: t("payment.methods.bank_transfer.description") },
+        tap: { label: t("payment.methods.tap.label"), description: t("payment.methods.tap.description") },
+      },
+    },
     emptyCart: {
       title: t("emptyCart.title"),
       description: t("emptyCart.description"),
@@ -260,6 +278,8 @@ export default async function CheckoutRoute() {
       submit: t("place.submit"),
       submitting: t("place.submitting"),
       error: t("place.error"),
+      outcomeUnknown: t("place.outcomeUnknown"),
+      orderCreated: t("place.orderCreated"),
       checkoutChanged: t("place.checkoutChanged"),
       unavailableTitle: t("place.unavailableTitle"),
       unavailableDescription: t("place.unavailableDescription"),
@@ -274,6 +294,7 @@ export default async function CheckoutRoute() {
         addressesUnavailable={addressState.unavailable}
         cartEmpty={cart.lines.length === 0}
         copy={copy}
+        paymentDiscovery={paymentDiscovery}
         giftWrapConfig={giftWrapConfig}
         initialGift={cart.gift}
         initialDestination={initialDestination}

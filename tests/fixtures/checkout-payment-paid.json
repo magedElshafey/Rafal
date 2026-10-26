@@ -1,0 +1,71 @@
+{
+    "success":  true,
+    "message":  "Order placed successfully",
+    "data":  {
+                 "id":  208,
+                 "order_number":  "RF-10208",
+                 "display_number":  "#RF-10208",
+                 "status":  "confirmed",
+                 "customer_status":  "processing",
+                 "placed_at":  "2026-09-21T18:00:04+00:00",
+                 "gift":  {
+                              "is_gift":  true,
+                              "is_anonymous":  false,
+                              "gift_message":  null
+                          },
+                 "shipping_address":  {
+                                          "recipient_name":  "Example Recipient",
+                                          "recipient_phone":  "[redacted]",
+                                          "city":  null,
+                                          "district":  "Example District",
+                                          "street_details":  "Example Street"
+                                      },
+                 "shipping_method":  {
+                                         "id":  1,
+                                         "code":  "standard",
+                                         "name":  "Ø´Ø­Ù† Ø¹Ø§Ø¯ÙŠ"
+                                     },
+                 "money":  {
+                               "subtotal":  "100.00",
+                               "discount_total":  "0.00",
+                               "shipping_fee":  "25.00",
+                               "personalization_total":  "0.00",
+                               "gift_wrap_fee":  "15.00",
+                               "vat_amount":  "18.26",
+                               "total":  "140.00",
+                               "currency":  "SAR"
+                           },
+                 "payment":  {
+                                 "method":  "card",
+                                 "status":  "paid",
+                                 "paid_at":  "2026-09-21T18:00:04+00:00"
+                             },
+                 "timeline":  [
+                                  {
+                                      "step":  "Confirmed",
+                                      "reached":  true
+                                  },
+                                  {
+                                      "step":  "Processing",
+                                      "reached":  false
+                                  },
+                                  {
+                                      "step":  "Shipped",
+                                      "reached":  false
+                                  },
+                                  {
+                                      "step":  "Delivered",
+                                      "reached":  false
+                                  }
+                              ],
+                 "can_cancel":  true,
+                 "can_reorder":  false
+             },
+    "meta":  {
+                 "account_prompt":  {
+                                        "email":  "example@example.com",
+                                        "phone":  "[redacted]",
+                                        "suggest_account":  true
+                                    }
+             }
+}

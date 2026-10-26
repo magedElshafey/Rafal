@@ -5,6 +5,7 @@ import type {
   CheckoutVerifyResult,
 } from "@/features/checkout/types/checkout.types";
 import { ApiError } from "@/lib/api/api-error";
+import { parseCheckoutVerifyResult } from "@/features/checkout/api/parse-checkout-verify-result";
 
 export async function verifyCheckoutOrderFromBrowser(
   locale: Locale,
@@ -20,7 +21,7 @@ export async function verifyCheckoutOrderFromBrowser(
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: request.email, otp: request.otp }),
+      body: JSON.stringify({ phone: request.phone, otp: request.otp }),
     },
   );
 
@@ -31,5 +32,5 @@ export async function verifyCheckoutOrderFromBrowser(
     });
   }
 
-  return response.json() as Promise<CheckoutVerifyResult>;
+  return parseCheckoutVerifyResult(await response.json());
 }

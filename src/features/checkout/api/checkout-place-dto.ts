@@ -12,20 +12,35 @@ export type CheckoutPlaceRequestDto = CheckoutQuoteRequestDto &
   CheckoutPlaceFieldsDto;
 
 export type CheckoutVerifyRequestDto = {
-  email: string;
+  phone: string;
   otp: string;
 };
 
-export type CheckoutPlaceMoneyDto = {
+type CheckoutPlaceMoneyBaseDto = {
   subtotal: string;
   discount_total: string;
   shipping_fee: string;
   personalization_total: string;
   gift_wrap_fee: string;
-  taxable_amount: string;
-  vat: { rate: string; amount: string };
   total: string;
   currency: string;
+};
+
+export type CheckoutPlaceMoneyDto = CheckoutPlaceMoneyBaseDto & (
+  | { taxable_amount: string; vat: { rate: string; amount: string }; vat_amount?: never }
+  | { vat_amount: string; taxable_amount?: never; vat?: never }
+);
+
+export type CheckoutPaymentDto = {
+  method: string;
+  status: string;
+  paid_at: string | null;
+};
+
+export type CheckoutPaymentHandoffDto = {
+  payment_url: string;
+  charge_id: string;
+  expires_at: string;
 };
 
 export type CheckoutPlaceShippingAddressDto = {
@@ -41,7 +56,8 @@ export type CheckoutPlaceDataDto = {
   order_number: string;
   display_number: string;
   status: string;
-  requires_verification: boolean;
+  requires_verification: boolean | null;
+  payment: CheckoutPaymentDto | null;
   placed_at: string;
   shipping_address: CheckoutPlaceShippingAddressDto;
   money: CheckoutPlaceMoneyDto;
@@ -53,6 +69,7 @@ export type CheckoutPlaceResponseDto = {
   message: string;
   data: CheckoutPlaceDataDto;
   meta: {
+    payment: CheckoutPaymentHandoffDto | null;
     requires_verification: boolean | null;
     verification_expires_at: string | null;
   } | null;

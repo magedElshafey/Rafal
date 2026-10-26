@@ -6,6 +6,7 @@ import type {
   CheckoutUnavailableLine,
 } from "@/features/checkout/types/checkout.types";
 import { ApiError } from "@/lib/api/api-error";
+import { parseCheckoutPlaceResult } from "@/features/checkout/api/parse-checkout-place-result";
 
 type PlaceErrorBody = {
   code?: unknown;
@@ -67,5 +68,5 @@ export async function placeCheckoutFromBrowser(
     });
   }
 
-  return response.json() as Promise<CheckoutPlaceResult>;
+  return parseCheckoutPlaceResult(await response.json());
 }

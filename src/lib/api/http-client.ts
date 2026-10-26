@@ -18,6 +18,8 @@ export type RequestConfig<TBody = unknown> = {
   timeoutMs?: number;
   /** Explicit caller opt-out; the default GET retry policy is unchanged. */
   retry?: false;
+  /** Optional status-only diagnostics; observer failures never affect requests. */
+  onResponseStatus?: (status: number) => void;
 };
 
 type CreateHttpClientOptions = {
@@ -114,6 +116,7 @@ export function createHttpClient({
     signal,
     timeoutMs,
     retry,
+    onResponseStatus,
   }: RequestConfig<TBody>): Promise<TResponse> {
     const url = buildUrl(path, baseUrl, query);
 
@@ -149,6 +152,7 @@ export function createHttpClient({
           signal: requestSignal,
         });
 
+        try { onResponseStatus?.(response.status); } catch { /* Diagnostics only. */ }
         if (!response.ok) {
           const canRetry =
             shouldRetry(method, response.status) && attempt < requestMaxRetries;

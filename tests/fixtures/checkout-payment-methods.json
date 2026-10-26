@@ -1,0 +1,22 @@
+{
+    "success":  true,
+    "message":  "Payment methods retrieved successfully",
+    "data":  {
+                 "card":  {
+                              "label":  "Credit Card / Mada",
+                              "icon":  "card"
+                          },
+                 "apple_pay":  {
+                                   "label":  "Apple Pay",
+                                   "icon":  "apple"
+                               },
+                 "bank_transfer":  {
+                                       "label":  "Bank Transfer",
+                                       "icon":  "bank"
+                                   },
+                 "tap":  {
+                             "label":  "Credit Card / Mada / Apple Pay",
+                             "icon":  "card"
+                         }
+             }
+}

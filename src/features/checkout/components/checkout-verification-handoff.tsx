@@ -9,11 +9,14 @@ import { InfoIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OtpInput } from "@/features/auth/components/OtpInput";
 import { useCheckoutVerify } from "@/features/checkout/hooks/use-checkout-verify";
-import type { CheckoutVerifyRequest } from "@/features/checkout/types/checkout.types";
+import type { CheckoutHostedPaymentResult, CheckoutVerifyRequest, CheckoutVerifyResult } from "@/features/checkout/types/checkout.types";
+import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-verify-result";
 import {
   clearCheckoutVerificationHandoff,
   readCheckoutVerificationHandoff,
   storeCheckoutConfirmationHandoff,
+  readCheckoutPaymentHandoff,
+  storeCheckoutPaymentHandoff,
   type CheckoutVerificationHandoff as VerificationContext,
 } from "@/features/checkout/utils/checkout-handoff";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -34,6 +37,11 @@ export type CheckoutVerificationCopy = {
   verify: string;
   verifying: string;
   verificationFailed: string;
+  paymentPending: string;
+  paymentDescription: string;
+  continuePayment: string;
+  openingPayment: string;
+  paymentHandoffFailed: string;
   missingTitle: string;
   missingDescription: string;
   returnToCheckout: string;
@@ -107,7 +115,7 @@ function CheckoutOrderVerificationForm({
     if (!locallyEligible || pending) return;
     void onVerify({
       orderNumber: context.orderNumber,
-      email: context.email,
+      phone: context.phone,
       otp,
     });
   };
@@ -124,7 +132,7 @@ function CheckoutOrderVerificationForm({
         <div className="flex flex-wrap justify-between gap-2">
           <dt className="text-gray-500">{copy.sentTo}</dt>
           <dd className="min-w-0 break-all font-medium text-gray-1000">
-            <bdi dir="ltr">{context.email}</bdi>
+            <bdi dir="ltr">{context.phone}</bdi>
           </dd>
         </div>
       </dl>
@@ -213,6 +221,11 @@ export function CheckoutVerificationHandoff({
   const router = useRouter();
   const verifyMutation = useCheckoutVerify(locale);
   const verifyInFlightRef = useRef(false);
+  const verifiedResultRef = useRef<CheckoutVerifyResult | null>(null);
+  const [payment, setPayment] = useState<CheckoutHostedPaymentResult | null>(null);
+  const [openingPayment, setOpeningPayment] = useState(false);
+  const paymentOpeningRef = useRef(false);
+  const [paymentError, setPaymentError] = useState(false);
   const [context, setContext] = useState<
     VerificationContext | null | undefined
   >(undefined);
@@ -221,10 +234,33 @@ export function CheckoutVerificationHandoff({
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
+      const savedPayment = readCheckoutPaymentHandoff(orderNumber);
+      if (savedPayment) {
+        verifiedResultRef.current = savedPayment;
+        setPayment(savedPayment);
+      }
       setContext(readCheckoutVerificationHandoff(orderNumber));
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [orderNumber]);
+
+  const openPayment = (result: CheckoutHostedPaymentResult) => {
+    if (paymentOpeningRef.current) return;
+    paymentOpeningRef.current = true;
+    setOpeningPayment(true);
+    setPaymentError(false);
+    try {
+      // Persist first, then revalidate immediately before leaving the storefront.
+      if (!storeCheckoutPaymentHandoff(result)) throw new Error("Checkout handoff unavailable.");
+      const validated = parseCheckoutHostedPaymentResult(result, Date.now());
+      window.location.assign(validated.handoff.paymentUrl);
+      // Keep the lock and OTP context until the browser leaves. Neither proves payment.
+    } catch {
+      paymentOpeningRef.current = false;
+      setOpeningPayment(false);
+      setPaymentError(true);
+    }
+  };
 
   const verifyOrder: VerifyOrder = async (input) => {
     if (verifyInFlightRef.current) return;
@@ -233,12 +269,20 @@ export function CheckoutVerificationHandoff({
     verifyMutation.reset();
 
     try {
-      const result = await verifyMutation.mutateAsync(input);
-      storeCheckoutConfirmationHandoff(result);
-      clearCheckoutVerificationHandoff(orderNumber);
+      const result = verifiedResultRef.current?.orderNumber === input.orderNumber
+        ? verifiedResultRef.current
+        : await verifyMutation.mutateAsync(input);
+      verifiedResultRef.current = result;
+      if (result.kind === "hosted-payment-required") {
+        setPayment(result);
+        openPayment(result);
+        return;
+      }
+      if (!storeCheckoutConfirmationHandoff(result)) throw new Error("Checkout handoff unavailable.");
       router.replace(
         `/orders/${encodeURIComponent(result.orderNumber)}/confirmation`,
       );
+      clearCheckoutVerificationHandoff(orderNumber);
     } catch {
       setRequestError("verificationFailed");
     } finally {
@@ -256,12 +300,21 @@ export function CheckoutVerificationHandoff({
         <InfoIcon aria-hidden="true" className="size-8" />
       </div>
       <h1 className="mt-5 text-h2 font-bold text-gray-1000">
-        {context ? copy.title : copy.missingTitle}
+        {payment ? copy.paymentPending : context ? copy.title : copy.missingTitle}
       </h1>
       <p className="mx-auto mt-3 max-w-md type-body text-gray-600">
-        {context ? copy.description : copy.missingDescription}
+        {payment ? copy.paymentDescription : context ? copy.description : copy.missingDescription}
       </p>
-      {context ? (
+      {payment ? (
+        <>
+          <p className="mt-3 type-body">{copy.orderNumber}: {payment.displayNumber}</p>
+          {paymentError ? <FieldFeedback role="alert">{copy.paymentHandoffFailed}</FieldFeedback> : null}
+          <Button className="mt-6 w-full" disabled={openingPayment} loading={openingPayment}
+            loadingLabel={copy.openingPayment} onClick={() => openPayment(payment)}>
+            {copy.continuePayment}
+          </Button>
+        </>
+      ) : context ? (
         <CheckoutOrderVerificationForm
           context={context}
           copy={copy}

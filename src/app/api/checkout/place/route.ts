@@ -11,6 +11,7 @@ import type { CheckoutUnavailableLine } from "@/features/checkout/types/checkout
 import { deleteGuestCartToken } from "@/features/cart/server/guest-cart-session";
 import { routing } from "@/i18n/routing";
 import { ApiError } from "@/lib/api/api-error";
+import { createCheckoutPlaceDiagnostics } from "@/features/checkout/server/checkout-place-diagnostics";
 
 const PRIVATE_NO_STORE_HEADERS = { "Cache-Control": "private, no-store" } as const;
 
@@ -60,21 +61,27 @@ export async function POST(request: Request) {
   const placeRequest = parseCheckoutPlaceRequest(value);
   if (!placeRequest) return errorResponse("invalid-input", 400);
 
+  const diagnostics = createCheckoutPlaceDiagnostics();
   try {
     const result = await placeCurrentCheckout(
       locale,
       placeRequest,
       request.signal,
+      diagnostics,
     );
     if (placeRequest.buyer.kind === "guest") {
+      diagnostics.stage("guest-cookie-cleanup");
       try {
         await deleteGuestCartToken();
-      } catch {
+      } catch (error) {
+        diagnostics.failure(error);
         // The order already exists; cookie cleanup must not turn success into a retryable failure.
       }
     }
+    diagnostics.stage("private-response");
     return Response.json(result, { headers: PRIVATE_NO_STORE_HEADERS });
   } catch (error) {
+    diagnostics.failure(error);
     if (error instanceof CheckoutCartSessionError) {
       return errorResponse("cart-session-unavailable", 409);
     }

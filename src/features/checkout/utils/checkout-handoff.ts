@@ -2,15 +2,33 @@ import type {
   CheckoutPlaceResult,
   CheckoutPlacedMoney,
   CheckoutPlacedShippingAddress,
+  CheckoutHostedPaymentResult,
 } from "@/features/checkout/types/checkout.types";
+import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
+import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-verify-result";
 
 const VERIFICATION_KEY_PREFIX = "rafal:checkout:verification:";
 const CONFIRMATION_KEY_PREFIX = "rafal:checkout:confirmation:";
+const PAYMENT_KEY_PREFIX = "rafal:checkout:payment:";
+
+export function storeCheckoutPaymentHandoff(result: CheckoutHostedPaymentResult): boolean {
+  try {
+    return write(storageKey(PAYMENT_KEY_PREFIX, result.orderNumber), parseCheckoutHostedPaymentResult(result));
+  } catch { return false; }
+}
+
+export function readCheckoutPaymentHandoff(orderNumber: string): CheckoutHostedPaymentResult | null {
+  try {
+    // Keep expired context so a reload never turns a known handoff into another Verify.
+    const result = parseCheckoutHostedPaymentResult(read(storageKey(PAYMENT_KEY_PREFIX, orderNumber)));
+    return result.orderNumber === orderNumber ? result : null;
+  } catch { return null; }
+}
 
 export type CheckoutVerificationHandoff = {
   orderNumber: string;
   displayNumber: string;
-  email: string;
+  phone: string;
   verificationExpiresAt: string | null;
 };
 
@@ -45,12 +63,13 @@ function read(key: string): unknown {
 
 export function storeCheckoutVerificationHandoff(
   result: Extract<CheckoutPlaceResult, { kind: "verification-required" }>,
-  email: string,
+  phone: string,
 ): boolean {
+  if (!isValidSaudiMobile(phone)) return false;
   return write(storageKey(VERIFICATION_KEY_PREFIX, result.orderNumber), {
     orderNumber: result.orderNumber,
     displayNumber: result.displayNumber,
-    email,
+    phone,
     verificationExpiresAt: result.verificationExpiresAt,
   } satisfies CheckoutVerificationHandoff);
 }
@@ -65,7 +84,7 @@ export function readCheckoutVerificationHandoff(
   const context = value as Record<string, unknown>;
   return context.orderNumber === orderNumber &&
     typeof context.displayNumber === "string" &&
-    typeof context.email === "string" &&
+    typeof context.phone === "string" && isValidSaudiMobile(context.phone) &&
     (context.verificationExpiresAt === null ||
       typeof context.verificationExpiresAt === "string")
     ? (context as CheckoutVerificationHandoff)

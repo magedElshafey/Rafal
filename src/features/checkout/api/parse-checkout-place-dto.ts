@@ -3,11 +3,13 @@ import type {
   CheckoutPlaceMoneyDto,
   CheckoutPlaceResponseDto,
   CheckoutPlaceShippingAddressDto,
+  CheckoutPaymentDto,
+  CheckoutPaymentHandoffDto,
 } from "@/features/checkout/api/checkout-place-dto";
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 
-const { parseBoolean, parseRecord, parseString } = createRuntimeValidators(
+const { parseBoolean, parseRecord, parseString, parseNonEmptyString } = createRuntimeValidators(
   (path, expected) => new CheckoutContractError(path, expected),
 );
 
@@ -37,8 +39,7 @@ function nullableString(value: unknown, path: string): string | null {
 
 function parseMoney(value: unknown, path: string): CheckoutPlaceMoneyDto {
   const source = parseRecord(value, path);
-  const vat = parseRecord(source.vat, `${path}.vat`);
-  return {
+  const base = {
     subtotal: decimalString(source.subtotal, `${path}.subtotal`),
     discount_total: decimalString(
       source.discount_total,
@@ -53,16 +54,61 @@ function parseMoney(value: unknown, path: string): CheckoutPlaceMoneyDto {
       source.gift_wrap_fee,
       `${path}.gift_wrap_fee`,
     ),
-    taxable_amount: decimalString(
-      source.taxable_amount,
-      `${path}.taxable_amount`,
-    ),
+    total: decimalString(source.total, `${path}.total`),
+    currency: parseNonEmptyString(source.currency, `${path}.currency`),
+  };
+  if (source.vat_amount !== undefined) {
+    if (source.vat !== undefined || source.taxable_amount !== undefined) {
+      throw new CheckoutContractError(path, "one supported VAT representation");
+    }
+    return { ...base, vat_amount: decimalString(source.vat_amount, `${path}.vat_amount`) };
+  }
+  const vat = parseRecord(source.vat, `${path}.vat`);
+  return {
+    ...base,
+    taxable_amount: decimalString(source.taxable_amount, `${path}.taxable_amount`),
     vat: {
       rate: decimalString(vat.rate, `${path}.vat.rate`),
       amount: decimalString(vat.amount, `${path}.vat.amount`),
     },
-    total: decimalString(source.total, `${path}.total`),
-    currency: parseString(source.currency, `${path}.currency`),
+  };
+}
+
+function timestamp(value: unknown, path: string): string {
+  const parsed = parseNonEmptyString(value, path);
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(parsed) || !Number.isFinite(Date.parse(parsed))) {
+    throw new CheckoutContractError(path, "an ISO timestamp");
+  }
+  return parsed;
+}
+
+function parsePayment(value: unknown, path: string): CheckoutPaymentDto | null {
+  if (value === undefined || value === null) return null;
+  const source = parseRecord(value, path);
+  return {
+    method: parseNonEmptyString(source.method, `${path}.method`),
+    status: parseNonEmptyString(source.status, `${path}.status`),
+    paid_at: source.paid_at === null ? null : timestamp(source.paid_at, `${path}.paid_at`),
+  };
+}
+
+function parseHandoff(value: unknown): CheckoutPaymentHandoffDto | null {
+  if (value === undefined || value === null) return null;
+  const path = "response.meta.payment";
+  const source = parseRecord(value, path);
+  const paymentUrl = parseNonEmptyString(source.payment_url, `${path}.payment_url`);
+  // Structural validation only. Destination approval belongs to the future handoff boundary.
+  try {
+    const url = new URL(paymentUrl);
+    if (url.protocol !== "https:" || url.username || url.password || paymentUrl !== paymentUrl.trim()) throw new Error();
+  } catch {
+    // Never include the URL (or the native URL error) in diagnostics.
+    throw new CheckoutContractError(`${path}.payment_url`, "an absolute HTTPS URL without credentials");
+  }
+  return {
+    payment_url: paymentUrl,
+    charge_id: parseNonEmptyString(source.charge_id, `${path}.charge_id`),
+    expires_at: timestamp(source.expires_at, `${path}.expires_at`),
   };
 }
 
@@ -97,17 +143,21 @@ function parseShippingAddress(
   };
 }
 
-function parseData(value: unknown, path: string): CheckoutPlaceDataDto {
+function parseData(value: unknown, path: string, onOrderParsed?: () => void): CheckoutPlaceDataDto {
   const source = parseRecord(value, path);
+  const id = positiveInteger(source.id, `${path}.id`);
+  const orderNumber = parseNonEmptyString(source.order_number, `${path}.order_number`);
+  onOrderParsed?.();
   return {
-    id: positiveInteger(source.id, `${path}.id`),
-    order_number: parseString(source.order_number, `${path}.order_number`),
-    display_number: parseString(
+    id,
+    order_number: orderNumber,
+    display_number: parseNonEmptyString(
       source.display_number,
       `${path}.display_number`,
     ),
-    status: parseString(source.status, `${path}.status`),
-    requires_verification: parseBoolean(
+    status: parseNonEmptyString(source.status, `${path}.status`),
+    payment: parsePayment(source.payment, `${path}.payment`),
+    requires_verification: source.requires_verification === undefined ? null : parseBoolean(
       source.requires_verification,
       `${path}.requires_verification`,
     ),
@@ -126,6 +176,7 @@ function parseData(value: unknown, path: string): CheckoutPlaceDataDto {
 
 export function parseCheckoutPlaceResponse(
   value: unknown,
+  onOrderParsed?: () => void,
 ): CheckoutPlaceResponseDto {
   const source = parseRecord(value, "response");
   const meta =
@@ -136,9 +187,10 @@ export function parseCheckoutPlaceResponse(
   return {
     success: parseBoolean(source.success, "response.success"),
     message: parseString(source.message, "response.message"),
-    data: parseData(source.data, "response.data"),
+    data: parseData(source.data, "response.data", onOrderParsed),
     meta: meta
       ? {
+          payment: parseHandoff(meta.payment),
           requires_verification:
             meta.requires_verification === undefined
               ? null
