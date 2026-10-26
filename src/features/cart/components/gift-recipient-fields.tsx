@@ -205,7 +205,7 @@ export function GiftRecipientFields({
         onChange={(event) => { mapFields.manual("streetDetails"); onChange("streetDetails", event.target.value); }}
       />
 
-      <AddressMapPicker cityId={draft.city?.id ?? null} disabled={busy} onSuggestion={(suggestion, replace) => {
+      <AddressMapPicker cityId={draft.city?.id ?? null} disabled={busy} onCityChange={city => onChange("city", city)} onSuggestion={(suggestion, replace) => {
         const patch = mapFields.merge(draft, suggestion, replace);
         if (patch.district !== undefined) onChange("district", patch.district);
         if (patch.streetDetails !== undefined) onChange("streetDetails", patch.streetDetails);

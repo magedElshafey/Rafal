@@ -26,9 +26,63 @@ function harness(fetch = async () => { throw new Error("Unexpected network"); })
 const load = harness();
 const { createAddressSuggestionGuard } = load("src/features/addresses/utils/merge-address-suggestion");
 const { parseAddressSuggestion, createAddressLookup } = load("src/features/addresses/api/address-geocoding.client");
+const { parseCityViewport, addressCityConflict, geographicName } = load("src/features/addresses/api/address-geocoding.client");
 const plain = value => JSON.parse(JSON.stringify(value));
 const empty = { district: "", streetDetails: "" };
 const providerFixtures = JSON.parse(readFileSync("tests/fixtures/address-map-provider.json", "utf8"));
+
+const cityResult = (city, region, lat = "24.7", lon = "46.7") => ({ class: "place", type: "city", lat, lon, boundingbox: ["24.5", "24.9", "46.5", "46.9"], address: { city, state: region, country_code: "sa" } });
+for (const [name, region, lat, lon] of [["Riyadh", "Riyadh Region", "24.7", "46.7"], ["Jeddah", "Makkah Region", "21.5", "39.2"], ["Dammam", "Eastern Province", "26.4", "50.1"]]) {
+  test(`${name}: forward city resolves only with matching Saudi administrative evidence`, () => {
+    const city = { id: 42, name, regionName: region };
+    const result = parseCityViewport([cityResult(name, region, lat, lon)], city);
+    assert.deepEqual(plain(result.center), { lat: Number(lat), lng: Number(lon) });
+    assert.equal(city.id, 42);
+  });
+}
+test("city viewport rejects ambiguity, missing region, wrong country/name/region and invalid coordinates", () => {
+  const city = { id: 1, name: "Riyadh", regionName: "Riyadh Region" };
+  const row = cityResult(city.name, city.regionName);
+  assert.equal(parseCityViewport([row], { ...city, regionName: undefined }), null);
+  assert.equal(parseCityViewport([row, { ...row, lat: "24.8" }], city), null);
+  assert.ok(parseCityViewport([row, row], city));
+  assert.equal(parseCityViewport(Array(5).fill(row), city), null);
+  for (const changed of [{ lat: "" }, { lon: "NaN" }, { lat: "40" }, { class: "highway", type: "residential" }, { address: { ...row.address, country_code: "ae" } }, { address: { ...row.address, state: "Other Region" } }, { address: { ...row.address, city: "Other City" } }]) {
+    assert.equal(parseCityViewport([{ ...row, ...changed }], city), null);
+  }
+  assert.throws(() => parseCityViewport({}, city));
+  assert.throws(() => parseCityViewport([null], city));
+  assert.deepEqual(plain(parseCityViewport([row], city).bounds), [24.5, 46.5, 24.9, 46.9]);
+  assert.equal(parseCityViewport([{ ...row, boundingbox: ["0", "90", "0", "180"] }], city).bounds, undefined);
+});
+test("duplicate city names use region evidence, never first-match selection", () => {
+  const rows = [cityResult("Riyadh", "Other Region", "26", "44"), cityResult("Riyadh", "Riyadh Region")];
+  assert.equal(parseCityViewport(rows, { id: 2, name: "Riyadh", regionName: "Other Region" }).center.lat, 26);
+  assert.equal(parseCityViewport(rows, { id: 1, name: "Riyadh", regionName: "Riyadh Region" }).center.lat, 24.7);
+});
+test("confirmed geographic conflicts block suggestions; missing evidence does not invent a conflict", () => {
+  const city = { id: 1, name: "Riyadh", regionName: "Riyadh Region" };
+  assert.equal(addressCityConflict(city, { countryStatus: "saudi", city: "Jeddah" }), true);
+  assert.equal(addressCityConflict(city, { countryStatus: "saudi", region: "Makkah Region" }), true);
+  assert.equal(addressCityConflict(city, { countryStatus: "saudi", district: "District" }), false);
+  assert.equal(addressCityConflict(city, { countryStatus: "saudi", city: "Riyadh", region: "Riyadh Province" }), false);
+  assert.equal(geographicName("منطقة الرِّياض"), geographicName("الرياض"));
+});
+test("forward lookup uses city AND region, Saudi restriction, bounded neutral GET and no auth", async () => {
+  let calls = 0;
+  const resolve = harness(async (url, init) => {
+    calls++;
+    assert.equal(url.pathname, "/v1/search");
+    assert.deepEqual(Object.fromEntries(url.searchParams), { key: "synthetic", city: "Riyadh", state: "Riyadh Region", countrycodes: "sa", format: "json", addressdetails: "1", limit: "5", "accept-language": "en" });
+    assert.deepEqual([...init.headers], [["accept", "application/json"]]);
+    assert.equal(init.body, undefined);
+    return Response.json([cityResult("Riyadh", "Riyadh Region")]);
+  })("src/features/addresses/api/address-geocoding.client").resolveCityViewport;
+  const city = { id: 1, name: "Riyadh", regionName: "Riyadh Region" };
+  assert.ok(await resolve(city, "en", "synthetic", new AbortController().signal));
+  assert.equal(await resolve({ ...city, regionName: undefined }, "en", "synthetic", new AbortController().signal), null);
+  assert.equal(calls, 1);
+});
 
 for (const city of ["Riyadh", "Jeddah", "Dammam"]) {
   test(`${city}: sanitized live-schema fixture populates both eligible fields`, () => {

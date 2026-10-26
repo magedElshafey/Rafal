@@ -7,7 +7,9 @@ import nextEnv from "@next/env";
 if (process.env.MAP_E2E_LIVE === "1") nextEnv.loadEnvConfig(process.cwd(), false, { info() {}, error() {} });
 
 const city = { id: 1, name: "Riyadh", region_id: 10, is_active: true };
-const regions = [{ id: 10, name: "Riyadh Region", cities: [city] }, { id: 20, name: "Other Region", cities: [{ ...city, id: 2, region_id: 20 }] }];
+const regions = [{ id: 10, name: "Riyadh Region", cities: [city] }, { id: 20, name: "Other Region", cities: [{ ...city, id: 2, region_id: 20 }] },
+  { id: 30, name: "Makkah Region", cities: [{ ...city, id: 3, name: "Jeddah", region_id: 30 }] },
+  { id: 40, name: "Eastern Province", cities: [{ ...city, id: 4, name: "Dammam", region_id: 40 }] }];
 const address = { id: 1, label: "Home", recipient_name: "Test Buyer", recipient_phone: "+966501234567", city: { id: 1, name: "Riyadh", region: { id: 10, name: "Riyadh Region" } }, district: "Saved District", street_details: "Saved Street", is_default: true, is_serviceable: true, created_at: "2026-01-01T00:00:00Z" };
 const lineTotal = { unit_regular_price: "100.00", unit_price: "100.00", discount_per_unit: "0.00", quantity: 1, line_subtotal: "100.00", personalization_fee: "0.00", line_total: "100.00", discount_active: false };
 const cart = {
@@ -50,7 +52,7 @@ const backend = createServer(async (req, res) => {
   return send({ success: false, message: "Unconfigured fixture" }, 404);
 });
 backend.listen(3101, "127.0.0.1");
-const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--hostname", "127.0.0.1", "--port", "3100"], {
+const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", process.env.MAP_E2E_PRODUCTION === "1" ? "start" : "dev", "--hostname", "127.0.0.1", "--port", "3100"], {
   stdio: "inherit",
   env: { ...process.env, RAFAL_MAP_E2E: "1", API_BASE_URL: "http://127.0.0.1:3101", NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3101", SITE_URL: "http://127.0.0.1:3100", NEXT_PUBLIC_LOCATIONIQ_TOKEN: process.env.MAP_E2E_NO_TOKEN ? "" : process.env.MAP_E2E_LIVE === "1" ? process.env.NEXT_PUBLIC_LOCATIONIQ_TOKEN ?? "" : "synthetic-mocked-token", USE_MOCK_AUTH: "false", USE_MOCK_API: "false", NEXT_TELEMETRY_DISABLED: "1" },
 });

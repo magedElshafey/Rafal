@@ -361,8 +361,15 @@ function OneTimeAddressForm({
           />
         </div>
       </div>
-      <AddressMapPicker cityId={draft.city?.id ?? null} onSuggestion={(suggestion, replace) => {
-        setDraft({ ...draft, ...mapFields.merge(draft, suggestion, replace) });
+      <AddressMapPicker cityId={draft.city?.id ?? null} onCityChange={(city) => {
+        setDraft(current => ({ ...current, city: { id: city.id, name: city.name } }));
+        setErrors(current => ({ ...current, city: undefined }));
+        setFormError(null);
+      }} onSuggestion={(suggestion, replace) => {
+        const patch = mapFields.merge(draft, suggestion, replace);
+        setDraft({ ...draft, ...patch });
+        setErrors(current => ({ ...current, ...(patch.district !== undefined ? { district: undefined } : {}), ...(patch.streetDetails !== undefined ? { streetDetails: undefined } : {}) }));
+        if (Object.keys(patch).length) setFormError(null);
       }} />
       <FieldFeedback role="alert" className="mt-4" reserve={[copy.errors.validation]}>
           {formError}

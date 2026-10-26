@@ -17,6 +17,8 @@ test("missing token: keyboard manual Checkout address still commits with the sam
   await page.getByRole("button", { name: "Choose location on map" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByText("The map is unavailable. You can still enter and save your address manually.")).toBeVisible();
+  await page.getByRole("button", { name: "Back to address", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   for (const [selector, value] of [["#checkout-recipient-name", "Keyboard Buyer"], ["#checkout-recipient-phone", "501234567"], ["#checkout-district", "Manual"], ["#checkout-street-details", "Street"]]) {
     await page.locator(selector).focus();
     await page.keyboard.type(value);

@@ -1,5 +1,5 @@
 import type { Locale } from "next-intl";
-import type { AddressMapPoint, AddressMapSuggestion } from "@/features/addresses/types/address-map.types";
+import type { AddressMapCity, AddressMapPoint, AddressMapSuggestion, CityViewport } from "@/features/addresses/types/address-map.types";
 import { createHttpClient } from "@/lib/api/http-client";
 
 const provider = createHttpClient({ baseUrl: new URL("https://eu1.locationiq.com/v1/"), timeoutMs: 8_000, maxRetries: 0 });
@@ -46,6 +46,62 @@ export async function reverseGeocodeAddress(point: AddressMapPoint, locale: Loca
     query: { key: publicToken, lat: point.lat, lon: point.lng, format: "json", addressdetails: 1, "accept-language": locale },
   });
   return parseAddressSuggestion(payload);
+}
+
+// Conservative same-language comparison, not a transliteration or City-ID resolver.
+export function geographicName(value: string): string {
+  return value.normalize("NFKC").toLowerCase().replace(/[\u064b-\u065f\u0670\u0640]/g, "")
+    .replace(/[أإآ]/g, "ا").replace(/^(?:منطقة|المنطقة)\s+/u, "")
+    .replace(/\s+(?:region|province)$/i, "").replace(/\s+/g, " ").trim();
+}
+
+export function addressCityConflict(city: AddressMapCity | null, suggestion: AddressMapSuggestion): boolean {
+  if (!city || suggestion.countryStatus !== "saudi") return false;
+  return Boolean(
+    (suggestion.city && geographicName(city.name) !== geographicName(suggestion.city)) ||
+    (city.regionName && suggestion.region && geographicName(city.regionName) !== geographicName(suggestion.region)),
+  );
+}
+
+export function parseCityViewport(value: unknown, city: AddressMapCity): CityViewport | null {
+  if (!Array.isArray(value)) throw new Error("Invalid city response.");
+  if (!city.regionName || !city.name.trim() || value.length >= 5) return null;
+  const matches: CityViewport[] = [];
+  for (const item of value) {
+    const candidate = record(item);
+    if (!candidate.address) continue;
+    const address = record(candidate.address);
+    const name = text(address.city) ?? text(address.town) ?? text(address.municipality);
+    const region = text(address.state);
+    const isCity = (candidate.class === "place" && ["city", "town", "municipality"].includes(String(candidate.type))) ||
+      (candidate.class === "boundary" && candidate.type === "administrative");
+    if (!isCity || text(address.country_code)?.toLowerCase() !== "sa" || !name || !region ||
+      geographicName(name) !== geographicName(city.name) || geographicName(region) !== geographicName(city.regionName)) continue;
+    const lat = typeof candidate.lat === "string" && candidate.lat.trim() ? Number(candidate.lat) : NaN;
+    const lng = typeof candidate.lon === "string" && candidate.lon.trim() ? Number(candidate.lon) : NaN;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < 16 || lat > 33 || lng < 34 || lng > 56) continue;
+    let bounds: CityViewport["bounds"];
+    if (Array.isArray(candidate.boundingbox) && candidate.boundingbox.length === 4 &&
+      candidate.boundingbox.every(v => typeof v === "string" && v.trim() && Number.isFinite(Number(v)))) {
+      const [south, north, west, east] = candidate.boundingbox.map(Number);
+      if (south >= 16 && north <= 33 && west >= 34 && east <= 56 && south < north && west < east &&
+        north - south <= 3 && east - west <= 3 && lat >= south && lat <= north && lng >= west && lng <= east) {
+        bounds = [south, west, north, east];
+      }
+    }
+    // Duplicate rows for exactly the same point do not make a second location.
+    if (!matches.some(match => match.center.lat === lat && match.center.lng === lng)) matches.push({ center: { lat, lng }, ...(bounds ? { bounds } : {}) });
+  }
+  return matches.length === 1 ? matches[0] : null;
+}
+
+export async function resolveCityViewport(city: AddressMapCity, locale: Locale, publicToken: string, signal: AbortSignal): Promise<CityViewport | null> {
+  if (!city.regionName || !city.name.trim() || !publicToken) return null;
+  const payload = await provider.request<unknown>({
+    path: "search", retry: false, signal,
+    query: { key: publicToken, city: city.name, state: city.regionName, countrycodes: "sa", format: "json", addressdetails: 1, limit: 5, "accept-language": locale },
+  });
+  return parseCityViewport(payload, city);
 }
 
 // Component-owned request lifecycle; no global cache or stored coordinates.

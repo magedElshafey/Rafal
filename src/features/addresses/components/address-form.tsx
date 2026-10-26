@@ -451,10 +451,18 @@ export function AddressForm({
                 onChange={(event) => updateField("streetDetails", event.target.value)}
               />
               <AddressMapPicker cityId={draft.city?.id ?? null} disabled={mutation.isPending}
+                onCityChange={(city) => {
+                  setDraft(current => ({ ...current, city: { id: city.id, name: city.name } }));
+                  setErrors(current => ({ ...current, cityId: undefined }));
+                  setFormError(null);
+                }}
                 onSuggestion={(suggestion, replace) => {
                   // The picker invokes the latest committed callback. Keep the guard's
                   // bookkeeping outside React's replayable state updater.
-                  setDraft({ ...draft, ...mapFields.merge(draft, suggestion, replace) });
+                  const patch = mapFields.merge(draft, suggestion, replace);
+                  setDraft({ ...draft, ...patch });
+                  setErrors(current => ({ ...current, ...(patch.district !== undefined ? { district: undefined } : {}), ...(patch.streetDetails !== undefined ? { streetDetails: undefined } : {}) }));
+                  if (Object.keys(patch).length) setFormError(null);
                 }} />
               <div className="flex min-h-20 items-center justify-between gap-5 sm:col-span-2">
                 <div className="min-w-0 py-3">

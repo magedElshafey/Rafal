@@ -1,20 +1,9 @@
-.root { min-width: 0; }
-.canvas {
-  height: 20rem;
-  position: relative;
-  z-index: 0;
-  isolation: isolate;
-  touch-action: pan-y;
-  border-radius: var(--radius-md);
-}
+.root { position: relative; min-width: 0; min-height: 12rem; flex: 1 1 0; isolation: isolate; }
+.canvas { height: 100%; min-height: 12rem; position: relative; z-index: 0; border-radius: var(--radius-md); background: var(--color-gray-100); }
 .canvas:focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
-.marker { background: transparent; border: 0; }
-.marker span {
-  display: block;
-  width: 100%; height: 100%;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  background: var(--color-gold-500);
-  border: 3px solid var(--color-gray-1000);
-}
-.canvas :global(.leaflet-control-attribution) { white-space: normal; }
+.pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); pointer-events: none; z-index: 1; }
+.pin span { display: block; width: 2rem; height: 2rem; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--color-gold-500); border: 3px solid var(--color-gray-1000); box-shadow: var(--shadow-modal); }
+.zoom { position: absolute; top: 1rem; inset-inline-end: 1rem; display: flex; flex-direction: column; gap: .25rem; z-index: 2; }
+.zoom button { background: var(--color-gray-0); min-width: 2.75rem; }
+.tileError { position: absolute; top: 1rem; inset-inline-start: 1rem; max-width: calc(100% - 6rem); background: var(--color-gray-0); color: var(--color-gray-1000); border-radius: var(--radius-md); padding: .5rem; font-size: .875rem; z-index: 2; }
+.canvas :global(.leaflet-control-attribution) { white-space: normal; font-size: 10px; }

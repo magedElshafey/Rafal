@@ -19,6 +19,7 @@ type RafalModalProps = {
   closeLabel?: string;
   showClose?: boolean;
   className?: string;
+  bodyClassName?: string;
   returnFocusRef?: RefObject<HTMLElement | null>;
   onAfterClose?: () => void;
   variant?: "modal" | "bottom-sheet" | "image-viewer";
@@ -27,6 +28,7 @@ type RafalModalProps = {
 export function RafalModal({
   children,
   className,
+  bodyClassName,
   closeLabel = "Close",
   description,
   dismissible = true,
@@ -137,7 +139,7 @@ export function RafalModal({
           ) : null}
           <div
             className={
-              isImageViewer ? "h-full min-h-0" : cn("space-y-3", showClose && "pe-8")
+              cn(isImageViewer ? "h-full min-h-0" : cn("space-y-3", showClose && "pe-8"), bodyClassName)
             }
           >
             <DialogPrimitive.Title
