@@ -1,0 +1,440 @@
+[
+  {
+    "locale": "en",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "motion": "no-preference",
+    "hasTouch": true,
+    "errors": [],
+    "exceptions": [],
+    "stress": [
+      {
+        "width": 768,
+        "parts": [
+          {
+            "x": 24,
+            "right": 77.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 104.140625,
+            "right": 516.9375,
+            "width": 412.796875
+          },
+          {
+            "x": 544,
+            "right": 744,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 104.140625,
+            "right": 170.75
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 174.75,
+            "right": 295.890625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 299.890625,
+            "right": 368.125
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 372.125,
+            "right": 456.765625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 460.765625,
+            "right": 516.9375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 769,
+        "parts": [
+          {
+            "x": 24,
+            "right": 77.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 104.640625,
+            "right": 517.4375,
+            "width": 412.796875
+          },
+          {
+            "x": 545,
+            "right": 745,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 104.640625,
+            "right": 171.25
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 175.25,
+            "right": 296.390625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 300.390625,
+            "right": 368.625
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 372.625,
+            "right": 457.265625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 461.265625,
+            "right": 517.4375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 820,
+        "parts": [
+          {
+            "x": 24,
+            "right": 77.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 130.140625,
+            "right": 542.9375,
+            "width": 412.796875
+          },
+          {
+            "x": 596,
+            "right": 796,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 130.140625,
+            "right": 196.75
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 200.75,
+            "right": 321.890625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 325.890625,
+            "right": 394.125
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 398.125,
+            "right": 482.765625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 486.765625,
+            "right": 542.9375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 1023,
+        "parts": [
+          {
+            "x": 24,
+            "right": 77.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 231.640625,
+            "right": 644.4375,
+            "width": 412.796875
+          },
+          {
+            "x": 799,
+            "right": 999,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 231.640625,
+            "right": 298.25
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 302.25,
+            "right": 423.390625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 427.390625,
+            "right": 495.625
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 499.625,
+            "right": 584.265625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 588.265625,
+            "right": 644.4375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 1024,
+        "parts": [
+          {
+            "x": 32,
+            "right": 85.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 200.140625,
+            "right": 676.9375,
+            "width": 476.796875
+          },
+          {
+            "x": 792,
+            "right": 992,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 200.140625,
+            "right": 266.75
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 286.75,
+            "right": 407.890625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 427.890625,
+            "right": 496.125
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 516.125,
+            "right": 600.765625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 620.765625,
+            "right": 676.9375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 1025,
+        "parts": [
+          {
+            "x": 32,
+            "right": 85.0625,
+            "width": 53.0625
+          },
+          {
+            "x": 200.640625,
+            "right": 677.4375,
+            "width": 476.796875
+          },
+          {
+            "x": 793,
+            "right": 993,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 200.640625,
+            "right": 267.25
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 287.25,
+            "right": 408.390625
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 428.390625,
+            "right": 496.625
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 516.625,
+            "right": 601.265625
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 621.265625,
+            "right": 677.4375
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 1280,
+        "parts": [
+          {
+            "x": 32,
+            "right": 95.6875,
+            "width": 63.6875
+          },
+          {
+            "x": 333.453125,
+            "right": 810.25,
+            "width": 476.796875
+          },
+          {
+            "x": 1048,
+            "right": 1248,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 333.453125,
+            "right": 400.0625
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 420.0625,
+            "right": 541.203125
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 561.203125,
+            "right": 629.4375
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 649.4375,
+            "right": 734.078125
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 754.078125,
+            "right": 810.25
+          }
+        ],
+        "outcome": "PASS"
+      },
+      {
+        "width": 1440,
+        "parts": [
+          {
+            "x": 32,
+            "right": 95.6875,
+            "width": 63.6875
+          },
+          {
+            "x": 413.453125,
+            "right": 890.25,
+            "width": 476.796875
+          },
+          {
+            "x": 1208,
+            "right": 1408,
+            "width": 200
+          }
+        ],
+        "links": [
+          {
+            "text": "Home",
+            "height": 30,
+            "x": 413.453125,
+            "right": 480.0625
+          },
+          {
+            "text": "Categories",
+            "height": 44,
+            "x": 500.0625,
+            "right": 621.203125
+          },
+          {
+            "text": "Offers",
+            "height": 30,
+            "x": 641.203125,
+            "right": 709.4375
+          },
+          {
+            "text": "About us",
+            "height": 30,
+            "x": 729.4375,
+            "right": 814.078125
+          },
+          {
+            "text": "Blog",
+            "height": 30,
+            "x": 834.078125,
+            "right": 890.25
+          }
+        ],
+        "outcome": "PASS"
+      }
+    ],
+    "stage": "mobile-more-to-desktop",
+    "mdResize": "PASS",
+    "lgResize": "PASS",
+    "outcome": "PASS"
+  }
+]

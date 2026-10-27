@@ -1,0 +1,24 @@
+[
+  {
+    "locale": "ar",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "motion": "no-preference",
+    "hasTouch": true,
+    "errors": [],
+    "exceptions": [],
+    "stress": [],
+    "outcome": "FAIL",
+    "failure": "mobile->desktop category focus"
+  },
+  {
+    "locale": "en",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "motion": "no-preference",
+    "hasTouch": true,
+    "errors": [],
+    "exceptions": [],
+    "stress": [],
+    "outcome": "FAIL",
+    "failure": "mobile->desktop category focus"
+  }
+]

@@ -1,0 +1,2 @@
+const fs = require('node:fs');
+if (process.env.QA_PID_LOG) fs.appendFileSync(process.env.QA_PID_LOG, JSON.stringify({pid:process.pid,ppid:process.ppid,argv:process.argv,at:new Date().toISOString()})+'\n');

@@ -1,0 +1,15 @@
+const fs=require('node:fs'),{createRequire}=require('node:module'),req=createRequire('D:/megz/Rafal/package.json'),sharp=req('sharp');
+const before=JSON.parse(fs.readFileSync(__dirname+'/before/results.json')),after=JSON.parse(fs.readFileSync(__dirname+'/after/results.json'));
+(async()=>{const results=[];for(const r of after){
+ const failures=[],g=r.geometry;
+ if(!g){results.push({key:r.url,failures:['no geometry']});continue}
+ const links=g.links.filter(x=>x.visible),parts=g.parts.filter(x=>x.width>0);
+ const overlap=(a,b)=>Math.min(a.right,b.right)-Math.max(a.x,b.x)>0.5;
+ for(let i=0;i<links.length;i++)for(let j=i+1;j<links.length;j++)if(overlap(links[i].box,links[j].box))failures.push('navigation overlap');
+ for(let i=0;i<parts.length;i++)for(let j=i+1;j<parts.length;j++)if(overlap(parts[i],parts[j]))failures.push('header section overlap');
+ for(const a of g.actions)if(a.x<0||a.right>r.width||a.height<(r.width>=768&&r.auth?44:0))failures.push('action bounds or target');
+ if(g.lang!==r.locale||g.dir!==(r.locale==='ar'?'rtl':'ltr'))failures.push('document locale');
+ if(links.some((l,i)=>i>0&&(r.locale==='ar'?l.box.x>links[i-1].box.x:l.box.x<links[i-1].box.x)))failures.push('navigation direction');
+ let unchanged=null;if(r.width<768||r.width>=1024){const h=r.width<768?64:80;const a=await sharp(__dirname+'/before/'+r.screenshot).extract({left:0,top:0,width:r.width,height:h}).raw().toBuffer();const b=await sharp(__dirname+'/after/'+r.screenshot).extract({left:0,top:0,width:r.width,height:h}).raw().toBuffer();unchanged=a.equals(b);if(!unchanged)failures.push('header pixel difference outside tablet range')}
+ results.push({source:r.source,locale:r.locale,auth:r.auth,width:r.width,unchangedHeaderPixels:unchanged,failures,outcome:failures.length?'FAIL':'PASS'});
+ }fs.writeFileSync(__dirname+'/review.json',JSON.stringify(results,null,2));console.log(JSON.stringify({before:before.reduce((a,r)=>(a[r.outcome]=(a[r.outcome]||0)+1,a),{}),after:after.reduce((a,r)=>(a[r.outcome]=(a[r.outcome]||0)+1,a),{}),geometry:results.reduce((a,r)=>(a[r.outcome]=(a[r.outcome]||0)+1,a),{}),unchanged:results.filter(r=>r.unchangedHeaderPixels).length,errors:[...new Set(after.flatMap(r=>r.errors))],exceptions:after.flatMap(r=>r.exceptions),failures:results.filter(r=>r.outcome==='FAIL')},null,2))})();

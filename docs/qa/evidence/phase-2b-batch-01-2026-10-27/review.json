@@ -1,0 +1,596 @@
+[
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 768,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 769,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 820,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1023,
+    "unchangedHeaderPixels": null,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1024,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1025,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1280,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1440,
+    "unchangedHeaderPixels": true,
+    "failures": [],
+    "outcome": "PASS"
+  }
+]

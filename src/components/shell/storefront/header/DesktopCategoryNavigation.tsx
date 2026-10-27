@@ -65,7 +65,13 @@ function CategoryDisclosure({ categories, copy, pathname }: Props & { pathname: 
 
   return (
     <div ref={rootRef} onBlur={(event) => {
-      if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      if (event.currentTarget.contains(event.relatedTarget)) return;
+      // CSS can hide the focused control before the media-query listener runs.
+      if (!event.relatedTarget && document.hasFocus()
+        && !window.matchMedia("(min-width: 48rem)").matches) {
+        document.getElementById("mobile-categories-trigger")?.focus();
+      }
+      setOpen(false);
     }} onKeyDown={(event) => {
       if (open && event.key === "Escape") {
         event.preventDefault();

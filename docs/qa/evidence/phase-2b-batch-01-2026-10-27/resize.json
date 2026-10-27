@@ -1,0 +1,274 @@
+[
+  {
+    "locale": "ar",
+    "originalGap": true,
+    "scenario": "mobile-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "desktop-categories-trigger",
+      "text": "الفئات",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "desktop-categories-trigger",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": true,
+    "scenario": "desktop-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BODY",
+      "id": "",
+      "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام فاخر",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "mobile-categories-trigger",
+    "outcome": "FAIL"
+  },
+  {
+    "locale": "ar",
+    "originalGap": true,
+    "scenario": "mobile-more",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "A",
+      "id": "",
+      "text": "الرئيسية",
+      "href": "/ar"
+    },
+    "panelVisible": false,
+    "expected": "/ar",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": true,
+    "scenario": "lg-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "",
+      "text": "مجوهرات",
+      "href": null
+    },
+    "panelVisible": true,
+    "expected": "open",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": false,
+    "scenario": "mobile-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "desktop-categories-trigger",
+      "text": "الفئات",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "desktop-categories-trigger",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": false,
+    "scenario": "desktop-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "mobile-categories-trigger",
+      "text": "الفئات",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "mobile-categories-trigger",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": false,
+    "scenario": "mobile-more",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "A",
+      "id": "",
+      "text": "الرئيسية",
+      "href": "/ar"
+    },
+    "panelVisible": false,
+    "expected": "/ar",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "ar",
+    "originalGap": false,
+    "scenario": "lg-category",
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "",
+      "text": "مجوهرات",
+      "href": null
+    },
+    "panelVisible": true,
+    "expected": "open",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": true,
+    "scenario": "mobile-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "desktop-categories-trigger",
+      "text": "Categories",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "desktop-categories-trigger",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": true,
+    "scenario": "desktop-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BODY",
+      "id": "",
+      "text": "RafalHomeCategoriesJewelriesGiftsAccessoriesLuxury",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "mobile-categories-trigger",
+    "outcome": "FAIL"
+  },
+  {
+    "locale": "en",
+    "originalGap": true,
+    "scenario": "mobile-more",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "A",
+      "id": "",
+      "text": "Home",
+      "href": "/en"
+    },
+    "panelVisible": false,
+    "expected": "/en",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": true,
+    "scenario": "lg-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "",
+      "text": "Jewelries",
+      "href": null
+    },
+    "panelVisible": true,
+    "expected": "open",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": false,
+    "scenario": "mobile-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "desktop-categories-trigger",
+      "text": "Categories",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "desktop-categories-trigger",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": false,
+    "scenario": "desktop-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BODY",
+      "id": "",
+      "text": "RafalHomeCategoriesJewelriesGiftsAccessoriesLuxury",
+      "href": null
+    },
+    "panelVisible": false,
+    "expected": "mobile-categories-trigger",
+    "outcome": "FAIL"
+  },
+  {
+    "locale": "en",
+    "originalGap": false,
+    "scenario": "mobile-more",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "A",
+      "id": "",
+      "text": "Home",
+      "href": "/en"
+    },
+    "panelVisible": false,
+    "expected": "/en",
+    "outcome": "PASS"
+  },
+  {
+    "locale": "en",
+    "originalGap": false,
+    "scenario": "lg-category",
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "focus": {
+      "tag": "BUTTON",
+      "id": "",
+      "text": "Jewelries",
+      "href": null
+    },
+    "panelVisible": true,
+    "expected": "open",
+    "outcome": "PASS"
+  }
+]

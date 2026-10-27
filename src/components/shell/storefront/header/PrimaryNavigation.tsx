@@ -14,7 +14,7 @@ const PrimaryNavigation = async ({ categories: categoryData }: {
 
   return (
     <nav data-desktop-navigation aria-label={t("main_navigation")} className="hidden md:block">
-      <ul className="flex items-center gap-4 sm:gap-5">
+      <ul className="flex items-center gap-1 lg:gap-5">
         {primaryNavigationItems.map((item) => (
           <li key={item.href}>
             {item.key === "categories" && categories.length > 0 ? (

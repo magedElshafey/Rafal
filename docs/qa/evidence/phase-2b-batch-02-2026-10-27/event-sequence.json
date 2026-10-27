@@ -1,0 +1,519 @@
+{
+  "before": {
+    "locale": "ar",
+    "motion": "reduce",
+    "attempt": 1,
+    "events": [
+      {
+        "time": 838.2000000476837,
+        "type": "before-resize",
+        "width": 768,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": true,
+        "expanded": "true"
+      },
+      {
+        "time": 845.5,
+        "type": "blur",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": false,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 845.5999999046326,
+        "type": "focusout",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": false,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 846.2999999523163,
+        "type": "media-listener-remove",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "matches": false
+      },
+      {
+        "time": 846.5,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "aria-expanded",
+        "target": {
+          "tag": "BUTTON",
+          "id": "desktop-categories-trigger",
+          "text": "الفئات",
+          "visible": false,
+          "connected": true
+        },
+        "value": "false"
+      },
+      {
+        "time": 846.5,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "aria-hidden",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": "true"
+      },
+      {
+        "time": 846.5,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "inert",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": ""
+      },
+      {
+        "time": 846.5,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "data-open",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": "false"
+      },
+      {
+        "time": 847.4000000953674,
+        "type": "window-resize",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false"
+      },
+      {
+        "time": 864.7999999523163,
+        "type": "after-two-frames",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false"
+      }
+    ],
+    "outcome": "FAIL"
+  },
+  "after": {
+    "locale": "ar",
+    "motion": "reduce",
+    "attempt": 2,
+    "events": [
+      {
+        "time": 1374.0999999046326,
+        "type": "before-resize",
+        "width": 768,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": true,
+        "expanded": "true"
+      },
+      {
+        "time": 1381.3999998569489,
+        "type": "blur",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": false,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 1381.5,
+        "type": "focusout",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "",
+          "text": "مجوهرات",
+          "visible": false,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 1382.5999999046326,
+        "type": "focus-call",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BODY",
+          "id": "",
+          "text": "Rafalالرئيسيةالفئاتمجوهراتهدايااكسسواراتأقلام",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "stack": [
+          "    at HTMLElement.focus (<anonymous>:10:134)",
+          "    at onBlur (http://127.0.0.1:3200/_next/static/chunks/20rail0thh9dm.js:1:2419)",
+          "    at s1 (http://127.0.0.1:3200/_next/static/chunks/1mkbuudhndal5.js:1:178502)"
+        ]
+      },
+      {
+        "time": 1382.8999998569489,
+        "type": "focus",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 1382.8999998569489,
+        "type": "focusin",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "related": null
+      },
+      {
+        "time": 1383,
+        "type": "focus-return",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "true",
+        "target": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        }
+      },
+      {
+        "time": 1383.6999998092651,
+        "type": "media-listener-remove",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "matches": false
+      },
+      {
+        "time": 1383.6999998092651,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "aria-expanded",
+        "target": {
+          "tag": "BUTTON",
+          "id": "desktop-categories-trigger",
+          "text": "الفئات",
+          "visible": false,
+          "connected": true
+        },
+        "value": "false"
+      },
+      {
+        "time": 1383.6999998092651,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "aria-hidden",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": "true"
+      },
+      {
+        "time": 1383.7999999523163,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "inert",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": ""
+      },
+      {
+        "time": 1383.7999999523163,
+        "type": "mutation",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false",
+        "attribute": "data-open",
+        "target": {
+          "tag": "DIV",
+          "id": "_R_kb5tivb_",
+          "text": "مجوهراتهدايااكسسواراتأقلام فاخرةباقات وردسُبَ",
+          "visible": false,
+          "connected": true
+        },
+        "value": "false"
+      },
+      {
+        "time": 1385.3999998569489,
+        "type": "window-resize",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false"
+      },
+      {
+        "time": 1403.1999998092651,
+        "type": "after-two-frames",
+        "width": 767,
+        "hasFocus": true,
+        "active": {
+          "tag": "BUTTON",
+          "id": "mobile-categories-trigger",
+          "text": "الفئات",
+          "visible": true,
+          "connected": true
+        },
+        "desktopVisible": false,
+        "expanded": "false"
+      }
+    ],
+    "outcome": "PASS"
+  }
+}

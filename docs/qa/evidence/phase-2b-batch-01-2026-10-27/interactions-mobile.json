@@ -1,0 +1,1418 @@
+[
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 320,
+      "y": 264,
+      "bottom": 740,
+      "width": 320,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-320-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 390,
+      "y": 368,
+      "bottom": 844,
+      "width": 390,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-390-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 767,
+      "y": 548,
+      "bottom": 1024,
+      "width": 767,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-767-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 320,
+      "y": 264,
+      "bottom": 740,
+      "width": 320,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-320-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 390,
+      "y": 368,
+      "bottom": 844,
+      "width": 390,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-390-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "focusCycle": [
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": false,
+        "documentHasFocus": false,
+        "activeTag": "BODY"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "BUTTON"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      },
+      {
+        "inDialog": true,
+        "documentHasFocus": true,
+        "activeTag": "A"
+      }
+    ],
+    "more": true,
+    "panel": {
+      "x": 0,
+      "right": 767,
+      "y": 548,
+      "bottom": 1024,
+      "width": 767,
+      "height": 476,
+      "scrollHeight": 474,
+      "clientHeight": 474,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-767-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  }
+]

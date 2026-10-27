@@ -1,0 +1,96 @@
+[
+  {
+    "locale": "en",
+    "delayMilliseconds": 0,
+    "url": "http://127.0.0.1:3100/en/checkout",
+    "errorsBeforeOpening": 0,
+    "serverPaymentSection": "<section id=\"checkout-payment\" aria-labelledby=\"checkout-payment-title\" class=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\">",
+    "hydrationWarnings": [
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <InnerLayoutRouter url=\"/en/checkout\" tree={[...]} params={{locale:\"en\"}} cacheNode={{rsc:{...}, ...}} ...>\n        <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n          <SegmentTrieNode>\n          <CheckoutRoute>\n            <Container>\n              <div className=\"mx-auto w-...\">\n                <CheckoutPage addresses={[...]} addressesUnavailable={false} cartEmpty={false} ...>\n                  <div>\n                    <h1>\n                    <div dir=\"ltr\" className=\"mt-6 grid ...\">\n                      <div dir=\"ltr\" className=\"space-y-6\">\n                        <CheckoutDestinationSection>\n                        <CheckoutShippingSection>\n                        <CheckoutBuyerSection>\n                        <Suspense fallback={<CheckoutPaymentLoading>}>\n                          <CheckoutPaymentRead discovery={Promise} copy={{title:\"Pay...\", ...}} step=\"4\" ...>\n                            <CheckoutPaymentSection copy={{title:\"Pay...\", ...}} step=\"4\" selectedCode=\"card\" ...>\n                              <CheckoutStepSection id=\"checkout-p...\" step=\"4\" title=\"Payment op...\">\n                                <section\n                                  id=\"checkout-payment\"\n                                  aria-labelledby=\"checkout-payment-title\"\n                                  className=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\"\n-                                 data-aria-hidden=\"true\"\n-                                 aria-hidden=\"true\"\n                                >\n                        ...\n                      ...\n        ...\n      ...\n"
+      },
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackErrorBoundary pathname=\"/en/checkout\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n      <RedirectBoundary>\n        <RedirectErrorBoundary router={{...}}>\n          <InnerLayoutRouter url=\"/en/checkout\" tree={[...]} params={{locale:\"en\"}} cacheNode={{rsc:{...}, ...}} ...>\n            <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n              <SegmentTrieNode>\n              <script>\n              <script>\n              <StoreFontLayout>\n                <BrowsingCityProvider serverCity={{id:1,regionId:10, ...}} copy={{changing:\"...\", ...}}>\n                  <div className=\"flex min-h...\">\n                    <header>\n                    <div>\n                    <AnnouncementBanner>\n                    <main>\n                    <footer>\n                    <Suspense fallback={{...}}>\n                      <MobileBottomNavigation>\n                        <MobileBottomNavigationClient copy={{about_us:\"...\", ...}} categories={[...]}>\n                          <MobileNavigation copy={{about_us:\"...\", ...}} categories={[...]} pathname=\"/checkout\">\n                            <nav\n                              aria-label=\"Store navigation\"\n                              className=\"fixed inset-x-0 bottom-0 z-40 box-border h-[calc(var(--mobile-bottom-navigati...\"\n-                             data-aria-hidden=\"true\"\n-                             aria-hidden=\"true\"\n                            >\n                  ...\n          ...\n"
+      }
+    ],
+    "intentionallyBlockedProviderErrors": 6,
+    "attributeWriteExample": {
+      "name": "data-aria-hidden",
+      "value": "true",
+      "tag": "SPAN",
+      "id": "",
+      "at": 913.8999998569489,
+      "stack": "Error\n    at Element.setAttribute (<anonymous>:2:305)\n    at http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2610:30\n    at HTMLCollection.forEach (<anonymous>)\n    at deep (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2594:33)\n    at applyAttributeToOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2621:5)\n    at hideOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2666:12)\n    at DialogContentModal.DialogContentModal2.useEffect (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:508:208)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js:14944:22)"
+    }
+  },
+  {
+    "locale": "en",
+    "delayMilliseconds": 2500,
+    "url": "http://127.0.0.1:3100/en/checkout",
+    "errorsBeforeOpening": 0,
+    "serverPaymentSection": "<section id=\"checkout-payment\" aria-labelledby=\"checkout-payment-title\" class=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\">",
+    "hydrationWarnings": [],
+    "intentionallyBlockedProviderErrors": 6,
+    "attributeWriteExample": {
+      "name": "data-aria-hidden",
+      "value": "true",
+      "tag": "SPAN",
+      "id": "",
+      "at": 3428.2000000476837,
+      "stack": "Error\n    at Element.setAttribute (<anonymous>:2:305)\n    at http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2610:30\n    at HTMLCollection.forEach (<anonymous>)\n    at deep (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2594:33)\n    at applyAttributeToOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2621:5)\n    at hideOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2666:12)\n    at DialogContentModal.DialogContentModal2.useEffect (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:508:208)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js:14944:22)"
+    }
+  },
+  {
+    "locale": "ar",
+    "delayMilliseconds": 0,
+    "url": "http://127.0.0.1:3100/ar/checkout",
+    "errorsBeforeOpening": 0,
+    "serverPaymentSection": "<section id=\"checkout-payment\" aria-labelledby=\"checkout-payment-title\" class=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\">",
+    "hydrationWarnings": [
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <InnerLayoutRouter url=\"/ar/checkout\" tree={[...]} params={{locale:\"ar\"}} cacheNode={{rsc:{...}, ...}} ...>\n        <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n          <SegmentTrieNode>\n          <CheckoutRoute>\n            <Container>\n              <div className=\"mx-auto w-...\">\n                <CheckoutPage addresses={[...]} addressesUnavailable={false} cartEmpty={false} ...>\n                  <div>\n                    <h1>\n                    <div dir=\"ltr\" className=\"mt-6 grid ...\">\n                      <div dir=\"rtl\" className=\"space-y-6\">\n                        <CheckoutDestinationSection>\n                        <CheckoutShippingSection>\n                        <CheckoutBuyerSection>\n                        <Suspense fallback={<CheckoutPaymentLoading>}>\n                          <CheckoutPaymentRead discovery={Promise} copy={{title:\"معا...\", ...}} step=\"4\" ...>\n                            <CheckoutPaymentSection copy={{title:\"معا...\", ...}} step=\"4\" selectedCode=\"card\" ...>\n                              <CheckoutStepSection id=\"checkout-p...\" step=\"4\" title=\"معاينة خيا...\">\n                                <section\n                                  id=\"checkout-payment\"\n                                  aria-labelledby=\"checkout-payment-title\"\n                                  className=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\"\n-                                 data-aria-hidden=\"true\"\n-                                 aria-hidden=\"true\"\n                                >\n                        ...\n                      ...\n        ...\n      ...\n"
+      },
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackErrorBoundary pathname=\"/ar/checkout\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n      <RedirectBoundary>\n        <RedirectErrorBoundary router={{...}}>\n          <InnerLayoutRouter url=\"/ar/checkout\" tree={[...]} params={{locale:\"ar\"}} cacheNode={{rsc:{...}, ...}} ...>\n            <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n              <SegmentTrieNode>\n              <script>\n              <script>\n              <StoreFontLayout>\n                <BrowsingCityProvider serverCity={{id:1,regionId:10, ...}} copy={{changing:\"...\", ...}}>\n                  <div className=\"flex min-h...\">\n                    <header>\n                    <div>\n                    <AnnouncementBanner>\n                    <main>\n                    <footer>\n                    <Suspense fallback={{...}}>\n                  ...\n          ...\n"
+      },
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <RedirectErrorBoundary router={{...}}>\n      <InnerLayoutRouter url=\"/ar/checkout\" tree={[...]} params={{locale:\"ar\"}} cacheNode={{rsc:{...}, ...}} ...>\n        <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n          <SegmentTrieNode>\n          <CheckoutRoute>\n            <Container>\n              <div className=\"mx-auto w-...\">\n                <CheckoutPage addresses={[...]} addressesUnavailable={false} cartEmpty={false} ...>\n                  <div>\n                    <h1>\n                    <div dir=\"ltr\" className=\"mt-6 grid ...\">\n                      <div dir=\"rtl\" className=\"space-y-6\">\n                        <CheckoutDestinationSection>\n                        <CheckoutShippingSection>\n                        <CheckoutBuyerSection>\n                        <Suspense fallback={<CheckoutPaymentLoading>}>\n                          <CheckoutPaymentRead discovery={Promise} copy={{title:\"معا...\", ...}} step=\"4\" ...>\n                            <CheckoutPaymentSection copy={{title:\"معا...\", ...}} step=\"4\" selectedCode=\"card\" ...>\n                              <CheckoutStepSection id=\"checkout-p...\" step=\"4\" title=\"معاينة خيا...\">\n                                <section\n                                  id=\"checkout-payment\"\n                                  aria-labelledby=\"checkout-payment-title\"\n                                  className=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\"\n-                                 data-aria-hidden=\"true\"\n-                                 aria-hidden=\"true\"\n                                >\n                        ...\n                      ...\n        ...\n      ...\n"
+      },
+      {
+        "type": "error",
+        "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackErrorBoundary pathname=\"/ar/checkout\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n      <RedirectBoundary>\n        <RedirectErrorBoundary router={{...}}>\n          <InnerLayoutRouter url=\"/ar/checkout\" tree={[...]} params={{locale:\"ar\"}} cacheNode={{rsc:{...}, ...}} ...>\n            <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n              <SegmentTrieNode>\n              <script>\n              <script>\n              <StoreFontLayout>\n                <BrowsingCityProvider serverCity={{id:1,regionId:10, ...}} copy={{changing:\"...\", ...}}>\n                  <div className=\"flex min-h...\">\n                    <header>\n                    <div>\n                    <AnnouncementBanner>\n                    <main>\n                    <footer>\n                    <Suspense fallback={{...}}>\n                      <MobileBottomNavigation>\n                        <MobileBottomNavigationClient copy={{about_us:\"...\", ...}} categories={[...]}>\n                          <MobileNavigation copy={{about_us:\"...\", ...}} categories={[...]} pathname=\"/checkout\">\n                            <nav\n                              aria-label=\"التنقل عبر المتجر\"\n                              className=\"fixed inset-x-0 bottom-0 z-40 box-border h-[calc(var(--mobile-bottom-navigati...\"\n-                             data-aria-hidden=\"true\"\n-                             aria-hidden=\"true\"\n                            >\n                  ...\n          ...\n"
+      }
+    ],
+    "intentionallyBlockedProviderErrors": 6,
+    "attributeWriteExample": {
+      "name": "data-aria-hidden",
+      "value": "true",
+      "tag": "SPAN",
+      "id": "",
+      "at": 1107.9000000953674,
+      "stack": "Error\n    at Element.setAttribute (<anonymous>:2:305)\n    at http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2610:30\n    at HTMLCollection.forEach (<anonymous>)\n    at deep (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2594:33)\n    at applyAttributeToOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2621:5)\n    at hideOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2666:12)\n    at DialogContentModal.DialogContentModal2.useEffect (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:508:208)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js:14944:22)"
+    }
+  },
+  {
+    "locale": "ar",
+    "delayMilliseconds": 2500,
+    "url": "http://127.0.0.1:3100/ar/checkout",
+    "errorsBeforeOpening": 0,
+    "serverPaymentSection": "<section id=\"checkout-payment\" aria-labelledby=\"checkout-payment-title\" class=\"rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-6\">",
+    "hydrationWarnings": [],
+    "intentionallyBlockedProviderErrors": 6,
+    "attributeWriteExample": {
+      "name": "data-aria-hidden",
+      "value": "true",
+      "tag": "SPAN",
+      "id": "",
+      "at": 3683.899999856949,
+      "stack": "Error\n    at Element.setAttribute (<anonymous>:2:305)\n    at http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2610:30\n    at HTMLCollection.forEach (<anonymous>)\n    at deep (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2594:33)\n    at applyAttributeToOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2621:5)\n    at hideOthers (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:2666:12)\n    at DialogContentModal.DialogContentModal2.useEffect (http://127.0.0.1:3100/_next/static/chunks/node_modules_1zbsw8v._.js:508:208)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js:14944:22)"
+    }
+  }
+]

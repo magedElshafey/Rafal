@@ -1,0 +1,54 @@
+[
+  {
+    "locale": "ar",
+    "auth": false,
+    "url": "http://127.0.0.1:3100/ar",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error: Minified React error #441; visit https://react.dev/errors/441 for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "exceptions": [],
+    "status": 500,
+    "headerCount": 0,
+    "outcome": "BLOCKED"
+  },
+  {
+    "locale": "ar",
+    "auth": true,
+    "url": "http://127.0.0.1:3100/ar",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error: Minified React error #441; visit https://react.dev/errors/441 for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "exceptions": [],
+    "status": 500,
+    "headerCount": 0,
+    "outcome": "BLOCKED"
+  },
+  {
+    "locale": "en",
+    "auth": false,
+    "url": "http://127.0.0.1:3100/en",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error: Minified React error #441; visit https://react.dev/errors/441 for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "exceptions": [],
+    "status": 500,
+    "headerCount": 0,
+    "outcome": "BLOCKED"
+  },
+  {
+    "locale": "en",
+    "auth": true,
+    "url": "http://127.0.0.1:3100/en",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "Error: Minified React error #441; visit https://react.dev/errors/441 for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "exceptions": [],
+    "status": 500,
+    "headerCount": 0,
+    "outcome": "BLOCKED"
+  }
+]

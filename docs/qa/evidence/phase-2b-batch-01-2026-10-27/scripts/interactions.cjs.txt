@@ -1,0 +1,52 @@
+const fs=require('node:fs'),{createRequire}=require('node:module');
+const {chromium}=createRequire('D:/megz/Rafal/package.json')('playwright');
+const mobileOnly=process.argv[2]==='mobile';
+const out=__dirname+(mobileOnly?'/interactions-mobile':'/interactions'); fs.mkdirSync(out,{recursive:true});
+const rows=[],sizes=[[320,740],[390,844],[767,1024],[768,1024],[769,1024],[820,1180],[1023,768],[1024,768],[1025,768],[1280,800],[1440,900]];
+function check(value,message){if(!value)throw Error(message)}
+(async()=>{const browser=await chromium.launch({headless:true});try{
+ for(const source of ['fixture','public'])for(const locale of ['ar','en'])for(const auth of (source==='fixture'?[false,true]:[false]))for(const [width,height] of sizes.filter(s=>!mobileOnly||s[0]<768)){
+  const ctx=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'});
+  await ctx.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'},...(auth?[{name:'rafal_auth_access_token',value:'synthetic-auth',domain:'127.0.0.1',path:'/'}]:[])]);
+  const page=await ctx.newPage();await page.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());
+  const row={source,locale,auth,width,height,url:`http://127.0.0.1:${source==='public'?3200:3100}/${locale}/checkout/payment-result`,errors:[],exceptions:[]};
+  page.on('console',m=>{if(['error','warning'].includes(m.type()))row.errors.push(m.text())});page.on('pageerror',e=>row.exceptions.push(e.message));
+  try{
+   await page.goto(row.url,{timeout:45000});await page.evaluate(()=>document.fonts.ready);await page.waitForTimeout(800);
+   const controls=page.locator('header a:visible, header button:visible');
+   row.tabOrder=[];await controls.first().focus();
+   for(let i=0;i<await controls.count();i++){
+    check(await controls.nth(i).evaluate(e=>e===document.activeElement),'header tab order');
+    row.tabOrder.push(await controls.nth(i).evaluate(e=>({label:e.getAttribute('aria-label')||e.textContent,href:e.getAttribute('href')})));
+    if(i<(await controls.count())-1)await page.keyboard.press('Tab');
+   }
+   row.direction=await page.locator('html').getAttribute('dir');check(row.direction===(locale==='ar'?'rtl':'ltr'),'direction');
+   const primary=await page.locator('[data-desktop-navigation] > ul > li > a, [data-desktop-navigation] > ul > li > div > button').evaluateAll(es=>es.filter(e=>e.checkVisibility()).map(e=>e.getBoundingClientRect().x));
+   check(primary.every((x,i)=>i===0||(locale==='ar'?x<primary[i-1]:x>primary[i-1])),'visual link order');
+   if(width<768){
+    const more=page.locator('button[aria-controls="mobile-navigation-sheet"]').last();
+    await more.focus();await page.keyboard.press('Enter');const dialog=page.locator('#mobile-navigation-sheet');await dialog.waitFor({state:'visible'});
+    check(await dialog.evaluate(e=>e.contains(document.activeElement)),'More initial focus');
+    row.focusCycle=[];
+    for(let i=0;i<8;i++){await page.keyboard.press('Tab');const focus=await dialog.evaluate(e=>({inDialog:e.contains(document.activeElement),documentHasFocus:document.hasFocus(),activeTag:document.activeElement.tagName}));row.focusCycle.push(focus);check(focus.inDialog||(!focus.documentHasFocus&&focus.activeTag==='BODY'),'More background focus isolation')}
+    row.more=true;await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});check(await more.evaluate(e=>e===document.activeElement),'More restores focus');
+   }
+   const trigger=page.locator(width<768?'#mobile-categories-trigger':'#desktop-categories-trigger');
+   if(await trigger.evaluate(e=>e.tagName==='BUTTON')){
+    await trigger.focus();await page.keyboard.press('Enter');
+    const panel=page.locator(width<768?'#mobile-navigation-sheet':'[data-open="true"][role="region"]');await panel.waitFor({state:'visible'});
+    row.panel=await panel.evaluate(e=>{const r=e.getBoundingClientRect();const bad=[...e.querySelectorAll('a,button')].filter(x=>x.checkVisibility()).filter(x=>{const b=x.getBoundingClientRect();return b.x<r.x-1||b.right>r.right+1||x.scrollWidth>x.clientWidth+1});return{x:r.x,right:r.right,y:r.y,bottom:r.bottom,width:r.width,height:r.height,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,horizontalClips:bad.map(x=>x.textContent)}});
+    check(row.panel.x>=-0.5&&row.panel.right<=width+0.5&&row.panel.bottom<=height+0.5&&row.panel.horizontalClips.length===0,'panel clips');
+    await page.keyboard.press('Tab');check(await panel.evaluate(e=>e.contains(document.activeElement)),'keyboard enters panel');
+    row.categoryLinks=await panel.locator('a:visible').evaluateAll(es=>es.map(e=>({text:e.textContent,href:e.getAttribute('href')})));
+    check(row.categoryLinks.length>0,'category destinations present');
+    row.hierarchyButtons=await panel.locator(width<768?'nav ul button':'ul button').count();
+    if(row.hierarchyButtons){const child=panel.locator(width<768?'nav ul button':'ul button').first();await child.click();row.childOpened=true;if(width<768){const back=panel.locator('button').first();await back.click();check(await child.evaluate(e=>e===document.activeElement),'category back restores focus')}}
+    row.screenshot=`${source}-${locale}-${auth?'auth':'anon'}-${width}-menu.png`;await page.screenshot({path:out+'/'+row.screenshot});
+    await page.keyboard.press('Escape');await panel.waitFor({state:'hidden'});check(await trigger.evaluate(e=>e===document.activeElement),'category Escape restores focus');row.categories='PASS';
+   }else{row.categories='DIRECT LINK (empty fixture taxonomy)';check(await trigger.getAttribute('href')===`/${locale}/categories`,'category fallback href')}
+   check(row.exceptions.length===0,'browser exception');row.outcome='PASS';
+  }catch(e){row.outcome='FAIL';row.failure=e.message}
+  rows.push(row);fs.writeFileSync(out+'/results.json',JSON.stringify(rows,null,2));console.log(source,locale,auth,width,row.outcome,row.failure||'');await ctx.close();
+ }
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

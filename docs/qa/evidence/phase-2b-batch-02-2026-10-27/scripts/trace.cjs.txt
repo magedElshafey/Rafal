@@ -1,0 +1,25 @@
+const fs=require('node:fs'),{chromium}=require('D:/megz/Rafal/node_modules/playwright');
+const phase=process.argv[2]||'before',out=__dirname+'/'+phase;fs.mkdirSync(out,{recursive:true});
+function instrument(){
+ window.qaEvents=[];
+ const describe=e=>e instanceof Element?{tag:e.tagName,id:e.id,text:e.textContent.slice(0,45),visible:e.checkVisibility(),connected:e.isConnected}:null;
+ const state=()=>({width:innerWidth,hasFocus:document.hasFocus(),active:describe(document.activeElement),desktopVisible:document.querySelector('[data-desktop-navigation]')?.checkVisibility(),expanded:document.getElementById('desktop-categories-trigger')?.getAttribute('aria-expanded')});
+ const log=(type,details={})=>window.qaEvents.push({time:performance.now(),type,...state(),...details});
+ window.qaMark=log;
+ for(const type of ['focus','blur','focusin','focusout'])document.addEventListener(type,e=>log(type,{target:describe(e.target),related:describe(e.relatedTarget)}),true);
+ window.addEventListener('resize',()=>log('window-resize'));
+ const focus=HTMLElement.prototype.focus;HTMLElement.prototype.focus=function(...args){log('focus-call',{target:describe(this),stack:new Error().stack.split('\n').slice(1,4)});const result=focus.apply(this,args);log('focus-return',{target:describe(this)});return result};
+ const match=window.matchMedia;window.matchMedia=function(...args){const m=match.apply(this,args),add=m.addEventListener,remove=m.removeEventListener,handlers=new Map();if(args[0]!=='(min-width: 48rem)')return m;
+ m.addEventListener=function(type,fn,opts){const wrapped=function(e){log('media-handler-start',{matches:m.matches,handler:String(fn).slice(0,180)});try{return typeof fn==='function'?fn.call(this,e):fn.handleEvent(e)}finally{log('media-handler-end',{matches:m.matches})}};handlers.set(fn,wrapped);log('media-listener-add',{matches:m.matches});return add.call(this,type,wrapped,opts)};
+ m.removeEventListener=function(type,fn,opts){log('media-listener-remove',{matches:m.matches});return remove.call(this,type,handlers.get(fn)||fn,opts)};return m};
+ new MutationObserver(records=>{for(const r of records){if(r.target instanceof Element&&(r.target.id==='desktop-categories-trigger'||r.target.classList.contains('motion-category-panel')))log('mutation',{attribute:r.attributeName,target:describe(r.target),value:r.target.getAttribute(r.attributeName)})}}).observe(document,{subtree:true,attributes:true,attributeFilter:['aria-expanded','aria-hidden','inert','data-open']});
+}
+(async()=>{const b=await chromium.launch(),rows=[];try{for(const locale of ['ar','en'])for(const motion of ['reduce','no-preference']){
+ const c=await b.newContext({viewport:{width:768,height:1024},reducedMotion:motion});await c.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'}]);await c.addInitScript(instrument);const p=await c.newPage();await p.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());await p.goto(`http://127.0.0.1:3200/${locale}/checkout/payment-result`);await p.evaluate(()=>document.fonts.ready);await p.waitForFunction(()=>document.querySelectorAll("#desktop-categories-trigger").length===1&&document.getElementById("desktop-categories-trigger")?.tagName==="BUTTON");
+ for(let attempt=0;attempt<10;attempt++){
+  await p.setViewportSize({width:768,height:1024});const t=p.locator('#desktop-categories-trigger');await t.focus();await p.keyboard.press('Enter');await p.locator('[data-open="true"]').waitFor({state:'visible'});await p.keyboard.press('Tab');await p.evaluate(()=>{window.qaEvents=[];window.qaMark('before-resize')});
+  await p.setViewportSize({width:767,height:1024});await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));await p.evaluate(()=>window.qaMark('after-two-frames'));
+  const events=await p.evaluate(()=>window.qaEvents);const row={locale,motion,attempt,events,outcome:events.at(-1).active?.id==='mobile-categories-trigger'?'PASS':'FAIL'};rows.push(row);
+  if(attempt===0||row.outcome==='FAIL')await p.screenshot({path:`${out}/${locale}-${motion}-${attempt}-${row.outcome}.png`});fs.writeFileSync(out+'/traces.json',JSON.stringify(rows,null,2));console.log(phase,locale,motion,attempt,row.outcome);
+ }await c.close();
+}}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

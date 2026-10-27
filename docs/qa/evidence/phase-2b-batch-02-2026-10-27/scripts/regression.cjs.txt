@@ -1,0 +1,53 @@
+const fs=require('node:fs'),{chromium}=require('D:/megz/Rafal/node_modules/playwright');
+const out=__dirname+'/regression';fs.mkdirSync(out,{recursive:true});const rows=[];
+const cases=[['desktop-category',768,767],['mobile-category',767,768],['mobile-more',767,768],['desktop-category',1023,1024],['desktop-category',1024,1023]];
+const check=(v,m)=>{if(!v)throw Error(m)};
+const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+const focusState=p=>p.evaluate(()=>{const e=document.activeElement;return {tag:e.tagName,id:e.id,text:e.textContent.slice(0,60),href:e.getAttribute('href'),visible:e.checkVisibility(),inert:!!e.closest('[inert]'),hasFocus:document.hasFocus(),focusVisible:e.matches(':focus-visible'),outline:getComputedStyle(e).outlineStyle,shadow:getComputedStyle(e).boxShadow}});
+async function active(p,selector){await p.waitForFunction(s=>document.activeElement===document.querySelector(s),selector,{timeout:3000});const f=await focusState(p);check(f.visible&&!f.inert&&f.hasFocus,'focus not visible/interactive in document');return f}
+async function keyOpen(p,trigger,panel){await trigger.focus();await p.keyboard.press('Enter');await panel.waitFor({state:'visible'});}
+(async()=>{const b=await chromium.launch();try{for(const locale of ['ar','en'])for(const motion of ['reduce','no-preference']){
+ const c=await b.newContext({viewport:{width:768,height:1024},reducedMotion:motion});await c.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'}]);const p=await c.newPage(),errors=[],exceptions=[];
+ p.on('console',m=>{if(['warning','error'].includes(m.type()))errors.push(m.text())});p.on('pageerror',e=>exceptions.push(e.message));await p.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());const url=`http://127.0.0.1:3200/${locale}/checkout/payment-result`;await p.goto(url);await p.evaluate(()=>document.fonts.ready);await p.waitForFunction(()=>document.querySelectorAll('#desktop-categories-trigger').length===1&&document.getElementById('desktop-categories-trigger')?.tagName==='BUTTON');
+ for(const [surface,from,to] of cases)for(let iteration=0;iteration<10;iteration++){
+  const row={locale,motion,surface,from,to,height:1024,iteration,url};
+  try{
+   await p.setViewportSize({width:from,height:1024});await settle(p);
+   const desktop=surface==='desktop-category';const selector=desktop?'#desktop-categories-trigger':surface==='mobile-category'?'#mobile-categories-trigger':'button[aria-controls="mobile-navigation-sheet"]:not(#mobile-categories-trigger)';
+   const trigger=p.locator(selector),panel=p.locator(desktop?'[role="region"][data-open="true"]':'#mobile-navigation-sheet');
+   await keyOpen(p,trigger,panel);await p.keyboard.press('Escape');await panel.waitFor({state:'hidden'});await active(p,selector);row.escapeBefore='PASS';
+   await keyOpen(p,trigger,panel);await p.keyboard.press('Tab');await p.keyboard.press('Tab');await p.keyboard.press('Shift+Tab');
+   check(await panel.evaluate(e=>e.contains(document.activeElement)),'focus must start inside the open menu');row.before=await focusState(p);
+   const held=await p.evaluateHandle(()=>document.activeElement);
+   await p.setViewportSize({width:to,height:1024});await settle(p);
+   const crossed=from<768||to<768;
+   if(crossed){
+    await panel.waitFor({state:'hidden'});
+    const target=to<768?'#mobile-categories-trigger':surface==='mobile-category'?'#desktop-categories-trigger':'[data-desktop-navigation] a';
+    row.after=await active(p,target);check(row.after.focusVisible,'restored focus should retain keyboard focus visibility');
+    check(await p.locator('#desktop-categories-trigger').getAttribute('aria-expanded')==='false','desktop menu closed');
+    check(await p.locator('#mobile-navigation-sheet').evaluate(e=>!e.open),'mobile dialog closed');
+    await p.waitForFunction(()=>document.body.style.overflow!=='hidden',null,{timeout:3000});row.scrollUnlocked=true;
+    await p.keyboard.press('Tab');row.tabAfter=await focusState(p);check(row.tabAfter.visible&&!row.tabAfter.inert&&row.tabAfter.hasFocus,'Tab after transition');await p.keyboard.press('Shift+Tab');await active(p,target);
+    // Reopen the available category menu to exercise Escape after the transition.
+    const nextSelector=to<768?'#mobile-categories-trigger':'#desktop-categories-trigger';
+    const nextPanel=p.locator(to<768?'#mobile-navigation-sheet':'[role="region"][data-open="true"]');await keyOpen(p,p.locator(nextSelector),nextPanel);await p.keyboard.press('Escape');await nextPanel.waitFor({state:'hidden'});await active(p,nextSelector);
+   }else{
+    check(await panel.isVisible(),'lg transition must preserve open menu');check(await held.evaluate(e=>e===document.activeElement),'lg transition changed focused item');row.after=await focusState(p);check(row.after.visible&&!row.after.inert&&row.after.hasFocus,'lg focus invalid');
+    await p.keyboard.press('Tab');await p.keyboard.press('Shift+Tab');check(await held.evaluate(e=>e===document.activeElement),'lg Tab/Shift+Tab order');await p.keyboard.press('Escape');await panel.waitFor({state:'hidden'});await active(p,selector);
+   }
+   await held.dispose();row.escapeAfter='PASS';row.outcome='PASS';
+   if(iteration===0){row.screenshot=`${locale}-${motion}-${surface}-${from}-${to}.png`;await p.screenshot({path:out+'/'+row.screenshot})}
+  }catch(e){row.outcome='FAIL';row.failure=e.message;row.failureFocus=await focusState(p);await p.keyboard.press('Escape');}
+  rows.push(row);fs.writeFileSync(out+'/results.json',JSON.stringify(rows,null,2));if(iteration===9||row.outcome==='FAIL')console.log(locale,motion,surface,from,to,iteration,row.outcome,row.failure||'');
+ }
+ // Controls: ordinary external focus and native-dialog browser-chrome focus.
+ const control={locale,motion,surface:'focus-controls',url};try{
+  await p.setViewportSize({width:768,height:1024});await settle(p);const trigger=p.locator('#desktop-categories-trigger'),panel=p.locator('[role="region"][data-open="true"]');await keyOpen(p,trigger,panel);await p.keyboard.press('Tab');const logo=p.locator('header a').first();await logo.focus();await panel.waitFor({state:'hidden'});await p.setViewportSize({width:767,height:1024});await settle(p);check(await logo.evaluate(e=>e===document.activeElement),'resize stole external focus');control.externalFocus='PASS';
+  const more=p.locator('button[aria-controls="mobile-navigation-sheet"]:not(#mobile-categories-trigger)'),dialog=p.locator('#mobile-navigation-sheet');await keyOpen(p,more,dialog);await logo.evaluate(e=>e.focus());check(await dialog.evaluate(e=>e.contains(document.activeElement)),'native dialog background isolation');control.backgroundIsolation='PASS';control.focusCycle=[];
+  for(let i=0;i<8;i++){await p.keyboard.press('Tab');const f=await focusState(p);control.focusCycle.push(f);check(await dialog.evaluate(e=>e.contains(document.activeElement))||(!f.hasFocus&&f.tag==='BODY'),'focus escaped to background instead of browser chrome')}
+  if(!(await p.evaluate(()=>document.hasFocus())))await p.keyboard.press('Tab');await p.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});check(await more.evaluate(e=>e===document.activeElement),'Escape restores More focus');control.outcome='PASS';
+ }catch(e){control.outcome='FAIL';control.failure=e.message}
+ control.errors=errors;control.exceptions=exceptions;if(errors.length||exceptions.length){control.outcome='FAIL';control.failure='browser console/exception'}rows.push(control);fs.writeFileSync(out+'/results.json',JSON.stringify(rows,null,2));console.log(locale,motion,'controls',control.outcome);await c.close();
+ }}finally{await b.close()}const summary={cases:rows.length,passed:rows.filter(r=>r.outcome==='PASS').length,failed:rows.filter(r=>r.outcome==='FAIL').length};fs.writeFileSync(out+'/summary.json',JSON.stringify(summary,null,2));console.log(summary);if(summary.failed)process.exitCode=1;
+})().catch(e=>{console.error(e);process.exitCode=1});

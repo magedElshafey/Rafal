@@ -1,0 +1,47 @@
+const fs = require('node:fs');
+const {createRequire} = require('node:module');
+const {chromium} = createRequire('D:/megz/Rafal/package.json')('playwright');
+const phase = process.argv[2] || 'before';
+const out = `${__dirname}/${phase}`;
+fs.mkdirSync(out, {recursive:true});
+const sizes = [[320,740],[390,844],[767,1024],[768,1024],[769,1024],[820,1180],[1023,768],[1024,768],[1025,768],[1280,800],[1440,900]];
+const rows=[];
+(async()=>{
+ const browser=await chromium.launch({headless:true});
+ try {
+  for(const source of ['fixture','public']) for(const locale of ['ar','en']) for(const auth of (source==='fixture'?[false,true]:[false])) for(const [width,height] of sizes) {
+   const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'});
+   await context.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'},...(auth?[{name:'rafal_auth_access_token',value:'synthetic-auth',domain:'127.0.0.1',path:'/'}]:[])]);
+   const page=await context.newPage(),errors=[],exceptions=[];
+   page.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text())});
+   page.on('pageerror',e=>exceptions.push(e.message));
+   await page.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());
+   const row={source,locale,auth,width,height,url:`http://127.0.0.1:${source==='fixture'?3100:3200}/${locale}/checkout/payment-result`,errors,exceptions};
+   try {
+    row.status=(await page.goto(row.url,{timeout:45000})).status();
+    await page.locator('header').waitFor(); await page.evaluate(()=>document.fonts.ready); await page.waitForTimeout(650);
+    row.geometry=await page.evaluate(()=>{
+     const rect=e=>{const r=e.getBoundingClientRect();return {x:r.x,right:r.right,y:r.y,bottom:r.bottom,width:r.width,height:r.height}};
+     const visible=e=>e.checkVisibility() && !e.closest('[inert]');
+     const links=[...document.querySelectorAll('[data-desktop-navigation] > ul > li')].map(e=>{
+      const a=e.querySelector('a,button'),range=document.createRange();range.selectNodeContents(a);
+      const lineYs=[...new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>Math.round(r.y)))];
+      return {text:a.textContent,box:rect(a),item:rect(e),lineYs,visible:visible(a)};
+     });
+     const header=document.querySelector('header'),container=header.firstElementChild;
+     const descendants=[...header.querySelectorAll('*')].filter(visible).filter(e=>!e.closest('[aria-hidden="true"]'));
+     const outside=descendants.map(e=>({tag:e.tagName,text:(e.textContent||'').slice(0,70),...rect(e)})).filter(r=>r.width>0&&(r.x < -0.5 || r.right>innerWidth+0.5));
+     const actions=[...header.querySelectorAll('nav:not([data-desktop-navigation]) a')].filter(visible).map(e=>({label:e.getAttribute('aria-label')||e.textContent,...rect(e)}));
+     const nav=document.querySelector('[data-desktop-navigation]');
+     return {lang:document.documentElement.lang,dir:document.documentElement.dir,overflowX:getComputedStyle(document.documentElement).overflowX,container:rect(container),parts:[...container.children].map(rect),navGap:getComputedStyle(nav.firstElementChild).gap,links,actions,outside};
+    });
+    row.screenshot=`${source}-${locale}-${auth?'auth':'anon'}-${width}.png`;
+    await page.screenshot({path:`${out}/${row.screenshot}`});
+    row.wraps=row.geometry.links.filter(l=>l.visible && l.box.height>44).map(l=>l.text);
+    row.outcome=row.status===200 && row.wraps.length===0 && row.geometry.outside.length===0 && exceptions.length===0?'PASS':'FAIL';
+   }catch(e){row.outcome='BLOCKED';row.failure=e.message;}
+   rows.push(row);fs.writeFileSync(`${out}/results.json`,JSON.stringify(rows,null,2));
+   console.log(phase,source,locale,auth,width,row.outcome,JSON.stringify(row.wraps||row.failure));await context.close();
+  }
+ } finally {await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1});

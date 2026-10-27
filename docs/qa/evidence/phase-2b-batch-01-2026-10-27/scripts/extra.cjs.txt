@@ -1,0 +1,26 @@
+const fs=require('node:fs'),{chromium}=require('D:/megz/Rafal/node_modules/playwright');
+const rows=[];function check(v,m){if(!v)throw Error(m)}
+(async()=>{const b=await chromium.launch();try{for(const locale of ['ar','en']){
+ const ctx=await b.newContext({viewport:{width:390,height:844},reducedMotion:'no-preference',hasTouch:true});
+ await ctx.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'}]);const p=await ctx.newPage();await p.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());
+ const row={locale,url:`http://127.0.0.1:3200/${locale}/checkout/payment-result`,motion:'no-preference',hasTouch:true,errors:[],exceptions:[],stress:[]};p.on('console',m=>{if(['warning','error'].includes(m.type()))row.errors.push(m.text())});p.on('pageerror',e=>row.exceptions.push(e.message));
+ try{
+  await p.goto(row.url);await p.evaluate(()=>document.fonts.ready);await p.waitForTimeout(800);
+  const more=p.locator('button[aria-controls="mobile-navigation-sheet"]').last();await more.tap();const dialog=p.locator('#mobile-navigation-sheet');await dialog.waitFor({state:'visible'});await p.waitForTimeout(350);await p.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});check(await more.evaluate(e=>e===document.activeElement),'touch More focus');
+  const mobile=p.locator('#mobile-categories-trigger');await mobile.tap();await dialog.waitFor({state:'visible'});await p.waitForTimeout(350);await p.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});check(await mobile.evaluate(e=>e===document.activeElement),'touch category focus');
+  await mobile.focus();await p.keyboard.press('Enter');await dialog.waitFor({state:'visible'});await p.setViewportSize({width:768,height:1024});await dialog.waitFor({state:'hidden'});const desktop=p.locator('#desktop-categories-trigger');await p.waitForFunction(()=>document.activeElement?.id==='desktop-categories-trigger',null,{timeout:3000});check(await desktop.evaluate(e=>e===document.activeElement),'mobile->desktop category focus');
+  await p.keyboard.press('Enter');let panel=p.locator('[role="region"][data-open="true"]');await panel.waitFor({state:'visible'});await p.keyboard.press('Tab');await p.setViewportSize({width:767,height:1024});await panel.waitFor({state:'hidden'});await p.waitForFunction(()=>document.activeElement?.id==='mobile-categories-trigger',null,{timeout:3000});check(await mobile.evaluate(e=>e===document.activeElement),'desktop->mobile category focus');
+  await more.focus();await p.keyboard.press('Enter');await dialog.waitFor({state:'visible'});await p.setViewportSize({width:768,height:1024});await dialog.waitFor({state:'hidden'});await p.waitForFunction(()=>document.activeElement===document.querySelector('[data-desktop-navigation] a'),null,{timeout:3000});check(await p.locator('[data-desktop-navigation] a').first().evaluate(e=>e===document.activeElement),'mobile More->desktop focus');row.mdResize='PASS';
+  await p.setViewportSize({width:1023,height:768});await desktop.focus();await p.keyboard.press('Enter');await panel.waitFor({state:'visible'});for(const w of [1024,1025,1023]){await p.setViewportSize({width:w,height:768});check(await desktop.getAttribute('aria-expanded')==='true','lg transition panel remains open')};await p.keyboard.press('Escape');row.lgResize='PASS';
+  // Supplemental geometry stress only: reserve the measured 200px auth action width.
+  // This does not authenticate the public page or modify any response or application file.
+  await p.locator('header nav:not([data-desktop-navigation])').evaluate(e=>e.parentElement.style.width='200px');
+  for(const w of [768,769,820,1023,1024,1025,1280,1440]){
+   await p.setViewportSize({width:w,height:1024});const measurements=await p.evaluate(()=>{const h=document.querySelector('header').firstElementChild;const parts=[...h.children].map(e=>{const r=e.getBoundingClientRect();return{x:r.x,right:r.right,width:r.width}});const links=[...document.querySelectorAll('[data-desktop-navigation]>ul>li')].map(e=>{const a=e.querySelector('a,button'),r=a.getBoundingClientRect();return{text:a.textContent,height:r.height,x:r.x,right:r.right}});return{parts,links}});
+   check(measurements.links.every(x=>x.height<=44&&x.x>=0&&x.right<=w),'200px reserved action space wraps/clips');check(measurements.parts.every(x=>x.x>=24&&x.right<=w-24),'reserved action/header gutter');
+   await desktop.focus();await p.keyboard.press('Enter');await panel.waitFor({state:'visible'});await p.waitForTimeout(300);await p.keyboard.press('Escape');check(await desktop.evaluate(e=>e===document.activeElement),'stress category focus');row.stress.push({width:w,...measurements,outcome:'PASS'});
+  }
+  row.outcome='PASS';
+ }catch(e){row.outcome='FAIL';row.failure=e.message}
+ rows.push(row);fs.writeFileSync(__dirname+'/extra.json',JSON.stringify(rows,null,2));console.log(locale,row.outcome,row.failure||'');await ctx.close();
+}}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

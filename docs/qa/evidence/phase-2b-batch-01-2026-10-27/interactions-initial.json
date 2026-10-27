@@ -1,0 +1,3572 @@
+[
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "ar",
+    "auth": true,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": "/ar/categories"
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "الإشعارات",
+        "href": "/ar/notifications"
+      },
+      {
+        "label": "المفضلة",
+        "href": "/ar/account/wishlist"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "الملف الشخصي",
+        "href": "/ar/account/profile"
+      }
+    ],
+    "direction": "rtl",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "fixture",
+    "locale": "en",
+    "auth": true,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": "/en/categories"
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Notifications",
+        "href": "/en/notifications"
+      },
+      {
+        "label": "Wishlist",
+        "href": "/en/account/wishlist"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Profile",
+        "href": "/en/account/profile"
+      }
+    ],
+    "direction": "ltr",
+    "categories": "DIRECT LINK (empty fixture taxonomy)",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 16,
+      "right": 752,
+      "y": 80,
+      "bottom": 467,
+      "width": 736,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-768-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 16,
+      "right": 753,
+      "y": 80,
+      "bottom": 467,
+      "width": 737,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-769-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 26,
+      "right": 794,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-820-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 127.5,
+      "right": 895.5,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-1023-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 128,
+      "right": 896,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-1024-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 128.5,
+      "right": 896.5,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-1025-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 256,
+      "right": 1024,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-1280-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3200/ar/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/ar"
+      },
+      {
+        "label": "الرئيسية",
+        "href": "/ar"
+      },
+      {
+        "label": "الفئات",
+        "href": null
+      },
+      {
+        "label": "العروض",
+        "href": "/ar/offers"
+      },
+      {
+        "label": "من نحن",
+        "href": "/ar/about-us"
+      },
+      {
+        "label": "المدونة",
+        "href": "/ar/blog"
+      },
+      {
+        "label": "سلة التسوق",
+        "href": "/ar/cart"
+      },
+      {
+        "label": "تسجيل الدخول",
+        "href": "/ar/login"
+      }
+    ],
+    "direction": "rtl",
+    "panel": {
+      "x": 336,
+      "right": 1104,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "أقلام فاخرة",
+        "href": "/ar/categories/aklam-fakhr"
+      },
+      {
+        "text": "باقات ورد",
+        "href": "/ar/categories/bakat-ord"
+      },
+      {
+        "text": "سُبَح فاخرة",
+        "href": "/ar/categories/brooches-7281"
+      },
+      {
+        "text": "عرض جميع المنتجات",
+        "href": "/ar/categories/jewelry"
+      },
+      {
+        "text": "أساور",
+        "href": "/ar/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "قلائد",
+        "href": "/ar/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "عرض جميع الفئات",
+        "href": "/ar/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-ar-anon-1440-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 767,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "outcome": "FAIL",
+    "failure": "More focus trap"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 16,
+      "right": 752,
+      "y": 80,
+      "bottom": 467,
+      "width": 736,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-768-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 769,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 16,
+      "right": 753,
+      "y": 80,
+      "bottom": 467,
+      "width": 737,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-769-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 26,
+      "right": 794,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-820-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1023,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 127.5,
+      "right": 895.5,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-1023-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 128,
+      "right": 896,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-1024-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1025,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 128.5,
+      "right": 896.5,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-1025-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 256,
+      "right": 1024,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-1280-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3200/en/checkout/payment-result",
+    "errors": [],
+    "exceptions": [],
+    "tabOrder": [
+      {
+        "label": "Rafal - Home",
+        "href": "/en"
+      },
+      {
+        "label": "Home",
+        "href": "/en"
+      },
+      {
+        "label": "Categories",
+        "href": null
+      },
+      {
+        "label": "Offers",
+        "href": "/en/offers"
+      },
+      {
+        "label": "About us",
+        "href": "/en/about-us"
+      },
+      {
+        "label": "Blog",
+        "href": "/en/blog"
+      },
+      {
+        "label": "Shopping cart",
+        "href": "/en/cart"
+      },
+      {
+        "label": "Sign in",
+        "href": "/en/login"
+      }
+    ],
+    "direction": "ltr",
+    "panel": {
+      "x": 336,
+      "right": 1104,
+      "y": 80,
+      "bottom": 467,
+      "width": 768,
+      "height": 387,
+      "scrollHeight": 385,
+      "clientHeight": 385,
+      "horizontalClips": []
+    },
+    "categoryLinks": [
+      {
+        "text": "Luxury Pens",
+        "href": "/en/categories/aklam-fakhr"
+      },
+      {
+        "text": "Flower Bouquets",
+        "href": "/en/categories/bakat-ord"
+      },
+      {
+        "text": "Luxury Misbaha",
+        "href": "/en/categories/brooches-7281"
+      },
+      {
+        "text": "View all products",
+        "href": "/en/categories/jewelry"
+      },
+      {
+        "text": "Bracelets",
+        "href": "/en/categories/jewelry?subcategory=bracelets-1305"
+      },
+      {
+        "text": "Necklaces",
+        "href": "/en/categories/jewelry?subcategory=necklaces-8747"
+      },
+      {
+        "text": "View all categories",
+        "href": "/en/categories"
+      }
+    ],
+    "hierarchyButtons": 3,
+    "childOpened": true,
+    "screenshot": "public-en-anon-1440-menu.png",
+    "categories": "PASS",
+    "outcome": "PASS"
+  }
+]

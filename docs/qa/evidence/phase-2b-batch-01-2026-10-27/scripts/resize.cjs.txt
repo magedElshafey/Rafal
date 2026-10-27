@@ -1,0 +1,15 @@
+const fs=require('node:fs'),{chromium}=require('D:/megz/Rafal/node_modules/playwright');
+const rows=[];
+(async()=>{const b=await chromium.launch();try{for(const locale of ['ar','en'])for(const originalGap of [true,false])for(const scenario of ['mobile-category','desktop-category','mobile-more','lg-category']){
+ const width=scenario==='desktop-category'?768:scenario==='lg-category'?1023:390;
+ const ctx=await b.newContext({viewport:{width,height:1024},reducedMotion:'no-preference',hasTouch:true});await ctx.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'}]);const p=await ctx.newPage();await p.route('**/*',r=>['GET','HEAD','OPTIONS'].includes(r.request().method())?r.continue():r.abort());
+ const row={locale,originalGap,scenario,url:`http://127.0.0.1:3200/${locale}/checkout/payment-result`,errors:[],exceptions:[]};p.on('console',m=>{if(['warning','error'].includes(m.type()))row.errors.push(m.text())});p.on('pageerror',e=>row.exceptions.push(e.message));
+ try{await p.goto(row.url);await p.evaluate(()=>document.fonts.ready);await p.waitForTimeout(600);
+ if(originalGap)await p.addStyleTag({content:'@media (min-width:768px){[data-desktop-navigation]>ul{gap:20px!important}}'});
+ const desktop=scenario.includes('desktop')||scenario==='lg-category';const trigger=p.locator(desktop?'#desktop-categories-trigger':scenario==='mobile-more'?'button[aria-controls="mobile-navigation-sheet"]:not(#mobile-categories-trigger)':'#mobile-categories-trigger');await trigger.focus();await p.keyboard.press('Enter');const panel=p.locator(desktop?'[role="region"][data-open="true"]':'#mobile-navigation-sheet');await panel.waitFor({state:'visible'});await p.waitForTimeout(350);if(desktop)await p.keyboard.press('Tab');
+ await p.setViewportSize({width:scenario==='desktop-category'?767:scenario==='lg-category'?1024:768,height:1024});await p.waitForTimeout(450);
+ row.focus=await p.evaluate(()=>({tag:document.activeElement.tagName,id:document.activeElement.id,text:document.activeElement.textContent.slice(0,50),href:document.activeElement.getAttribute('href')}));row.panelVisible=await panel.isVisible();
+ row.expected=scenario==='desktop-category'?'mobile-categories-trigger':scenario==='mobile-category'?'desktop-categories-trigger':scenario==='mobile-more'?`/${locale}`:'open';
+ row.outcome=(scenario==='lg-category'?row.panelVisible:!row.panelVisible&&(row.focus.id===row.expected||row.focus.href===row.expected))?'PASS':'FAIL';
+ }catch(e){row.outcome='FAIL';row.failure=e.message}rows.push(row);fs.writeFileSync(__dirname+'/resize.json',JSON.stringify(rows,null,2));console.log(locale,originalGap,scenario,row.outcome,JSON.stringify(row.focus));await ctx.close();
+}}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,0 +1,2624 @@
+[
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 320,
+        "y": 0,
+        "bottom": 64,
+        "width": 320,
+        "height": 64
+      },
+      "parts": [
+        {
+          "x": 256.234375,
+          "right": 304,
+          "y": 18,
+          "bottom": 46,
+          "width": 47.765625,
+          "height": 28
+        },
+        {
+          "x": 0,
+          "right": 0,
+          "y": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 16,
+          "right": 118.1875,
+          "y": 20,
+          "bottom": 44,
+          "width": 102.1875,
+          "height": 24
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        }
+      ],
+      "actions": [
+        {
+          "label": "تسجيل الدخول",
+          "x": 16,
+          "right": 118.1875,
+          "y": 21,
+          "bottom": 43,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-320.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 390,
+        "y": 0,
+        "bottom": 64,
+        "width": 390,
+        "height": 64
+      },
+      "parts": [
+        {
+          "x": 326.234375,
+          "right": 374,
+          "y": 18,
+          "bottom": 46,
+          "width": 47.765625,
+          "height": 28
+        },
+        {
+          "x": 0,
+          "right": 0,
+          "y": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 16,
+          "right": 118.1875,
+          "y": 20,
+          "bottom": 44,
+          "width": 102.1875,
+          "height": 24
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        }
+      ],
+      "actions": [
+        {
+          "label": "تسجيل الدخول",
+          "x": 16,
+          "right": 118.1875,
+          "y": 21,
+          "bottom": 43,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-390.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 768,
+        "y": 0,
+        "bottom": 80,
+        "width": 768,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 690.9375,
+          "right": 744,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 223.875,
+          "right": 645.25,
+          "y": 18,
+          "bottom": 62,
+          "width": 421.375,
+          "height": 44
+        },
+        {
+          "x": 24,
+          "right": 178.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 154.1875,
+          "height": 44
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 564.328125,
+            "right": 645.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "item": {
+            "x": 564.328125,
+            "right": 645.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 468.5,
+            "right": 560.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "item": {
+            "x": 468.5,
+            "right": 560.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 383.359375,
+            "right": 464.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "item": {
+            "x": 383.359375,
+            "right": 464.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 303.09375,
+            "right": 379.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "item": {
+            "x": 303.09375,
+            "right": 379.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 223.875,
+            "right": 299.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "item": {
+            "x": 223.875,
+            "right": 299.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "سلة التسوق",
+          "x": 134.1875,
+          "right": 178.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "تسجيل الدخول",
+          "x": 24,
+          "right": 126.1875,
+          "y": 29,
+          "bottom": 51,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-768.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 820,
+        "y": 0,
+        "bottom": 80,
+        "width": 820,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 742.9375,
+          "right": 796,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 249.875,
+          "right": 671.25,
+          "y": 18,
+          "bottom": 62,
+          "width": 421.375,
+          "height": 44
+        },
+        {
+          "x": 24,
+          "right": 178.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 154.1875,
+          "height": 44
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 590.328125,
+            "right": 671.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "item": {
+            "x": 590.328125,
+            "right": 671.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 494.5,
+            "right": 586.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "item": {
+            "x": 494.5,
+            "right": 586.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 409.359375,
+            "right": 490.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "item": {
+            "x": 409.359375,
+            "right": 490.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 329.09375,
+            "right": 405.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "item": {
+            "x": 329.09375,
+            "right": 405.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 249.875,
+            "right": 325.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "item": {
+            "x": 249.875,
+            "right": 325.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "سلة التسوق",
+          "x": 134.1875,
+          "right": 178.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "تسجيل الدخول",
+          "x": 24,
+          "right": 126.1875,
+          "y": 29,
+          "bottom": 51,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-820.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1024,
+        "y": 0,
+        "bottom": 80,
+        "width": 1024,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 938.9375,
+          "right": 992,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 319.875,
+          "right": 805.25,
+          "y": 18,
+          "bottom": 62,
+          "width": 485.375,
+          "height": 44
+        },
+        {
+          "x": 32,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 154.1875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 724.328125,
+            "right": 805.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "item": {
+            "x": 724.328125,
+            "right": 805.25,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 612.5,
+            "right": 704.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "item": {
+            "x": 612.5,
+            "right": 704.328125,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 511.359375,
+            "right": 592.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "item": {
+            "x": 511.359375,
+            "right": 592.5,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 415.09375,
+            "right": 491.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "item": {
+            "x": 415.09375,
+            "right": 491.359375,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 319.875,
+            "right": 395.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "item": {
+            "x": 319.875,
+            "right": 395.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "سلة التسوق",
+          "x": 142.1875,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "تسجيل الدخول",
+          "x": 32,
+          "right": 134.1875,
+          "y": 29,
+          "bottom": 51,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-1024.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1280,
+        "y": 0,
+        "bottom": 80,
+        "width": 1280,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 1184.3125,
+          "right": 1248,
+          "y": 24,
+          "bottom": 56,
+          "width": 63.6875,
+          "height": 32
+        },
+        {
+          "x": 442.5625,
+          "right": 927.9375,
+          "y": 18,
+          "bottom": 62,
+          "width": 485.375,
+          "height": 44
+        },
+        {
+          "x": 32,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 154.1875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 847.015625,
+            "right": 927.9375,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "item": {
+            "x": 847.015625,
+            "right": 927.9375,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 735.1875,
+            "right": 827.015625,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "item": {
+            "x": 735.1875,
+            "right": 827.015625,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 634.046875,
+            "right": 715.1875,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "item": {
+            "x": 634.046875,
+            "right": 715.1875,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 537.78125,
+            "right": 614.046875,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "item": {
+            "x": 537.78125,
+            "right": 614.046875,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 442.5625,
+            "right": 517.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "item": {
+            "x": 442.5625,
+            "right": 517.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "سلة التسوق",
+          "x": 142.1875,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "تسجيل الدخول",
+          "x": 32,
+          "right": 134.1875,
+          "y": 29,
+          "bottom": 51,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-1280.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "ar",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3200/ar",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "ar",
+      "dir": "rtl",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1440,
+        "y": 0,
+        "bottom": 80,
+        "width": 1440,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 1344.3125,
+          "right": 1408,
+          "y": 24,
+          "bottom": 56,
+          "width": 63.6875,
+          "height": 32
+        },
+        {
+          "x": 522.5625,
+          "right": 1007.9375,
+          "y": 18,
+          "bottom": 62,
+          "width": 485.375,
+          "height": 44
+        },
+        {
+          "x": 32,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 154.1875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "الرئيسية",
+          "box": {
+            "x": 927.015625,
+            "right": 1007.9375,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "item": {
+            "x": 927.015625,
+            "right": 1007.9375,
+            "y": 25,
+            "bottom": 55,
+            "width": 80.921875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "الفئات",
+          "box": {
+            "x": 815.1875,
+            "right": 907.015625,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "item": {
+            "x": 815.1875,
+            "right": 907.015625,
+            "y": 18,
+            "bottom": 62,
+            "width": 91.828125,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "العروض",
+          "box": {
+            "x": 714.046875,
+            "right": 795.1875,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "item": {
+            "x": 714.046875,
+            "right": 795.1875,
+            "y": 25,
+            "bottom": 55,
+            "width": 81.140625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "من نحن",
+          "box": {
+            "x": 617.78125,
+            "right": 694.046875,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "item": {
+            "x": 617.78125,
+            "right": 694.046875,
+            "y": 25,
+            "bottom": 55,
+            "width": 76.265625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "المدونة",
+          "box": {
+            "x": 522.5625,
+            "right": 597.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "item": {
+            "x": 522.5625,
+            "right": 597.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 75.21875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "سلة التسوق",
+          "x": 142.1875,
+          "right": 186.1875,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "تسجيل الدخول",
+          "x": 32,
+          "right": 134.1875,
+          "y": 29,
+          "bottom": 51,
+          "width": 102.1875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-ar-anon-1440.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 320,
+    "height": 740,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 320,
+        "y": 0,
+        "bottom": 64,
+        "width": 320,
+        "height": 64
+      },
+      "parts": [
+        {
+          "x": 16,
+          "right": 63.765625,
+          "y": 18,
+          "bottom": 46,
+          "width": 47.765625,
+          "height": 28
+        },
+        {
+          "x": 0,
+          "right": 0,
+          "y": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 257.703125,
+          "right": 304,
+          "y": 20,
+          "bottom": 44,
+          "width": 46.296875,
+          "height": 24
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        }
+      ],
+      "actions": [
+        {
+          "label": "Sign in",
+          "x": 257.703125,
+          "right": 304,
+          "y": 21,
+          "bottom": 43,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-320.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 390,
+    "height": 844,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 390,
+        "y": 0,
+        "bottom": 64,
+        "width": 390,
+        "height": 64
+      },
+      "parts": [
+        {
+          "x": 16,
+          "right": 63.765625,
+          "y": 18,
+          "bottom": 46,
+          "width": 47.765625,
+          "height": 28
+        },
+        {
+          "x": 0,
+          "right": 0,
+          "y": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 327.703125,
+          "right": 374,
+          "y": 20,
+          "bottom": 44,
+          "width": 46.296875,
+          "height": 24
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "item": {
+            "x": 0,
+            "right": 0,
+            "y": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "lineYs": [],
+          "visible": false
+        }
+      ],
+      "actions": [
+        {
+          "label": "Sign in",
+          "x": 327.703125,
+          "right": 374,
+          "y": 21,
+          "bottom": 43,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-390.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 768,
+    "height": 1024,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 768,
+        "y": 0,
+        "bottom": 80,
+        "width": 768,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 24,
+          "right": 77.0625,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 154.984375,
+          "right": 567.78125,
+          "y": 18,
+          "bottom": 62,
+          "width": 412.796875,
+          "height": 44
+        },
+        {
+          "x": 645.703125,
+          "right": 744,
+          "y": 18,
+          "bottom": 62,
+          "width": 98.296875,
+          "height": 44
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 154.984375,
+            "right": 221.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "item": {
+            "x": 154.984375,
+            "right": 221.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 225.59375,
+            "right": 346.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "item": {
+            "x": 225.59375,
+            "right": 346.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 350.734375,
+            "right": 418.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "item": {
+            "x": 350.734375,
+            "right": 418.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 422.96875,
+            "right": 507.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "item": {
+            "x": 422.96875,
+            "right": 507.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 511.609375,
+            "right": 567.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "item": {
+            "x": 511.609375,
+            "right": 567.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "Shopping cart",
+          "x": 645.703125,
+          "right": 689.703125,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Sign in",
+          "x": 697.703125,
+          "right": 744,
+          "y": 29,
+          "bottom": 51,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-768.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 820,
+    "height": 1180,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 820,
+        "y": 0,
+        "bottom": 80,
+        "width": 820,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 24,
+          "right": 77.0625,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 180.984375,
+          "right": 593.78125,
+          "y": 18,
+          "bottom": 62,
+          "width": 412.796875,
+          "height": 44
+        },
+        {
+          "x": 697.703125,
+          "right": 796,
+          "y": 18,
+          "bottom": 62,
+          "width": 98.296875,
+          "height": 44
+        }
+      ],
+      "navGap": "4px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 180.984375,
+            "right": 247.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "item": {
+            "x": 180.984375,
+            "right": 247.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 251.59375,
+            "right": 372.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "item": {
+            "x": 251.59375,
+            "right": 372.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 376.734375,
+            "right": 444.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "item": {
+            "x": 376.734375,
+            "right": 444.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 448.96875,
+            "right": 533.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "item": {
+            "x": 448.96875,
+            "right": 533.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 537.609375,
+            "right": 593.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "item": {
+            "x": 537.609375,
+            "right": 593.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "Shopping cart",
+          "x": 697.703125,
+          "right": 741.703125,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Sign in",
+          "x": 749.703125,
+          "right": 796,
+          "y": 29,
+          "bottom": 51,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-820.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1024,
+    "height": 768,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1024,
+        "y": 0,
+        "bottom": 80,
+        "width": 1024,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 32,
+          "right": 85.0625,
+          "y": 26,
+          "bottom": 54,
+          "width": 53.0625,
+          "height": 28
+        },
+        {
+          "x": 250.984375,
+          "right": 727.78125,
+          "y": 18,
+          "bottom": 62,
+          "width": 476.796875,
+          "height": 44
+        },
+        {
+          "x": 893.703125,
+          "right": 992,
+          "y": 18,
+          "bottom": 62,
+          "width": 98.296875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 250.984375,
+            "right": 317.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "item": {
+            "x": 250.984375,
+            "right": 317.59375,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 337.59375,
+            "right": 458.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "item": {
+            "x": 337.59375,
+            "right": 458.734375,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 478.734375,
+            "right": 546.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "item": {
+            "x": 478.734375,
+            "right": 546.96875,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 566.96875,
+            "right": 651.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "item": {
+            "x": 566.96875,
+            "right": 651.609375,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 671.609375,
+            "right": 727.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "item": {
+            "x": 671.609375,
+            "right": 727.78125,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "Shopping cart",
+          "x": 893.703125,
+          "right": 937.703125,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Sign in",
+          "x": 945.703125,
+          "right": 992,
+          "y": 29,
+          "bottom": 51,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-1024.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1280,
+    "height": 800,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1280,
+        "y": 0,
+        "bottom": 80,
+        "width": 1280,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 32,
+          "right": 95.6875,
+          "y": 24,
+          "bottom": 56,
+          "width": 63.6875,
+          "height": 32
+        },
+        {
+          "x": 384.296875,
+          "right": 861.09375,
+          "y": 18,
+          "bottom": 62,
+          "width": 476.796875,
+          "height": 44
+        },
+        {
+          "x": 1149.703125,
+          "right": 1248,
+          "y": 18,
+          "bottom": 62,
+          "width": 98.296875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 384.296875,
+            "right": 450.90625,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "item": {
+            "x": 384.296875,
+            "right": 450.90625,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 470.90625,
+            "right": 592.046875,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "item": {
+            "x": 470.90625,
+            "right": 592.046875,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 612.046875,
+            "right": 680.28125,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "item": {
+            "x": 612.046875,
+            "right": 680.28125,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 700.28125,
+            "right": 784.921875,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "item": {
+            "x": 700.28125,
+            "right": 784.921875,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 804.921875,
+            "right": 861.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "item": {
+            "x": 804.921875,
+            "right": 861.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "Shopping cart",
+          "x": 1149.703125,
+          "right": 1193.703125,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Sign in",
+          "x": 1201.703125,
+          "right": 1248,
+          "y": 29,
+          "bottom": 51,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-1280.png",
+    "wraps": [],
+    "outcome": "PASS"
+  },
+  {
+    "source": "public",
+    "locale": "en",
+    "auth": false,
+    "width": 1440,
+    "height": 900,
+    "url": "http://127.0.0.1:3200/en",
+    "errors": [],
+    "exceptions": [],
+    "status": 200,
+    "geometry": {
+      "lang": "en",
+      "dir": "ltr",
+      "overflowX": "hidden",
+      "container": {
+        "x": 0,
+        "right": 1440,
+        "y": 0,
+        "bottom": 80,
+        "width": 1440,
+        "height": 80
+      },
+      "parts": [
+        {
+          "x": 32,
+          "right": 95.6875,
+          "y": 24,
+          "bottom": 56,
+          "width": 63.6875,
+          "height": 32
+        },
+        {
+          "x": 464.296875,
+          "right": 941.09375,
+          "y": 18,
+          "bottom": 62,
+          "width": 476.796875,
+          "height": 44
+        },
+        {
+          "x": 1309.703125,
+          "right": 1408,
+          "y": 18,
+          "bottom": 62,
+          "width": 98.296875,
+          "height": 44
+        }
+      ],
+      "navGap": "20px",
+      "links": [
+        {
+          "text": "Home",
+          "box": {
+            "x": 464.296875,
+            "right": 530.90625,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "item": {
+            "x": 464.296875,
+            "right": 530.90625,
+            "y": 25,
+            "bottom": 55,
+            "width": 66.609375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Categories",
+          "box": {
+            "x": 550.90625,
+            "right": 672.046875,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "item": {
+            "x": 550.90625,
+            "right": 672.046875,
+            "y": 18,
+            "bottom": 62,
+            "width": 121.140625,
+            "height": 44
+          },
+          "lineYs": [
+            29,
+            32
+          ],
+          "visible": true
+        },
+        {
+          "text": "Offers",
+          "box": {
+            "x": 692.046875,
+            "right": 760.28125,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "item": {
+            "x": 692.046875,
+            "right": 760.28125,
+            "y": 25,
+            "bottom": 55,
+            "width": 68.234375,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "About us",
+          "box": {
+            "x": 780.28125,
+            "right": 864.921875,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "item": {
+            "x": 780.28125,
+            "right": 864.921875,
+            "y": 25,
+            "bottom": 55,
+            "width": 84.640625,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        },
+        {
+          "text": "Blog",
+          "box": {
+            "x": 884.921875,
+            "right": 941.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "item": {
+            "x": 884.921875,
+            "right": 941.09375,
+            "y": 25,
+            "bottom": 55,
+            "width": 56.171875,
+            "height": 30
+          },
+          "lineYs": [
+            29
+          ],
+          "visible": true
+        }
+      ],
+      "actions": [
+        {
+          "label": "Shopping cart",
+          "x": 1309.703125,
+          "right": 1353.703125,
+          "y": 18,
+          "bottom": 62,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Sign in",
+          "x": 1361.703125,
+          "right": 1408,
+          "y": 29,
+          "bottom": 51,
+          "width": 46.296875,
+          "height": 22
+        }
+      ],
+      "outside": []
+    },
+    "screenshot": "public-en-anon-1440.png",
+    "wraps": [],
+    "outcome": "PASS"
+  }
+]

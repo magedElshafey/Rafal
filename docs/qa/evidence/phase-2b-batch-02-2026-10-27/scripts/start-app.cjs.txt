@@ -1,0 +1,5 @@
+const {spawn}=require('node:child_process');const fs=require('node:fs');
+const log=fs.createWriteStream(__dirname+'/app-server.log');
+const child=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3200'],{cwd:'D:/megz/Rafal',windowsHide:true,stdio:['ignore','pipe','pipe']});
+console.log('OWNED_APP_PID='+child.pid);fs.writeFileSync(__dirname+'/app-pid.txt',String(child.pid));
+child.stdout.pipe(log);child.stderr.pipe(log);child.on('exit',c=>{log.end();process.exitCode=c;});

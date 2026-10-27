@@ -1,0 +1,31 @@
+[
+  {
+    "endpoint": "/blog",
+    "locale": "en",
+    "status": 200,
+    "sample": {
+      "title": "دليل هدايا اليوم الوطني (قريباً)",
+      "excerpt": "Et at qui et dolorem quod dolorem quidem magni architecto rerum assumenda sequi debitis."
+    }
+  },
+  {
+    "endpoint": "/about-us",
+    "locale": "en",
+    "status": 200,
+    "sample": {
+      "hero_subtitle": "Rafal",
+      "mission": "الإتقان والإبداع هما الأساس الذي تقوم عليه صناعة الحلي، ورسالتنا جعل الإبداع ينطق بين يديكم."
+    }
+  },
+  {
+    "endpoint": "/products",
+    "locale": "en",
+    "status": 200,
+    "sample": {
+      "name": "test product with requried variant",
+      "badges": [
+        "جديد"
+      ]
+    }
+  }
+]

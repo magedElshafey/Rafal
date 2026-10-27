@@ -1,0 +1,16 @@
+{
+  "sandbox": {
+    "command": "taskkill.exe /pid <disposable probe PID> /T /F",
+    "exitCode": 1,
+    "output": "ERROR: Access denied",
+    "targetStillAlive": true,
+    "cleanup": "process.kill on only the probe-owned PID"
+  },
+  "outsideSandbox": {
+    "target": 47684,
+    "code": 0,
+    "signal": null,
+    "output": "SUCCESS: The process with PID 53792 (child process of PID 47684) has been terminated.\r\nSUCCESS: The process with PID 47684 (child process of PID 45180) has been terminated.\r\n",
+    "targetStillAlive": false
+  }
+}
