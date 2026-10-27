@@ -197,7 +197,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     serverEnv.siteUrl,
   );
   return (
-    <Container className="main-content-spacing lg:px-15">
+    <Container data-product-page className="main-content-spacing lg:px-15">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

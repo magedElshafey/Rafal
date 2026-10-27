@@ -168,7 +168,7 @@ function ProductVariants({
         const optionLabel = getVariantAttributeLabel(option.key, copy.labels);
         const label = optionLabel.charAt(0).toUpperCase() + optionLabel.slice(1);
         return (
-          <fieldset key={option.id}>
+          <fieldset key={option.id} className="min-w-0">
             <legend className="type-body font-medium text-gray-900">
               {label}
             </legend>
@@ -192,12 +192,12 @@ function ProductVariants({
                     disabled={!selectable}
                     onClick={() => onSelectOption(option.id, value.id)}
                     className={cn(
-                      "flex min-h-11 items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 type-body-sm font-medium text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
+                      "flex min-h-11 min-w-0 max-w-full items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 py-2 type-body-sm font-medium text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
                       selected && "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
                       !selectable && "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400 opacity-60",
                     )}
                   >
-                    <span className={cn("inline-flex items-center gap-2", !selectable && "line-through")}>
+                    <span className={cn("inline-flex min-w-0 items-center gap-2 [overflow-wrap:anywhere]", !selectable && "line-through")}>
                       {option.key === "color" ? (
                         <VariantColorSwatch className="size-8" value={value.id} />
                       ) : (

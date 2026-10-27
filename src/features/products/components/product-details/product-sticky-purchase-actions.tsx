@@ -57,16 +57,16 @@ export function ProductStickyPurchaseActions({
             {errorMessage}
           </p>
         ) : null}
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           {formattedPrice ? (
-            <strong className="min-w-0 flex-1 truncate type-body-lg text-gray-1000">
+            <strong className="min-w-0 max-w-full flex-auto break-words type-body-lg text-gray-1000">
               <bdi>{formattedPrice}</bdi>
             </strong>
           ) : (
             <span className="min-w-0 flex-1" />
           )}
           <Button
-            className="min-w-36"
+            className="min-w-36 flex-1"
             disabled={!canAddToCart || isPending}
             loading={isPending}
             loadingLabel={addingLabel}

@@ -39,7 +39,7 @@ export function ProductReviewsContent({
   const numbers = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
 
   return (
-    <section id="reviews" aria-labelledby="product-reviews-title" tabIndex={-1}>
+    <section id="reviews" aria-labelledby="product-reviews-title" tabIndex={-1} className="md:scroll-mt-24">
       <h2 id="product-reviews-title" className="text-h3 font-bold">
         {readResult.ok
           ? formatProductMessage(copy.titleTemplate, {

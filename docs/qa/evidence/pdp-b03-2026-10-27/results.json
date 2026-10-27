@@ -1,0 +1,859 @@
+{
+  "passed": 50,
+  "failed": 0,
+  "cases": [
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 320,
+      "height": 740,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 676,
+        "stickyTop": 607
+      },
+      "sticky": {
+        "width": 144,
+        "height": 44,
+        "x": 16,
+        "right": 160,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 390,
+      "height": 844,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 780,
+        "stickyTop": 711
+      },
+      "sticky": {
+        "width": 150.65625,
+        "height": 44,
+        "x": 16,
+        "right": 166.65625,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 767,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 960,
+        "stickyTop": 891
+      },
+      "sticky": {
+        "width": 339.15625,
+        "height": 44,
+        "x": 16,
+        "right": 355.15625,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 768,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 106,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 24,
+        "right": 184,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 769,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 106,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 24,
+        "right": 184,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 1024,
+      "height": 768,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 96,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 60,
+        "right": 220,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 1440,
+      "height": 900,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 236,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 60,
+        "right": 220,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 320,
+      "height": 740,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 676,
+        "stickyTop": 607
+      },
+      "sticky": {
+        "width": 144,
+        "height": 44,
+        "x": 16,
+        "right": 160,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 390,
+      "height": 844,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 780,
+        "stickyTop": 711
+      },
+      "sticky": {
+        "width": 150.046875,
+        "height": 44,
+        "x": 16,
+        "right": 166.046875,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 767,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 960,
+        "stickyTop": 891
+      },
+      "sticky": {
+        "width": 338.546875,
+        "height": 44,
+        "x": 16,
+        "right": 354.546875,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 768,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 211,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 24,
+        "right": 184,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 769,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 211,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 24,
+        "right": 184,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 1024,
+      "height": 768,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 96,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 60,
+        "right": 220,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/soar-fd-klasyky-2",
+      "locale": "ar",
+      "width": 1440,
+      "height": 900,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 341,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 60,
+        "right": 220,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 320,
+      "height": 740,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 676,
+        "stickyTop": 607
+      },
+      "sticky": {
+        "width": 144,
+        "height": 44,
+        "x": 160,
+        "right": 304,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 390,
+      "height": 844,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 780,
+        "stickyTop": 711
+      },
+      "sticky": {
+        "width": 155.203125,
+        "height": 44,
+        "x": 218.796875,
+        "right": 374,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 767,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 960,
+        "stickyTop": 891
+      },
+      "sticky": {
+        "width": 343.703125,
+        "height": 44,
+        "x": 407.296875,
+        "right": 751,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 768,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 106,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 584,
+        "right": 744,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 769,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 106,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 585,
+        "right": 745,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 1024,
+      "height": 768,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 96,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 804,
+        "right": 964,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 1440,
+      "height": 900,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 236,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 1220,
+        "right": 1380,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 320,
+      "height": 740,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 676,
+        "stickyTop": 607
+      },
+      "sticky": {
+        "width": 144,
+        "height": 44,
+        "x": 160,
+        "right": 304,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 390,
+      "height": 844,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 780,
+        "stickyTop": 711
+      },
+      "sticky": {
+        "width": 154.59375,
+        "height": 44,
+        "x": 219.40625,
+        "right": 374,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 767,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 0,
+        "stickyBottom": 960,
+        "stickyTop": 891
+      },
+      "sticky": {
+        "width": 343.09375,
+        "height": 44,
+        "x": 407.90625,
+        "right": 751,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 768,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 211,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 584,
+        "right": 744,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 769,
+      "height": 1024,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 211,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 585,
+        "right": 745,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 1024,
+      "height": 768,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 96,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 804,
+        "right": 964,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/soar-fd-klasyky-2",
+      "locale": "en",
+      "width": 1440,
+      "height": 900,
+      "scenario": "PDP interactions",
+      "outcome": "PASS",
+      "errors": [],
+      "exceptions": [],
+      "anchor": {
+        "headingY": 341,
+        "stickyBottom": 69,
+        "stickyTop": 0
+      },
+      "sticky": {
+        "width": 160,
+        "height": 44,
+        "x": 1220,
+        "right": 1380,
+        "disabled": false,
+        "unobstructed": true
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 320,
+      "height": 740,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 390,
+      "height": 844,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 768,
+      "height": 1024,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 1024,
+      "height": 768,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/aatr-msk-abyd-2",
+      "locale": "ar",
+      "width": 1440,
+      "height": 900,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 320,
+      "height": 740,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 390,
+      "height": 844,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 768,
+      "height": 1024,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 1024,
+      "height": 768,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/aatr-msk-abyd-2",
+      "locale": "en",
+      "width": 1440,
+      "height": 900,
+      "scenario": "no-city",
+      "outcome": "PASS"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/cart",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/cart",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/cart",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/cart",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "mainZ": "auto"
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/boks-hdy-fakhr-8",
+      "locale": "ar",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "focusRestored": true
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products/boks-hdy-fakhr-8",
+      "locale": "ar",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "focusRestored": true
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/boks-hdy-fakhr-8",
+      "locale": "en",
+      "width": 320,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "focusRestored": true
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products/boks-hdy-fakhr-8",
+      "locale": "en",
+      "width": 1024,
+      "scenario": "navigation layers / shell",
+      "outcome": "PASS",
+      "focusRestored": true
+    }
+  ],
+  "stressBefore": [
+    {
+      "locale": "ar",
+      "optionWidth": 288,
+      "price": {
+        "width": 132,
+        "scroll": 136,
+        "text": "‏123,456,789.99 ر.س.‏"
+      }
+    },
+    {
+      "locale": "en",
+      "optionWidth": 293.046875,
+      "price": {
+        "width": 132,
+        "scroll": 132,
+        "text": "SAR 123,456,789.99"
+      }
+    }
+  ],
+  "stressAfter": [
+    {
+      "locale": "ar",
+      "optionWidth": 288,
+      "price": {
+        "width": 288,
+        "scroll": 288,
+        "text": "‏123,456,789.99 ر.س.‏"
+      }
+    },
+    {
+      "locale": "en",
+      "optionWidth": 288,
+      "price": {
+        "width": 132,
+        "scroll": 132,
+        "text": "SAR 123,456,789.99"
+      }
+    }
+  ],
+  "remaining": "Direct Reviews jumps can leave the sticky bar hidden; state logic unchanged. Populated recommendations and out-of-stock products not tested."
+}

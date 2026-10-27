@@ -84,8 +84,8 @@ export default async function StoreFontLayout({
         message="شحن مجاني للطلبات فوق ٢٠٠ ر.س"
         dismissible={true}
       />
-      {/* Lift only the mobile Cart context above positioned footer links. */}
-      <main className="relative isolate mt-5 flex-1 max-md:has-[[data-cart-page]]:z-10">
+      {/* Keep page-owned fixed purchase controls above positioned footer links. */}
+      <main className="relative isolate mt-5 flex-1 max-md:has-[[data-cart-page]]:z-10 has-[[data-product-page]]:z-10">
         {children}
         <StorefrontSyncVeil />
       </main>
