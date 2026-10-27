@@ -21,7 +21,7 @@ export async function CatalogueListingLoading() {
           <div className="mb-6 flex justify-end">
             <Skeleton className="h-11 w-44" />
           </div>
-          <ProductGridSkeleton />
+          <ProductGridSkeleton className="md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" />
         </div>
       </div>
     </Container>

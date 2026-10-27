@@ -284,10 +284,10 @@ function CatalogueFilters({
       {subcategoryOptions?.length && copy.subcategories && copy.all ? (
         <fieldset>
           <legend className="text-h4 font-medium">{copy.subcategories}</legend>
-          <div className="mt-3 space-y-2 type-body">
-            <label className="flex cursor-pointer items-center gap-2">
+          <div className="mt-3 space-y-1 type-body">
+            <label className="flex min-h-11 cursor-pointer items-center gap-2 wrap-anywhere">
               <input
-                className="accent-gold-500"
+                className="shrink-0 accent-gold-500"
                 type="radio"
                 name="subcategory"
                 checked={!filters.subcategory}
@@ -298,10 +298,10 @@ function CatalogueFilters({
             {subcategoryOptions.map(({ label, value }) => (
               <label
                 key={value}
-                className="flex cursor-pointer items-center gap-2"
+                className="flex min-h-11 cursor-pointer items-center gap-2 wrap-anywhere"
               >
                 <input
-                  className="accent-gold-500"
+                  className="shrink-0 accent-gold-500"
                   type="radio"
                   name="subcategory"
                   checked={filters.subcategory === value}
@@ -323,8 +323,8 @@ function CatalogueFilters({
         <legend className="text-h4 font-medium border-b border-border pb-3 block w-full">
           {copy.additional}
         </legend>
-        <div className="mt-3 space-y-3">
-          <label className="flex cursor-pointer items-center gap-3 type-body">
+        <div className="mt-3 space-y-1">
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 type-body">
             <Checkbox
               checked={filters.onDiscount}
               onCheckedChange={(checked) =>
@@ -333,7 +333,7 @@ function CatalogueFilters({
             />
             {copy.onDiscount}
           </label>
-          <label className="flex cursor-pointer items-center gap-3 type-body">
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 type-body">
             <Checkbox
               checked={filters.personalizable}
               onCheckedChange={(checked) =>
@@ -342,7 +342,7 @@ function CatalogueFilters({
             />
             {copy.personalizable}
           </label>
-          <label className="flex cursor-pointer items-center gap-3 type-body">
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 type-body">
             <Checkbox
               checked={filters.newArrival}
               onCheckedChange={(checked) =>
@@ -491,7 +491,7 @@ export function CatalogueProductListing({
         </div>
         {isNavigationPending ? (
           <div aria-busy="true" aria-label={copy.loading}>
-            <ProductGridSkeleton />
+            <ProductGridSkeleton className="md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" />
           </div>
         ) : listing === null ? (
           <EmptyState title={copy.filters.invalidPriceRange} role="status" />
@@ -502,6 +502,7 @@ export function CatalogueProductListing({
           />
         ) : (
           <ProductGrid
+            className="md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [&_.product-card_h3]:line-clamp-2 [&_.product-card_h3]:min-h-8 [&_.product-card_h3]:whitespace-normal [&_.product-card_h3]:wrap-anywhere"
             wishlistAccountId={accountId}
             badgeLabels={copy.badges}
             locale={locale}
@@ -517,7 +518,10 @@ export function CatalogueProductListing({
         )}
         {!isNavigationPending && query.isFetchingNextPage ? (
           <div aria-busy="true" aria-label={copy.loadingMore} className="mt-8">
-            <ProductGridSkeleton count={4} />
+            <ProductGridSkeleton
+              count={4}
+              className="md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            />
           </div>
         ) : null}
         {!isNavigationPending && query.isFetchNextPageError ? (

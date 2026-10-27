@@ -3,16 +3,21 @@ import Image from "next/image";
 import { ImageIcon } from "@/components/ui/icons";
 import type { Category } from "@/features/categories/types";
 import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 type CategoryCardProps = {
   category: Category;
+  className?: string;
 };
 
-export function CategoryCard({ category }: CategoryCardProps) {
+export function CategoryCard({ category, className }: CategoryCardProps) {
   return (
     <Link
       href={`/categories/${category.slug}`}
-      className="me-auto flex w-22 md:w-30 flex-col items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className={cn(
+        "me-auto flex w-22 md:w-30 flex-col items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        className,
+      )}
     >
       <span className="relative size-22 md:size-30 overflow-hidden rounded-full bg-gray-100">
         {category.imageUrl ? (

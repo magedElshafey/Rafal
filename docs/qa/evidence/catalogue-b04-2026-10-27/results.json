@@ -1,0 +1,1657 @@
+{
+  "base": "http://127.0.0.1:3200",
+  "fixtureBase": "http://127.0.0.1:3202",
+  "date": "2026-10-27",
+  "routes": [
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        136,
+        136,
+        136,
+        136,
+        136,
+        136
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        136,
+        136,
+        136,
+        136,
+        136,
+        136
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        171,
+        171,
+        171,
+        171,
+        171,
+        171
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        171,
+        171,
+        171,
+        171,
+        171,
+        171
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        168,
+        168,
+        168,
+        168,
+        168,
+        168
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        168,
+        168,
+        168,
+        168,
+        168,
+        168
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        146.65625,
+        146.671875,
+        146.671875,
+        146.65625,
+        146.671875,
+        146.671875
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        146.65625,
+        146.671875,
+        146.671875,
+        146.65625,
+        146.671875,
+        146.671875
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        216,
+        216,
+        216,
+        216,
+        216,
+        216
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        216,
+        216,
+        216,
+        216,
+        216,
+        216
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 136,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 136,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 171,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 171,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 216,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 216,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 212,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 212,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 259,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 259,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories/gifts",
+      "locale": "en",
+      "route": "categories/gifts",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 136,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories/gifts",
+      "locale": "ar",
+      "route": "categories/gifts",
+      "width": 320,
+      "height": 740,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 136,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories/gifts",
+      "locale": "en",
+      "route": "categories/gifts",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 171,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories/gifts",
+      "locale": "ar",
+      "route": "categories/gifts",
+      "width": 390,
+      "height": 844,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 171,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories/gifts",
+      "locale": "en",
+      "route": "categories/gifts",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 216,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories/gifts",
+      "locale": "ar",
+      "route": "categories/gifts",
+      "width": 768,
+      "height": 1024,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 216,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories/gifts",
+      "locale": "ar",
+      "route": "categories/gifts",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 212,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories/gifts",
+      "locale": "en",
+      "route": "categories/gifts",
+      "width": 1024,
+      "height": 768,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 212,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories/gifts",
+      "locale": "en",
+      "route": "categories/gifts",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "ltr",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 259,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories/gifts",
+      "locale": "ar",
+      "route": "categories/gifts",
+      "width": 1440,
+      "height": 900,
+      "kind": "required",
+      "dir": "rtl",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 259,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 639,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 295.5,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 639,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 295.5,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 640,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 186.65625,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 640,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 186.65625,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 767,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 229,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 767,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 229,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 1023,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 343.5,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 1023,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 2,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 343.5,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 1279,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 297,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 1279,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 3,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 297,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/products",
+      "locale": "ar",
+      "route": "products",
+      "width": 1280,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 219,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/products",
+      "locale": "en",
+      "route": "products",
+      "width": 1280,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": 4,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [
+        44,
+        44,
+        44
+      ],
+      "errors": [],
+      "pass": true,
+      "cardWidth": 219,
+      "titleHeight": 32,
+      "categoryWidths": []
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 639,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        295.5,
+        295.5,
+        295.5,
+        295.5,
+        295.5,
+        295.5
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 639,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        295.5,
+        295.5,
+        295.5,
+        295.5,
+        295.5,
+        295.5
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 640,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        136,
+        136,
+        136,
+        136,
+        136,
+        136
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 640,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        136,
+        136,
+        136,
+        136,
+        136,
+        136
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 767,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        167.75,
+        167.75,
+        167.75,
+        167.75,
+        167.75,
+        167.75
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 767,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        167.75,
+        167.75,
+        167.75,
+        167.75,
+        167.75,
+        167.75
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 1023,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        231.75,
+        231.75,
+        231.75,
+        231.75,
+        231.75,
+        231.75
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 1023,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        231.75,
+        231.75,
+        231.75,
+        231.75,
+        231.75,
+        231.75
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 1279,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        189.15625,
+        189.171875,
+        189.171875,
+        189.15625,
+        189.171875,
+        189.171875
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 1279,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        189.15625,
+        189.171875,
+        189.171875,
+        189.15625,
+        189.171875,
+        189.171875
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/ar/categories",
+      "locale": "ar",
+      "route": "categories",
+      "width": 1280,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "rtl",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        189.328125,
+        189.328125,
+        189.328125,
+        189.34375,
+        189.328125,
+        189.328125
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:3200/en/categories",
+      "locale": "en",
+      "route": "categories",
+      "width": 1280,
+      "height": 900,
+      "kind": "boundary",
+      "dir": "ltr",
+      "columns": null,
+      "outside": [],
+      "clipped": [],
+      "filterHeights": [],
+      "errors": [],
+      "pass": true,
+      "categoryWidths": [
+        189.328125,
+        189.328125,
+        189.328125,
+        189.34375,
+        189.328125,
+        189.328125
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "locale": "ar",
+      "width": 320,
+      "checks": [
+        "sort price_desc URL/value",
+        "discount filter URL",
+        "Tab/Shift+Tab containment; Escape focus restoration",
+        "safe empty search",
+        "nested category radio URL",
+        "product link keyboard navigation"
+      ],
+      "errors": [],
+      "emptyGeometry": {
+        "dir": "rtl",
+        "columns": null,
+        "outside": [],
+        "clipped": [],
+        "cards": [],
+        "filterHeights": [],
+        "categories": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "checks": [
+        "sort price_desc URL/value",
+        "discount filter URL",
+        "Tab/Shift+Tab containment; Escape focus restoration",
+        "safe empty search",
+        "nested category radio URL",
+        "product link keyboard navigation"
+      ],
+      "errors": [],
+      "emptyGeometry": {
+        "dir": "ltr",
+        "columns": null,
+        "outside": [],
+        "clipped": [],
+        "cards": [],
+        "filterHeights": [],
+        "categories": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "width": 768,
+      "checks": [
+        "sort price_desc URL/value",
+        "discount filter URL",
+        "safe empty search",
+        "nested category radio URL",
+        "product link keyboard navigation"
+      ],
+      "errors": [],
+      "emptyGeometry": {
+        "dir": "rtl",
+        "columns": null,
+        "outside": [],
+        "clipped": [],
+        "cards": [],
+        "filterHeights": [
+          44,
+          44,
+          44
+        ],
+        "categories": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "checks": [
+        "sort price_desc URL/value",
+        "discount filter URL",
+        "safe empty search",
+        "nested category radio URL",
+        "product link keyboard navigation"
+      ],
+      "errors": [],
+      "emptyGeometry": {
+        "dir": "ltr",
+        "columns": null,
+        "outside": [],
+        "clipped": [],
+        "cards": [],
+        "filterHeights": [
+          44,
+          44,
+          44
+        ],
+        "categories": []
+      },
+      "pass": true
+    }
+  ],
+  "fixtureStates": [
+    {
+      "locale": "ar",
+      "width": 320,
+      "checks": [
+        "pending pagination skeleton matches listing columns",
+        "next-page error preserves existing card",
+        "retry appends next page and removes exhausted pagination",
+        "long-title and unavailable card containment"
+      ],
+      "errors": [],
+      "skeleton": {
+        "columns": "136px 136px",
+        "rect": {
+          "x": 16,
+          "y": 340,
+          "width": 288,
+          "height": 458,
+          "top": 340,
+          "right": 304,
+          "bottom": 798,
+          "left": 16
+        }
+      },
+      "buttonsAtError": [
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "تصفية المنتجات",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": "إضافة إلى المفضلة",
+          "disabled": false
+        },
+        {
+          "text": "+",
+          "label": "اختيار خيارات منتج للاختبار بعنوان طويل لقياس عرض بطاقة المنتج في القائمة",
+          "disabled": false
+        },
+        {
+          "text": "إعادة المحاولة",
+          "label": null,
+          "disabled": false
+        }
+      ],
+      "unavailableText": "غير متوفر\n+\nمنتج للاختبار بعنوان طويل لقياس عرض بطاقة المنتج في القائمة\n‏115.00 ر.س.‏\n0.0\n·\n0 تقييم",
+      "bounds": {
+        "width": 136,
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "width": 768,
+      "checks": [
+        "pending pagination skeleton matches listing columns",
+        "next-page error preserves existing card",
+        "retry appends next page and removes exhausted pagination",
+        "long-title and unavailable card containment"
+      ],
+      "errors": [],
+      "skeleton": {
+        "columns": "216px 216px",
+        "rect": {
+          "x": 24,
+          "y": 802,
+          "width": 448,
+          "height": 618,
+          "top": 802,
+          "right": 472,
+          "bottom": 1420,
+          "left": 24
+        }
+      },
+      "buttonsAtError": [
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "تصفية المنتجات",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": "إضافة إلى المفضلة",
+          "disabled": false
+        },
+        {
+          "text": "+",
+          "label": "اختيار خيارات منتج للاختبار بعنوان طويل لقياس عرض بطاقة المنتج في القائمة",
+          "disabled": false
+        },
+        {
+          "text": "إعادة المحاولة",
+          "label": null,
+          "disabled": false
+        }
+      ],
+      "unavailableText": "غير متوفر\n+\nمنتج للاختبار بعنوان طويل لقياس عرض بطاقة المنتج في القائمة\n‏115.00 ر.س.‏\n0.0\n·\n0 تقييم",
+      "bounds": {
+        "width": 216,
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "checks": [
+        "pending pagination skeleton matches listing columns",
+        "next-page error preserves existing card",
+        "retry appends next page and removes exhausted pagination",
+        "long-title and unavailable card containment"
+      ],
+      "errors": [],
+      "skeleton": {
+        "columns": "136px 136px",
+        "rect": {
+          "x": 16,
+          "y": 340,
+          "width": 288,
+          "height": 458,
+          "top": 340,
+          "right": 304,
+          "bottom": 798,
+          "left": 16
+        }
+      },
+      "buttonsAtError": [
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "Filter products",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": "Add to wishlist",
+          "disabled": false
+        },
+        {
+          "text": "+",
+          "label": "Choose options for A deliberately long catalogue fixture title for responsive card readability",
+          "disabled": false
+        },
+        {
+          "text": "Try again",
+          "label": null,
+          "disabled": false
+        }
+      ],
+      "unavailableText": "Unavailable\n+\nA deliberately long catalogue fixture title for responsive card readability\nSAR 115.00\n0.0\n·\n0 reviews",
+      "bounds": {
+        "width": 136,
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "checks": [
+        "pending pagination skeleton matches listing columns",
+        "next-page error preserves existing card",
+        "retry appends next page and removes exhausted pagination",
+        "long-title and unavailable card containment"
+      ],
+      "errors": [],
+      "skeleton": {
+        "columns": "216px 216px",
+        "rect": {
+          "x": 296,
+          "y": 802,
+          "width": 448,
+          "height": 618,
+          "top": 802,
+          "right": 744,
+          "bottom": 1420,
+          "left": 296
+        }
+      },
+      "buttonsAtError": [
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "Filter products",
+          "label": null,
+          "disabled": false
+        },
+        {
+          "text": "",
+          "label": "Add to wishlist",
+          "disabled": false
+        },
+        {
+          "text": "+",
+          "label": "Choose options for A deliberately long catalogue fixture title for responsive card readability",
+          "disabled": false
+        },
+        {
+          "text": "Try again",
+          "label": null,
+          "disabled": false
+        }
+      ],
+      "unavailableText": "Unavailable\n+\nA deliberately long catalogue fixture title for responsive card readability\nSAR 115.00\n0.0\n·\n0 reviews",
+      "bounds": {
+        "width": 216,
+        "outside": []
+      },
+      "pass": true
+    }
+  ],
+  "keyboardAndSharedDefaults": [
+    {
+      "locale": "ar",
+      "checks": [
+        "native sort by keyboard",
+        "normal motion filter keyboard/Space/Escape focus return",
+        "invalid price range state",
+        "home category default widths preserved",
+        "home card default title treatment preserved"
+      ],
+      "errors": [],
+      "selectedOption": {
+        "text": "السعر من الأعلى",
+        "textWidth": 94.65386962890625,
+        "available": 95
+      },
+      "homeCategoryWidths": [
+        88,
+        88,
+        88,
+        88,
+        88,
+        88
+      ],
+      "homeTitleWrap": [
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap"
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "checks": [
+        "native sort by keyboard",
+        "normal motion filter keyboard/Space/Escape focus return",
+        "invalid price range state",
+        "home category default widths preserved",
+        "home card default title treatment preserved"
+      ],
+      "errors": [],
+      "selectedOption": {
+        "text": "Highest price",
+        "textWidth": 78.37188720703125,
+        "available": 79
+      },
+      "homeCategoryWidths": [
+        88,
+        88,
+        88,
+        88,
+        88,
+        88
+      ],
+      "homeTitleWrap": [
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap",
+        "nowrap"
+      ],
+      "pass": true
+    }
+  ]
+}
