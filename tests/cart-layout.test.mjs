@@ -81,12 +81,17 @@ function nodes(tree) {
 }
 const checkout = (tree) => nodes(tree).filter((node) => node.type === "button" && node.props.children === copy.checkout);
 
-test("checkout stacking adjustment is scoped to mobile Cart and preserves main isolation", () => {
+test("stacking is scoped to mobile Cart and PDP and preserves main isolation", () => {
   // Structural guard only; real-browser hit-testing verifies painting and pointer targets.
   const layout = readFileSync(new URL("../src/app/[locale]/(storefront)/layout.tsx", import.meta.url), "utf8");
   const mainClass = layout.match(/<main className="([^"]+)"/)[1];
   assert.ok(mainClass.split(" ").includes("isolate"));
-  assert.deepEqual(mainClass.split(" ").filter((token) => token.includes("z-")), ["max-md:has-[[data-cart-page]]:z-10"]);
+  assert.deepEqual(mainClass.split(" ").filter((token) => token.includes("z-")), [
+    "max-md:has-[[data-cart-page]]:z-10",
+    "has-[[data-product-page]]:z-10",
+  ]);
+  const pdp = readFileSync(new URL("../src/app/[locale]/(storefront)/products/[slug]/page.tsx", import.meta.url), "utf8");
+  assert.match(pdp, /<Container data-product-page\s/);
   assert.equal(harness().render().props["data-cart-page"], true);
   assert.equal(harness({ cart: { ...cart, lines: [] } }).render().props["data-cart-page"], undefined);
 });

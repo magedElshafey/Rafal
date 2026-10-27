@@ -1,0 +1,369 @@
+Batch 06 final gate records. Each full gate executed once.
+Full raw logs: C:\Users\geexar\AppData\Local\Temp\rafal-stabilization-b06
+
+npx.cmd tsc --noEmit
+PASS / exit 0
+
+
+npm.cmd run lint
+PASS / exit 0
+
+> rafal-website@0.1.0 lint
+> eslint
+
+
+
+$testFiles = @(rg --files tests src -g '*.test.mjs'); node --test @testFiles
+PASS / exit 0; 44 files, 606 passed, 0 failed, 0 skipped
+✔ Cart, Checkout and Orders use the shared attribute presentation (0.9046ms)
+ℹ tests 606
+ℹ suites 0
+ℹ pass 606
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44278.7268
+
+npm.cmd run build (normal production)
+PASS / exit 0
+
+> rafal-website@0.1.0 build
+> next build
+
+▲ Next.js 16.3.3 (Turbopack)
+- Environments: .env
+✓ Running next.config.ts took 219ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.5s
+  Running TypeScript ...
+  Finished TypeScript in 5.6s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/75) ...
+  Generating static pages using 5 workers (18/75) 
+  Generating static pages using 5 workers (37/75) 
+  Generating static pages using 5 workers (56/75) 
+categories response {
+  success: true,
+  message: 'Categories retrieved successfully',
+  data: [
+    {
+      id: 1,
+      name: 'مجوهرات',
+      slug: 'jewelry',
+      description: 'اكتشف تشكيلتنا الفاخرة من المجوهرات المصممة بعناية لتناسب كل الأذواق؛ قطع تجمع بين الرقي الكلاسيكي واللمسات العصرية لتمنحك بريقاً فريداً في كل مناسبة.',
+      image_url: 'https://api.rafal.shop/storage/59/Allyanna-Gifts---Women%27s-Moissanite-Round-Solitaire-Necklace---os-_-Gold.jpg',
+      sort_order: 1,
+      children: [Array]
+    },
+    {
+      id: 5,
+      name: 'هدايا',
+      slug: 'gifts',
+      description: 'تشكيلة منتقاة من الهدايا الراقية والمميزة التي صُممت لتناسب كل المناسبات وتعبّر عن مشاعرك بأجمل صورة لمن تحب.',
+      image_url: 'https://api.rafal.shop/storage/60/Beautiful-Ways-to-Package-a-Special-Gift%F0%9F%8E%81.jpg',
+      sort_order: 2,
+      children: [Array]
+    },
+    {
+      id: 9,
+      name: 'اكسسوارات',
+      slug: 'accessories',
+      description: 'تشكيلة متنوعة من الإكسسوارات العصرية المصممة لتُكمل إطلالتك وتمنحك لمسة إضافية من الأناقة والتألق في كل يوم.',
+      image_url: 'https://api.rafal.shop/storage/61/Kudos-Gold-Bundle--1---24k-Gold-_-XS.jpg',
+      sort_order: 3,
+      children: [Array]
+    },
+    {
+      id: 15,
+      name: 'أقلام فاخرة',
+      slug: 'aklam-fakhr',
+      description: 'تشكيلة متميزة من الأقلام الفاخرة بتصاميم كلاسيكية وعصرية، تجمع بين سلاسة الكتابة وفخامة المظهر لتكون الهدية المثالية لأصحاب الذوق الرفيع.',
+      image_url: 'https://api.rafal.shop/storage/67/Personalized-Premium-Pens-for-Professionals-%26-Executives-_-Corporate-Gifts.jpg',
+      sort_order: 5,
+      children: []
+    },
+    {
+      id: 16,
+      name: 'باقات ورد',
+      slug: 'bakat-ord',
+      description: 'تشكيلة ساحرة من باقات الزهور الطبيعية والدائمة المنسقة بعناية، لتعبر عن مشاعرك وتضفي بهجة استثنائية على كل مناسبة.',
+      image_url: 'https://api.rafal.shop/storage/68/High-end-Luxury-Faux-%28Artifical%29-Flower-Bouquet---Handcrafted-Flower-Roses.jpg',
+      sort_order: 6,
+      children: []
+    },
+    {
+      id: 3,
+      name: 'سُبَح فاخرة',
+      slug: 'brooches-7281',
+      description: 'تشكيلة راقية من السبح المصنوعة من الأحجار الكريمة، الكهرمان، وخامات مختارة بعناية، تجمع بين فخامة الإهداء وأناقة الاقتناء اليومي.',
+      image_url: 'https://api.rafal.shop/storage/64/download-%283%29.jpg',
+      sort_order: 18,
+      children: []
+    }
+  ]
+}
+categories response {
+  success: true,
+  message: 'Categories retrieved successfully',
+  data: [
+    {
+      id: 1,
+      name: 'Jewelries',
+      slug: 'jewelry',
+      description: 'Discover our exquisite jewelry collection, crafted to perfection. A blend of timeless elegance and modern designs curated to add a touch of sparkle to your every moment.',
+      image_url: 'https://api.rafal.shop/storage/59/Allyanna-Gifts---Women%27s-Moissanite-Round-Solitaire-Necklace---os-_-Gold.jpg',
+      sort_order: 1,
+      children: [Array]
+    },
+    {
+      id: 5,
+      name: 'Gifts',
+      slug: 'gifts',
+      description: 'A curated collection of thoughtful and elegant gifts, designed for every occasion to express your heartfelt feelings.',
+      image_url: 'https://api.rafal.shop/storage/60/Beautiful-Ways-to-Package-a-Special-Gift%F0%9F%8E%81.jpg',
+      sort_order: 2,
+      children: [Array]
+    },
+    {
+      id: 9,
+      name: 'Accessories',
+      slug: 'accessories',
+      description: 'A versatile collection of stylish accessories curated to complement your look and add the perfect finishing touch to any outfit.',
+      image_url: 'https://api.rafal.shop/storage/61/Kudos-Gold-Bundle--1---24k-Gold-_-XS.jpg',
+      sort_order: 3,
+      children: [Array]
+    },
+    {
+      id: 15,
+      name: 'Luxury Pens',
+      slug: 'aklam-fakhr',
+      description: 'A distinguished collection of fine luxury pens, combining smooth writing performance with sophisticated design—an ideal gift for every milestone.',
+      image_url: 'https://api.rafal.shop/storage/67/Personalized-Premium-Pens-for-Professionals-%26-Executives-_-Corporate-Gifts.jpg',
+      sort_order: 5,
+      children: []
+    },
+    {
+      id: 16,
+      name: 'Flower Bouquets',
+      slug: 'bakat-ord',
+      description: 'A stunning collection of fresh and preserved flower bouquets, artfully arranged to convey your feelings and brighten every special moment.',
+      image_url: 'https://api.rafal.shop/storage/68/High-end-Luxury-Faux-%28Artifical%29-Flower-Bouquet---Handcrafted-Flower-Roses.jpg',
+      sort_order: 6,
+      children: []
+    },
+    {
+      id: 3,
+      name: 'Luxury Misbaha',
+      slug: 'brooches-7281',
+      description: 'A distinguished collection of handcrafted prayer beads and misbaha, made from fine gemstones and premium materials, perfect for daily use and elegant gifting.',
+      image_url: 'https://api.rafal.shop/storage/64/download-%283%29.jpg',
+      sort_order: 18,
+      children: []
+    }
+  ]
+}
+✓ Generating static pages using 5 workers (75/75) in 1599ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+├ ƒ /[locale]
+├ ƒ /[locale]/about
+├ ƒ /[locale]/about-us
+├ ƒ /[locale]/account
+├ ƒ /[locale]/account/addresses
+├ ƒ /[locale]/account/loyalty
+├ ƒ /[locale]/account/orders
+├ ƒ /[locale]/account/orders/[orderNumber]
+├ ƒ /[locale]/account/profile
+├ ƒ /[locale]/account/settings
+├ ƒ /[locale]/account/wishlist
+├ ƒ /[locale]/auth/cart-recovery
+├ ƒ /[locale]/blog
+├ ƒ /[locale]/blog/[slug]
+├ ƒ /[locale]/cart
+├ ƒ /[locale]/categories
+├ ƒ /[locale]/categories/[slug]
+├ ƒ /[locale]/checkout
+├ ƒ /[locale]/checkout/payment-result
+├ ƒ /[locale]/contact
+├ ƒ /[locale]/ds-review
+├   /[locale]/foundation-review
+│ ├ ● /ar/foundation-review
+│ └ ● /en/foundation-review
+├ ƒ /[locale]/login
+├ ƒ /[locale]/login/verify
+├ ƒ /[locale]/offers
+├ ƒ /[locale]/orders/[orderNumber]/confirmation
+├ ƒ /[locale]/orders/[orderNumber]/verify
+├ ƒ /[locale]/privacy
+├ ƒ /[locale]/products
+├ ƒ /[locale]/products/[slug]
+├ ƒ /[locale]/register
+├ ƒ /[locale]/returns
+├ ƒ /[locale]/search
+├ ƒ /[locale]/shipping
+├ ƒ /[locale]/terms
+├ ƒ /[locale]/track-order
+├ ƒ /api/account/addresses
+├ ƒ /api/cart
+├ ƒ /api/cart/recommendations
+├ ƒ /api/checkout/orders/[orderNumber]/verify
+├ ƒ /api/checkout/place
+├ ƒ /api/checkout/quote
+├ ƒ /api/contact-messages
+├ ƒ /api/offers
+├ ƒ /api/orders/[orderNumber]/cancel
+├ ƒ /api/orders/[orderNumber]/return-request
+├ ƒ /api/orders/lookup
+├ ƒ /api/products
+├ ƒ /api/products/[productId]/reviews
+├ ƒ /api/products/quick-add
+├ ƒ /api/wishlist
+└ ƒ /api/wishlist/count
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+
+
+npm.cmd run build (existing RAFAL_MAP_E2E=1 production fixture profile)
+PASS / exit 0
+
+> rafal-website@0.1.0 build
+> next build
+
+▲ Next.js 16.3.3 (Turbopack)
+- Environments: .env
+✓ Running next.config.ts took 62ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.9s
+  Running TypeScript ...
+  Finished TypeScript in 6.4s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/75) ...
+  Generating static pages using 5 workers (18/75) 
+  Generating static pages using 5 workers (37/75) 
+  Generating static pages using 5 workers (56/75) 
+✓ Generating static pages using 5 workers (75/75) in 3.9s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+├ ƒ /[locale]
+├ ƒ /[locale]/about
+├ ƒ /[locale]/about-us
+├ ƒ /[locale]/account
+├ ƒ /[locale]/account/addresses
+├ ƒ /[locale]/account/loyalty
+├ ƒ /[locale]/account/orders
+├ ƒ /[locale]/account/orders/[orderNumber]
+├ ƒ /[locale]/account/profile
+├ ƒ /[locale]/account/settings
+├ ƒ /[locale]/account/wishlist
+├ ƒ /[locale]/auth/cart-recovery
+├ ƒ /[locale]/blog
+├ ƒ /[locale]/blog/[slug]
+├ ƒ /[locale]/cart
+├ ƒ /[locale]/categories
+├ ƒ /[locale]/categories/[slug]
+├ ƒ /[locale]/checkout
+├ ƒ /[locale]/checkout/payment-result
+├ ƒ /[locale]/contact
+├ ƒ /[locale]/ds-review
+├   /[locale]/foundation-review
+│ ├ ● /ar/foundation-review
+│ └ ● /en/foundation-review
+├ ƒ /[locale]/login
+├ ƒ /[locale]/login/verify
+├ ƒ /[locale]/offers
+├ ƒ /[locale]/orders/[orderNumber]/confirmation
+├ ƒ /[locale]/orders/[orderNumber]/verify
+├ ƒ /[locale]/privacy
+├ ƒ /[locale]/products
+├ ƒ /[locale]/products/[slug]
+├ ƒ /[locale]/register
+├ ƒ /[locale]/returns
+├ ƒ /[locale]/search
+├ ƒ /[locale]/shipping
+├ ƒ /[locale]/terms
+├ ƒ /[locale]/track-order
+├ ƒ /api/account/addresses
+├ ƒ /api/cart
+├ ƒ /api/cart/recommendations
+├ ƒ /api/checkout/orders/[orderNumber]/verify
+├ ƒ /api/checkout/place
+├ ƒ /api/checkout/quote
+├ ƒ /api/contact-messages
+├ ƒ /api/offers
+├ ƒ /api/orders/[orderNumber]/cancel
+├ ƒ /api/orders/[orderNumber]/return-request
+├ ƒ /api/orders/lookup
+├ ƒ /api/products
+├ ƒ /api/products/[productId]/reviews
+├ ƒ /api/products/quick-add
+├ ƒ /api/wishlist
+└ ƒ /api/wishlist/count
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+
+
+node <QA_TEMP>/run-e2e.cjs production
+PASS / exit 0; 47 passed, 2 expected skips
+{
+  "mode": "production",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "effectiveExitCode": 0,
+  "durationSeconds": 111.606
+}
+
+node <QA_TEMP>/smoke.cjs
+PASS / exit 0; 48 cases
+{
+  "cases": 48,
+  "fixtureRequests": {
+    "totalRequests": 113,
+    "nonReadRequests": [
+      {
+        "method": "POST",
+        "path": "/locations/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/locations/resolve"
+      },
+      {
+        "method": "POST",
+        "path": "/locations/resolve"
+      }
+    ]
+  },
+  "processTeardown": {
+    "checked": [
+      111104,
+      37332,
+      36836,
+      109504,
+      30608,
+      74836,
+      82088,
+      6444
+    ],
+    "remaining": []
+  }
+}

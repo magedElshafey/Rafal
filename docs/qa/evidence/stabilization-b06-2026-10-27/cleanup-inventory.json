@@ -1,0 +1,992 @@
+{
+  "scope": "Responsive QA artifacts only; production source, functional tests, configuration, payment/architecture docs and unrelated temp directories excluded.",
+  "rows": [
+    {
+      "path": "docs/qa/batch-03-pdp-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 6415
+    },
+    {
+      "path": "docs/qa/batch-04-catalogue-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 7216
+    },
+    {
+      "path": "docs/qa/batch-05-storefront-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 7953
+    },
+    {
+      "path": "docs/qa/evidence/catalogue-b04-2026-10-27/categories-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 94191
+    },
+    {
+      "path": "docs/qa/evidence/catalogue-b04-2026-10-27/categories-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 98307
+    },
+    {
+      "path": "docs/qa/evidence/catalogue-b04-2026-10-27/listing-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 293244
+    },
+    {
+      "path": "docs/qa/evidence/catalogue-b04-2026-10-27/listing-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 281132
+    },
+    {
+      "path": "docs/qa/evidence/catalogue-b04-2026-10-27/results.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 35954
+    },
+    {
+      "path": "docs/qa/evidence/pdp-b03-2026-10-27/option-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 27148
+    },
+    {
+      "path": "docs/qa/evidence/pdp-b03-2026-10-27/option-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 27278
+    },
+    {
+      "path": "docs/qa/evidence/pdp-b03-2026-10-27/purchase-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 28771
+    },
+    {
+      "path": "docs/qa/evidence/pdp-b03-2026-10-27/purchase-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 30213
+    },
+    {
+      "path": "docs/qa/evidence/pdp-b03-2026-10-27/results.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 19825
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/ar-auth-header-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 57783
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/ar-blog-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 828007
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/ar-gallery-320.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 176729
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/ar-generic-404-390.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 4576
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/ar-payment-confirmed-320.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 59563
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/browser-matrix.csv",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 71069
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/browser-measurements.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 714654
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4718
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/dev-e2e-result.json",
+      "classification": "KEEP",
+      "reason": "Evidence for an unresolved delivery or runner issue.",
+      "files": 1,
+      "bytes": 127
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/dev-e2e.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 349447
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-auth-header-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 59577
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-blog-390.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 1025249
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-category-menu-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 182740
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-map-320.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 31586
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-payment-failed-390.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 65917
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/en-products-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 266052
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/fixture-build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4718
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/hydration-evidence.json",
+      "classification": "KEEP",
+      "reason": "Evidence for an unresolved delivery or runner issue.",
+      "files": 1,
+      "bytes": 19097
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/lint.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 86
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/node-tests.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 117128
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/process-probe.json",
+      "classification": "KEEP",
+      "reason": "Evidence for an unresolved delivery or runner issue.",
+      "files": 1,
+      "bytes": 541
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/production-e2e-result.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 134
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/production-e2e.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 25059
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/public-data.json",
+      "classification": "KEEP",
+      "reason": "Evidence for an unresolved delivery or runner issue.",
+      "files": 1,
+      "bytes": 798
+    },
+    {
+      "path": "docs/qa/evidence/phase-2a-2026-10-27/typecheck.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 0
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-ar-category-mobile-390.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 23883
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-en-category-desktop-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 51907
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-fixture-ar-auth-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 48889
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-fixture-en-auth-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 50553
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-measurements.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 274510
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/after-public-ar-anon-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 48548
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/before-fixture-ar-auth-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 49113
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/before-fixture-en-auth-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 50929
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/before-measurements.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 274966
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/before-public-ar-anon-768.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 49101
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/browser-matrix.csv",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 26791
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4722
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/extra-en-recheck.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 9443
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/extra-initial.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 550
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/extra.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 9956
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/fixture-build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4718
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/home-fixture-probe.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 1940
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/home-initial-blocked.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 2672
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/home-public-measurements.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 56115
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/interactions-initial.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 76357
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/interactions-mobile.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 29917
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/lint.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 86
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/manifest.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 1313
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/node-tests.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 117106
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/production-e2e-result.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 134
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/production-e2e.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 25740
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/resize.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 6397
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/review.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 11076
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/extra-en.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 5285
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/extra.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 5014
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/focus-probe.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 764
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/header.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 3921
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/home-fixture-probe.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 1227
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/home-public.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 3829
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/interactions.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 6040
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/pid-probe.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 206
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/resize.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 2774
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/review.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 2310
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/run-e2e.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 1851
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/start-app.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 527
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/start-fixture.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 583
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-01-2026-10-27/typecheck.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 0
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/after-ar-focus-restored.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 37177
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/after-en-focus-restored.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 37981
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/after-traces.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 373490
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/before-ar-focus-loss.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 37064
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/before-en-focus-loss.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 37838
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/before-traces.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 352073
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/browser-results.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 304552
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/browser-summary.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 50
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4720
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/event-sequence.csv",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 2971
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/event-sequence.json",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 14171
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/fixture-build.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4718
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/lint.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 86
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/manifest.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 573
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/node-tests.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 117106
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/production-e2e-result.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 134
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/production-e2e.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 26289
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/pid-probe.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 206
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/regression.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 8002
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/run-e2e.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 1851
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/start-app.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 527
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/trace.cjs.txt",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 4347
+    },
+    {
+      "path": "docs/qa/evidence/phase-2b-batch-02-2026-10-27/typecheck.log",
+      "classification": "ARCHIVE",
+      "reason": "Historical raw diagnostics; preserve linked paths when archiving.",
+      "files": 1,
+      "bytes": 0
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/blog-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 467531
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/blog-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 454076
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/cart-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 6075
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/cart-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 5990
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/orders-after.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 28118
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/orders-before.png",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 27224
+    },
+    {
+      "path": "docs/qa/evidence/storefront-b05-2026-10-27/results.json",
+      "classification": "KEEP",
+      "reason": "Selected visual evidence or compact outcome; retain report links.",
+      "files": 1,
+      "bytes": 67625
+    },
+    {
+      "path": "docs/qa/phase-2a-baseline-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 16339
+    },
+    {
+      "path": "docs/qa/phase-2b-batch-01-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 15250
+    },
+    {
+      "path": "docs/qa/phase-2b-batch-02-2026-10-27.md",
+      "classification": "KEEP",
+      "reason": "Batch decisions, known risks, and acceptance history; no redundant report established.",
+      "files": 1,
+      "bytes": 12338
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-responsive-audit-20261027 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 7,
+      "bytes": 15131
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-responsive-audit-20261027 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 195,
+      "bytes": 51765729
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-responsive-audit-20261027 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 16,
+      "bytes": 2466113
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2a-20261027 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 15,
+      "bytes": 30317
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2a-20261027 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 276,
+      "bytes": 37216824
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2a-20261027 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 36,
+      "bytes": 4385655
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b01-20261027 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 16,
+      "bytes": 41098
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b01-20261027 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 187,
+      "bytes": 13330073
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b01-20261027 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 25,
+      "bytes": 956056
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b02-20261027 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 8,
+      "bytes": 18007
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b02-20261027 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 54,
+      "bytes": 2822256
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-phase2b-b02-20261027 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 14,
+      "bytes": 1206588
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-pdp-b03 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 12,
+      "bytes": 28677
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-pdp-b03 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 26,
+      "bytes": 3152612
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-pdp-b03 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 22,
+      "bytes": 426480
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-listing-b04 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 7,
+      "bytes": 21422
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-listing-b04 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 16,
+      "bytes": 3314034
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-listing-b04 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 12,
+      "bytes": 551554
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-storefront-b05 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 13,
+      "bytes": 38632
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-storefront-b05 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 37,
+      "bytes": 3599014
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-storefront-b05 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 21,
+      "bytes": 350444
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-stabilization-b06 [scripts]",
+      "classification": "ARCHIVE",
+      "reason": "Unique reproduction scripts; no application/test source included.",
+      "files": 8,
+      "bytes": 15953
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-stabilization-b06 [screenshots]",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Temporary capture sets; only after selected before/after evidence is retained.",
+      "files": 35,
+      "bytes": 2459534
+    },
+    {
+      "path": "C:/Users/geexar/AppData/Local/Temp/rafal-stabilization-b06 [other outputs]",
+      "classification": "ARCHIVE",
+      "reason": "Logs, traces, measurements and PID records; deduplicate only after durable gate evidence is verified.",
+      "files": 18,
+      "bytes": 324325
+    },
+    {
+      "path": ".next-map-e2e/",
+      "classification": "DELETE CANDIDATE",
+      "reason": "Regenerable fixture build only; after the approved cleanup and all owned fixture servers stop.",
+      "files": null,
+      "bytes": null
+    },
+    {
+      "path": "test-results/",
+      "classification": "KEEP",
+      "reason": "Pre-existing ignored payment-test captures; responsive-only provenance not established. Excluded from cleanup candidates.",
+      "files": 13,
+      "bytes": 780136
+    }
+  ],
+  "duplicateScriptGroups": [
+    [
+      "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/pid-probe.cjs.txt",
+      "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/pid-probe.cjs.txt"
+    ],
+    [
+      "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/run-e2e.cjs.txt",
+      "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/run-e2e.cjs.txt"
+    ],
+    [
+      "docs/qa/evidence/phase-2b-batch-01-2026-10-27/scripts/start-app.cjs.txt",
+      "docs/qa/evidence/phase-2b-batch-02-2026-10-27/scripts/start-app.cjs.txt"
+    ]
+  ]
+}

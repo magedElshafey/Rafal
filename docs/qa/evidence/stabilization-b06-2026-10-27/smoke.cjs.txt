@@ -1,0 +1,92 @@
+const fs = require('node:fs');
+const { chromium, expect } = require('D:/megz/Rafal/node_modules/@playwright/test');
+const rows = [], sizes = [[320,740],[768,1024],[1440,900]];
+const routes = [
+  {name:'home', path:''}, {name:'categories', path:'/categories'},
+  {name:'listing', path:'/products'}, {name:'pdp', path:'/products/aatr-msk-abyd-2'},
+  {name:'cart', path:'/cart', fixture:true}, {name:'checkout', path:'/checkout', fixture:true},
+  {name:'payment', path:'/checkout/payment-result?status=success&order_number=RF-10103', fixture:true, auth:true},
+];
+function geometry(root) {
+  const outside = [...root.querySelectorAll('*')].filter(e => {
+    if (!e.getClientRects().length || getComputedStyle(e).visibility === 'hidden' || e.classList.contains('sr-only') || e.closest('[aria-hidden=true]')) return false;
+    if (e.closest('[aria-roledescription=carousel]')) return false;
+    let parent = e.parentElement;
+    while(parent && parent !== root) { if(['auto','scroll'].includes(getComputedStyle(parent).overflowX)) return false; parent = parent.parentElement; }
+    const r=e.getBoundingClientRect(); return r.width>0 && (r.left < -1 || r.right > innerWidth+1);
+  }).map(e=>({tag:e.tagName,text:e.textContent.slice(0,70),class:e.className}));
+  return {dir:document.documentElement.dir,documentOverflow:document.documentElement.scrollWidth>innerWidth, outside,
+    mainZ:getComputedStyle(root).zIndex,isolation:getComputedStyle(root).isolation,
+    cartMarkers:root.querySelectorAll('[data-cart-page]').length,pdpMarkers:root.querySelectorAll('[data-product-page]').length};
+}
+function hitButton(e) {
+  const r=e.getBoundingClientRect();
+  return {rect:r.toJSON(),points:[r.top+4,r.top+r.height/2,r.bottom-4].map(y=>{const hit=document.elementFromPoint(r.left+r.width/2,y);return Boolean(hit && (hit===e||e.contains(hit)));})};
+}
+(async()=>{
+  const browser=await chromium.launch();
+  try { await Promise.all(['ar','en'].map(async locale=>{
+    const jobs=routes.flatMap(route=>sizes.map(([width,height])=>({...route,width,height})));
+    jobs.push({...routes[4],width:767,height:1024,boundary:true});
+    for(const [width,height] of sizes.slice(0,2)) jobs.push({name:'empty-cart',path:'/cart',width,height});
+    for(const job of jobs) {
+      const base=job.fixture?'http://127.0.0.1:3100':'http://127.0.0.1:3200';
+      const row={name:job.name,locale,viewport:{width:job.width,height:job.height},url:base+'/'+locale+job.path,fixture:Boolean(job.fixture),errors:[],warnings:[],blockedWrites:[]};
+      const context=await browser.newContext({viewport:row.viewport,reducedMotion:'reduce'});
+      await context.addCookies([{name:'rafal_guest_city_id',value:'1',domain:'127.0.0.1',path:'/'},
+        ...(job.fixture?[{name:'rafal_cart_token',value:'synthetic-cart',domain:'127.0.0.1',path:'/'}]:[]),
+        ...(job.auth?[{name:'rafal_auth_access_token',value:'synthetic-auth',domain:'127.0.0.1',path:'/',httpOnly:true}]:[])]);
+      await context.route('**/*',r=>{
+        if(['GET','HEAD','OPTIONS'].includes(r.request().method()))return r.continue();
+        row.blockedWrites.push({method:r.request().method(),url:r.request().url()});return r.abort();
+      });
+      const page=await context.newPage();page.setDefaultTimeout(15000);
+      page.on('pageerror',e=>row.errors.push({type:'pageerror',text:e.message}));
+      page.on('console',m=>{if(m.type()==='error')row.errors.push({type:'console',text:m.text(),url:m.location().url});if(m.type()==='warning')row.warnings.push(m.text());});
+      try {
+        const response=await page.goto(row.url);row.http=response.status();expect(row.http).toBe(200);
+        await page.locator('main').waitFor();
+        if(job.name==='home')await page.locator('.product-card h3').first().waitFor();
+        else await page.locator('main h1').first().waitFor();
+        if(job.name==='cart')await page.locator('[data-cart-page] article').first().waitFor();
+        if(job.name==='pdp')await page.locator('[data-product-page] output[aria-live="polite"]').waitFor();
+        if(job.name==='payment')await expect(page.locator('[data-payment-result]')).toHaveAttribute('data-payment-result','confirmed');
+        await page.evaluate(()=>document.fonts.ready);
+        if(job.name==='checkout') {
+          const summary=page.locator('[aria-labelledby=checkout-summary-title] summary');
+          await summary.click();await expect(page.locator('[aria-labelledby=checkout-summary-title] details')).toHaveAttribute('open','');
+          row.interaction='Opened order summary';
+        }
+        row.geometry=await page.locator('main').evaluate(geometry);
+        expect(row.geometry.documentOverflow).toBe(false);expect(row.geometry.outside).toEqual([]);
+        expect(row.geometry.dir).toBe(locale==='ar'?'rtl':'ltr');expect(row.geometry.isolation).toBe('isolate');
+        expect(row.geometry.mainZ).toBe(job.name==='pdp'||job.name==='cart'&&job.width<768?'10':'auto');
+        expect(row.geometry.cartMarkers).toBe(job.name==='cart'?1:0);expect(row.geometry.pdpMarkers).toBe(job.name==='pdp'?1:0);
+        if(job.width===320){await page.locator('main').scrollIntoViewIfNeeded();await page.screenshot({path:__dirname+`/smoke-${locale}-${job.name}-320.png`});}
+        if(job.name==='cart' && job.width<768) {
+          await page.locator('footer').scrollIntoViewIfNeeded();
+          row.purchaseHit=await page.locator('[data-cart-page] div.fixed button').evaluate(hitButton);
+          expect(row.purchaseHit.points.every(Boolean)).toBe(true);
+        }
+        if(job.name==='pdp') {
+          const controls=page.locator('output[aria-live="polite"]');
+          await controls.evaluate(e=>e.parentElement.parentElement.parentElement.scrollIntoView({block:'center'}));
+          await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+          await page.locator('footer').scrollIntoViewIfNeeded();
+          const bar=page.locator('aside[aria-hidden="false"]:visible');
+          await expect(bar).toHaveCount(1);
+          row.purchaseHit=await bar.locator('button').evaluate(hitButton);expect(row.purchaseHit.points.every(Boolean)).toBe(true);
+        }
+        row.knownErrors=row.errors.filter(e=>e.type==='console'&&(
+          e.url?.includes('/notifications?')&&e.text.includes('404')||
+          job.fixture&&e.url?.includes('/cart/recommendations')&&e.text.includes('503')||
+          job.fixture&&e.url?.includes('/wishlist/count')&&e.text.includes('404')));
+        expect(row.errors.filter(e=>!row.knownErrors.includes(e))).toEqual([]);expect(row.blockedWrites).toEqual([]);
+        row.pass=true;
+      }catch(e){row.pass=false;row.failure=e.message;}
+      rows.push(row);console.log(JSON.stringify({name:row.name,locale,width:job.width,pass:row.pass,errors:row.errors,failure:row.failure}));
+      await context.close();
+    }
+  })); } finally {await browser.close();fs.writeFileSync(__dirname+'/smoke-results.json',JSON.stringify({rows},null,2));}
+  if(rows.some(r=>!r.pass))process.exitCode=1;
+})().catch(e=>{console.error(e);process.exitCode=1;});

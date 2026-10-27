@@ -1,0 +1,588 @@
+2026-10-27T11:42:47.999Z pw:webserver HTTP GET: http://127.0.0.1:3100/en/checkout
+2026-10-27T11:42:48.006Z pw:webserver Error while checking if http://127.0.0.1:3100/en/checkout is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-27T11:42:48.006Z pw:webserver Starting WebServer process node tests/e2e/server.mjs...
+2026-10-27T11:42:48.064Z pw:webserver Process started
+2026-10-27T11:42:48.064Z pw:webserver Waiting for availability...
+2026-10-27T11:42:48.064Z pw:webserver HTTP GET: http://127.0.0.1:3100/en/checkout
+2026-10-27T11:42:48.072Z pw:webserver Error while checking if http://127.0.0.1:3100/en/checkout is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-27T11:42:48.072Z pw:webserver Waiting 100ms
+2026-10-27T11:42:48.184Z pw:webserver HTTP GET: http://127.0.0.1:3100/en/checkout
+2026-10-27T11:42:48.185Z pw:webserver Error while checking if http://127.0.0.1:3100/en/checkout is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-27T11:42:48.185Z pw:webserver Waiting 250ms
+[WebServer] (node:30608) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+2026-10-27T11:42:48.446Z pw:webserver HTTP GET: http://127.0.0.1:3100/en/checkout
+2026-10-27T11:42:48.448Z pw:webserver Error while checking if http://127.0.0.1:3100/en/checkout is available: connect ECONNREFUSED 127.0.0.1:3100
+2026-10-27T11:42:48.448Z pw:webserver Waiting 500ms
+[WebServer] (node:74836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] ▲ Next.js 16.3.3
+[WebServer] - Local:         http://127.0.0.1:3100
+
+[WebServer] - Network:       http://127.0.0.1:3100
+[WebServer] ✓ Ready in 173ms
+
+[WebServer] ✓ Running next.config.ts took 68ms
+
+2026-10-27T11:42:48.951Z pw:webserver HTTP GET: http://127.0.0.1:3100/en/checkout
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+2026-10-27T11:42:49.374Z pw:webserver HTTP Status: 200
+2026-10-27T11:42:49.374Z pw:webserver WebServer available
+
+Running 49 tests using 1 worker
+
+[1/49] tests\e2e\address-map-live.spec.ts:7:5 › live Riyadh: real provider response fills available address fields
+[2/49] tests\e2e\address-map-unavailable.spec.ts:5:5 › missing token: keyboard manual Checkout address still commits with the same payload
+(node:82088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/49] tests\e2e\address-map.spec.ts:61:7 › en: explicit Guest confirmation, protected edits, keyboard, lazy loading and cleanup
+tests\e2e\address-map.spec.ts:61:7 › en: explicit Guest confirmation, protected edits, keyboard, lazy loading and cleanup
+  pw:browser <launching> C:\Users\geexar\AppData\Local\ms-playwright\chromium_headless_shell-1248\chrome-headless-shell-win64\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\geexar\AppData\Local\Temp\playwright_chromiumdev_profile-HpUDk7 --remote-debugging-pipe --no-startup-window +0ms
+
+  pw:browser <launched> pid=6444 +417ms
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[4/49] tests\e2e\address-map.spec.ts:61:7 › ar: explicit Guest confirmation, protected edits, keyboard, lazy loading and cleanup
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[5/49] tests\e2e\address-map.spec.ts:118:5 › Riyadh/Jeddah/Dammam city focus and switching preserve the same map
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[6/49] tests\e2e\address-map.spec.ts:139:5 › desktop dragging only looks up the stopped center; bounds and zoom remain constrained
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[7/49] tests\e2e\address-map.spec.ts:161:5 › Address Book add/edit nested modal, replacement and exact changed-fields payload
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[8/49] tests\e2e\address-map.spec.ts:181:7 › cart gift: confirmation changes only draft fields, never Cart
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[9/49] tests\e2e\address-map.spec.ts:181:7 › checkout gift: confirmation changes only draft fields, never Cart
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[10/49] tests\e2e\address-map.spec.ts:201:5 › authenticated saved selection unchanged by optional one-time picker
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[11/49] tests\e2e\address-map.spec.ts:219:7 › district-only: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[12/49] tests\e2e\address-map.spec.ts:219:7 › street-only: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[13/49] tests\e2e\address-map.spec.ts:219:7 › remote: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[14/49] tests\e2e\address-map.spec.ts:219:7 › outside: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[15/49] tests\e2e\address-map.spec.ts:219:7 › unknown: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[16/49] tests\e2e\address-map.spec.ts:219:7 › conflict: accurate preview, safe confirmation and unchanged City ID
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[17/49] tests\e2e\address-map.spec.ts:237:7 › city ambiguous: preserves city and allows manual map navigation
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[18/49] tests\e2e\address-map.spec.ts:237:7 › city 403: preserves city and allows manual map navigation
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[19/49] tests\e2e\address-map.spec.ts:237:7 › city 429: preserves city and allows manual map navigation
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[20/49] tests\e2e\address-map.spec.ts:250:5 › late city/reverse responses cannot focus or confirm an old candidate
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[21/49] tests\e2e\address-map.spec.ts:273:5 › tile failure and enlarged layout retain keyboard recovery
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[22/49] tests\e2e\address-map.spec.ts:285:5 › preview layout and orientation preserve the candidate under the pin
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[23/49] tests\e2e\address-map.spec.ts:296:5 › mobile touch pan/pinch, reduced motion, error recovery and no overflow
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[24/49] tests\e2e\payment-result.spec.ts:35:9 › ar guest: confirmed payment, refresh, privacy, responsive and keyboard
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[25/49] tests\e2e\payment-result.spec.ts:35:9 › ar authenticated: confirmed payment, refresh, privacy, responsive and keyboard
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[26/49] tests\e2e\payment-result.spec.ts:35:9 › en guest: confirmed payment, refresh, privacy, responsive and keyboard
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[27/49] tests\e2e\payment-result.spec.ts:35:9 › en authenticated: confirmed payment, refresh, privacy, responsive and keyboard
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[28/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-PENDING / success resolves to pending
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[29/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-FAILED / success resolves to failed
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[30/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-FAILED / failed resolves to failed
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[31/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-PENDING / failed resolves to pending
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[32/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-10103 / failed resolves to confirmed
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[33/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-UNKNOWN / success resolves to pending
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[34/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-CONTRADICTORY / success resolves to pending
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[35/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-MISMATCH / success resolves to unavailable
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] [orders:guest-lookup] lookup failed { category: 'identity-mismatch', status: undefined }
+
+[36/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-ERROR / success resolves to unavailable
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] [orders:guest-lookup] lookup failed { category: 'backend', status: 503 }
+
+[37/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-FORBIDDEN / success resolves to unavailable
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[38/49] tests\e2e\payment-result.spec.ts:79:7 › guest RF-MALFORMED / success resolves to unavailable
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] [orders:guest-lookup] lookup failed { category: 'contract-or-network', status: undefined }
+
+[39/49] tests\e2e\payment-result.spec.ts:89:5 › invalid or missing query values never trigger a lookup
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[40/49] tests\e2e\payment-result.spec.ts:100:7 › guest missing identity has safe recovery without a lookup
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[41/49] tests\e2e\payment-result.spec.ts:100:7 › guest mismatch identity has safe recovery without a lookup
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[42/49] tests\e2e\payment-result.spec.ts:100:7 › guest blocked identity has safe recovery without a lookup
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[43/49] tests\e2e\payment-result.spec.ts:112:7 › guest: stale read updates only on explicit recheck; back remains read-only
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[44/49] tests\e2e\payment-result.spec.ts:112:7 › auth: stale read updates only on explicit recheck; back remains read-only
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[45/49] tests\e2e\payment-result.spec.ts:127:7 › auth RF-MISMATCH: unavailable without exposing order details
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[46/49] tests\e2e\payment-result.spec.ts:127:7 › auth RF-FORBIDDEN: unavailable without exposing order details
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[47/49] tests\e2e\payment-result.spec.ts:127:7 › auth RF-ERROR: unavailable without exposing order details
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[48/49] tests\e2e\payment-result.spec.ts:127:7 › auth RF-MALFORMED: unavailable without exposing order details
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+[49/49] tests\e2e\payment-result.spec.ts:136:5 › slow/network-failed lookup has accessible progress, blocks duplicate reads and never retains success
+[WebServer] categories response {
+[WebServer]   success: true,
+[WebServer]   message: 'Test',
+[WebServer]   data: [],
+[WebServer]   meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 }
+[WebServer] }
+
+  pw:browser [pid=6444] <gracefully close start> +2m
+
+  pw:browser [pid=6444] <process did exit: exitCode=0, signal=null> +155ms
+
+  pw:browser [pid=6444] starting temporary directories cleanup +0ms
+
+  pw:browser [pid=6444] finished temporary directories cleanup +39ms
+
+
+  pw:browser [pid=6444] <gracefully close end> +1ms
+2026-10-27T11:44:37.702Z pw:webserver Terminating the WebServer
+2026-10-27T11:44:38.782Z pw:webserver Terminated the WebServer
+  2 skipped
+  47 passed (1.8m)
