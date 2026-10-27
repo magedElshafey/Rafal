@@ -77,13 +77,14 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
         }
         if (backendFixture) {
           const parsed = load("src/features/checkout/api/parse-checkout-place-dto").parseCheckoutPlaceResponse(backendFixture);
-          const mapped = load("src/features/checkout/api/checkout-place-mapper").mapCheckoutPlaceResult(parsed);
+          const mapped = load("src/features/checkout/api/checkout-place-mapper").mapCheckoutPlaceResult(parsed, undefined, request);
           return load("src/features/checkout/api/parse-checkout-place-result").parseCheckoutPlaceResult(JSON.parse(JSON.stringify(mapped)));
         }
         return { kind: resultKind, orderNumber: "synthetic-order" };
       },
     }) },
     "@/features/checkout/utils/checkout-handoff": {
+      storeCheckoutPaymentHandoff() { effects.handoffs.push("hosted"); return stored; },
       storeCheckoutVerificationHandoff(result, phone) { effects.handoffs.push("otp"); verificationContexts.push({ result, phone }); return stored; },
       storeCheckoutConfirmationHandoff() { effects.handoffs.push("confirmation"); return stored; },
     },
@@ -104,6 +105,10 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
     } }).outputText;
     vm.runInNewContext(code, {
       module: loaded, exports: loaded.exports, URL,
+      window: { location: { assign() {
+        if (navigationThrows) throw new Error("Synthetic navigation failure");
+        effects.navigation.push("hosted");
+      } } },
       require: (name) => stubs[name] ?? (name.startsWith("@/") ? load(`src/${name.slice(2)}`) : require(name)),
     }, { filename });
     return loaded.exports;
@@ -142,6 +147,52 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
 }
 
 const ready = (codes) => Promise.resolve({ kind: "ready", methods: codes.map((code) => ({ code, label: code, icon: "card" })) });
+
+for (const method of ["card", "apple_pay", "tap"]) {
+  test(`actual Checkout handler: ${method} hosted response keeps identity and cart, navigates once`, async () => {
+    const backendFixture = JSON.parse(read("tests/fixtures/checkout-place-hosted.json"));
+    backendFixture.data.payment.method = method;
+    const h = harness({ discovery: ready([method]), backendFixture });
+    h.payment.props.onSelect(method);
+    const button = h.snapshot().button;
+    assert.equal(button.props.disabled, false);
+    button.props.onClick(); button.props.onClick(); await tick();
+    assert.equal(h.calls.length, 1);
+    assert.equal(h.serialize(h.calls[0]).payment_method, method);
+    assert.deepEqual(h.effects.navigation, ["hosted"]);
+    assert.deepEqual(h.effects.handoffs, ["hosted"]);
+    assert.equal(h.effects.cleanup, 0);
+    assert.ok(renderToStaticMarkup(h.snapshot().actions).includes(backendFixture.data.order_number));
+    h.snapshot().button.props.onClick(); await tick();
+    assert.equal(h.calls.length, 1);
+  });
+}
+
+for (const options of [{ stored: false }, { navigationThrows: true }]) {
+  test(`hosted Place storage/navigation failure keeps created identity and locks replay: ${JSON.stringify(options)}`, async () => {
+    const backendFixture = JSON.parse(read("tests/fixtures/checkout-place-hosted.json"));
+    const h = harness({ discovery: ready(["card"]), backendFixture, ...options });
+    h.button.props.onClick(); await tick();
+    assert.equal(h.snapshot().button.props.disabled, true);
+    assert.ok(renderToStaticMarkup(h.snapshot().actions).includes(backendFixture.data.order_number));
+    assert.equal(h.effects.cleanup, 0);
+    h.snapshot().button.props.onClick(); h.button.props.onClick(); await tick();
+    assert.equal(h.calls.length, 1);
+  });
+}
+
+test("an additional selection is invalidated by a new discovery Promise; Card stays independent", () => {
+  const h = harness({ discovery: ready(["card", "tap"]) });
+  h.payment.props.onSelect("tap");
+  assert.equal(h.snapshot().button.props.disabled, false);
+  h.refreshDiscovery(ready(["card"]));
+  assert.equal(h.snapshot().button.props.disabled, true);
+  // An old streamed child's callback cannot authorize the refreshed selection.
+  h.payment.props.onSelect("tap");
+  assert.equal(h.snapshot().button.props.disabled, true);
+  h.payment.props.onSelect("card");
+  assert.equal(h.snapshot().button.props.disabled, false);
+});
 
 for (const locale of ["ar", "en"]) {
   test(`${locale}: runtime pending Card fixture navigates Guest to OTP once and preserves the submission lock`, async () => {
@@ -191,12 +242,12 @@ for (const [name, discovery] of cases) {
     const h = harness({ discovery: discovery() });
     assert.equal(h.button.props.disabled, false);
     assert.equal(h.button.props["aria-describedby"], "checkout-submitted-payment");
-    assert.ok(renderToStaticMarkup(h.actions).includes(h.copy.payment.submissionNotice));
+    assert.ok(renderToStaticMarkup(h.actions).includes(h.copy.payment.submissionNotice.replace("{method}", h.copy.payment.methods.card.label)));
     h.button.props.onClick();
     await tick();
     assert.equal(h.calls.length, 1);
     assert.equal(h.serialize(h.calls[0]).payment_method, "card");
-    assert.equal("paymentMethod" in h.calls[0], false);
+    assert.equal(h.calls[0].paymentMethod, "card");
   });
 
   test(`actual Place guard: mismatched Tap selection cannot submit with ${name}`, async () => {
@@ -213,7 +264,7 @@ for (const locale of ["ar", "en"]) {
   test(`${locale} identifies the submitted method even on discovery failure and explains a blocked selection`, async () => {
     const h = harness({ locale, discovery: Promise.resolve({ kind: "unavailable" }), selected: "apple_pay" });
     const html = renderToStaticMarkup(h.actions);
-    assert.ok(html.includes(h.copy.payment.submissionNotice));
+    assert.ok(html.includes(h.copy.payment.submissionNotice.replace("{method}", h.copy.payment.methods.apple_pay.label)));
     assert.ok(html.includes(h.copy.payment.selectionUnavailable));
     assert.match(html, /role="alert"/);
     h.button.props.onClick(); await tick();
@@ -222,7 +273,7 @@ for (const locale of ["ar", "en"]) {
 }
 
 test("normal UI callback cannot change legacy selection to an unsupported method", () => {
-  const h = harness({ discovery: ready(["card", "tap"]) });
+  const h = harness({ discovery: ready(["card", "tap"]), guest: true });
   h.payment.props.onSelect("tap");
   assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "card");
 });

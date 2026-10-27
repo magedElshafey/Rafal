@@ -136,7 +136,7 @@ export async function placeCheckout(
   }
   diagnostics?.stage("response-parsing");
   const response = parseCheckoutPlaceResponse(payload, diagnostics?.orderParsed);
-  return mapCheckoutPlaceResult(response, diagnostics);
+  return mapCheckoutPlaceResult(response, diagnostics, input);
 }
 
 export async function verifyCheckoutOrder(

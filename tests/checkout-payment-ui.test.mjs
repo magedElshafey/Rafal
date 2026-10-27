@@ -56,8 +56,8 @@ const render = (discovery, locale = "en", selectedCode = "card") => renderToStat
 test("known discovered methods retain backend order; untrusted labels/icons and unknown codes are not rendered", () => {
   const html = render({ kind: "ready", methods });
   assert.ok(html.indexOf('value="tap"') < html.indexOf('value="card"'));
-  assert.ok(html.indexOf('value="card"') < html.indexOf('value="bank_transfer"'));
-  assert.ok(html.indexOf('value="bank_transfer"') < html.indexOf('value="apple_pay"'));
+  assert.ok(html.indexOf('value="card"') < html.indexOf('value="apple_pay"'));
+  assert.equal(html.includes('value="bank_transfer"'), false);
   assert.equal(html.includes('value="future"'), false);
   assert.equal(html.includes("untrusted"), false);
 });
@@ -67,11 +67,12 @@ for (const locale of ["ar", "en"]) {
     const html = render({ kind: "ready", methods }, locale);
     assert.ok(html.includes(copy(locale).title));
     assert.ok(html.includes(copy(locale).notice));
-    for (const method of Object.values(copy(locale).methods)) assert.ok(html.includes(method.label));
+    for (const code of ["card", "apple_pay", "tap"]) assert.ok(html.includes(copy(locale).methods[code].label));
+    assert.equal(html.includes(copy(locale).methods.bank_transfer.label), false);
     assert.match(html, /<fieldset aria-describedby=/);
     assert.match(html, /<legend class="sr-only">/);
     const radios = html.match(/<input[^>]+>/g);
-    assert.equal(radios.length, 4);
+    assert.equal(radios.length, 3);
     assert.equal(new Set(radios.map((input) => input.match(/name="([^"]+)"/)[1])).size, 1);
     for (const radio of radios) {
       assert.match(radio, /type="radio"/);
@@ -163,17 +164,18 @@ test("real React Suspense streams unrelated checkout content and loading before 
   assert.ok(html.includes(copy("en").unavailable));
 });
 
-test("legacy submission checks selection consistency without adding payment to the request", () => {
+test("submission checks selection consistency and accepts only implemented identity-specific methods", () => {
   const page = source("src/features/checkout/components/checkout-page.tsx");
   const place = page.slice(page.indexOf("const placeRequest:"), page.indexOf("  return (", page.indexOf("const placeRequest:")));
-  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode\)/);
+  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode, isAuthenticated, selectedPaymentDiscovery === paymentDiscovery\)/);
   assert.match(place, /!cityTransitionLocked &&\s*paymentReady &&/);
-  assert.match(page, /if \(canSelectCheckoutPayment\(code\)\) setSelectedPaymentCode\(code\)/);
+  assert.match(page, /if \(canSelectCheckoutPayment\(code, isAuthenticated, true\)\)/);
   const { serializeCheckoutPlaceRequest } = h.load("src/features/checkout/api/checkout-place-serializer");
   const { parseCheckoutPlaceRequest } = h.load("src/features/checkout/server/parse-checkout-place-request");
   const request = { destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" } };
   assert.equal(serializeCheckoutPlaceRequest(request).payment_method, "card");
-  assert.equal(parseCheckoutPlaceRequest({ ...request, paymentMethod: "tap" }), null);
+  assert.equal(parseCheckoutPlaceRequest({ ...request, paymentMethod: "tap" }).paymentMethod, "tap");
+  assert.equal(parseCheckoutPlaceRequest({ ...request, paymentMethod: "bank_transfer" }), null);
   const route = source("src/app/[locale]/(storefront)/checkout/page.tsx");
   assert.match(route, /const paymentDiscovery = readCurrentCheckoutPaymentMethods\(locale\)/);
   assert.doesNotMatch(route, /await readCurrentCheckoutPaymentMethods/);

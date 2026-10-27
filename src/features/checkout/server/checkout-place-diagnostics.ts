@@ -44,7 +44,7 @@ function safePaymentDecision(facts: CheckoutPaymentDecisionFacts) {
     requiresVerification: facts.requiresVerification === null || facts.requiresVerification === undefined
       ? "missing" : booleanState(facts.requiresVerification),
     outcomeKind: allowed(facts.outcomeKind, ["paid", "verification-required", "hosted-payment-pending", "unresolved"]),
-    decisionAction: allowed(facts.decisionAction, ["confirm-paid", "verify-otp", "hold"]),
+    decisionAction: allowed(facts.decisionAction, ["confirm-paid", "verify-otp", "hosted-payment", "hold"]),
     legacyConfirmation: booleanState(facts.legacyConfirmation),
   };
 }

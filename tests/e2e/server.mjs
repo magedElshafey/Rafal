@@ -43,7 +43,19 @@ const backend = createServer(async (req, res) => {
   // Explicit local-only opt-in. These responses exercise existing frontend branches;
   // they do not establish any new Laravel method or authenticated Place contract.
   if (paymentFlows && req.method === "POST") {
-    if (url.pathname === "/checkout/place" && fields?.payment_method === "card") {
+    if (url.pathname === "/checkout/place" && ["card", "apple_pay", "tap"].includes(fields?.payment_method)) {
+      if (req.headers.authorization?.startsWith("Bearer synthetic-auth-hosted")) {
+        const data = paymentFixture("checkout-place-hosted");
+        data.data.order_number = "RF-E2E-HOSTED";
+        data.data.payment.method = fields.payment_method;
+        const variant = req.headers.authorization;
+        if (variant.endsWith("unsafe")) data.meta.payment.payment_url = "https://unsafe.example.invalid/pay";
+        if (variant.endsWith("expired")) data.meta.payment.expires_at = "2000-01-01T00:00:00Z";
+        if (variant.endsWith("missing")) delete data.meta.payment.payment_url;
+        if (variant.endsWith("mismatch")) data.data.payment.method = "apple_pay";
+        return send(data, 201);
+      }
+      if (fields.payment_method !== "card") return send({}, 403);
       const authenticated = req.headers.authorization === "Bearer synthetic-auth";
       if (!authenticated && !/^synthetic-payment-(false|true|missing|empty|failed)$/.test(req.headers["x-cart-token"] ?? "")) return send({}, 403);
       const data = paymentFixture(authenticated ? "checkout-payment-paid" : "checkout-payment-otp-card");
@@ -102,12 +114,16 @@ const backend = createServer(async (req, res) => {
     return ok({ ...cart, token: req.headers["x-cart-token"] ?? "synthetic-cart", gift: gift ? { ...cart.gift, is_gift: true, recipient: { name: "Recipient", phone: "966501234567", city: { id: 1, name: "Riyadh" }, district: "", street_details: "" } } : cart.gift });
   }
   if (url.pathname === "/checkout/payment-methods") {
+    const auth = req.headers.authorization ?? "";
+    if (auth.endsWith("hosted-failed")) return send({ success: false }, 503);
+    if (auth.endsWith("hosted-cardonly")) return ok({ card: { label: "Card", icon: "card" } });
     const token = req.headers["x-cart-token"];
     if (paymentFlows && token === "synthetic-payment-failed") return send({ success: false }, 503);
     if (paymentFlows && token === "synthetic-payment-empty") return ok({});
     const methods = { apple_pay: { label: "Apple Pay", icon: "apple" }, bank_transfer: { label: "Bank Transfer", icon: "bank" } };
     if (paymentFlows && token === "synthetic-payment-missing") return ok(methods);
-    return ok({ card: { label: "Credit Card / Mada", icon: "card" }, ...methods });
+    return ok({ card: { label: "Credit Card / Mada", icon: "card" }, ...methods,
+      ...(auth.startsWith("Bearer synthetic-auth-hosted") ? { tap: { label: "Tap", icon: "card" } } : {}) });
   }
   // Outside the explicit payment-flow opt-in, mutations remain disabled.
   if (url.pathname === "/checkout/quote") return send({ success: false, message: "Fixture quote unavailable" }, 422);

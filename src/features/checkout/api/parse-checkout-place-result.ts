@@ -1,6 +1,7 @@
 import type { CheckoutPlaceResult } from "@/features/checkout/types/checkout.types";
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
+import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-hosted-payment";
 
 const { parseRecord, parseString, parseNonEmptyString } = createRuntimeValidators(
   (path, expected) => new CheckoutContractError(path, expected),
@@ -21,6 +22,7 @@ function money(value: unknown, path: string): string {
 // Unknown branches must fail before client Cart cleanup or confirmation navigation.
 export function parseCheckoutPlaceResult(value: unknown): CheckoutPlaceResult {
   const source = parseRecord(value, "result");
+  if (source.kind === "hosted-payment-required") return parseCheckoutHostedPaymentResult(source, Date.now());
   if (source.kind !== "confirmed" && source.kind !== "verification-required") {
     throw new CheckoutContractError("result.kind", "an established Checkout result");
   }

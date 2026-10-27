@@ -50,7 +50,9 @@ import type {
 import {
   storeCheckoutConfirmationHandoff,
   storeCheckoutVerificationHandoff,
+  storeCheckoutPaymentHandoff,
 } from "@/features/checkout/utils/checkout-handoff";
+import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-hosted-payment";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/api-error";
 import { CheckoutPaymentLoading, CheckoutPaymentRead, type CheckoutPaymentCopy } from "@/features/checkout/components/checkout-payment-section";
@@ -136,8 +138,9 @@ export function CheckoutPage({
   const [placeOutcome, setPlaceOutcome] = useState<
     { kind: "unknown" } | { kind: "created"; orderNumber: string } | null
   >(null);
-  // Presentation only: the existing Place serializer still owns the fixed card value.
+  // Only additional methods depend on the discovery snapshot that offered them.
   const [selectedPaymentCode, setSelectedPaymentCode] = useState<CheckoutPaymentCode>(legacyCheckoutPaymentMethod);
+  const [selectedPaymentDiscovery, setSelectedPaymentDiscovery] = useState<Promise<CheckoutPaymentDiscovery> | null>(null);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
   const request: CheckoutQuoteRequest | null = destination
     ? {
@@ -268,9 +271,9 @@ export function CheckoutPage({
     : guestBuyer;
   const placeRequest: CheckoutPlaceRequest | null =
     destination && shippingMethodId !== null && buyer
-      ? { destination, shippingMethodId, buyer }
+      ? { destination, shippingMethodId, buyer, ...(isAuthenticated && selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
       : null;
-  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode);
+  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, isAuthenticated, selectedPaymentDiscovery === paymentDiscovery);
   // Mutation error state can arrive before placeOrder records the outcome.
   const uncertainPlaceError =
     placeMutation.isError &&
@@ -314,11 +317,20 @@ export function CheckoutPage({
       placeAttemptLockedRef.current = true;
       const result = await placeMutation.mutateAsync(placeRequest);
       // Keep the browser protocol narrow until pending-order cleanup is agreed.
-      if (result.kind !== "verification-required" && result.kind !== "confirmed") {
+      if (result.kind !== "verification-required" && result.kind !== "confirmed" && result.kind !== "hosted-payment-required") {
         throw new Error("Unsupported Checkout result.");
       }
       createdOrderNumber = result.orderNumber;
       setPlaceOutcome({ kind: "created", orderNumber: result.orderNumber });
+      if (result.kind === "hosted-payment-required") {
+        if (!isAuthenticated) throw new Error("Unsupported Checkout result.");
+        const validated = parseCheckoutHostedPaymentResult(result, Date.now());
+        if (!storeCheckoutPaymentHandoff(validated)) throw new Error("Checkout handoff unavailable.");
+        // A pending hosted order does not establish that Laravel consumed the cart.
+        setPlaceCompleted(true);
+        window.location.assign(validated.handoff.paymentUrl);
+        return;
+      }
       try {
         await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
       } catch {
@@ -417,8 +429,14 @@ export function CheckoutPage({
               discovery={paymentDiscovery}
               copy={copy.payment}
               step={isAuthenticated ? "3" : "4"}
-              selectedCode={selectedPaymentCode}
-              onSelect={(code) => { if (canSelectCheckoutPayment(code)) setSelectedPaymentCode(code); }}
+              selectedCode={paymentReady ? selectedPaymentCode : null}
+              isAuthenticated={isAuthenticated}
+              onSelect={(code) => {
+                if (canSelectCheckoutPayment(code, isAuthenticated, true)) {
+                  setSelectedPaymentCode(code);
+                  setSelectedPaymentDiscovery(paymentDiscovery);
+                }
+              }}
             />
           </Suspense>
           <CheckoutGiftWrap
@@ -478,10 +496,12 @@ export function CheckoutPage({
                   </p>
                 ) : null}
                 <p id="checkout-submitted-payment" className="mb-3 type-body-sm text-gray-600">
-                  {copy.payment.submissionNotice}
+                  {copy.payment.submissionNotice.replace("{method}", copy.payment.methods[selectedPaymentCode]?.label ?? copy.payment.selectionUnavailable)}
                 </p>
                 {!paymentReady ? (
-                  <p role="alert" className="mb-3 type-body-sm text-destructive">{copy.payment.selectionUnavailable}</p>
+                  <div className="mb-3">
+                    <p role="alert" className="type-body-sm text-destructive">{copy.payment.selectionUnavailable}</p>
+                  </div>
                 ) : null}
                 <Button
                   size="lg"
@@ -494,6 +514,7 @@ export function CheckoutPage({
                 >
                   {copy.place.submit}
                 </Button>
+                {!paymentReady ? <Button variant="ghost" onClick={() => setSelectedPaymentCode("card")}>{copy.payment.methods.card.label}</Button> : null}
               </div>
             }
             quote={quote}

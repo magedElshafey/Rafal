@@ -1,5 +1,6 @@
 import type { CheckoutPlaceResponseDto } from "@/features/checkout/api/checkout-place-dto";
-import type { CheckoutPlaceResult } from "@/features/checkout/types/checkout.types";
+import type { CheckoutPlaceResult, CheckoutPlaceRequest } from "@/features/checkout/types/checkout.types";
+import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-hosted-payment";
 import { normalizeCheckoutPayment } from "@/features/checkout/api/normalize-checkout-payment";
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import { decideCheckoutPayment } from "@/features/checkout/utils/checkout-payment-decision";
@@ -8,15 +9,17 @@ import type { CheckoutPlaceDiagnostics } from "@/features/checkout/server/checko
 export function mapCheckoutPlaceResult(
   response: CheckoutPlaceResponseDto,
   diagnostics?: CheckoutPlaceDiagnostics,
+  request?: CheckoutPlaceRequest,
 ): CheckoutPlaceResult {
   const { data } = response;
   diagnostics?.stage("payment-normalization");
   const outcome = normalizeCheckoutPayment(response);
   diagnostics?.stage("result-mapping");
-  const decision = decideCheckoutPayment(outcome);
-  // Existing consumers understand only OTP and established order confirmation.
-  // Missing payment is never classified as paid by the new normalizer.
-  const legacyConfirmation = response.success && !data.payment && !response.meta?.payment &&
+  const decision = decideCheckoutPayment(outcome, request?.buyer.kind === "authenticated" &&
+    outcome.payment?.method === (request.paymentMethod ?? "card"));
+  // Preserve the established legacy confirmation without classifying missing payment as paid.
+  const legacyConfirmation = (!request || (request.paymentMethod ?? "card") === "card") &&
+    response.success && !data.payment && !response.meta?.payment &&
     data.status === "confirmed" && data.requires_verification === false &&
     response.meta?.requires_verification !== true;
   diagnostics?.paymentDecision({
@@ -29,8 +32,17 @@ export function mapCheckoutPlaceResult(
     decisionAction: decision.action,
     legacyConfirmation,
   });
+  if (request && data.payment && data.payment.method !== (request.paymentMethod ?? "card")) {
+    throw new CheckoutContractError("response.data.payment.method", "the submitted payment method");
+  }
   if (decision.action === "hold" && !legacyConfirmation) {
     throw new CheckoutContractError("response.data", "a result supported by the existing Checkout flow");
+  }
+  if (decision.action === "hosted-payment" && outcome.kind === "hosted-payment-pending") {
+    return parseCheckoutHostedPaymentResult({
+      kind: "hosted-payment-required", orderNumber: data.order_number,
+      displayNumber: data.display_number, handoff: outcome.handoff,
+    }, Date.now());
   }
   const order = {
     id: data.id,

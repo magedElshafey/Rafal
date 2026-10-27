@@ -86,13 +86,13 @@
   "checkoutPage": {
     "title": "Checkout",
     "payment": {
-      "title": "Payment options preview",
-      "notice": "This list previews payment options. Your order uses the current card option even if it is not shown here. Other payment options are not available yet.",
-      "submissionNotice": "This order will use the current card / Mada option. Other payment methods cannot be used for this order.",
+      "title": "Payment method",
+      "notice": "Choose an available payment method. Card / Mada remains available if payment options cannot be loaded.",
+      "submissionNotice": "Payment method for this order: {method}.",
       "selectionUnavailable": "The selected payment method cannot be used. Choose the current card option before placing your order.",
       "loading": "Loading payment methods",
-      "unavailable": "Payment options could not be displayed. The current checkout option is unchanged.",
-      "empty": "No additional payment options are available to display. The current checkout option is unchanged.",
+      "unavailable": "Payment options could not be loaded. Card / Mada remains available.",
+      "empty": "No additional payment options are available. Card / Mada remains available.",
       "disabled": "Not available for checkout yet",
       "methods": {
         "card": { "label": "Card / Mada", "description": "Current checkout option" },

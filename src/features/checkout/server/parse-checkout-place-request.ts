@@ -23,7 +23,7 @@ export function parseCheckoutPlaceRequest(
 ): CheckoutPlaceRequest | null {
   if (
     !isRecord(value) ||
-    !hasOnlyKeys(value, ["destination", "shippingMethodId", "buyer"])
+    !hasOnlyKeys(value, ["destination", "shippingMethodId", "buyer", "paymentMethod"])
   ) {
     return null;
   }
@@ -31,6 +31,9 @@ export function parseCheckoutPlaceRequest(
   const destination = parseCheckoutDestination(value.destination);
   const shippingMethodId = positiveInteger(value.shippingMethodId);
   if (!destination || !shippingMethodId || !isRecord(value.buyer)) return null;
+  const method = value.paymentMethod;
+  if (method !== undefined && method !== "card" && method !== "apple_pay" && method !== "tap") return null;
+  if (value.buyer.kind !== "authenticated" && method !== undefined && method !== "card") return null;
 
   if (
     value.buyer.kind === "authenticated" &&
@@ -40,6 +43,7 @@ export function parseCheckoutPlaceRequest(
       destination,
       shippingMethodId,
       buyer: { kind: "authenticated" },
+      ...(method === undefined ? {} : { paymentMethod: method }),
     };
   }
 

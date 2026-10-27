@@ -1,0 +1,80 @@
+{
+  "success": true,
+  "message": "Order created. Complete the payment on the secure payment page.",
+  "data": {
+    "id": 900001,
+    "order_number": "RF-SYNTHETIC-HOSTED",
+    "display_number": "#RF-SYNTHETIC-HOSTED",
+    "status": "new",
+    "customer_status": "processing",
+    "requires_verification": false,
+    "placed_at": "2026-10-21T20:27:51+03:00",
+    "shipping_address": {
+      "recipient_name": "Synthetic Buyer",
+      "recipient_phone": "+966501234567",
+      "city": {
+        "id": 1,
+        "name": "Synthetic City"
+      },
+      "district": "Synthetic District",
+      "street_details": "Synthetic Street"
+    },
+    "shipping_method": {
+      "id": 1,
+      "code": "standard",
+      "name": "Synthetic shipping"
+    },
+    "money": {
+      "subtotal": "399.98",
+      "discount_total": "0.00",
+      "shipping_fee": "25.00",
+      "personalization_total": "0.00",
+      "gift_wrap_fee": "0.00",
+      "taxable_amount": "424.98",
+      "vat": {
+        "rate": "15.00",
+        "amount": "63.75"
+      },
+      "total": "488.73",
+      "currency": "SAR"
+    },
+    "payment": {
+      "method": "card",
+      "status": "pending",
+      "paid_at": null
+    },
+    "verification_expires_at": null,
+    "timeline": [
+      {
+        "step": "Confirmed",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Processing",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Shipped",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Delivered",
+        "reached": false,
+        "reached_at": null
+      }
+    ],
+    "can_cancel": false,
+    "can_reorder": false,
+    "can_request_return": false
+  },
+  "meta": {
+    "payment": {
+      "payment_url": "https://checkout.tap.company/?token=SYNTHETIC_TEST_TOKEN",
+      "charge_id": "chg_SYNTHETIC",
+      "expires_at": "2099-01-01T00:00:00Z"
+    }
+  }
+}

@@ -7,6 +7,71 @@ const records = async (request: APIRequestContext): Promise<RecordedRequest[]> =
   (await request.get("http://127.0.0.1:3101/__requests")).json();
 const mutations = (rows: RecordedRequest[]) => rows.filter(row => row.method === "POST" && /\/place$|\/verify$|\/charge/.test(row.path));
 
+for (const locale of ["ar", "en"]) {
+  for (const method of ["card", "apple_pay", "tap"]) {
+    test(`${locale} authenticated ${method}: observed hosted Place, identity and no replay`, async ({ page, request }) => {
+      const offset = (await records(request)).length;
+      await setup(page, "hosted", true);
+      await page.setViewportSize({ width: locale === "ar" ? 390 : 1440, height: 900 });
+      await page.goto(`/${locale}/checkout`);
+      await page.getByText("Standard", { exact: true }).click();
+      await page.locator(`#checkout-payment input[value="${method}"]`).check();
+      const selectedLabel = await page.locator(`#checkout-payment input[value="${method}"]`).locator("..").locator("span.block").first().innerText();
+      await expect(page.locator("#checkout-submitted-payment")).toContainText(selectedLabel);
+      await expect(page.locator('#checkout-payment input[value="bank_transfer"]')).toHaveCount(0);
+      const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
+      await expect(place).toBeEnabled();
+      await place.evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
+      await expect(page.getByRole("heading", { name: "Synthetic hosted checkout" })).toBeVisible();
+      await page.goBack();
+      await expect(page).toHaveURL(new RegExp(`/${locale}/checkout$`));
+      expect(await page.evaluate(() => {
+        const handoff = JSON.parse(sessionStorage.getItem("rafal:checkout:payment:RF-E2E-HOSTED") ?? "null");
+        return { order: handoff?.orderNumber, confirmation: sessionStorage.getItem("rafal:checkout:confirmation:RF-E2E-HOSTED") };
+      })).toEqual({ order: "RF-E2E-HOSTED", confirmation: null });
+      await page.evaluate(() => sessionStorage.removeItem("rafal:checkout:payment:RF-E2E-HOSTED"));
+      await page.reload();
+      await expect(page.locator("#checkout-order-otp")).toHaveCount(0);
+      const calls = mutations((await records(request)).slice(offset));
+      expect(calls.map(row => row.path)).toEqual(["/checkout/place"]);
+      expect(calls[0].fields?.payment_method).toBe(method);
+      expect(calls[0].authenticated).toBe(true);
+    });
+  }
+}
+
+for (const variant of ["unsafe", "expired", "missing", "mismatch"]) {
+  test(`authenticated hosted ${variant}: safe locked failure without replay`, async ({ page, request }) => {
+    const offset = (await records(request)).length;
+    await setup(page, `hosted-${variant}`, true);
+    await page.goto("/en/checkout");
+    await page.getByText("Standard", { exact: true }).click();
+    const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
+    await expect(place).toBeEnabled();
+    await place.click();
+    await expect(page.getByText(/could not confirm whether/i)).toBeVisible();
+    await expect(place).toBeDisabled();
+    await page.reload();
+    expect(mutations((await records(request)).slice(offset)).map(row => row.path)).toEqual(["/checkout/place"]);
+    expect(await page.evaluate(() => sessionStorage.getItem("rafal:checkout:payment:RF-E2E-HOSTED"))).toBeNull();
+  });
+}
+
+for (const variant of ["cardonly", "failed"]) {
+  test(`authenticated discovery ${variant}: Card fallback without offering extra methods`, async ({ page, request }) => {
+    const offset = (await records(request)).length;
+    await setup(page, `hosted-${variant}`, true);
+    await page.goto("/en/checkout");
+    await page.getByText("Standard", { exact: true }).click();
+    for (const method of ["apple_pay", "tap", "bank_transfer"]) await expect(page.locator(`#checkout-payment input[value="${method}"]`)).toHaveCount(0);
+    const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
+    await expect(place).toBeEnabled();
+    await place.click();
+    await expect(page.getByRole("heading", { name: "Synthetic hosted checkout" })).toBeVisible();
+    expect(mutations((await records(request)).slice(offset))[0].fields?.payment_method).toBe("card");
+  });
+}
+
 async function setup(page: Page, variant = "false", authenticated = false) {
   await page.route("**/*", route => {
     const host = new URL(route.request().url()).hostname;
@@ -17,7 +82,7 @@ async function setup(page: Page, variant = "false", authenticated = false) {
   });
   await page.context().addCookies([
     { name: "rafal_guest_city_id", value: "1", domain: "127.0.0.1", path: "/" },
-    { name: authenticated ? "rafal_auth_access_token" : "rafal_cart_token", value: authenticated ? "synthetic-auth" : `synthetic-payment-${variant}`, domain: "127.0.0.1", path: "/", httpOnly: true, sameSite: "Lax" },
+    { name: authenticated ? "rafal_auth_access_token" : "rafal_cart_token", value: authenticated ? (variant.startsWith("hosted") ? `synthetic-auth-${variant}` : "synthetic-auth") : `synthetic-payment-${variant}`, domain: "127.0.0.1", path: "/", httpOnly: true, sameSite: "Lax" },
   ]);
 }
 
@@ -124,7 +189,7 @@ for (const locale of ["ar", "en"]) {
       const card = page.locator('#checkout-payment input[value="card"]');
       await expect(card).toBeChecked();
       await expect(page.locator('#checkout-payment input[value="apple_pay"]')).toBeDisabled();
-      await expect(page.locator('#checkout-payment input[value="bank_transfer"]')).toBeDisabled();
+      await expect(page.locator('#checkout-payment input[value="bank_transfer"]')).toHaveCount(0);
       await expect(page.locator('#checkout-payment input[value="tap"]')).toHaveCount(0);
       const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
       await expect(place).toBeEnabled();
@@ -168,7 +233,7 @@ for (const scenario of ["missing", "empty", "failed"]) {
     await setup(page, scenario);
     await prepareCheckout(page, "en");
     await expect(page.locator('#checkout-payment input[value="card"]')).toHaveCount(0);
-    await expect(page.locator("#checkout-submitted-payment")).toContainText("card / Mada");
+    await expect(page.locator("#checkout-submitted-payment")).toContainText("Card / Mada");
     const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
     await expect(place).toBeEnabled();
     await place.evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });

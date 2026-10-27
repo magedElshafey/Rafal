@@ -23,7 +23,8 @@ export type CheckoutPaymentCopy = {
 type Props = {
   copy: CheckoutPaymentCopy;
   step: string;
-  selectedCode: CheckoutPaymentCode;
+  selectedCode: CheckoutPaymentCode | null;
+  isAuthenticated?: boolean;
   onSelect: (code: CheckoutPaymentCode) => void;
 };
 
@@ -41,10 +42,10 @@ export function CheckoutPaymentLoading({ copy, step }: Pick<Props, "copy" | "ste
   );
 }
 
-export function CheckoutPaymentSection({ copy, step, discovery, selectedCode, onSelect }: Props & { discovery: CheckoutPaymentDiscovery }) {
+export function CheckoutPaymentSection({ copy, step, discovery, selectedCode, onSelect, isAuthenticated = false }: Props & { discovery: CheckoutPaymentDiscovery }) {
   const id = useId();
   const methods = discovery.kind === "ready"
-    ? discovery.methods.filter((method) => isCheckoutPaymentCode(method.code))
+    ? discovery.methods.filter((method) => isCheckoutPaymentCode(method.code) && method.code !== "bank_transfer")
     : [];
   return (
     <CheckoutStepSection id="checkout-payment" step={step} title={copy.title}>
@@ -60,7 +61,7 @@ export function CheckoutPaymentSection({ copy, step, discovery, selectedCode, on
             {methods.map((method) => {
               if (!isCheckoutPaymentCode(method.code)) return null;
               const code = method.code;
-              const enabled = canSelectCheckoutPayment(code);
+              const enabled = canSelectCheckoutPayment(code, isAuthenticated, true);
               const selected = enabled && selectedCode === code;
               const Icon = icons[code];
               const descriptionId = `${id}-${code}-description`;

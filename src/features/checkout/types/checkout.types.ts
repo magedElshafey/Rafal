@@ -45,6 +45,7 @@ export type CheckoutPlaceRequest = Readonly<{
   destination: CheckoutDestination;
   shippingMethodId: number;
   buyer: CheckoutBuyer;
+  paymentMethod?: "card" | "apple_pay" | "tap";
 }>;
 
 export type CheckoutVerifyRequest = Readonly<{
@@ -169,6 +170,7 @@ type CheckoutPlacedOrder = Readonly<{
 }>;
 
 export type CheckoutPlaceResult =
+  | CheckoutHostedPaymentResult
   | (CheckoutPlacedOrder & Readonly<{ kind: "confirmed" }>)
   | (CheckoutPlacedOrder &
       Readonly<{

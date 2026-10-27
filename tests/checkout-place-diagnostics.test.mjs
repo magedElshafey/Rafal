@@ -320,7 +320,7 @@ for (const [label, change, kind, action, legacy, status] of decisionCases) {
       assert.deepEqual(result.body, { code: "service-unavailable" });
       const failure = dev.logs.find(([, data]) => data.event === "failure")[1];
       assert.deepEqual(failure.paymentDecision, facts);
-      assert.equal(failure.contractPath, "response.data");
+      assert.equal(failure.contractPath, ["Tap pending", "Tap without handoff", "unknown codes"].includes(label) ? "response.data.payment.method" : "response.data");
     } else assert.equal(result.body.kind, action === "verify-otp" ? "verification-required" : "confirmed");
     const output = JSON.stringify(dev.logs);
     for (const sensitive of [secret, fixture("paid").data.payment.paid_at, "synthetic-test-only", "chg_EXAMPLE", "RF-10373"]) assert.equal(output.includes(sensitive), false);

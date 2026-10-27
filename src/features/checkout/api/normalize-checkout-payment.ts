@@ -45,7 +45,7 @@ export function normalizeCheckoutPayment(response: CheckoutPlaceResponseDto): Ch
   if (!otp && data.status === "confirmed" && payment.status === "paid") {
     return { ...context, kind: "paid", nextAction: "confirm" };
   }
-  if (!otp && data.status === "new" && payment.method === "tap" && payment.status === "pending" && required === false) {
+  if (!otp && data.status === "new" && ["card", "apple_pay", "tap"].includes(payment.method) && payment.status === "pending" && required === false) {
     if (!handoff) return unresolved("missing-handoff");
     return {
       ...context, kind: "hosted-payment-pending", nextAction: "hosted-payment",

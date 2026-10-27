@@ -31,7 +31,7 @@ function harness() {
       require: (name) => name === "server-only" ? {} : name === "next-intl" ? {
         hasLocale: (locales, locale) => locales.includes(locale),
       } : name === "@/i18n/routing" ? { routing: { locales: ["ar", "en"] } } : name === "@/features/cart/server/cart-auth-context" ? {
-        resolveCartTransportIdentity: async () => ({ kind: "guest", token: "synthetic-guest" }),
+        resolveCartTransportIdentity: async () => state.identity ?? ({ kind: "guest", token: "synthetic-guest" }),
       } : name === "@/features/cart/server/guest-cart-session" ? {
         deleteGuestCartToken: async () => { state.deleted += 1; },
       } : name === "@/lib/api/server-api" ? {
@@ -49,6 +49,80 @@ const { normalizeCheckoutPayment: normalize } = h.load("src/features/checkout/ap
 const { mapCheckoutPlaceResult: legacy } = h.load("src/features/checkout/api/checkout-place-mapper");
 const { parseCheckoutPaymentMethodsResponse: methods } = h.load("src/features/checkout/api/parse-checkout-payment-methods-dto");
 const outcome = (payload) => normalize(parse(payload));
+
+const hostedFixture = () => JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-place-hosted.json"), "utf8"));
+const hostedRequest = (method = "card") => new Request("https://store.example.invalid/api/checkout/place?locale=en", {
+  method: "POST", headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" }, paymentMethod: method }),
+});
+
+test("Guest methods remain Card-only at both private input and serializer boundaries", () => {
+  const input = { destination: { kind: "one-time-address", address: { recipientName: "Test", recipientPhone: "+966501234567", cityId: 1, district: "Test", streetDetails: "Test" } }, shippingMethodId: 1, buyer: { kind: "guest", name: "Test", email: "test@example.invalid", phone: "+966501234567" } };
+  const parseInput = h.load("src/features/checkout/server/parse-checkout-place-request").parseCheckoutPlaceRequest;
+  const serialize = h.load("src/features/checkout/api/checkout-place-serializer").serializeCheckoutPlaceRequest;
+  assert.equal(serialize(parseInput(input)).payment_method, "card");
+  for (const paymentMethod of ["apple_pay", "tap", "bank_transfer"]) {
+    assert.equal(parseInput({ ...input, paymentMethod }), null);
+    assert.throws(() => serialize({ ...input, paymentMethod }));
+  }
+});
+
+test("new methods cannot use the legacy missing-payment confirmation exception", () => {
+  for (const paymentMethod of ["apple_pay", "tap"]) {
+    const response = hostedFixture();
+    response.data.status = "confirmed";
+    delete response.data.payment; response.meta = null;
+    assert.throws(() => legacy(parse(response), undefined, { buyer: { kind: "authenticated" }, paymentMethod }));
+  }
+});
+
+for (const method of ["card", "apple_pay", "tap"]) {
+  test(`observed authenticated ${method}: real route, upstream parser, mapper and private parser preserve hosted identity`, async () => {
+    const server = harness();
+    server.state.identity = { kind: "authenticated", bearerToken: "synthetic-account" };
+    server.state.payload = hostedFixture();
+    server.state.payload.data.payment.method = method;
+    const response = await server.load("src/app/api/checkout/place/route").POST(hostedRequest(method));
+    assert.equal(response.status, 200);
+    const result = server.load("src/features/checkout/api/parse-checkout-place-result").parseCheckoutPlaceResult(await response.json());
+    assert.equal(result.kind, "hosted-payment-required");
+    assert.equal(result.orderNumber, "RF-SYNTHETIC-HOSTED");
+    assert.ok(result.handoff.paymentUrl === server.state.payload.meta.payment.payment_url);
+    assert.equal("money" in result, false);
+    assert.equal(server.calls.length, 1);
+    assert.equal(server.calls[0].body.get("payment_method"), method);
+    assert.ok(server.calls[0].headers.Authorization === "Bearer synthetic-account");
+    assert.equal(server.calls[0].body.has("guest[phone]"), false);
+    assert.equal(server.state.deleted, 0);
+  });
+}
+
+for (const [name, mutate] of [
+  ["missing URL", data => { delete data.meta.payment.payment_url; }],
+  ["unsafe host", data => { data.meta.payment.payment_url = "https://unsafe.example.invalid/pay"; }],
+  ["HTTP", data => { data.meta.payment.payment_url = "http://checkout.tap.company/pay"; }],
+  ["credentials", data => { data.meta.payment.payment_url = "https://user@checkout.tap.company/pay"; }],
+  ["port", data => { data.meta.payment.payment_url = "https://checkout.tap.company:444/pay"; }],
+  ["expired", data => { data.meta.payment.expires_at = "2000-01-01T00:00:00Z"; }],
+  ["invalid expiry", data => { data.meta.payment.expires_at = "tomorrow"; }],
+  ["missing charge", data => { delete data.meta.payment.charge_id; }],
+  ["method mismatch", data => { data.data.payment.method = "apple_pay"; }],
+  ["unsuccessful", data => { data.success = false; }],
+  ["paid without evidence", data => { data.data.status = "confirmed"; data.data.payment.status = "paid"; delete data.meta.payment; }],
+]) {
+  test(`authenticated hosted ${name}: one upstream request, no unsafe result or cleanup`, async () => {
+    const server = harness();
+    server.state.identity = { kind: "authenticated", bearerToken: "synthetic-account" };
+    server.state.payload = hostedFixture(); mutate(server.state.payload);
+    const response = await server.load("src/app/api/checkout/place/route").POST(hostedRequest());
+    assert.ok(response.status >= 400);
+    const result = await response.json();
+    assert.equal("handoff" in result, false);
+    assert.equal("kind" in result, false);
+    assert.equal(server.calls.length, 1);
+    assert.equal(server.state.deleted, 0);
+  });
+}
 
 test("discovery preserves backend codes/order including unknown methods; empty is explicit", () => {
   const payload = fixture("methods");
@@ -219,7 +293,7 @@ test("actual server Place compatibility boundary rejects pending and returns est
   const request = { destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" } };
   const identity = { kind: "authenticated", bearerToken: "synthetic" };
   server.state.payload = fixture("pending");
-  await assert.rejects(placeCheckout(identity, "en", request), /supported by the existing Checkout flow/);
+  await assert.rejects(placeCheckout(identity, "en", request), /submitted payment method/);
   server.state.payload = oldOrder("pending_verification", true);
   assert.equal((await placeCheckout(identity, "en", request)).kind, "verification-required");
   assert.equal(server.calls.at(-1).body.get("payment_method"), "card");

@@ -112,7 +112,7 @@ export default async function CheckoutRoute() {
     payment: {
       title: t("payment.title"),
       notice: t("payment.notice"),
-      submissionNotice: t("payment.submissionNotice"),
+      submissionNotice: t("payment.submissionNotice", { method: "{method}" }),
       selectionUnavailable: t("payment.selectionUnavailable"),
       loading: t("payment.loading"),
       unavailable: t("payment.unavailable"),
