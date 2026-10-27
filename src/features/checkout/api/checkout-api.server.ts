@@ -38,8 +38,8 @@ function getIdentityHeaders(
     : { "X-Cart-Token": identity.token };
 }
 
-// No UI caller yet. The caller supplies the existing server-resolved Cart identity;
-// discovery does not establish eligibility or launch support for any method.
+// Checkout supplies the server-resolved Cart identity. Discovery provides displayed
+// options, not Place eligibility or implemented lifecycle support for a method.
 export async function getCheckoutPaymentMethods(
   identity: CheckoutTransportIdentity,
   locale: Locale,

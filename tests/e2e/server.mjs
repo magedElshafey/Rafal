@@ -24,6 +24,8 @@ const cart = {
 const requests = [];
 const paymentReads = new Map();
 const paymentOrder = JSON.parse(readFileSync(new URL("../fixtures/payment-result-order.json", import.meta.url), "utf8"));
+const paymentFlows = process.env.PAYMENT_FLOW_E2E === "1";
+const paymentFixture = name => JSON.parse(readFileSync(new URL(`../fixtures/${name}.json`, import.meta.url), "utf8"));
 const backend = createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3100");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept-Language,X-Locale");
@@ -38,6 +40,35 @@ const backend = createServer(async (req, res) => {
     ? Object.fromEntries(await new Response(raw, { headers: { "Content-Type": req.headers["content-type"] } }).formData())
     : undefined;
   requests.push({ path: url.pathname, method: req.method, body: raw, fields, locale: req.headers["x-locale"], authenticated: Boolean(req.headers.authorization) });
+  // Explicit local-only opt-in. These responses exercise existing frontend branches;
+  // they do not establish any new Laravel method or authenticated Place contract.
+  if (paymentFlows && req.method === "POST") {
+    if (url.pathname === "/checkout/place" && fields?.payment_method === "card") {
+      const authenticated = req.headers.authorization === "Bearer synthetic-auth";
+      if (!authenticated && !/^synthetic-payment-(false|true|missing|empty|failed)$/.test(req.headers["x-cart-token"] ?? "")) return send({}, 403);
+      const data = paymentFixture(authenticated ? "checkout-payment-paid" : "checkout-payment-otp-card");
+      data.data.order_number = authenticated ? "RF-E2E-CONFIRMED" : `RF-E2E-${req.headers["x-cart-token"].endsWith("true") ? "TRUE" : "FALSE"}`;
+      return send(data);
+    }
+    const verify = url.pathname.match(/^\/checkout\/orders\/(RF-E2E-(?:TRUE|FALSE|UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED))\/verify$/);
+    if (verify && fields?.phone === "+966501234567" && fields?.otp === "123456") {
+      const data = paymentFixture("checkout-verify-hosted");
+      data.data.order_number = verify[1];
+      data.data.requires_verification = verify[1].endsWith("TRUE");
+      if (verify[1].endsWith("UNSAFE")) data.meta.payment.payment_url = "https://unsafe.example.invalid/pay";
+      if (verify[1].endsWith("EXPIRED")) data.meta.payment.expires_at = "2000-01-01T00:00:00Z";
+      if (verify[1].endsWith("MISSING")) delete data.meta.payment.payment_url;
+      if (verify[1].endsWith("MISMATCH")) data.data.order_number = "RF-OTHER";
+      if (verify[1].endsWith("MALFORMED")) return send({ success: true, data: {} });
+      return send(data);
+    }
+    if (url.pathname === "/checkout/quote") return ok({
+      totals: { ...cart.totals, shipping_fee: "0.00", vat: { rate: "15", amount: "13.04" } },
+      shipping_options: [{ id: 1, code: "standard", name: "Standard", eta_label: "Test delivery", price: "0.00", fee: "0.00", is_free: true, is_pickup: false }],
+      fulfillable: true, warehouse: { id: 1, name: "Test warehouse" }, unavailable_lines: [], coupon: null,
+      location: { in_coverage: true, city },
+    });
+  }
   if (/\/checkout\/place|\/verify|\/payment/.test(url.pathname) && req.method !== "GET") return send({}, 403);
   if (url.pathname === "/regions") return ok(regions);
   if (url.pathname === "/auth/me") return ok({ id: 1, first_name: "Test", last_name: "Buyer", email: "test@example.invalid", phone: "966501234567", profile_complete: true, created_at: "2026-01-01T00:00:00Z" });
@@ -70,8 +101,15 @@ const backend = createServer(async (req, res) => {
     const gift = req.headers["x-cart-token"] === "synthetic-gift";
     return ok({ ...cart, token: req.headers["x-cart-token"] ?? "synthetic-cart", gift: gift ? { ...cart.gift, is_gift: true, recipient: { name: "Recipient", phone: "966501234567", city: { id: 1, name: "Riyadh" }, district: "", street_details: "" } } : cart.gift });
   }
-  if (url.pathname === "/checkout/payment-methods") return ok({ card: { label: "Card", icon: "card" } });
-  // Quoting is allowed only against this fixture; no order can be placed.
+  if (url.pathname === "/checkout/payment-methods") {
+    const token = req.headers["x-cart-token"];
+    if (paymentFlows && token === "synthetic-payment-failed") return send({ success: false }, 503);
+    if (paymentFlows && token === "synthetic-payment-empty") return ok({});
+    const methods = { apple_pay: { label: "Apple Pay", icon: "apple" }, bank_transfer: { label: "Bank Transfer", icon: "bank" } };
+    if (paymentFlows && token === "synthetic-payment-missing") return ok(methods);
+    return ok({ card: { label: "Credit Card / Mada", icon: "card" }, ...methods });
+  }
+  // Outside the explicit payment-flow opt-in, mutations remain disabled.
   if (url.pathname === "/checkout/quote") return send({ success: false, message: "Fixture quote unavailable" }, 422);
   if (url.pathname === "/categories") return send({ success: true, message: "Test", data: [], meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 } });
   return send({ success: false, message: "Unconfigured fixture" }, 404);

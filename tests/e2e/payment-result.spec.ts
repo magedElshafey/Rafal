@@ -25,9 +25,13 @@ async function setup(page: Page, options: { authenticated?: boolean; order?: str
   });
 }
 
+let requestOffset = 0;
+test.beforeEach(async ({ request }) => {
+  requestOffset = (await (await request.get("http://127.0.0.1:3101/__requests")).json()).length;
+});
 test.afterEach(async ({ request }) => {
   const requests = await (await request.get("http://127.0.0.1:3101/__requests")).json();
-  expect(requests.filter((r: { method: string; path: string }) => r.method !== "GET" && /\/checkout\/place|\/verify|\/charge|\/payment/.test(r.path))).toEqual([]);
+  expect(requests.slice(requestOffset).filter((r: { method: string; path: string }) => r.method !== "GET" && /\/checkout\/place|\/verify|\/charge|\/payment/.test(r.path))).toEqual([]);
 });
 
 for (const locale of ["ar", "en"]) {

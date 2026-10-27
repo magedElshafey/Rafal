@@ -1,9 +1,9 @@
 export const checkoutPaymentCodes = ["card", "apple_pay", "bank_transfer", "tap"] as const;
 export type CheckoutPaymentCode = (typeof checkoutPaymentCodes)[number];
 
-// Explicit legacy rollout boundary, not discovery-driven eligibility. Making
-// discovery authoritative is deferred until its availability contract is confirmed.
-// Keep this aligned with the unchanged Place serializer (covered by contract tests).
+// Implemented-method boundary. Discovery is presentation data, not an established
+// Place eligibility contract. Laravel determines final method acceptance.
+// Keep this aligned with the Place serializer (covered by contract tests).
 export const legacyCheckoutPaymentMethod = "card" as const;
 
 export function canSubmitCheckoutPayment(selectedCode: string | null): boolean {

@@ -20,8 +20,8 @@ import type {
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import type { CheckoutPlaceDiagnostics } from "./checkout-place-diagnostics";
 
-// Optional, request-local presentation data. Discovery is not payment eligibility
-// authority and is not reused to authorize Place after Cart/city changes.
+// Request-local presentation data; discovery is not an established Place guard.
+// Laravel remains authoritative for final eligibility when Place is submitted.
 export async function readCurrentCheckoutPaymentMethods(locale: Locale): Promise<CheckoutPaymentDiscovery> {
   try {
     const identity = await resolveCartTransportIdentity();

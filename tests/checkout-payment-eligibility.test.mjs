@@ -136,6 +136,7 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
       return { button: find(actions, Button), actions, shipping: find(tree, CheckoutShippingSection) };
     },
     payment: find(tree, CheckoutPaymentRead), render, find, CheckoutPaymentRead,
+    refreshDiscovery: (discovery) => { props.paymentDiscovery = discovery; },
     serialize: load("src/features/checkout/api/checkout-place-serializer").serializeCheckoutPlaceRequest,
   };
 }
@@ -168,8 +169,25 @@ const cases = [
   ["discovery still loading", () => new Promise(() => {})],
 ];
 
+test("Promise refresh/remount preserve method policy; refresh cannot unlock a placed order", async () => {
+  for (const selected of ["card", "tap", "apple_pay", "bank_transfer"]) {
+    const h = harness({ discovery: ready(["card"]), selected });
+    for (const discovery of [new Promise(() => {}), ready([]), Promise.resolve({ kind: "unavailable" }), ready(["card"])]) {
+      h.refreshDiscovery(discovery);
+      assert.equal(h.snapshot().button.props.disabled, selected !== "card");
+      const remounted = harness({ discovery, selected });
+      assert.equal(remounted.button.props.disabled, selected !== "card");
+    }
+    h.snapshot().button.props.onClick(); await tick();
+    assert.equal(h.calls.length, selected === "card" ? 1 : 0);
+    h.refreshDiscovery(ready(["card"]));
+    h.snapshot().button.props.onClick(); await tick();
+    assert.equal(h.calls.length, selected === "card" ? 1 : 0);
+  }
+});
+
 for (const [name, discovery] of cases) {
-  test(`explicit legacy boundary: ${name} still submits only the visibly declared card method`, async () => {
+  test(`presentation-only discovery: ${name} preserves the declared Card submission`, async () => {
     const h = harness({ discovery: discovery() });
     assert.equal(h.button.props.disabled, false);
     assert.equal(h.button.props["aria-describedby"], "checkout-submitted-payment");
