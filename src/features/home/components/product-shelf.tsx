@@ -68,7 +68,7 @@ export function ProductShelf({
 
         {products.length > 0 ? (
           <AppCarousel
-            className="mt-5"
+            className="mt-5 [&_.product-card_h3]:line-clamp-2 [&_.product-card_h3]:min-h-8 [&_.product-card_h3]:whitespace-normal [&_.product-card_h3]:wrap-anywhere"
             deferUntilNearViewport
             direction={direction}
             dragFree

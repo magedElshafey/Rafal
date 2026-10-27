@@ -20,7 +20,7 @@ export function OrderFilterNavigation({
 }: OrderFilterNavigationProps) {
   return (
     <nav aria-label={label}>
-      <ul className="flex max-w-full gap-2 overflow-x-auto pb-1">
+      <ul className="flex flex-wrap gap-2 pb-1">
         {orderFilterValues.map((filter) => {
           const active = activeFilter === filter;
           const href = buildOrdersListHref({ filter });

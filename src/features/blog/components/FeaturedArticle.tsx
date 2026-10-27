@@ -42,7 +42,7 @@ export function FeaturedArticle({
         aspectRatio="16 / 9"
         sizes="(max-width: 768px) 100vw, 50vw"
         preload={article.coverUrl !== null}
-        frameClassName="h-full min-h-56 rounded-none"
+        frameClassName="w-full min-w-0 min-h-56 rounded-none md:h-full"
       />
     </article>
   );

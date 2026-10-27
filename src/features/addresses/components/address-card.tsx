@@ -32,8 +32,8 @@ export function AddressCard({
 }: AddressCardProps) {
   return (
     <article className="flex min-w-0 flex-col rounded-lg border border-gray-200 bg-gray-0 p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1 basis-48">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="type-body-lg font-bold text-gray-1000">
               {address.label}
@@ -48,7 +48,7 @@ export function AddressCard({
             <span className="sr-only">{copy.recipient}: </span>
             {address.recipientName}
             {" | "}
-            <bdi dir="ltr">
+            <bdi dir="ltr" className="whitespace-nowrap">
               {formatSaudiMobileForDisplay(address.recipientPhone)}
             </bdi>
           </p>

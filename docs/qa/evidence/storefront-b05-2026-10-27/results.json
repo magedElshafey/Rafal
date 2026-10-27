@@ -1,0 +1,2875 @@
+{
+  "date": "2026-10-27",
+  "matrix": [
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 467,
+          "width": 288,
+          "height": 548,
+          "top": 467,
+          "right": 304,
+          "bottom": 1015,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 790,
+          "width": 286,
+          "height": 224,
+          "top": 790,
+          "right": 303,
+          "bottom": 1014,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 467,
+          "width": 288,
+          "height": 548,
+          "top": 467,
+          "right": 304,
+          "bottom": 1015,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 790,
+          "width": 286,
+          "height": 224,
+          "top": 790,
+          "right": 303,
+          "bottom": 1014,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 467,
+          "width": 358,
+          "height": 492,
+          "top": 467,
+          "right": 374,
+          "bottom": 959,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 734,
+          "width": 356,
+          "height": 224,
+          "top": 734,
+          "right": 373,
+          "bottom": 958,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 443,
+          "width": 358,
+          "height": 492,
+          "top": 443,
+          "right": 374,
+          "bottom": 935,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 710,
+          "width": 356,
+          "height": 224,
+          "top": 710,
+          "right": 373,
+          "bottom": 934,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 449,
+          "width": 720,
+          "height": 284,
+          "top": 449,
+          "right": 744,
+          "bottom": 733,
+          "left": 24
+        },
+        "image": {
+          "x": 384,
+          "y": 450,
+          "width": 359,
+          "height": 282,
+          "top": 450,
+          "right": 743,
+          "bottom": 732,
+          "left": 384
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 449,
+          "width": 720,
+          "height": 284,
+          "top": 449,
+          "right": 744,
+          "bottom": 733,
+          "left": 24
+        },
+        "image": {
+          "x": 25,
+          "y": 450,
+          "width": 359,
+          "height": 282,
+          "top": 450,
+          "right": 384,
+          "bottom": 732,
+          "left": 25
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 32,
+          "y": 437,
+          "width": 960,
+          "height": 276,
+          "top": 437,
+          "right": 992,
+          "bottom": 713,
+          "left": 32
+        },
+        "image": {
+          "x": 512,
+          "y": 438,
+          "width": 479,
+          "height": 274,
+          "top": 438,
+          "right": 991,
+          "bottom": 712,
+          "left": 512
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 32,
+          "y": 437,
+          "width": 960,
+          "height": 276,
+          "top": 437,
+          "right": 992,
+          "bottom": 713,
+          "left": 32
+        },
+        "image": {
+          "x": 33,
+          "y": 438,
+          "width": 479,
+          "height": 274,
+          "top": 438,
+          "right": 512,
+          "bottom": 712,
+          "left": 33
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 32,
+          "y": 437,
+          "width": 1376,
+          "height": 388.4375,
+          "top": 437,
+          "right": 1408,
+          "bottom": 825.4375,
+          "left": 32
+        },
+        "image": {
+          "x": 720,
+          "y": 438,
+          "width": 687,
+          "height": 386.4375,
+          "top": 438,
+          "right": 1407,
+          "bottom": 824.4375,
+          "left": 720
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 32,
+          "y": 437,
+          "width": 1376,
+          "height": 388.4375,
+          "top": 437,
+          "right": 1408,
+          "bottom": 825.4375,
+          "left": 32
+        },
+        "image": {
+          "x": 33,
+          "y": 438,
+          "width": 687,
+          "height": 386.4375,
+          "top": 438,
+          "right": 720,
+          "bottom": 824.4375,
+          "left": 33
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 131.203125,
+          "y": 592,
+          "width": 172.796875,
+          "height": 72,
+          "top": 592,
+          "right": 304,
+          "bottom": 664,
+          "left": 131.203125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 612,
+          "width": 168.65625,
+          "height": 52,
+          "top": 612,
+          "right": 184.65625,
+          "bottom": 664,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 179.953125,
+          "y": 716,
+          "width": 194.046875,
+          "height": 52,
+          "top": 716,
+          "right": 374,
+          "bottom": 768,
+          "left": 179.953125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 716,
+          "width": 168.65625,
+          "height": 52,
+          "top": 716,
+          "right": 184.65625,
+          "bottom": 768,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 390,
+      "height": 844,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 768,
+      "height": 1024,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 1024,
+      "height": 768,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 1440,
+      "height": 900,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 639,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 443,
+          "width": 607,
+          "height": 552.3125,
+          "top": 443,
+          "right": 623,
+          "bottom": 995.3125,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 654,
+          "width": 605,
+          "height": 340.3125,
+          "top": 654,
+          "right": 622,
+          "bottom": 994.3125,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 639,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 443,
+          "width": 607,
+          "height": 552.3125,
+          "top": 443,
+          "right": 623,
+          "bottom": 995.3125,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 654,
+          "width": 605,
+          "height": 340.3125,
+          "top": 654,
+          "right": 622,
+          "bottom": 994.3125,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 640,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 447,
+          "width": 592,
+          "height": 543.875,
+          "top": 447,
+          "right": 616,
+          "bottom": 990.875,
+          "left": 24
+        },
+        "image": {
+          "x": 25,
+          "y": 658,
+          "width": 590,
+          "height": 331.875,
+          "top": 658,
+          "right": 615,
+          "bottom": 989.875,
+          "left": 25
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 640,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 447,
+          "width": 592,
+          "height": 543.875,
+          "top": 447,
+          "right": 616,
+          "bottom": 990.875,
+          "left": 24
+        },
+        "image": {
+          "x": 25,
+          "y": 658,
+          "width": 590,
+          "height": 331.875,
+          "top": 658,
+          "right": 615,
+          "bottom": 989.875,
+          "left": 25
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 767,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 447,
+          "width": 719,
+          "height": 615.3125,
+          "top": 447,
+          "right": 743,
+          "bottom": 1062.3125,
+          "left": 24
+        },
+        "image": {
+          "x": 25,
+          "y": 658,
+          "width": 717,
+          "height": 403.3125,
+          "top": 658,
+          "right": 742,
+          "bottom": 1061.3125,
+          "left": 25
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 639,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 428.953125,
+          "y": 772,
+          "width": 194.046875,
+          "height": 52,
+          "top": 772,
+          "right": 623,
+          "bottom": 824,
+          "left": 428.953125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 767,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 24,
+          "y": 447,
+          "width": 719,
+          "height": 615.3125,
+          "top": 447,
+          "right": 743,
+          "bottom": 1062.3125,
+          "left": 24
+        },
+        "image": {
+          "x": 25,
+          "y": 658,
+          "width": 717,
+          "height": 403.3125,
+          "top": 658,
+          "right": 742,
+          "bottom": 1061.3125,
+          "left": 25
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 640,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 429.953125,
+          "y": 772,
+          "width": 194.046875,
+          "height": 52,
+          "top": 772,
+          "right": 624,
+          "bottom": 824,
+          "left": 429.953125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 639,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 772,
+          "width": 168.65625,
+          "height": 52,
+          "top": 772,
+          "right": 184.65625,
+          "bottom": 824,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 767,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 556.953125,
+          "y": 772,
+          "width": 194.046875,
+          "height": 52,
+          "top": 772,
+          "right": 751,
+          "bottom": 824,
+          "left": 556.953125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 640,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 772,
+          "width": 168.65625,
+          "height": 52,
+          "top": 772,
+          "right": 184.65625,
+          "bottom": 824,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 767,
+      "height": 900,
+      "boundary": true,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 772,
+          "width": 168.65625,
+          "height": 52,
+          "top": 772,
+          "right": 184.65625,
+          "bottom": 824,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    }
+  ],
+  "interactions": [
+    {
+      "route": "",
+      "locale": "en",
+      "checks": [
+        "home carousel keyboard advance in locale direction",
+        "search suggestions, keyboard selection, Escape focus",
+        "last horizontally scrolling home category filter reachable by focus"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "account/addresses",
+      "locale": "en",
+      "checks": [
+        "edit dialog keyboard containment, Escape and restored focus; cancel delete dialog"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "",
+      "locale": "ar",
+      "checks": [
+        "home carousel keyboard advance in locale direction",
+        "search suggestions, keyboard selection, Escape focus",
+        "last horizontally scrolling home category filter reachable by focus"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "account/addresses",
+      "locale": "ar",
+      "checks": [
+        "edit dialog keyboard containment, Escape and restored focus; cancel delete dialog"
+      ],
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "finalBuildSmoke": [
+    {
+      "locale": "ar",
+      "route": "",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/ar",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "en",
+      "route": "",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/en",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true,
+      "titlesChecked": 29,
+      "titlesAllWrap": true,
+      "minimumTitleHeight": 32
+    },
+    {
+      "locale": "ar",
+      "route": "blog",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/ar/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 467,
+          "width": 288,
+          "height": 548,
+          "top": 467,
+          "right": 304,
+          "bottom": 1015,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 790,
+          "width": 286,
+          "height": 224,
+          "top": 790,
+          "right": 303,
+          "bottom": 1014,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "blog",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3200/en/blog",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "featured": {
+        "article": {
+          "x": 16,
+          "y": 467,
+          "width": 288,
+          "height": 548,
+          "top": 467,
+          "right": 304,
+          "bottom": 1015,
+          "left": 16
+        },
+        "image": {
+          "x": 17,
+          "y": 790,
+          "width": 286,
+          "height": 224,
+          "top": 790,
+          "right": 303,
+          "bottom": 1014,
+          "left": 17
+        },
+        "fits": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "cart",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 16,
+          "y": 612,
+          "width": 168.65625,
+          "height": 52,
+          "top": 612,
+          "right": 184.65625,
+          "bottom": 664,
+          "left": 16
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "cart",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/cart",
+      "errors": [],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "quantityWidths": [
+        44,
+        44
+      ],
+      "fixed": {
+        "position": "fixed",
+        "rect": {
+          "x": 131.203125,
+          "y": 592,
+          "width": 172.796875,
+          "height": 72,
+          "top": 592,
+          "right": 304,
+          "bottom": 664,
+          "left": 131.203125
+        },
+        "reachable": true
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/addresses",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/ar/notifications?_rsc=kxC__c8p6VSDf8NM"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/addresses",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/account/addresses",
+      "errors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "warnings": [],
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "phoneRects": [
+        1
+      ],
+      "knownErrors": [
+        {
+          "type": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "url": "http://127.0.0.1:3100/en/notifications?_rsc=Kd17VIn8fJV8grfn"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "errors": [],
+      "warnings": [],
+      "expandedSummary": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": [],
+        "documentOverflow": false
+      },
+      "knownErrors": [],
+      "pass": true
+    }
+  ],
+  "finalBuildInteractions": [
+    {
+      "route": "",
+      "locale": "ar",
+      "checks": [
+        "home carousel keyboard advance in locale direction",
+        "search suggestions, keyboard selection, Escape focus",
+        "last horizontally scrolling home category filter reachable by focus"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "",
+      "locale": "en",
+      "checks": [
+        "home carousel keyboard advance in locale direction",
+        "search suggestions, keyboard selection, Escape focus",
+        "last horizontally scrolling home category filter reachable by focus"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "account/addresses",
+      "locale": "ar",
+      "checks": [
+        "edit dialog keyboard containment, Escape and restored focus; cancel delete dialog"
+      ],
+      "errors": [],
+      "pass": true
+    },
+    {
+      "route": "account/addresses",
+      "locale": "en",
+      "checks": [
+        "edit dialog keyboard containment, Escape and restored focus; cancel delete dialog"
+      ],
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "states": [
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "confirmed",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result?status=success&order_number=RF-10103",
+      "title": "تم تأكيد الدفع",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "confirmed",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result?status=success&order_number=RF-10103",
+      "title": "Payment confirmed",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "pending",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result?status=success&order_number=RF-PENDING",
+      "title": "تأكيد الدفع قيد الانتظار",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "pending",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result?status=success&order_number=RF-PENDING",
+      "title": "Payment confirmation is pending",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "failed",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result?status=failed&order_number=RF-FAILED",
+      "title": "لم تكتمل عملية الدفع",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "failed",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result?status=failed&order_number=RF-FAILED",
+      "title": "Payment was not completed",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "unavailable",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result?status=success&order_number=RF-ERROR",
+      "title": "تعذر التحقق من حالة الدفع",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "unavailable",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result?status=success&order_number=RF-ERROR",
+      "title": "We couldn't verify your payment",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "invalid",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result",
+      "title": "رابط نتيجة الدفع غير صالح",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "invalid",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result",
+      "title": "This payment return link is invalid",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout/payment-result",
+      "state": "checking",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/checkout/payment-result?status=success&order_number=RF-10103",
+      "title": "جارٍ التحقق من الدفع",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout/payment-result",
+      "state": "checking",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/checkout/payment-result?status=success&order_number=RF-10103",
+      "title": "Checking your payment",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "login",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/login",
+      "title": "أهلاً بك في رافال",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "login",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/login",
+      "title": "Welcome to Rafal",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "login/verify",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/login/verify",
+      "title": "تحقق من رقم جوالك",
+      "otpInput": "three digits entered; no submit",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "login/verify",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/login/verify",
+      "title": "Verify your phone",
+      "otpInput": "three digits entered; no submit",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "register",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/register",
+      "title": "استكمال البيانات",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "register",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/register",
+      "title": "Complete your profile",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/profile",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/profile",
+      "title": "البيانات الشخصية",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/profile",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/profile",
+      "title": "Personal information",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/settings",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/settings",
+      "title": "الإعدادات",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/settings",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/settings",
+      "title": "Settings",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/loyalty",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/loyalty",
+      "title": "نقاط الولاء",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/loyalty",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/loyalty",
+      "title": "Loyalty points",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/wishlist",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/wishlist",
+      "title": "المفضلة",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/wishlist",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/wishlist",
+      "title": "Wishlist",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders",
+      "title": "طلباتي",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders",
+      "title": "My orders",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders/RF-10103",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders/RF-10103",
+      "title": "طلب 10103",
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders/RF-10103",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders/RF-10103",
+      "title": "Order 10103",
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [
+        {
+          "path": "/api/checkout/quote",
+          "method": "POST"
+        }
+      ],
+      "url": "http://127.0.0.1:3100/ar/checkout",
+      "title": "إتمام الشراء",
+      "savedAddressChoices": 1,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "checkout",
+      "width": 320,
+      "height": 740,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [
+        {
+          "path": "/api/checkout/quote",
+          "method": "POST"
+        }
+      ],
+      "url": "http://127.0.0.1:3100/en/checkout",
+      "title": "Checkout",
+      "savedAddressChoices": 1,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders",
+      "width": 390,
+      "height": 844,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders",
+      "title": "طلباتي",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders",
+      "width": 390,
+      "height": 844,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders",
+      "title": "My orders",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders",
+      "width": 768,
+      "height": 1024,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders",
+      "title": "طلباتي",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders",
+      "width": 768,
+      "height": 1024,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders",
+      "title": "My orders",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders",
+      "width": 1024,
+      "height": 768,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders",
+      "title": "طلباتي",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders",
+      "width": 1024,
+      "height": 768,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders",
+      "title": "My orders",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "ar",
+      "route": "account/orders",
+      "width": 1440,
+      "height": 900,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/ar/account/orders",
+      "title": "طلباتي",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "rtl",
+        "outside": []
+      },
+      "pass": true
+    },
+    {
+      "locale": "en",
+      "route": "account/orders",
+      "width": 1440,
+      "height": 900,
+      "errors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "blockedWrites": [],
+      "url": "http://127.0.0.1:3100/en/account/orders",
+      "title": "My orders",
+      "filterVisible": true,
+      "geometry": {
+        "dir": "ltr",
+        "outside": []
+      },
+      "pass": true
+    }
+  ]
+}

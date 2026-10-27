@@ -548,7 +548,7 @@ export function CartPage({
                   </p>
                 </div>
 
-                <div className="col-span-2 flex min-w-0 items-end justify-between gap-3 sm:col-span-1 sm:flex-col sm:items-end">
+                <div className="col-span-2 flex min-w-0 flex-wrap items-end justify-between gap-3 sm:col-span-1 sm:flex-col sm:flex-nowrap sm:items-end">
                   <div className="flex items-start gap-2 sm:w-full sm:justify-between">
                     <div className="text-start sm:text-end">
                       <strong className="block type-body-lg text-gray-1000">
@@ -580,7 +580,7 @@ export function CartPage({
                     </button>
                   </div>
 
-                  <div className="flex h-11 items-center overflow-hidden rounded-md border border-gray-200 bg-gray-0">
+                  <div className="flex h-11 shrink-0 items-center overflow-hidden rounded-md border border-gray-200 bg-gray-0">
                     <button
                       type="button"
                       aria-label={copy.decrease}
@@ -590,7 +590,7 @@ export function CartPage({
                         unavailable
                       }
                       onClick={() => mutateQuantity(line.id, -1)}
-                      className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
+                      className="size-11 shrink-0 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       {"\u2212"}
                     </button>
@@ -612,7 +612,7 @@ export function CartPage({
                           line.quantity >= availability.available)
                       }
                       onClick={() => mutateQuantity(line.id, 1)}
-                      className="size-11 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
+                      className="size-11 shrink-0 text-lg hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:text-gray-300"
                     >
                       +
                     </button>
