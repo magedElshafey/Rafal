@@ -88,15 +88,25 @@ for (const authenticated of [false, true]) {
     const section = h.render("section", CheckoutDestinationSection, { addresses: [], addressesUnavailable: false, committedDestination: null, copy: common.checkoutPage.destination,
       gift: null, isAuthenticated: authenticated, locale: "en", onCommit: value => h.commits.push(value) });
     const form = h.find(section, el => el.type?.name === "OneTimeAddressForm");
-    const render = () => h.render("one-time", form.type, form.props);
+    const render = () => h.render("one-time", form.type, { ...form.props, committedAddress: h.commits.at(-1)?.address ?? null });
     const field = name => h.find(render(), el => el.props.name === name);
     for (const [name, value] of [["recipientName", "Test"], ["recipientPhone", "501234567"], ["cityId", "1"], ["district", "Manual"], ["streetDetails", "Street"]]) field(name).props.onChange({ target: { value } });
     // Manual submission does not require the picker to run or have credentials.
     h.find(render(), el => el.type === "form").props.onSubmit({ preventDefault() {} });
+    assert.equal(h.commits.length, 1, "an uncommitted alternative must not deselect a saved address");
     assert.deepEqual(plain(h.commits[0]), { kind: "one-time-address", address: { recipientName: "Test", recipientPhone: "+966501234567", cityId: 1, district: "Manual", streetDetails: "Street" } });
     h.find(render(), el => el.type === h.MapPicker).props.onSuggestion({ district: "Late", streetDetails: "Late", city: "Other" }, false);
     assert.equal(field("district").props.value, "Manual");
     assert.equal(field("cityId").props.value, "1");
+    assert.equal(h.commits.length, 1, "ignored suggestions must not invalidate a committed address");
+    h.find(render(), el => el.type === h.MapPicker).props.onCityChange({ id: 2, name: "Other city" });
+    assert.equal(h.commits.at(-1), null, "map city changes invalidate the committed destination");
+    assert.equal(field("cityId").props.value, "2");
+    h.find(render(), el => el.type === "form").props.onSubmit({ preventDefault() {} });
+    h.find(render(), el => el.type === h.MapPicker).props.onSuggestion({ district: "New district", streetDetails: "New street" }, true);
+    assert.equal(h.commits.length, 4);
+    assert.equal(h.commits.at(-1), null, "applied map details invalidate the committed destination");
+    assert.equal(field("district").props.value, "New district");
   });
 }
 

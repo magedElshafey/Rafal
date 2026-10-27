@@ -38,28 +38,89 @@ async function submitOtp(page: Page) {
   });
 }
 
-async function prepareGuest(page: Page, locale: string) {
+async function prepareCheckout(page: Page, locale: string, authenticated = false) {
   await page.goto(`/${locale}/checkout`);
+  if (authenticated) await page.locator('button[aria-controls="checkout-one-time-address"]').click();
   await page.locator("#checkout-recipient-name").fill("Synthetic Buyer");
   await page.locator("#checkout-recipient-phone").fill("501234567");
   await page.locator("#checkout-city").selectOption("1");
   await page.locator("#checkout-district").fill("Synthetic District");
   await page.locator("#checkout-street-details").fill("Synthetic Street");
   await page.locator('#checkout-destination button[type="submit"]').click();
-  await page.locator("#checkout-buyer-name").fill("Synthetic Buyer");
-  await page.locator("#checkout-buyer-email").fill("buyer@example.invalid");
-  await page.locator("#checkout-buyer-phone").fill("501234567");
-  await page.locator('#checkout-buyer button[type="submit"]').click();
+  if (!authenticated) {
+    await page.locator("#checkout-buyer-name").fill("Synthetic Buyer");
+    await page.locator("#checkout-buyer-email").fill("buyer@example.invalid");
+    await page.locator("#checkout-buyer-phone").fill("501234567");
+    await page.locator('#checkout-buyer button[type="submit"]').click();
+  }
   await page.getByText("Standard", { exact: true }).click();
 }
 
 for (const locale of ["ar", "en"]) {
+  test(`${locale} hiding a one-time address preserves the unfinished draft`, async ({ page, request }) => {
+    const offset = (await records(request)).length;
+    await setup(page, "false", true);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/${locale}/checkout`);
+    const toggle = page.locator('button[aria-controls="checkout-one-time-address"]');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await page.locator("#checkout-recipient-name").fill("Unfinished Recipient");
+    await page.locator("#checkout-city").selectOption("2");
+    await page.locator("#checkout-district").fill("Unfinished District");
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator("#checkout-recipient-name")).not.toBeVisible();
+    await toggle.click();
+    await expect(page.locator("#checkout-recipient-name")).toHaveValue("Unfinished Recipient");
+    await expect(page.locator("#checkout-city")).toHaveValue("2");
+    await expect(page.locator("#checkout-district")).toHaveValue("Unfinished District");
+    await expect(page.locator('button[aria-describedby="checkout-submitted-payment"]')).toBeDisabled();
+    expect(mutations((await records(request)).slice(offset))).toEqual([]);
+  });
+
+  for (const authenticated of [false, true]) {
+    test(`${locale} ${authenticated ? "User" : "Guest"} delivery edits require saving and refreshed shipping before Place`, async ({ page, request }) => {
+      const offset = (await records(request)).length;
+      await setup(page, "false", authenticated);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await prepareCheckout(page, locale, authenticated);
+      const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
+      await expect(place).toBeEnabled();
+      for (const [selector, value] of [
+        ["#checkout-recipient-name", "Updated Recipient"],
+        ["#checkout-recipient-phone", "509876543"],
+        ["#checkout-district", "Updated District"],
+        ["#checkout-street-details", "Updated Street"],
+      ]) {
+        await page.locator(selector).fill(value);
+        await expect(place).toBeDisabled();
+        await expect(page.locator('input[name="checkout-shipping-method"]')).toHaveCount(0);
+        await page.locator('#checkout-destination button[type="submit"]').focus();
+        await page.keyboard.press("Enter");
+        await expect(page.locator(selector)).toHaveValue(value);
+        await expect(place).toBeDisabled();
+        await page.getByText("Standard", { exact: true }).click();
+        await expect(place).toBeEnabled();
+      }
+      await page.locator("#checkout-city").selectOption("2");
+      await expect(place).toBeDisabled();
+      await page.locator("#checkout-street-details").fill("");
+      await page.locator('#checkout-destination button[type="submit"]').click();
+      await expect(page.locator("#checkout-street-details")).toHaveAttribute("aria-invalid", "true");
+      await expect(place).toBeDisabled();
+      if (!authenticated) await expect(page.locator("#checkout-buyer-name")).toHaveValue("Synthetic Buyer");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      expect(mutations((await records(request)).slice(offset))).toEqual([]);
+    });
+  }
+
   for (const variant of ["false", "true"]) {
     test(`${locale} Guest Place → OTP (${variant}) → hosted: one mutation each, no confirmation`, async ({ page, request }) => {
       const offset = (await records(request)).length;
       await setup(page, variant);
       await page.setViewportSize({ width: locale === "ar" ? 390 : 1440, height: 900 });
-      await prepareGuest(page, locale);
+      await prepareCheckout(page, locale);
       const card = page.locator('#checkout-payment input[value="card"]');
       await expect(card).toBeChecked();
       await expect(page.locator('#checkout-payment input[value="apple_pay"]')).toBeDisabled();
@@ -105,7 +166,7 @@ for (const scenario of ["missing", "empty", "failed"]) {
   test(`discovery ${scenario}: declared Card checkout remains usable without duplicate Place`, async ({ page, request }) => {
     const offset = (await records(request)).length;
     await setup(page, scenario);
-    await prepareGuest(page, "en");
+    await prepareCheckout(page, "en");
     await expect(page.locator('#checkout-payment input[value="card"]')).toHaveCount(0);
     await expect(page.locator("#checkout-submitted-payment")).toContainText("card / Mada");
     const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');

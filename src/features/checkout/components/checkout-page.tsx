@@ -165,9 +165,9 @@ export function CheckoutPage({
     });
   };
 
-  const commitDestination = (nextDestination: CheckoutDestination) => {
-    const nextRequest = { destination: nextDestination } as const;
-    invalidateTarget(nextRequest);
+  const commitDestination = (nextDestination: CheckoutDestination | null) => {
+    // Editing a delivery draft must not leave the old address eligible for Place.
+    if (nextDestination) invalidateTarget({ destination: nextDestination });
     setShippingMethodId(null);
     setDestination(nextDestination);
     setPlaceUnavailableLines([]);

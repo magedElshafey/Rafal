@@ -80,7 +80,7 @@ type CheckoutDestinationSectionProps = {
   giftMutationDisabled: boolean;
   isAuthenticated: boolean;
   locale: Locale;
-  onCommit: (destination: CheckoutDestination) => void;
+  onCommit: (destination: CheckoutDestination | null) => void;
   onGiftPendingChange: (pending: boolean) => void;
   onGiftPersisted: (gift: CartSnapshot["gift"]) => void;
 };
@@ -172,7 +172,7 @@ function OneTimeAddressForm({
   committedAddress: CheckoutAddress | null;
   copy: CheckoutDestinationCopy;
   locale: Locale;
-  onCommit: (destination: CheckoutDestination) => void;
+  onCommit: (destination: CheckoutDestination | null) => void;
 }) {
   const [draft, setDraft] = useState<AddressDraft>(() =>
     draftFromCommittedAddress(committedAddress),
@@ -207,6 +207,7 @@ function OneTimeAddressForm({
     setDraft((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
     setFormError(null);
+    if (committedAddress) onCommit(null);
   };
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -300,6 +301,7 @@ function OneTimeAddressForm({
               const selectedId = Number(event.target.value);
               const city = cities.find((item) => item.id === selectedId);
               if (!city) return;
+              if (committedAddress) onCommit(null);
               setDraft((current) => ({
                 ...current,
                 city: { id: city.id, name: city.name },
@@ -362,6 +364,7 @@ function OneTimeAddressForm({
         </div>
       </div>
       <AddressMapPicker cityId={draft.city?.id ?? null} onCityChange={(city) => {
+        if (committedAddress) onCommit(null);
         setDraft(current => ({ ...current, city: { id: city.id, name: city.name } }));
         setErrors(current => ({ ...current, city: undefined }));
         setFormError(null);
@@ -369,7 +372,10 @@ function OneTimeAddressForm({
         const patch = mapFields.merge(draft, suggestion, replace);
         setDraft({ ...draft, ...patch });
         setErrors(current => ({ ...current, ...(patch.district !== undefined ? { district: undefined } : {}), ...(patch.streetDetails !== undefined ? { streetDetails: undefined } : {}) }));
-        if (Object.keys(patch).length) setFormError(null);
+        if (Object.keys(patch).length) {
+          setFormError(null);
+          if (committedAddress) onCommit(null);
+        }
       }} />
       <FieldFeedback role="alert" className="mt-4" reserve={[copy.errors.validation]}>
           {formError}
@@ -514,26 +520,30 @@ export function CheckoutDestinationSection({
           type="button"
           variant="ghost"
           className="mt-4 px-0 text-gold-700"
+          aria-expanded={showOneTimeEditor}
+          aria-controls="checkout-one-time-address"
           onClick={() => setShowOneTime((current) => !current)}
         >
           {showOneTime ? copy.oneTime.hide : copy.oneTime.show}
         </Button>
       ) : null}
 
-      {showOneTimeEditor ? (
-        <div className={cn(isAuthenticated && addresses.length > 0 && "mt-4")}>
-          <OneTimeAddressForm
-            committedAddress={
-              committedDestination?.kind === "one-time-address"
-                ? committedDestination.address
-                : null
-            }
-            copy={copy}
-            locale={locale}
-            onCommit={onCommit}
-          />
-        </div>
-      ) : null}
+      <div
+        id="checkout-one-time-address"
+        hidden={!showOneTimeEditor}
+        className={cn(isAuthenticated && addresses.length > 0 && "mt-4")}
+      >
+        <OneTimeAddressForm
+          committedAddress={
+            committedDestination?.kind === "one-time-address"
+              ? committedDestination.address
+              : null
+          }
+          copy={copy}
+          locale={locale}
+          onCommit={onCommit}
+        />
+      </div>
     </CheckoutStepSection>
   );
 }
