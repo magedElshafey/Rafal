@@ -8,11 +8,13 @@ import type {
 export async function lookupGuestOrderFromBrowser(
   locale: Locale,
   input: GuestOrderLookupInput,
+  signal?: AbortSignal,
 ): Promise<GuestOrderLookupResult> {
   try {
     const response = await fetch("/api/orders/lookup", {
       method: "POST",
       cache: "no-store",
+      signal,
       headers: {
         Accept: "application/json",
         "Accept-Language": locale,

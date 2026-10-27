@@ -833,6 +833,21 @@
       "service": "We couldn't track the order right now. Please try again."
     }
   },
+  "paymentResult": {
+    "confirmed": { "title": "Payment confirmed", "description": "Your payment has been received. Thank you for shopping with Rafal." },
+    "failed": { "title": "Payment was not completed", "description": "We couldn't confirm a completed payment. Review your order or contact us before making another payment." },
+    "pending": { "title": "Payment confirmation is pending", "description": "Your order has not yet returned a final payment result. Check again shortly or review your order before making another payment." },
+    "unavailable": { "title": "We couldn't verify your payment", "description": "Use order tracking with your contact details, or contact us for help. Please check your order before making another payment." },
+    "invalid": { "title": "This payment return link is invalid", "description": "The link is missing or contains invalid order information. You can still track your order or contact us for help." },
+    "checking": { "title": "Checking your payment", "description": "We're checking your order for payment confirmation." },
+    "orderNumber": "Order number",
+    "reportedFailed": "The payment return reported an unsuccessful attempt. This does not confirm that your order was cancelled.",
+    "details": "View order details",
+    "lookup": "Track your order",
+    "store": "Back to store",
+    "support": "Contact us",
+    "recheck": "Check payment status again"
+  },
   "auth": {
     "brandHome": "Rafal — home page",
     "backToOtp": "Back to phone verification",

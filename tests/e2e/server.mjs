@@ -2,6 +2,7 @@
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import nextEnv from "@next/env";
+import { readFileSync } from "node:fs";
 
 // Explicit opt-in only. Normal CI always uses a synthetic token and mocked provider.
 if (process.env.MAP_E2E_LIVE === "1") nextEnv.loadEnvConfig(process.cwd(), false, { info() {}, error() {} });
@@ -21,6 +22,8 @@ const cart = {
   coupon: null, gift: { is_gift: false, is_anonymous: false, gift_message: null, gift_wrap: false, recipient: null },
 };
 const requests = [];
+const paymentReads = new Map();
+const paymentOrder = JSON.parse(readFileSync(new URL("../fixtures/payment-result-order.json", import.meta.url), "utf8"));
 const backend = createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3100");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept-Language,X-Locale");
@@ -34,10 +37,32 @@ const backend = createServer(async (req, res) => {
   const fields = req.headers["content-type"]?.startsWith("multipart/form-data")
     ? Object.fromEntries(await new Response(raw, { headers: { "Content-Type": req.headers["content-type"] } }).formData())
     : undefined;
-  requests.push({ path: url.pathname, method: req.method, body: raw, fields });
+  requests.push({ path: url.pathname, method: req.method, body: raw, fields, locale: req.headers["x-locale"], authenticated: Boolean(req.headers.authorization) });
   if (/\/checkout\/place|\/verify|\/payment/.test(url.pathname) && req.method !== "GET") return send({}, 403);
   if (url.pathname === "/regions") return ok(regions);
   if (url.pathname === "/auth/me") return ok({ id: 1, first_name: "Test", last_name: "Buyer", email: "test@example.invalid", phone: "966501234567", profile_complete: true, created_at: "2026-01-01T00:00:00Z" });
+  if (url.pathname === "/orders/lookup" || /^\/orders\/RF-/.test(url.pathname)) {
+    const guest = url.pathname === "/orders/lookup";
+    const orderNumber = guest ? fields?.order_number : decodeURIComponent(url.pathname.slice("/orders/".length));
+    if (guest ? fields?.phone !== "+966501234567" : req.headers.authorization !== "Bearer synthetic-auth") return send({ success: false }, 403);
+    if (orderNumber === "RF-FORBIDDEN") return send({ success: false }, 403);
+    if (orderNumber === "RF-ERROR") return send({ success: false, message: "PRIVATE-PROVIDER-ERROR" }, 503);
+    if (orderNumber === "RF-MALFORMED") return ok({ payment: { status: "paid" } });
+    const count = (paymentReads.get(orderNumber) ?? 0) + 1;
+    paymentReads.set(orderNumber, count);
+    const data = structuredClone(paymentOrder.data);
+    data.order_number = orderNumber === "RF-MISMATCH" ? "RF-OTHER" : orderNumber;
+    if (/PENDING|UNKNOWN|STALE|FAILED|CONTRADICTORY/.test(orderNumber)) {
+      data.payment.status = orderNumber.includes("UNKNOWN") ? "unrecognized" : orderNumber.includes("FAILED") ? "failed" : "pending";
+      data.payment.paid_at = null;
+      data.status = orderNumber.includes("FAILED") ? "payment_failed" : "new";
+    }
+    if (orderNumber === "RF-CONTRADICTORY") { data.payment.status = "paid"; data.status = "payment_failed"; }
+    if (orderNumber?.startsWith("RF-STALE") && count > 1) {
+      data.status = "confirmed"; data.payment = paymentOrder.data.payment;
+    }
+    return ok(data);
+  }
   if (url.pathname === "/settings/public") return ok({ vat_rate: 15, free_shipping_enabled: false, free_shipping_threshold: null, gift_wrap_enabled: true, gift_wrap_fee: 0, max_addresses_per_user: 10, max_cart_item_quantity: 10, otp_resend_cooldown_seconds: 60, currency: "SAR" });
   if (url.pathname === "/addresses" && req.method === "GET") return send({ success: true, message: "Test", data: [address], meta: { current_page: 1, last_page: 1, per_page: 15, total: 1 } });
   if (url.pathname.startsWith("/addresses") && ["POST", "PUT"].includes(req.method)) return ok({ ...address, ...JSON.parse(raw) });

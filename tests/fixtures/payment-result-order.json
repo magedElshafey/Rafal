@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "data": {
+    "id": 10103,
+    "order_number": "RF-10103",
+    "display_number": "10103",
+    "status": "confirmed",
+    "customer_status": "confirmed",
+    "requires_verification": false,
+    "placed_at": "2026-10-26T10:00:00Z",
+    "items": [],
+    "gift": null,
+    "shipping_address": {
+      "recipient_name": "Synthetic Guest",
+      "recipient_phone": "+966501234567",
+      "city": null,
+      "district": "Synthetic District",
+      "street_details": "Synthetic Street"
+    },
+    "shipping_method": null,
+    "money": { "total": "100.00", "currency": "SAR" },
+    "payment": { "method": "tap", "status": "paid", "paid_at": "2026-10-26T10:01:00Z" },
+    "verification_expires_at": null,
+    "timeline": [],
+    "can_cancel": false,
+    "can_reorder": false,
+    "can_request_return": false
+  }
+}
