@@ -165,7 +165,14 @@ test("Verify hosted result validates server and browser contracts, rejecting uns
     p => { p.meta.payment.payment_url = "not-a-url"; },
     p => { delete p.meta.payment.charge_id; },
     p => { p.meta.payment.expires_at = "2000-01-01T00:00:00Z"; },
-    p => { p.meta.requires_verification = false; },
+    p => { p.meta.requires_verification = true; },
+    p => { delete p.meta.payment; },
+    p => { delete p.meta.payment.expires_at; },
+    p => { p.meta.payment.expires_at = "invalid"; },
+    p => { p.meta.payment.charge_id = ""; },
+    p => { p.success = false; },
+    p => { p.data.order_number = "RF-OTHER-ORDER"; },
+    p => { delete p.data.requires_verification; },
     p => { p.data.payment.status = "paid"; },
     p => { p.data.payment.paid_at = "2026-01-01T00:00:00Z"; },
     p => { p.data.payment.method = "unknown"; },
@@ -177,12 +184,47 @@ test("Verify hosted result validates server and browser contracts, rejecting uns
   const h = harness(); h.state.payload = hostedFixture();
   const result = await h.load("src/features/checkout/api/checkout-verify-mutation").verifyCheckoutOrderFromBrowser("ar", h.input);
   assert.equal(result.kind, "hosted-payment-required");
+  assert.equal(result.orderNumber, h.input.orderNumber);
+  assert.equal(result.handoff.paymentUrl, h.state.payload.meta.payment.payment_url);
+  assert.equal(result.handoff.expiresAt, h.state.payload.meta.payment.expires_at);
+  assert.equal(result.handoff.chargeId, h.state.payload.meta.payment.charge_id);
+  assert.equal(h.state.browser.length, 1);
+  assert.equal(h.state.upstream.length, 1);
+  assert.equal(h.state.upstream[0].path, `/checkout/orders/${h.input.orderNumber}/verify`);
   const { parseCheckoutVerifyResult } = h.load("src/features/checkout/api/parse-checkout-verify-result");
   for (const handoff of [null, {}, { ...result.handoff, paymentUrl: "https://evil.example" },
     { ...result.handoff, paymentUrl: "http://checkout.tap.company" },
     { ...result.handoff, paymentUrl: "https://user@checkout.tap.company" },
     { ...result.handoff, expiresAt: "2000-01-01T00:00:00Z" }]) {
     assert.throws(() => parseCheckoutVerifyResult({ ...result, handoff }));
+  }
+});
+
+test("Verify retains the earlier hosted flag variant and accepts consistent metadata flags", async () => {
+  for (const required of [false, true]) {
+    for (const metadataRequired of [undefined, required]) {
+      const h = harness(); h.state.payload = hostedFixture();
+      h.state.payload.data.requires_verification = required;
+      if (metadataRequired !== undefined) h.state.payload.meta.requires_verification = metadataRequired;
+      const result = await h.load("src/features/checkout/api/checkout-verify-mutation").verifyCheckoutOrderFromBrowser("ar", h.input);
+      assert.equal(result.kind, "hosted-payment-required");
+      assert.equal(result.orderNumber, h.input.orderNumber);
+    }
+  }
+});
+
+test("Verify confirms paid only with payment evidence; pending cannot become confirmation", async () => {
+  const h = harness();
+  const verify = h.load("src/features/checkout/api/checkout-api.server").verifyCheckoutOrder;
+  const paid = structuredClone(h.state.payload);
+  assert.equal((await verify("ar", h.input)).kind, "confirmed");
+  for (const change of [
+    p => { p.data.payment.status = "pending"; p.data.payment.paid_at = null; },
+    p => { p.data.payment.paid_at = null; },
+    p => { p.success = false; },
+  ]) {
+    h.state.payload = structuredClone(paid); change(h.state.payload);
+    await assert.rejects(verify("ar", h.input));
   }
 });
 

@@ -171,6 +171,7 @@ test("Verify hosted handoff and destination failures never log payment URLs or t
   for (const invalid of [false, true]) {
     const change = payload => {
       Object.assign(payload, structuredClone(hosted));
+      payload.data.order_number = secret; // Match runVerify's synthetic requested identity.
       if (invalid) payload.meta.payment.payment_url = "https://evil.example/?token=SYNTHETIC_PAYMENT_TOKEN";
     };
     const dev = harness("development", "paid", change);

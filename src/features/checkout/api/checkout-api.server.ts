@@ -6,7 +6,7 @@ import { checkoutContractEndpoints } from "@/features/checkout/api/checkout-dto"
 import { mapCheckoutPlaceResult } from "@/features/checkout/api/checkout-place-mapper";
 import { mapCheckoutQuote } from "@/features/checkout/api/checkout-mapper";
 import { parseCheckoutPlaceResponse } from "@/features/checkout/api/parse-checkout-place-dto";
-import { parseCheckoutQuoteResponse } from "@/features/checkout/api/parse-checkout-dto";
+import { CheckoutContractError, parseCheckoutQuoteResponse } from "@/features/checkout/api/parse-checkout-dto";
 import { serializeCheckoutPlaceRequest } from "@/features/checkout/api/checkout-place-serializer";
 import { serializeCheckoutQuoteRequest } from "@/features/checkout/api/checkout-serializer";
 import type { CheckoutVerifyRequestDto } from "@/features/checkout/api/checkout-place-dto";
@@ -170,9 +170,16 @@ export async function verifyCheckoutOrder(
     }
 
     diagnostics.stage("result-mapping");
-    // Verify's documented handoff retains OTP flags; it is not a Place payment outcome.
-    if (response.data.status === "pending_verification" && response.data.requires_verification === true &&
-      response.meta?.requires_verification !== false && response.data.payment?.method === "card" &&
+    if (response.data.order_number !== input.orderNumber) {
+      throw new CheckoutContractError("response.data.order_number", "the requested order identity");
+    }
+    // Verify can clear the OTP flag while retaining pending_verification status.
+    // Keep the earlier flag-retaining variant, but reject conflicting metadata.
+    // This continuation is specific to Verify, not a paid or Place outcome.
+    const verificationRequired = response.data.requires_verification;
+    const metadataRequired = response.meta?.requires_verification;
+    if (response.data.status === "pending_verification" && verificationRequired !== null &&
+      (metadataRequired == null || metadataRequired === verificationRequired) && response.data.payment?.method === "card" &&
       response.data.payment.status === "pending" && response.data.payment.paid_at === null && response.meta?.payment) {
       const handoff = response.meta.payment;
       return parseCheckoutHostedPaymentResult({
