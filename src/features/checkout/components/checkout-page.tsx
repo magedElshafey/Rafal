@@ -271,9 +271,9 @@ export function CheckoutPage({
     : guestBuyer;
   const placeRequest: CheckoutPlaceRequest | null =
     destination && shippingMethodId !== null && buyer
-      ? { destination, shippingMethodId, buyer, ...(isAuthenticated && selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
+      ? { destination, shippingMethodId, buyer, ...(selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
       : null;
-  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, isAuthenticated, selectedPaymentDiscovery === paymentDiscovery);
+  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, selectedPaymentDiscovery === paymentDiscovery);
   // Mutation error state can arrive before placeOrder records the outcome.
   const uncertainPlaceError =
     placeMutation.isError &&
@@ -430,9 +430,8 @@ export function CheckoutPage({
               copy={copy.payment}
               step={isAuthenticated ? "3" : "4"}
               selectedCode={paymentReady ? selectedPaymentCode : null}
-              isAuthenticated={isAuthenticated}
               onSelect={(code) => {
-                if (canSelectCheckoutPayment(code, isAuthenticated, true)) {
+                if (canSelectCheckoutPayment(code, true)) {
                   setSelectedPaymentCode(code);
                   setSelectedPaymentDiscovery(paymentDiscovery);
                 }

@@ -148,6 +148,27 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
 
 const ready = (codes) => Promise.resolve({ kind: "ready", methods: codes.map((code) => ({ code, label: code, icon: "card" })) });
 
+for (const locale of ["ar", "en"]) {
+  for (const method of ["card", "apple_pay", "tap"]) {
+    test(`${locale} Guest ${method}: real Place parser to browser action stores phone and navigates to OTP once`, async () => {
+      const backendFixture = JSON.parse(read("tests/fixtures/checkout-guest-otp.json"));
+      backendFixture.data.payment.method = method;
+      const h = harness({ locale, guest: true, discovery: ready([method]), backendFixture });
+      h.payment.props.onSelect(method);
+      const button = h.snapshot().button;
+      assert.equal(button.props.disabled, false);
+      button.props.onClick(); button.props.onClick(); await tick();
+      assert.equal(h.calls.length, 1);
+      assert.equal(h.serialize(h.calls[0]).payment_method, method);
+      assert.deepEqual(h.effects.navigation, ["/orders/RF-SYNTHETIC-GUEST/verify"]);
+      assert.deepEqual(h.effects.handoffs, ["otp"]);
+      assert.equal(h.verificationContexts[0].phone, "0501234567");
+      h.snapshot().button.props.onClick(); await tick();
+      assert.equal(h.calls.length, 1);
+    });
+  }
+}
+
 for (const method of ["card", "apple_pay", "tap"]) {
   test(`actual Checkout handler: ${method} hosted response keeps identity and cart, navigates once`, async () => {
     const backendFixture = JSON.parse(read("tests/fixtures/checkout-place-hosted.json"));
@@ -272,10 +293,10 @@ for (const locale of ["ar", "en"]) {
   });
 }
 
-test("normal UI callback cannot change legacy selection to an unsupported method", () => {
+test("Guest selection can choose an advertised Tap method", () => {
   const h = harness({ discovery: ready(["card", "tap"]), guest: true });
   h.payment.props.onSelect("tap");
-  assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "card");
+  assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "tap");
 });
 
 for (const selected of ["bank_transfer", "future", null]) {

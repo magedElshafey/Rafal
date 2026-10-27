@@ -9,6 +9,73 @@ const mutations = (rows: RecordedRequest[]) => rows.filter(row => row.method ===
 
 for (const locale of ["ar", "en"]) {
   for (const method of ["card", "apple_pay", "tap"]) {
+    test(`${locale} Guest ${method}: selected method through Place, OTP and hosted handoff exactly once`, async ({ page, request }) => {
+      const offset = (await records(request)).length;
+      await setup(page, "unified");
+      await page.setViewportSize({ width: locale === "ar" ? 390 : 1440, height: 900 });
+      await prepareCheckout(page, locale);
+      const radio = page.locator(`#checkout-payment input[value="${method}"]`);
+      await radio.focus();
+      await page.keyboard.press("Space");
+      await expect(radio).toBeChecked();
+      const selectedLabel = await radio.locator("..").locator("span.block").first().innerText();
+      await expect(page.locator("#checkout-submitted-payment")).toContainText(selectedLabel);
+      await expect(page.locator('#checkout-payment input[value="bank_transfer"]')).toHaveCount(0);
+      const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');
+      await expect(place).toBeEnabled();
+      await place.evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
+      const order = `RF-E2E-GUEST-${method.replace("_", "").toUpperCase()}`;
+      await expect(page).toHaveURL(new RegExp(`/${locale}/orders/${order}/verify$`));
+      expect(mutations((await records(request)).slice(offset)).map(row => row.path)).toEqual(["/checkout/place"]);
+      await submitOtp(page);
+      await expect(page.getByRole("heading", { name: "Synthetic hosted checkout" })).toBeVisible();
+      await page.goBack();
+      await expect(page.locator("#checkout-order-otp")).toHaveCount(0);
+      await page.reload();
+      await expect(page.locator("#checkout-order-otp")).toHaveCount(0);
+      const calls = mutations((await records(request)).slice(offset));
+      expect(calls.map(row => row.path)).toEqual(["/checkout/place", `/checkout/orders/${order}/verify`]);
+      expect(calls[0].fields?.payment_method).toBe(method);
+      expect(calls[0].fields?.["guest[phone]"]).toBe(phone);
+      expect(calls[1].fields?.phone).toBe(phone);
+      expect(calls.every(row => !row.authenticated)).toBe(true);
+      expect(await page.evaluate(order => sessionStorage.getItem(`rafal:checkout:confirmation:${order}`), order)).toBeNull();
+    });
+  }
+}
+
+test("Guest discovery omitting additional methods cannot offer them; Card remains usable", async ({ page, request }) => {
+  const offset = (await records(request)).length;
+  await setup(page, "cardonly");
+  await prepareCheckout(page, "en");
+  for (const method of ["apple_pay", "tap", "bank_transfer"]) await expect(page.locator(`#checkout-payment input[value="${method}"]`)).toHaveCount(0);
+  await page.locator('button[aria-describedby="checkout-submitted-payment"]').click();
+  await expect(page).toHaveURL(/\/orders\/RF-E2E-GUEST-CARD\/verify$/);
+  const calls = mutations((await records(request)).slice(offset));
+  expect(calls).toHaveLength(1);
+  expect(calls[0].fields?.payment_method).toBe("card");
+});
+
+for (const method of ["APPLEPAY", "TAP"]) {
+  for (const failure of ["UNSAFE", "EXPIRED", "MISSING", "MISMATCH", "MALFORMED"]) {
+    test(`Guest ${method} Verify ${failure}: no redirect or replay`, async ({ page, request }) => {
+      const offset = (await records(request)).length;
+      await setup(page, "unified");
+      const order = `RF-E2E-GUEST-${method}-${failure}`;
+      await seedVerification(page, order);
+      await page.goto(`/en/orders/${order}/verify`);
+      await submitOtp(page);
+      await expect(page.locator("#checkout-order-verification-error")).toContainText("could not be verified");
+      await expect(page).toHaveURL(new RegExp(`/orders/${order}/verify$`));
+      await page.reload();
+      expect(mutations((await records(request)).slice(offset)).map(row => row.path)).toEqual([`/checkout/orders/${order}/verify`]);
+      expect(await page.evaluate(order => sessionStorage.getItem(`rafal:checkout:payment:${order}`), order)).toBeNull();
+    });
+  }
+}
+
+for (const locale of ["ar", "en"]) {
+  for (const method of ["card", "apple_pay", "tap"]) {
     test(`${locale} authenticated ${method}: observed hosted Place, identity and no replay`, async ({ page, request }) => {
       const offset = (await records(request)).length;
       await setup(page, "hosted", true);
@@ -188,7 +255,7 @@ for (const locale of ["ar", "en"]) {
       await prepareCheckout(page, locale);
       const card = page.locator('#checkout-payment input[value="card"]');
       await expect(card).toBeChecked();
-      await expect(page.locator('#checkout-payment input[value="apple_pay"]')).toBeDisabled();
+      await expect(page.locator('#checkout-payment input[value="apple_pay"]')).toBeEnabled();
       await expect(page.locator('#checkout-payment input[value="bank_transfer"]')).toHaveCount(0);
       await expect(page.locator('#checkout-payment input[value="tap"]')).toHaveCount(0);
       const place = page.locator('button[aria-describedby="checkout-submitted-payment"]');

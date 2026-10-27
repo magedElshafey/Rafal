@@ -63,7 +63,7 @@ test("known discovered methods retain backend order; untrusted labels/icons and 
 });
 
 for (const locale of ["ar", "en"]) {
-  test(`${locale} has localized labels, explicit inactive-method notice and native accessible radios`, () => {
+  test(`${locale} has localized advertised methods and native accessible radios`, () => {
     const html = render({ kind: "ready", methods }, locale);
     assert.ok(html.includes(copy(locale).title));
     assert.ok(html.includes(copy(locale).notice));
@@ -81,7 +81,7 @@ for (const locale of ["ar", "en"]) {
         assert.match(radio, /checked=""/);
         assert.doesNotMatch(radio, /disabled=/);
       } else {
-        assert.match(radio, /disabled=""/);
+        assert.doesNotMatch(radio, /disabled=/);
         assert.doesNotMatch(radio, /checked=/);
       }
     }
@@ -90,12 +90,14 @@ for (const locale of ["ar", "en"]) {
   });
 }
 
-test("only existing card flow is selectable, including when an unsupported selected code is passed", () => {
+test("Card fallback is independent; additional methods require advertisement and bank transfer stays hidden", () => {
   assert.equal(canSelectCheckoutPayment("card"), true);
   for (const code of ["tap", "apple_pay", "bank_transfer", "future"]) assert.equal(canSelectCheckoutPayment(code), false);
+  for (const code of ["tap", "apple_pay"]) assert.equal(canSelectCheckoutPayment(code, true), true);
+  assert.equal(canSelectCheckoutPayment("bank_transfer", true), false);
   assert.equal(isCheckoutPaymentCode("future"), false);
   const html = render({ kind: "ready", methods }, "en", "tap");
-  assert.doesNotMatch(html, /checked=/);
+  assert.match(html, /<input[^>]*checked=""[^>]*value="tap"|<input[^>]*value="tap"[^>]*checked=""/);
   const withoutCard = render({ kind: "ready", methods: methods.filter((method) => method.code !== "card") });
   assert.doesNotMatch(withoutCard, /checked=/);
 });
@@ -164,12 +166,12 @@ test("real React Suspense streams unrelated checkout content and loading before 
   assert.ok(html.includes(copy("en").unavailable));
 });
 
-test("submission checks selection consistency and accepts only implemented identity-specific methods", () => {
+test("submission checks selection consistency and accepts only implemented methods", () => {
   const page = source("src/features/checkout/components/checkout-page.tsx");
   const place = page.slice(page.indexOf("const placeRequest:"), page.indexOf("  return (", page.indexOf("const placeRequest:")));
-  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode, isAuthenticated, selectedPaymentDiscovery === paymentDiscovery\)/);
+  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode, selectedPaymentDiscovery === paymentDiscovery\)/);
   assert.match(place, /!cityTransitionLocked &&\s*paymentReady &&/);
-  assert.match(page, /if \(canSelectCheckoutPayment\(code, isAuthenticated, true\)\)/);
+  assert.match(page, /if \(canSelectCheckoutPayment\(code, true\)\)/);
   const { serializeCheckoutPlaceRequest } = h.load("src/features/checkout/api/checkout-place-serializer");
   const { parseCheckoutPlaceRequest } = h.load("src/features/checkout/server/parse-checkout-place-request");
   const request = { destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" } };

@@ -7,8 +7,8 @@ import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dt
 export function serializeCheckoutPlaceRequest(
   input: CheckoutPlaceRequest,
 ): CheckoutPlaceRequestDto {
-  if (!canSelectCheckoutPayment(input.paymentMethod ?? "card", input.buyer.kind === "authenticated", true)) {
-    throw new CheckoutContractError("request.paymentMethod", "an implemented payment method for this identity");
+  if (!canSelectCheckoutPayment(input.paymentMethod ?? "card", true)) {
+    throw new CheckoutContractError("request.paymentMethod", "an implemented payment method");
   }
   const destination = serializeCheckoutQuoteRequest({
     destination: input.destination,

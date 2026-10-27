@@ -179,8 +179,10 @@ export async function verifyCheckoutOrder(
     const verificationRequired = response.data.requires_verification;
     const metadataRequired = response.meta?.requires_verification;
     if (response.data.status === "pending_verification" && verificationRequired !== null &&
-      (metadataRequired == null || metadataRequired === verificationRequired) && response.data.payment?.method === "card" &&
-      response.data.payment.status === "pending" && response.data.payment.paid_at === null && response.meta?.payment) {
+      (metadataRequired == null || metadataRequired === verificationRequired) &&
+      (response.data.payment?.method === "card" ||
+        (verificationRequired === false && ["apple_pay", "tap"].includes(response.data.payment?.method ?? ""))) &&
+      response.data.payment?.status === "pending" && response.data.payment.paid_at === null && response.meta?.payment) {
       const handoff = response.meta.payment;
       return parseCheckoutHostedPaymentResult({
         kind: "hosted-payment-required", orderNumber: response.data.order_number, displayNumber: response.data.display_number,

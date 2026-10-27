@@ -35,7 +35,9 @@ export function mapCheckoutPlaceResult(
   if (request && data.payment && data.payment.method !== (request.paymentMethod ?? "card")) {
     throw new CheckoutContractError("response.data.payment.method", "the submitted payment method");
   }
-  if (decision.action === "hold" && !legacyConfirmation) {
+  const unsupportedAuthenticatedOtp = decision.action === "verify-otp" &&
+    request?.buyer.kind === "authenticated" && data.payment != null && data.payment.method !== "card";
+  if ((decision.action === "hold" || unsupportedAuthenticatedOtp) && !legacyConfirmation) {
     throw new CheckoutContractError("response.data", "a result supported by the existing Checkout flow");
   }
   if (decision.action === "hosted-payment" && outcome.kind === "hosted-payment-pending") {

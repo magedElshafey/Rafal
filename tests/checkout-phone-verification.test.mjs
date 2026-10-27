@@ -15,7 +15,7 @@ const fixture = name => JSON.parse(readFileSync(path.join(root, `tests/fixtures/
 const phone = "00966 50 123 4567";
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-function harness(locale = "ar") {
+function harness(locale = "ar", method = "card") {
   const modules = new Map(), storage = new Map(), scopes = new Map();
   const state = { upstream: [], browser: [], navigation: [], hostedNavigation: [], payload: fixture("paid"), status: null, storageFails: false, navigationFails: false };
   let scope, cursor;
@@ -82,7 +82,9 @@ function harness(locale = "ar") {
     return loaded.exports;
   }
   const handoff = load("src/features/checkout/utils/checkout-handoff");
-  const parsed = load("src/features/checkout/api/parse-checkout-place-dto").parseCheckoutPlaceResponse(fixture("otp-card"));
+  const placePayload = method === "card" ? fixture("otp-card") : JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
+  placePayload.data.payment.method = method;
+  const parsed = load("src/features/checkout/api/parse-checkout-place-dto").parseCheckoutPlaceResponse(placePayload);
   const otpResult = load("src/features/checkout/api/checkout-place-mapper").mapCheckoutPlaceResult(parsed);
   state.payload.data.order_number = otpResult.orderNumber;
   const input = { orderNumber: otpResult.orderNumber, phone, otp: "123456" };
@@ -103,13 +105,18 @@ function harness(locale = "ar") {
   return { state, storage, load, handoff, otpResult, input, copy, page, form, find, OtpInput, remount: () => scopes.clear() };
 }
 
-const hostedFixture = () => JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-verify-hosted.json"), "utf8"));
+const hostedFixture = (method = "card") => {
+  const payload = JSON.parse(readFileSync(path.join(root, method === "card" ? "tests/fixtures/checkout-verify-hosted.json" : "tests/fixtures/checkout-guest-verify-hosted.json"), "utf8"));
+  payload.data.payment.method = method;
+  return payload;
+};
 
 for (const locale of ["ar", "en"]) {
+  for (const method of ["card", "apple_pay", "tap"]) {
   for (const failure of [null, "storageFails", "navigationFails"]) {
-    test(`${locale}: hosted Card handoff, ${failure ?? "success"}, preserves pending identity without repeating Verify`, async () => {
-      const h = harness(locale);
-      h.state.payload = hostedFixture();
+    test(`${locale}: hosted ${method} handoff, ${failure ?? "success"}, preserves pending identity without repeating Verify`, async () => {
+      const h = harness(locale, method);
+      h.state.payload = hostedFixture(method);
       h.handoff.storeCheckoutVerificationHandoff(h.otpResult, phone);
       h.page();
       if (failure) h.state[failure] = true;
@@ -142,6 +149,7 @@ for (const locale of ["ar", "en"]) {
       assert.equal(h.state.upstream.length, 1);
     });
   }
+  }
 }
 
 test("expired stored handoff retains pending recovery and never re-verifies or redirects", () => {
@@ -156,6 +164,7 @@ test("expired stored handoff retains pending recovery and never re-verifies or r
 });
 
 test("Verify hosted result validates server and browser contracts, rejecting unsafe or contradictory handoffs", async () => {
+  for (const method of ["card", "apple_pay", "tap"]) {
   for (const change of [
     p => { p.meta.payment.payment_url = "https://checkout.tap.company.evil.example/pay"; },
     p => { p.meta.payment.payment_url = "http://checkout.tap.company/pay"; },
@@ -176,10 +185,15 @@ test("Verify hosted result validates server and browser contracts, rejecting uns
     p => { p.data.payment.status = "paid"; },
     p => { p.data.payment.paid_at = "2026-01-01T00:00:00Z"; },
     p => { p.data.payment.method = "unknown"; },
+    p => { p.data.payment.method = "bank_transfer"; },
+    p => { p.data.status = "confirmed"; },
   ]) {
-    const h = harness(); h.state.payload = hostedFixture(); change(h.state.payload);
-    await assert.rejects(h.load("src/features/checkout/api/checkout-api.server").verifyCheckoutOrder("ar", h.input));
+    const h = harness("ar", method); h.state.payload = hostedFixture(method); change(h.state.payload);
+    await assert.rejects(h.load("src/features/checkout/api/checkout-verify-mutation").verifyCheckoutOrderFromBrowser("ar", h.input));
+    assert.equal(h.state.browser.length, 1);
     assert.equal(h.state.upstream.length, 1);
+    assert.equal(h.state.hostedNavigation.length, 0);
+  }
   }
   const h = harness(); h.state.payload = hostedFixture();
   const result = await h.load("src/features/checkout/api/checkout-verify-mutation").verifyCheckoutOrderFromBrowser("ar", h.input);

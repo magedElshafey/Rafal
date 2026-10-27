@@ -55,6 +55,12 @@ const backend = createServer(async (req, res) => {
         if (variant.endsWith("mismatch")) data.data.payment.method = "apple_pay";
         return send(data, 201);
       }
+      if (["synthetic-payment-unified", "synthetic-payment-cardonly"].includes(req.headers["x-cart-token"])) {
+        const data = paymentFixture("checkout-guest-otp");
+        data.data.payment.method = fields.payment_method;
+        data.data.order_number = `RF-E2E-GUEST-${fields.payment_method.replace("_", "").toUpperCase()}`;
+        return send(data, 201);
+      }
       if (fields.payment_method !== "card") return send({}, 403);
       const authenticated = req.headers.authorization === "Bearer synthetic-auth";
       if (!authenticated && !/^synthetic-payment-(false|true|missing|empty|failed)$/.test(req.headers["x-cart-token"] ?? "")) return send({}, 403);
@@ -62,9 +68,10 @@ const backend = createServer(async (req, res) => {
       data.data.order_number = authenticated ? "RF-E2E-CONFIRMED" : `RF-E2E-${req.headers["x-cart-token"].endsWith("true") ? "TRUE" : "FALSE"}`;
       return send(data);
     }
-    const verify = url.pathname.match(/^\/checkout\/orders\/(RF-E2E-(?:TRUE|FALSE|UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED))\/verify$/);
+    const verify = url.pathname.match(/^\/checkout\/orders\/(RF-E2E-(?:TRUE|FALSE|UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED|GUEST-(?:CARD|APPLEPAY|TAP)(?:-(?:UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED))?))\/verify$/);
     if (verify && fields?.phone === "+966501234567" && fields?.otp === "123456") {
-      const data = paymentFixture("checkout-verify-hosted");
+      const data = paymentFixture(verify[1].includes("GUEST-") ? "checkout-guest-verify-hosted" : "checkout-verify-hosted");
+      data.data.payment.method = verify[1].includes("APPLEPAY") ? "apple_pay" : verify[1].includes("GUEST-TAP") ? "tap" : "card";
       data.data.order_number = verify[1];
       data.data.requires_verification = verify[1].endsWith("TRUE");
       if (verify[1].endsWith("UNSAFE")) data.meta.payment.payment_url = "https://unsafe.example.invalid/pay";
@@ -118,12 +125,13 @@ const backend = createServer(async (req, res) => {
     if (auth.endsWith("hosted-failed")) return send({ success: false }, 503);
     if (auth.endsWith("hosted-cardonly")) return ok({ card: { label: "Card", icon: "card" } });
     const token = req.headers["x-cart-token"];
+    if (paymentFlows && token === "synthetic-payment-cardonly") return ok({ card: { label: "Card", icon: "card" } });
     if (paymentFlows && token === "synthetic-payment-failed") return send({ success: false }, 503);
     if (paymentFlows && token === "synthetic-payment-empty") return ok({});
     const methods = { apple_pay: { label: "Apple Pay", icon: "apple" }, bank_transfer: { label: "Bank Transfer", icon: "bank" } };
     if (paymentFlows && token === "synthetic-payment-missing") return ok(methods);
     return ok({ card: { label: "Credit Card / Mada", icon: "card" }, ...methods,
-      ...(auth.startsWith("Bearer synthetic-auth-hosted") ? { tap: { label: "Tap", icon: "card" } } : {}) });
+      ...(auth.startsWith("Bearer synthetic-auth-hosted") || token === "synthetic-payment-unified" ? { tap: { label: "Tap", icon: "card" } } : {}) });
   }
   // Outside the explicit payment-flow opt-in, mutations remain disabled.
   if (url.pathname === "/checkout/quote") return send({ success: false, message: "Fixture quote unavailable" }, 422);

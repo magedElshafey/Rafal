@@ -6,14 +6,14 @@ export type CheckoutPaymentCode = (typeof checkoutPaymentCodes)[number];
 // Card remains the compatibility default for older browser requests.
 export const legacyCheckoutPaymentMethod = "card" as const;
 
-export function canSubmitCheckoutPayment(selectedCode: string | null, authenticated = false, advertised = false): boolean {
-  return selectedCode !== null && canSelectCheckoutPayment(selectedCode, authenticated, advertised);
+export function canSubmitCheckoutPayment(selectedCode: string | null, advertised = false): boolean {
+  return selectedCode !== null && canSelectCheckoutPayment(selectedCode, advertised);
 }
 
 export function isCheckoutPaymentCode(code: string): code is CheckoutPaymentCode {
   return checkoutPaymentCodes.some((known) => known === code);
 }
 
-export function canSelectCheckoutPayment(code: string, authenticated = false, advertised = false): boolean {
-  return code === "card" || (authenticated && advertised && (code === "apple_pay" || code === "tap"));
+export function canSelectCheckoutPayment(code: string, advertised = false): boolean {
+  return code === "card" || (advertised && (code === "apple_pay" || code === "tap"));
 }

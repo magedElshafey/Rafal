@@ -51,21 +51,62 @@ const { parseCheckoutPaymentMethodsResponse: methods } = h.load("src/features/ch
 const outcome = (payload) => normalize(parse(payload));
 
 const hostedFixture = () => JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-place-hosted.json"), "utf8"));
+
+for (const method of ["apple_pay", "tap"]) {
+  test(`${method}: new Guest OTP evidence does not expand authenticated OTP or Guest direct hosted Place`, () => {
+    const otp = JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
+    otp.data.payment.method = method;
+    assert.throws(() => legacy(parse(otp), undefined, { buyer: { kind: "authenticated" }, paymentMethod: method }));
+    const hosted = hostedFixture(); hosted.data.payment.method = method;
+    assert.throws(() => legacy(parse(hosted), undefined, { buyer: { kind: "guest" }, paymentMethod: method }));
+  });
+}
 const hostedRequest = (method = "card") => new Request("https://store.example.invalid/api/checkout/place?locale=en", {
   method: "POST", headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" }, paymentMethod: method }),
 });
 
-test("Guest methods remain Card-only at both private input and serializer boundaries", () => {
+test("Guest supported methods retain identity through private input and serializer boundaries", () => {
   const input = { destination: { kind: "one-time-address", address: { recipientName: "Test", recipientPhone: "+966501234567", cityId: 1, district: "Test", streetDetails: "Test" } }, shippingMethodId: 1, buyer: { kind: "guest", name: "Test", email: "test@example.invalid", phone: "+966501234567" } };
   const parseInput = h.load("src/features/checkout/server/parse-checkout-place-request").parseCheckoutPlaceRequest;
   const serialize = h.load("src/features/checkout/api/checkout-place-serializer").serializeCheckoutPlaceRequest;
   assert.equal(serialize(parseInput(input)).payment_method, "card");
-  for (const paymentMethod of ["apple_pay", "tap", "bank_transfer"]) {
+  for (const paymentMethod of ["card", "apple_pay", "tap"]) {
+    const parsed = parseInput({ ...input, paymentMethod });
+    assert.equal(parsed.paymentMethod, paymentMethod);
+    assert.equal(serialize(parsed).payment_method, paymentMethod);
+    assert.equal(serialize(parsed)["guest[phone]"], input.buyer.phone);
+  }
+  for (const paymentMethod of ["bank_transfer", "unknown"]) {
     assert.equal(parseInput({ ...input, paymentMethod }), null);
     assert.throws(() => serialize({ ...input, paymentMethod }));
   }
 });
+
+for (const method of ["card", "apple_pay", "tap"]) {
+  test(`Guest ${method} Place: full parser and private route return OTP with original identity`, async () => {
+    const server = harness();
+    server.state.payload = JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
+    server.state.payload.data.payment.method = method;
+    const response = await server.load("src/app/api/checkout/place/route").POST(new Request("https://store.example.invalid/api/checkout/place?locale=en", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+        destination: { kind: "one-time-address", address: { recipientName: "Test", recipientPhone: "+966501234567", cityId: 1, district: "Test", streetDetails: "Test" } },
+        shippingMethodId: 1, buyer: { kind: "guest", name: "Test", email: "test@example.invalid", phone: "0501234567" }, paymentMethod: method,
+      }),
+    }));
+    assert.equal(response.status, 200);
+    const result = server.load("src/features/checkout/api/parse-checkout-place-result").parseCheckoutPlaceResult(await response.json());
+    assert.equal(result.kind, "verification-required");
+    assert.equal(result.orderNumber, "RF-SYNTHETIC-GUEST");
+    assert.equal(result.verificationExpiresAt, "2099-01-01T00:00:00Z");
+    assert.equal("handoff" in result, false);
+    assert.equal(server.calls.length, 1);
+    assert.equal(server.calls[0].body.get("payment_method"), method);
+    assert.equal(server.calls[0].body.get("guest[phone]"), "+966501234567");
+    assert.equal(server.calls[0].headers.Authorization, undefined);
+    assert.equal(server.state.deleted, 1);
+  });
+}
 
 test("new methods cannot use the legacy missing-payment confirmation exception", () => {
   for (const paymentMethod of ["apple_pay", "tap"]) {

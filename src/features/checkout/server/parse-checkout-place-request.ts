@@ -33,7 +33,6 @@ export function parseCheckoutPlaceRequest(
   if (!destination || !shippingMethodId || !isRecord(value.buyer)) return null;
   const method = value.paymentMethod;
   if (method !== undefined && method !== "card" && method !== "apple_pay" && method !== "tap") return null;
-  if (value.buyer.kind !== "authenticated" && method !== undefined && method !== "card") return null;
 
   if (
     value.buyer.kind === "authenticated" &&
@@ -62,5 +61,5 @@ export function parseCheckoutPlaceRequest(
     email: value.buyer.email,
     phone: value.buyer.phone,
   });
-  return buyer ? { destination, shippingMethodId, buyer } : null;
+  return buyer ? { destination, shippingMethodId, buyer, ...(method === undefined ? {} : { paymentMethod: method }) } : null;
 }

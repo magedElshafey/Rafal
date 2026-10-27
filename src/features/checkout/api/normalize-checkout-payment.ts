@@ -35,9 +35,11 @@ export function normalizeCheckoutPayment(response: CheckoutPlaceResponseDto): Ch
     (payment && payment.status !== "paid" && payment.paid_at !== null) ||
     (payment?.status === "paid" && (!payment.paid_at || handoff))
   ) return unresolved("contradictory");
-  // The Guest OTP contract also returns an explicitly pending Card payment.
+  // Keep legacy Card variants; additional Guest methods use the observed OTP flags.
   const otpPaymentSupported = !payment ||
-    (payment.method === "card" && payment.status === "pending" && payment.paid_at === null);
+    (payment.status === "pending" && payment.paid_at === null &&
+      (payment.method === "card" || (["apple_pay", "tap"].includes(payment.method) &&
+        data.status === "pending_verification" && required === true && metadataRequired === true)));
   if (otp && otpPaymentSupported && !handoff && (data.status === "pending_verification" || data.status === "new")) {
     return { ...context, kind: "verification-required", nextAction: "verify-otp" };
   }
