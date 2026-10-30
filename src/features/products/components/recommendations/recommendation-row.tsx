@@ -13,7 +13,7 @@ export async function RecommendationRow({ products, locale, accountId, title }: 
   accountId: string | null;
   title: string;
 }) {
-  if (products.length < 2) return null;
+  if (products.length === 0) return null;
   const [t, navigation] = await Promise.all([
     getTranslations({ locale, namespace: "Common.productListing" }),
     getTranslations({ locale, namespace: "Common.productDetails.discovery" }),

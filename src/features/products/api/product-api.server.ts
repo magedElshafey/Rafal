@@ -82,14 +82,17 @@ export async function getProductBySlugDto({
 export async function getRelatedProductsDto({
   slug,
   locale,
+  cityId,
   signal,
 }: {
   slug: string;
   locale: Locale;
+  cityId?: number;
   signal?: AbortSignal;
 }): Promise<ProductRecommendationsResponseDto> {
   const payload = await optionalAuthProductRead(locale, {
     path: `/products/${encodeURIComponent(slug)}/related`,
+    query: { city_id: cityId },
     signal,
   });
   return parseProductRecommendationsResponse(payload);

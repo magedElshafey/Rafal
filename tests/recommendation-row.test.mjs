@@ -62,11 +62,11 @@ const props = { locale: "en", accountId: "account", title: "You may also like", 
 const sectionPath = "src/features/products/components/recommendations/product-recommendations-section";
 const rowPath = "src/features/products/components/recommendations/recommendation-row";
 
-test("mapped 0/1 hide, 2 show, and more than 10 cap without reordering or deduplicating", async () => {
+test("mapped empty hides, one product shows, and more than 10 cap without reordering or deduplicating", async () => {
   for (const ids of [[], [1], [9, 2], [9, 2, 2, 8, 7, 6, 5, 4, 3, 1, 11, 12]]) {
     const { load, cards } = harness(async () => ids.map(product));
     const tree = await load(sectionPath).ProductRecommendationsSection(props);
-    if (ids.length < 2) { assert.equal(tree, null); continue; }
+    if (ids.length === 0) { assert.equal(tree, null); continue; }
     renderToStaticMarkup(tree);
     assert.deepEqual(cards.map((card) => card.product.id), ids.slice(0, 10).map(String));
     assert.ok(cards.every((card) => card.wishlistAccountId === "account" && card.locale === "en"));
@@ -75,11 +75,10 @@ test("mapped 0/1 hide, 2 show, and more than 10 cap without reordering or dedupl
 
 test("current product exclusion precedes minimum and maximum count decisions", async () => {
   for (const ids of [["current", 1], ["current", 9, 2], ["current", ...Array.from({ length: 11 }, (_, i) => i)]]) {
-    const { load, cards } = harness(async (slug, locale) => {
-      assert.equal(slug, "current"); assert.equal(locale, "en"); return ids.map(product);
+    const { load, cards } = harness(async (slug, locale, cityId) => {
+      assert.equal(slug, "current"); assert.equal(locale, "en"); assert.equal(cityId, 27); return ids.map(product);
     });
-    const tree = await load(sectionPath).ProductRecommendationsSection(props);
-    if (ids.length === 2) { assert.equal(tree, null); continue; }
+    const tree = await load(sectionPath).ProductRecommendationsSection({ ...props, cityId: 27 });
     renderToStaticMarkup(tree);
     assert.deepEqual(cards.map((card) => card.product.id), ids.filter((id) => id !== "current").slice(0, 10).map(String));
   }
@@ -132,17 +131,40 @@ test("PDP inserts one independent recommendation Suspense after reviews without 
   assert.equal((source.match(/<ProductRecommendationsSection /g) ?? []).length, 1);
   assert.match(source, /<ProductReviewsSection[^]*?<\/Suspense>[^]*?<Suspense[^]*?RecommendationRowSkeleton[^]*?<ProductRecommendationsSection/);
   assert.doesNotMatch(source, /await getRelatedProducts|<RelatedProducts/);
+  assert.match(source, /<ProductRecommendationsSection[^>]*cityId=\{cityId\}/);
 });
 
 const cartRowsPath = "src/features/cart/components/cart-recommendations";
 const cartProps = { locale: "en", accountId: "account", contextReady: true, cart: { lines: [{ product: { id: "in-cart" } }] } };
 
-test("Cart rows use one response, preserve order, and exclude Cart products and cross-row duplicates", () => {
+test("full Product Resources survive parsing and mapping into independent singleton Cart and PDP rows", async () => {
+  const raw = JSON.parse(readFileSync(path.join(root, "tests/fixtures/product-33.json"), "utf8")).data;
+  raw.category = { id: 1, name: "Category", slug: "category" };
+  for (const locale of ["ar", "en"]) {
+    const h = harness(async () => {
+      const parsed = h.load("src/features/products/api/parse-product-dto").parseProductRecommendationsResponse({ success: true, message: "OK", data: [raw] });
+      return h.load("src/features/products/api/product-mappers").mapRecommendationProducts(parsed.data);
+    }, locale);
+    const parse = h.load("src/features/cart/api/parse-cart-recommendations").parseCartRecommendationsResponse;
+    const map = h.load("src/features/products/api/product-mappers").mapRecommendationProducts;
+    const parsed = parse({ success: true, message: "OK", data: { frequently_ordered_with: [raw, raw], related: [raw, raw] } });
+    const html = renderToStaticMarkup(h.load(cartRowsPath).CartRecommendationRows({ ...cartProps, locale, read: { status: "success", data: {
+      frequentlyOrderedWith: map(parsed.data.frequently_ordered_with), related: map(parsed.data.related),
+    } } }));
+    assert.equal((html.match(/data-product=/g) ?? []).length, 2);
+    assert.ok(html.includes(messages[locale].cartPage.recommendations.frequentlyOrderedWith));
+    assert.ok(html.includes(messages[locale].productDetails.discovery.relatedTitle));
+    const pdp = renderToStaticMarkup(await h.load(sectionPath).ProductRecommendationsSection({ ...props, locale }));
+    assert.equal((pdp.match(/data-product=/g) ?? []).length, 1);
+  }
+});
+
+test("Cart rows use one response, preserve both backend groups and exclude Cart products", () => {
   const { load, cards } = harness();
   const html = renderToStaticMarkup(load(cartRowsPath).CartRecommendationRows({ ...cartProps, read: { status: "success", data: {
     frequentlyOrderedWith: ["in-cart", 9, 2].map(product), related: [2, "in-cart", 7, 3].map(product),
   } } }));
-  assert.deepEqual(cards.map((card) => card.product.id), ["9", "2", "7", "3"]);
+  assert.deepEqual(cards.map((card) => card.product.id), ["9", "2", "2", "7", "3"]);
   assert.ok(html.indexOf("Often ordered with these products") < html.indexOf("You may also like"));
   assert.ok(cards.every((card) => card.quickAddControl === undefined), "Cart uses default Quick Add");
 });
@@ -157,12 +179,12 @@ test("Cart Arabic copy and RTL direction use existing localization", () => {
   assert.equal((html.match(/dir="rtl"/g) ?? []).length, 2);
 });
 
-test("Cart deduplicates each row and excludes only displayed first-row IDs", () => {
+test("Cart deduplicates within each row without excluding products shared by backend groups", () => {
   for (const [first, second, expected] of [
-    [[1, 1], [1, 1, 2, 2], ["1", "2"]],
+    [[1, 1], [1, 1, 2, 2], ["1", "1", "2"]],
     [[], [3, 3, 2, 2], ["3", "2"]],
-    [["in-cart", 1, 1, 2], [2, 3, 3, 4], ["1", "2", "3", "4"]],
-    [Array.from({ length: 12 }, (_, i) => i + 1), [1, 11, 11, 12], [...Array.from({ length: 10 }, (_, i) => String(i + 1)), "11", "12"]],
+    [["in-cart", 1, 1, 2], [2, 3, 3, 4], ["1", "2", "2", "3", "4"]],
+    [Array.from({ length: 12 }, (_, i) => i + 1), [1, 11, 11, 12], [...Array.from({ length: 10 }, (_, i) => String(i + 1)), "1", "11", "12"]],
   ]) {
     const { load, cards } = harness();
     renderToStaticMarkup(load(cartRowsPath).CartRecommendationRows({ ...cartProps, read: { status: "success", data: {
@@ -176,19 +198,22 @@ test("Cart rows apply independent 0/1/2/10 limits after exclusions", () => {
   for (const firstCount of [0, 1, 2, 10, 12]) {
     for (const secondCount of [0, 1, 2, 10, 12]) {
       const { load, cards } = harness();
-      renderToStaticMarkup(load(cartRowsPath).CartRecommendationRows({ ...cartProps, read: { status: "success", data: {
+      const html = renderToStaticMarkup(load(cartRowsPath).CartRecommendationRows({ ...cartProps, read: { status: "success", data: {
         frequentlyOrderedWith: Array.from({ length: firstCount }, (_, i) => product(i)),
         related: Array.from({ length: secondCount }, (_, i) => product(i + 100)),
       } } }));
-      const count = (value) => value < 2 ? 0 : Math.min(10, value);
+      const count = (value) => Math.min(10, value);
       assert.equal(cards.length, count(firstCount) + count(secondCount));
+      assert.equal(html.includes("Often ordered with these products"), firstCount > 0);
+      assert.equal(html.includes("You may also like"), secondCount > 0);
+      if (!firstCount && !secondCount) assert.equal(html, "");
     }
   }
   const { load, cards } = harness();
   renderToStaticMarkup(load(cartRowsPath).CartRecommendationRows({ ...cartProps, read: { status: "success", data: {
     frequentlyOrderedWith: ["in-cart", 1].map(product), related: [1, 2, 3].map(product),
   } } }));
-  assert.deepEqual(cards.map((card) => card.product.id), ["1", "2", "3"]);
+  assert.deepEqual(cards.map((card) => card.product.id), ["1", "1", "2", "3"]);
 });
 
 test("Cart empty/context guards and inactive/error states hide cached data without querying", () => {

@@ -28,7 +28,7 @@ export function RecommendationRowView({ products, locale, accountId, title, copy
   copy: RecommendationRowCopy;
   renderQuickAdd?: (product: ListingProduct) => ReactNode;
 }) {
-  if (products.length < 2) return null;
+  if (products.length === 0) return null;
   return (
     <section aria-label={title} className={sectionClassName}>
       <h2 className="text-h3 font-bold">{title}</h2>

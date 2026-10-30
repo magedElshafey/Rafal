@@ -10,9 +10,10 @@ import { ApiError } from "@/lib/api/api-error";
 export async function getRelatedProducts(
   slug: string,
   locale: Locale,
+  cityId?: number,
   signal?: AbortSignal,
 ): Promise<readonly ListingProduct[]> {
-  const response = await getRelatedProductsDto({ slug, locale, signal });
+  const response = await getRelatedProductsDto({ slug, locale, cityId, signal });
   if (!response.success) {
     throw new ApiError({ status: 502, code: "recommendations-unavailable", message: "Related products request was unsuccessful." });
   }

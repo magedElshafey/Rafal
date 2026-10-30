@@ -394,7 +394,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Suspense key={product.id} fallback={
         <RecommendationRowSkeleton title={t("discovery.relatedTitle")} loadingLabel={t("discovery.loading")} />
       }>
-        <ProductRecommendationsSection slug={product.slug} productId={product.id} locale={locale}
+        <ProductRecommendationsSection slug={product.slug} productId={product.id} locale={locale} cityId={cityId}
           accountId={user?.id ?? null} title={t("discovery.relatedTitle")} />
       </Suspense>
     </Container>

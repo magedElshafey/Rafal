@@ -39,11 +39,8 @@ export function CartRecommendationRows({ cart, locale, accountId, read, contextR
       return true;
     });
   };
-  const firstCandidates = uniqueOutsideCart(read.data.frequentlyOrderedWith);
-  const first = firstCandidates.length < 2 ? [] : firstCandidates.slice(0, 10);
-  const firstIds = new Set(first.map((product) => product.id));
-  const second = uniqueOutsideCart(read.data.related).filter((product) => !firstIds.has(product.id));
-  // Only the displayed first row excludes products from the second row.
+  const first = uniqueOutsideCart(read.data.frequentlyOrderedWith);
+  const second = uniqueOutsideCart(read.data.related);
   const copy = { previous: navigation("previous"), next: navigation("next"),
     badges: { discount: t("badges.discount"), new: t("badges.new"), personalization: t("badges.personalization") },
     rating: (value: string) => t("rating", { value }), reviews: (count: number) => t("reviews", { count }), unavailable: t("unavailable") };

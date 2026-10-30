@@ -96,23 +96,36 @@ test("existing mapper preserves backend order and duplicates, with existing null
   assert.equal(parseProductRecommendationsResponse(pdp([malformedVariant])).data[0].variants.length, fixture.variants.length);
 });
 
-test("PDP uses encoded slug, locale headers, optional-auth fallback and no city query", async () => {
+test("PDP preserves encoded slug, city and locale through optional-auth fallback", async () => {
   const { load, state } = harness();
   state.accessToken = "test-access";
   state.respond = async () => state.calls.length === 1
     ? Response.json({ message: "Unauthorized" }, { status: 401 }) : Response.json(pdp([product()]));
   const { getRelatedProducts } = load("src/features/products/server/related-products-boundary");
-  const result = await getRelatedProducts("a/b", "en", new AbortController().signal);
+  const result = await getRelatedProducts("a/b", "en", 27, new AbortController().signal);
   assert.equal(result.length, 1);
   assert.equal(state.calls.length, 2);
   for (const call of state.calls) {
-    assert.equal(call.url, "https://backend.test/api/v1/products/a%2Fb/related");
+    assert.equal(call.url, "https://backend.test/api/v1/products/a%2Fb/related?city_id=27");
     assert.equal(new Headers(call.headers).get("X-Locale"), "en");
     assert.equal(new Headers(call.headers).get("Accept-Language"), "en");
     assert.ok(call.signal instanceof AbortSignal);
   }
   assert.equal(new Headers(state.calls[0].headers).get("Authorization"), "Bearer test-access");
   assert.equal(new Headers(state.calls[1].headers).get("Authorization"), null);
+});
+
+test("PDP performs one successful read per requested city and omits unresolved city", async () => {
+  const { load, state } = harness();
+  state.respond = async () => Response.json(pdp([product()]));
+  const { getRelatedProducts } = load("src/features/products/server/related-products-boundary");
+  for (const cityId of [27, 28, undefined]) {
+    const before = state.calls.length;
+    assert.equal((await getRelatedProducts("product", "ar", cityId)).length, 1);
+    assert.equal(state.calls.length, before + 1);
+    const url = new URL(state.calls.at(-1).url);
+    assert.equal(url.searchParams.get("city_id"), cityId === undefined ? null : String(cityId));
+  }
 });
 
 test("Cart resolves guest/auth/tokenless identity through existing private transport and maps both arrays", async () => {
