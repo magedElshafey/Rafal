@@ -41,6 +41,7 @@ export type ProductDto = {
   is_personalizable: boolean;
   is_wishlist: boolean;
   personalization_max_length: number | null;
+  personalization_languages: readonly string[] | null;
   personalization_fee: string | null;
   viewers_now: number;
   times_ordered: number;

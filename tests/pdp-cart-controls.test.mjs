@@ -164,9 +164,31 @@ test("failed/uncertain edits reconcile without retries; failed reads offer recov
   const h = harness(); h.state.response = new Error("uncertain"); h.state.readFails = true;
   button(h.render().panel.cartControls, "increase").props.onClick(event); await tick(); await tick();
   const view = h.render(); assert.equal(button(view.panel.cartControls, "increase").props.disabled, true);
+  for (const label of ["increase", "decrease", "remove"]) {
+    assert.equal(button(view.panel.cartControls, label).props.disabled, true);
+    button(view.panel.cartControls, label).props.onClick(event);
+  }
+  assert.equal(h.state.calls.length, 1);
   h.state.readFails = false;
   find(view.panel.cartControls, e => e.type === "button" && e.props.children === "sheet.retry").props.onClick(); await tick();
   assert.equal(h.state.calls.length, 1);
+});
+
+test("failed reconciliation remains recoverable after switching to Add mode", async () => {
+  const h = harness(); h.state.response = new Error("uncertain"); h.state.readFails = true;
+  button(h.render().panel.cartControls, "increase").props.onClick(event); await tick(); await tick();
+  h.render().panel.onSelectOption("size", "m");
+  const view = h.render();
+  assert.equal(view.panel.cartControls, undefined);
+  assert.equal(view.panel.canAddToCart, false);
+  assert.equal(view.sticky.canAddToCart, false);
+  assert.equal(view.panel.addToCartErrorMessage, "Failed");
+  view.panel.onAddToCart(event); assert.equal(h.state.calls.length, 1);
+  const retry = find(view.tree, e => e.type === "button" && e.props.children === "sheet.retry");
+  assert.ok(retry); assert.equal(retry.props.disabled, false);
+  h.state.readFails = false; retry.props.onClick(); await tick(); await tick();
+  assert.equal(h.state.calls.length, 1);
+  assert.equal(h.render().panel.canAddToCart, true);
 });
 
 test("stale identity cannot delete a replacement line or newly ambiguous selection", () => {

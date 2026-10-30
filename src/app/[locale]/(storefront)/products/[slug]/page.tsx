@@ -301,43 +301,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 "availability.deliveryUnavailableAtLocationNamed",
               ) as string,
             },
-            personalization: {
-              additionalFeeTemplate: t.raw(
-                "personalization.additionalFee",
-              ) as string,
-              characterCountTemplate: t.raw(
-                "personalization.characterCount",
-              ) as string,
-              description: t("personalization.description"),
-              inputLabel: t("personalization.inputLabel"),
-              languageLabel: t("personalization.languageLabel"),
-              languages: {
-                arabic: t("personalization.languages.arabic"),
-                english: t("personalization.languages.english"),
-              },
-              characterPolicies: {
-                "letters-and-spaces": t(
-                  "personalization.characterPolicies.lettersAndSpaces",
-                ),
-              },
-              errors: {
-                invalidCharacters: t(
-                  "personalization.errors.invalidCharacters",
-                ),
-                languageScriptMismatchTemplate: t.raw(
-                  "personalization.errors.languageScriptMismatch",
-                ) as string,
-                required: t("personalization.errors.required"),
-                tooLongTemplate: t.raw(
-                  "personalization.errors.tooLong",
-                ) as string,
-                unsupportedLanguage: t(
-                  "personalization.errors.unsupportedLanguage",
-                ),
-              },
-              placeholder: t("personalization.placeholder"),
-              title: t("personalization.title"),
-            },
             price: {
               countdown: {
                 days: t("price.countdown.days"),

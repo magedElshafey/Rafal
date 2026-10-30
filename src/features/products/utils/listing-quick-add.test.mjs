@@ -42,14 +42,14 @@ test("multiple variants require selection and never produce an Add input", () =>
   assert.equal(getQuickAddActivation(quickAdd, null), "pdp");
 });
 
-test("customization never produces an Add input", () => {
+test("customization opens the modal and never produces a direct Add input", () => {
   assert.equal(
     getDirectQuickAddInput("product-7", { kind: "customize" }),
     null,
   );
   assert.equal(
     getQuickAddActivation({ kind: "customize" }, 11),
-    "pdp",
+    "selector",
   );
 });
 

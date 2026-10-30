@@ -56,9 +56,6 @@ export async function getQuickAddSelectionData({
     product.personalization.enabled,
     product.variants.length,
   );
-  if (journey === "customize") {
-    return { kind: "journey-changed", journey: "customize" };
-  }
   if (journey === "unavailable") {
     throw new QuickAddSelectionError("product-unavailable");
   }

@@ -544,9 +544,10 @@
       }
     },
     "personalization": {
+      "configurationUnavailable": "Personalization options are unavailable. Please try again later.",
       "title": "Personalize with a name",
       "description": "Add a name or short phrase to be engraved on this product.",
-      "additionalFee": "+ {amount}",
+      "additionalFee": "+ {amount} per unit",
       "languageLabel": "Engraving language",
       "languages": {
         "arabic": "Arabic",

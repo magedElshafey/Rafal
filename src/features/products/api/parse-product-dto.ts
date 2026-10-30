@@ -249,6 +249,9 @@ export function parseProductDto(value: unknown, path = "product"): ProductDto {
       source.personalization_max_length,
       `${path}.personalization_max_length`,
     ),
+    personalization_languages: source.personalization_languages == null ? null
+      : parseArray(source.personalization_languages, `${path}.personalization_languages`)
+        .map((language, index) => parseString(language, `${path}.personalization_languages[${index}]`)),
     personalization_fee: nullableDecimalString(
       source.personalization_fee,
       `${path}.personalization_fee`,

@@ -1,10 +1,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { cartMutationKey, cartMutationScope } from "@/features/cart/api/cart-mutation";
+import { cartMutationKey, cartMutationScope, cartMutationFilters } from "@/features/cart/api/cart-mutation";
 import type { Locale } from "next-intl";
 import { useTranslations } from "next-intl";
-import { useId, useRef, useState, type RefObject } from "react";
+import { useEffect, useId, useRef, useState, type RefObject } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@/components/ui/icons";
@@ -43,12 +43,15 @@ import { ApiError } from "@/lib/api/api-error";
 import { useRafalToast } from "@/lib/rafal-toast";
 import { cn } from "@/lib/utils";
 import { getVariantAttributeLabel } from "@/lib/variant-attributes";
+import { ProductPersonalizationFields } from "@/features/products/components/product-personalization-fields";
+import type { ProductPersonalizationInput } from "@/features/products/types/product-details.types";
+import { validateProductPersonalization } from "@/features/products/utils/validate-product-personalization";
 
 export type QuickAddSuccessHandler = (cart: CartSnapshot, trigger: HTMLButtonElement | null) => void;
 
 type ProductQuickAddSheetProps = {
   onAdded?: QuickAddSuccessHandler;
-  cityId: number;
+  cityId: number | null;
   locale: Locale;
   onOpenChange: (open: boolean) => void;
   productName: string;
@@ -121,20 +124,24 @@ export function ProductQuickAddSheet({
   const { committedCity, isChanging: cityTransitionLocked } = useBrowsingCity();
   const [selectedOptions, setSelectedOptions] =
     useState<SelectedProductOptions>({});
+  const selectedOptionsRef = useRef(selectedOptions);
   const [quantity, setQuantity] = useState(1);
+  const [personalizationDraft, setPersonalizationDraft] = useState<ProductPersonalizationInput | null>(null);
   const activationLockedRef = useRef(false);
   const pendingSuccessRef = useRef<(() => void) | null>(null);
   const selectionQueryOptions = quickAddSelectionQueryOptions(
     locale,
     slug,
-    cityId,
+    cityId ?? 0,
   );
   const selectionQuery = useQuery({
     ...selectionQueryOptions,
+    enabled: cityId !== null,
     refetchOnMount: "always",
   });
   const cartQuery = useQuery({
     ...currentCartQueryOptions(locale, null),
+    enabled: cityId !== null,
     refetchOnMount: "always",
     staleTime: 0,
   });
@@ -146,6 +153,12 @@ export function ProductQuickAddSheet({
     ? resolveProductVariant(selection.product.variants, selectedOptions)
     : null;
   const availability = variant?.availability ?? null;
+  const personalization = selection?.product.personalization;
+  const firstLanguage = personalization?.enabled ? personalization.allowedLanguages[0] : undefined;
+  const personalizationInput = personalizationDraft ?? (firstLanguage ? { language: firstLanguage, text: "" } : null);
+  const personalizationValidation = personalization?.enabled && personalizationInput
+    ? validateProductPersonalization(personalization, personalizationInput) : null;
+  const personalizationValid = !personalization?.enabled || personalizationValidation?.valid === true;
   const remainingAddable =
     variant && availability?.status === "available"
       ? getQuickAddRemainingQuantity(
@@ -158,6 +171,15 @@ export function ProductQuickAddSheet({
     selection?.city.id ?? null,
     committedCity?.id ?? null,
   );
+  const latestContextRef = useRef({ cityId: committedCity?.id ?? null, cityTransitionLocked, selection });
+  useEffect(() => {
+    latestContextRef.current = { cityId: committedCity?.id ?? null, cityTransitionLocked, selection };
+  }, [committedCity?.id, cityTransitionLocked, selection]);
+  const reconcileCart = async () => {
+    await queryClient.invalidateQueries({ queryKey: currentCartQueryKeyRoot, refetchType: "none" });
+    await queryClient.fetchQuery(currentCartQueryOptions(locale, null))
+      .then(cart => setCurrentCartQueryData(queryClient, locale, cart)).catch(() => {});
+  };
   const mutation = useMutation({
     mutationKey: cartMutationKey,
     scope: cartMutationScope,
@@ -171,8 +193,14 @@ export function ProductQuickAddSheet({
       return transition;
     },
     retry: false,
-    onSuccess: (result) => {
+    onError: reconcileCart,
+    onSuccess: async (result) => {
       if (!result.ok) {
+        // Server Actions return these failures even when Laravel may have accepted the write.
+        if (result.error.code === "service-unavailable" || result.error.code === "cart-session-failure") {
+          await reconcileCart();
+          return;
+        }
         const refreshTargets = getQuickAddFailureRefreshTargets(
           result.error.code,
         );
@@ -212,6 +240,7 @@ export function ProductQuickAddSheet({
       : null;
   const canAdd =
     !selectionQuery.isFetching &&
+    !selectionQuery.isError && !cartQuery.isFetching && !cartQuery.isError && personalizationValid &&
     canSubmitQuickAddSelection({
       availability,
       cityContextMatches: contextMatches,
@@ -226,6 +255,10 @@ export function ProductQuickAddSheet({
     if (
       !selection ||
       !variant ||
+      selectedOptionsRef.current !== selectedOptions ||
+      latestContextRef.current.selection !== selection || latestContextRef.current.cityTransitionLocked ||
+      latestContextRef.current.cityId !== selection.city.id ||
+      !canAdd || queryClient.isMutating(cartMutationFilters) > 0 ||
       !canSubmitQuickAddSelection({
         availability: variant.availability,
         cityContextMatches: quickAddCityContextMatches(
@@ -241,11 +274,17 @@ export function ProductQuickAddSheet({
     ) {
       return;
     }
+    const latest = queryClient.getQueryState<CartSnapshot>(currentCartQueryKey(locale, null));
+    const latestRemaining = variant.availability.status === "available"
+      ? getQuickAddRemainingQuantity(variant.availability.maxOrderQuantity, latest?.data, variant.id) : null;
+    if (!latest?.data || latest.isInvalidated || latest.status === "error" || latest.fetchStatus === "fetching" ||
+      latestRemaining === null || quantity > latestRemaining) return;
     activationLockedRef.current = true;
     mutation.mutate({
       productId: selection.product.id,
       quantity,
       variantId: variant.id,
+      ...(personalization?.enabled && personalizationInput ? { personalization: personalizationInput } : {}),
     });
   };
 
@@ -283,7 +322,9 @@ export function ProductQuickAddSheet({
       showClose
       title={selection?.product.name ?? productName}
     >
-      {selectionQuery.isPending ? (
+      {cityId === null ? (
+        <p className="min-h-40 type-body text-destructive" role="status">{t("errors.locationRequired")}</p>
+      ) : selectionQuery.isPending ? (
         <div
           aria-busy="true"
           className="min-h-80 rounded-md bg-gray-50 p-5 type-body text-gray-600 sm:min-h-96"
@@ -303,7 +344,7 @@ export function ProductQuickAddSheet({
             {detailLink}
           </div>
         </div>
-      ) : selectionQuery.data.kind === "journey-changed" ? (
+      ) : selectionQuery.data?.kind === "journey-changed" ? (
         <div className="min-h-80 space-y-4 sm:min-h-96">
           <p className="type-body text-gray-700" role="status">
             {t(
@@ -359,10 +400,12 @@ export function ProductQuickAddSheet({
                             onChange={() => {
                               mutation.reset();
                               setQuantity(1);
-                              setSelectedOptions((current) => ({
-                                ...current,
+                              const nextOptions = {
+                                ...selectedOptionsRef.current,
                                 [option.id]: value.id,
-                              }));
+                              };
+                              selectedOptionsRef.current = nextOptions;
+                              setSelectedOptions(nextOptions);
                             }}
                             type="radio"
                             value={value.id}
@@ -385,6 +428,13 @@ export function ProductQuickAddSheet({
               );
             })}
           </div>
+
+          {personalization?.enabled && <ProductPersonalizationFields
+            locale={locale} product={selection.product} personalizationInput={personalizationInput}
+            personalizationValidation={personalizationValidation}
+            onChangeText={text => { if (personalizationInput) setPersonalizationDraft({ ...personalizationInput, text }); }}
+            onSelectLanguage={language => setPersonalizationDraft({ language, text: personalizationInput?.text ?? "" })}
+          />}
 
           <div
             className="min-h-24 space-y-2 border-t border-gray-200 pt-4"

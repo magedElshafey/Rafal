@@ -206,7 +206,7 @@ test("PDP robustness matrix renders supported empty, Unicode, attributed and per
     ["all unavailable", (data) => { data.variants.forEach((variant) => { variant.warehouse_stocks = []; }); }, false],
     ["no media", (data) => { data.images = []; }, true],
     ["zero variants", (data) => { data.variants = []; }, false],
-    ["valid personalization", (data) => { data.is_personalizable = true; data.personalization_max_length = 20; }, false],
+    ["valid personalization", (data) => { data.is_personalizable = true; data.personalization_max_length = 20; data.personalization_languages = ["ar", "en"]; }, false],
     ["duplicate empty combinations", (data) => { data.variants[1].attributes = []; }, false],
     ["duplicate full combinations", (data) => { data.variants.forEach((variant) => { variant.attributes = { width: "25" }; }); }, false],
     ["duplicate IDs", (data) => { data.variants[1].id = 54; }, false],
@@ -235,6 +235,29 @@ test("PDP robustness matrix renders supported empty, Unicode, attributed and per
       assert.deepEqual(purchase.product.personalization.allowedLanguages, ["arabic", "english"]);
       panel.onChangePersonalizationText("هدية");
       assert.equal(attemptAdd(render()).personalization.text, "هدية");
+      panel.onChangePersonalizationText("123! 🙂 Mixed هدية");
+      assert.equal(attemptAdd(render()).personalization.text, "123! 🙂 Mixed هدية");
+    }
+  }
+});
+
+test("PDP fails closed for unavailable language metadata and honors the supported API subset", async () => {
+  for (const languages of [undefined, null, [], ["fr"], ["en"]]) {
+    const payload = structuredClone(fixture);
+    Object.assign(payload.data, { is_personalizable: true, personalization_max_length: 15, personalization_languages: languages });
+    const { purchase } = await composePage(payload);
+    assert.ok(purchase);
+    const render = purchaseRenderer(purchase); const panel = render();
+    assert.equal(panel.canAddToCart, false);
+    assert.doesNotThrow(() => renderToStaticMarkup(React.createElement(ProductPurchasePanel, panel)));
+    if (languages?.[0] === "en") {
+      assert.deepEqual(purchase.product.personalization.allowedLanguages, ["english"]);
+      panel.onChangePersonalizationText("123! هدية");
+      assert.equal(attemptAdd(render()).personalization.language, "english");
+      panel.onChangePersonalizationText("x".repeat(16)); assert.equal(attemptAdd(render()), null);
+    } else {
+      assert.deepEqual(purchase.product.personalization.allowedLanguages, []);
+      assert.equal(attemptAdd(panel), null);
     }
   }
 });

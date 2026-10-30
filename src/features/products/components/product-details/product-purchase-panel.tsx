@@ -1,6 +1,6 @@
+import { ProductPersonalizationFields } from "@/features/products/components/product-personalization-fields";
 import type { Locale } from "next-intl";
 import {
-  useState,
   type MouseEventHandler,
   type ReactNode,
   type Ref,
@@ -23,17 +23,14 @@ import type {
   VariantAvailabilityById,
 } from "@/features/products/types/product-availability.types";
 import type {
-  PersonalizationCharacterPolicy,
   PersonalizationLanguage,
   ProductDetails,
   ProductPersonalizationInput,
   ProductVariant,
 } from "@/features/products/types/product-details.types";
 import { formatProductMessage } from "@/features/products/utils/format-product-message";
-import { FieldFeedback } from "@/components/ui/field";
 import type { SelectedProductOptions } from "@/features/products/utils/product-variant-resolver";
 import type {
-  ProductPersonalizationValidationError,
   ProductPersonalizationValidationResult,
 } from "@/features/products/utils/validate-product-personalization";
 import { cn } from "@/lib/utils";
@@ -50,24 +47,6 @@ export type ProductPurchasePanelCopy = {
     unavailableAtLocation: string;
     unavailableAtLocationTemplate: string;
     uncoveredLocationTemplate: string;
-  };
-  personalization: {
-    additionalFeeTemplate: string;
-    characterCountTemplate: string;
-    description: string;
-    inputLabel: string;
-    languages: Record<PersonalizationLanguage, string>;
-    languageLabel: string;
-    characterPolicies: Record<PersonalizationCharacterPolicy, string>;
-    errors: {
-      invalidCharacters: string;
-      languageScriptMismatchTemplate: string;
-      required: string;
-      tooLongTemplate: string;
-      unsupportedLanguage: string;
-    };
-    placeholder: string;
-    title: string;
   };
   options: {
     colorOptionTemplate: string;
@@ -216,168 +195,6 @@ function ProductVariants({
     </div>
   );
 }
-function ProductPersonalizationSummary({
-  copy,
-  locale,
-  onChangeText,
-  onSelectLanguage,
-  personalizationInput,
-  personalizationValidation,
-  product,
-}: {
-  copy: ProductPurchasePanelCopy["personalization"];
-  locale: Locale;
-  onChangeText: (text: string) => void;
-  onSelectLanguage: (language: PersonalizationLanguage) => void;
-  personalizationInput: ProductPersonalizationInput | null;
-  personalizationValidation: ProductPersonalizationValidationResult | null;
-  product: Pick<ProductDetails, "id" | "personalization">;
-}) {
-  const [hasInteracted, setHasInteracted] = useState(false);
-
-  if (
-    !product.personalization.enabled ||
-    !personalizationInput ||
-    !personalizationValidation
-  ) {
-    return null;
-  }
-
-  const inputId = `personalization-${product.id}`;
-  const policyId = `${inputId}-policy`;
-  const counterId = `${inputId}-counter`;
-  const errorId = `${inputId}-error`;
-  const showError =
-    !personalizationValidation.valid &&
-    (hasInteracted || personalizationInput.text.length > 0);
-  const errorMessage = personalizationValidation.valid
-    ? null
-    : getPersonalizationErrorMessage(personalizationValidation.error, copy);
-  const describedBy = [policyId, counterId, showError ? errorId : null]
-    .filter(Boolean)
-    .join(" ");
-
-  return (
-    <section
-      aria-labelledby="product-personalization-title"
-      className="rounded-lg border border-gray-200 bg-gray-50 p-4 sm:p-5"
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 id="product-personalization-title" className="text-h4 font-bold">
-            {copy.title}
-          </h2>
-          <p className="mt-1 type-body-sm text-gray-500">{copy.description}</p>
-        </div>
-        {product.personalization.additionalFee ? (
-          <span className="rounded-full bg-gold-50 px-3 py-1 type-badge text-gold-700">
-            {formatProductMessage(copy.additionalFeeTemplate, {
-              amount: new Intl.NumberFormat(locale, {
-                style: "currency",
-                currency: product.personalization.additionalFee.currency,
-              }).format(product.personalization.additionalFee.amount),
-            })}
-          </span>
-        ) : null}
-      </div>
-
-      <fieldset className="mt-4">
-        <legend className="type-label text-gray-700">
-          {copy.languageLabel}
-        </legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {product.personalization.allowedLanguages.map((language) => (
-            <label key={language} className="relative cursor-pointer">
-              <input
-                type="radio"
-                name={`${inputId}-language`}
-                value={language}
-                checked={personalizationInput.language === language}
-                onChange={() => {
-                  onSelectLanguage(language);
-                  if (personalizationInput.text.trim().length > 0) {
-                    setHasInteracted(true);
-                  }
-                }}
-                className="peer sr-only"
-              />
-              <span className="flex min-h-11 items-center rounded-full border border-gray-300 bg-gray-0 px-4 py-2 type-body-sm text-gray-700 peer-checked:border-gold-500 peer-checked:bg-gold-500 peer-checked:text-gray-0 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
-                {copy.languages[language]}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className="mt-4">
-        <label htmlFor={inputId} className="type-label text-gray-700">
-          {copy.inputLabel}
-        </label>
-        <input
-          id={inputId}
-          value={personalizationInput.text}
-          onChange={(event) => {
-            setHasInteracted(true);
-            onChangeText(event.target.value);
-          }}
-          onBlur={() => setHasInteracted(true)}
-          maxLength={product.personalization.maxLength}
-          placeholder={copy.placeholder}
-          dir={personalizationInput.language === "arabic" ? "rtl" : "ltr"}
-          aria-invalid={showError || undefined}
-          aria-describedby={describedBy}
-          className={`mt-2 h-11 w-full rounded-md border bg-gray-0 px-4 type-body text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-            showError ? "border-destructive" : "border-gray-200"
-          }`}
-        />
-        <div className="mt-2 flex flex-wrap justify-between gap-2 type-caption text-gray-400">
-          <span id={policyId}>
-            {copy.characterPolicies[product.personalization.characterPolicy]}
-          </span>
-          <span id={counterId}>
-            {formatProductMessage(copy.characterCountTemplate, {
-              count: personalizationInput.text.length,
-              max: product.personalization.maxLength,
-            })}
-          </span>
-        </div>
-        <FieldFeedback id={errorId} className="mt-2" reserve={[
-          copy.errors.required,
-          copy.errors.unsupportedLanguage,
-          copy.errors.invalidCharacters,
-          formatProductMessage(copy.errors.tooLongTemplate, { max: product.personalization.maxLength }),
-          ...product.personalization.allowedLanguages.map((language) =>
-            formatProductMessage(copy.errors.languageScriptMismatchTemplate, { language: copy.languages[language] })),
-        ]}>
-          {showError ? errorMessage : null}
-        </FieldFeedback>
-      </div>
-    </section>
-  );
-}
-
-function getPersonalizationErrorMessage(
-  error: ProductPersonalizationValidationError,
-  copy: ProductPurchasePanelCopy["personalization"],
-): string {
-  switch (error.code) {
-    case "required":
-      return copy.errors.required;
-    case "unsupported-language":
-      return copy.errors.unsupportedLanguage;
-    case "too-long":
-      return formatProductMessage(copy.errors.tooLongTemplate, {
-        max: error.maxLength,
-      });
-    case "invalid-characters":
-      return copy.errors.invalidCharacters;
-    case "language-script-mismatch":
-      return formatProductMessage(copy.errors.languageScriptMismatchTemplate, {
-        language: copy.languages[error.language],
-      });
-  }
-}
-
 function AvailabilityMessage({
   availability,
   copy,
@@ -575,9 +392,8 @@ export function ProductPurchasePanel({
         product={product}
         selectedOptions={selectedOptions}
       />
-      <ProductPersonalizationSummary
+      <ProductPersonalizationFields
         key={personalizationResetKey}
-        copy={copy.personalization}
         locale={locale}
         onChangeText={onChangePersonalizationText}
         onSelectLanguage={onSelectPersonalizationLanguage}

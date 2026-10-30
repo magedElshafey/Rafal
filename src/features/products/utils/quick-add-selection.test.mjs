@@ -122,6 +122,7 @@ test("the browser DTO excludes warehouse stock and unrelated ProductDetails", ()
       id: "product-1",
       name: "Gift",
       options: [],
+      personalization: { enabled: false },
       slug: "gift",
       variants: [
         {
@@ -144,6 +145,7 @@ test("the browser DTO excludes warehouse stock and unrelated ProductDetails", ()
     "id",
     "name",
     "options",
+    "personalization",
     "slug",
     "variants",
   ]);

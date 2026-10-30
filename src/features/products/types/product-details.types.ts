@@ -76,7 +76,6 @@ export type ProductSocialProof = {
 
 export type PersonalizationLanguage = "arabic" | "english";
 
-export type PersonalizationCharacterPolicy = "letters-and-spaces";
 
 export type ProductPersonalizationInput = {
   language: PersonalizationLanguage;
@@ -89,7 +88,6 @@ export type ProductPersonalizationConfig =
       enabled: true;
       maxLength: number;
       allowedLanguages: readonly PersonalizationLanguage[];
-      characterPolicy: PersonalizationCharacterPolicy;
       additionalFee: Money | null;
     };
 

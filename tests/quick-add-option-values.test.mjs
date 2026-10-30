@@ -31,19 +31,19 @@ function loadSource(relativePath) {
     console, process, module: loaded, exports: loaded.exports,
     require: (specifier) => {
       if (specifier === "react") return {
-        ...React, useId: () => "options", useRef: (value) => ({ current: value }),
+        ...React, useEffect: fn => fn(), useId: () => "options", useRef: (value) => ({ current: value }),
         useState: () => [stateIndex++ === 0 ? selected : 1, noop],
       };
       if (specifier === "next-intl") return { useTranslations: () => (key) => key };
       if (specifier === "@tanstack/react-query") return {
-        useQueryClient: () => ({}),
+        useQueryClient: () => ({ isMutating: () => 0, getQueryState: () => ({ data: { lines: [] }, status: "success", fetchStatus: "idle" }) }),
         useQuery: ({ kind }) => kind === "selection"
           ? { data: { kind: "selection", data: selection }, isFetching: false }
           : { data: { lines: [] } },
         useMutation: () => ({ mutate: (input) => submitted.push(input), reset: noop }),
       };
       if (specifier === "@/features/products/api/quick-add-selection.client") return { quickAddSelectionQueryOptions: () => ({ kind: "selection" }) };
-      if (specifier === "@/features/cart/api/cart-query") return { currentCartQueryOptions: () => ({ kind: "cart" }) };
+      if (specifier === "@/features/cart/api/cart-query") return { currentCartQueryKey: () => ["cart", "current"], currentCartQueryOptions: () => ({ kind: "cart" }) };
       if (specifier === "@/features/cart/actions/add-cart-line") return {};
       if (specifier === "@/features/cart/api/cart-recommendation-lifecycle") return {};
       if (specifier === "@/features/location/components/browsing-city-provider") return { useBrowsingCity: () => ({ committedCity: { id: 27 }, isChanging: false }) };

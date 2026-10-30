@@ -57,15 +57,10 @@ export function assertProductConfiguration(product: ProductDetails): void {
     const {
       additionalFee,
       allowedLanguages,
-      characterPolicy,
       maxLength,
     } = product.personalization;
 
-    if (allowedLanguages.length === 0) {
-      throw new Error(
-        `Product "${product.id}" enables personalization without an allowed language.`,
-      );
-    }
+    // An empty supported-language list renders unavailable personalization, never a fallback language.
     if (
       new Set(allowedLanguages).size !== allowedLanguages.length ||
       allowedLanguages.some(
@@ -81,11 +76,7 @@ export function assertProductConfiguration(product: ProductDetails): void {
         `Product "${product.id}" personalization maxLength must be a positive finite integer.`,
       );
     }
-    if (characterPolicy !== "letters-and-spaces") {
-      throw new Error(
-        `Product "${product.id}" contains an unknown personalization character policy.`,
-      );
-    }
+
     if (
       additionalFee !== null &&
       (!Number.isFinite(additionalFee.amount) ||

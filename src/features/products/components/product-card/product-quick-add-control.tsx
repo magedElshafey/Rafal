@@ -289,11 +289,11 @@ export function ProductQuickAddControl({
         </span>
       </IconButton>}
       <span className="sr-only" role="status">{announcement}</span>
-      {selectorOpen && committedCity && quickAdd.kind === "select-options" ? (
+      {selectorOpen && quickAdd.kind !== "direct" ? (
         <ProductQuickAddSheet
           onAdded={onAdded}
-          key={`${slug}:${committedCity.id}`}
-          cityId={committedCity.id}
+          key={quickAdd.kind === "customize" ? slug : `${slug}:${committedCity?.id}`}
+          cityId={committedCity?.id ?? null}
           locale={locale}
           onOpenChange={setSelectorOpen}
           productName={productName}

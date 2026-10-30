@@ -91,8 +91,8 @@ function mapPersonalization(
   return {
     enabled: true,
     maxLength: product.personalization_max_length,
-    allowedLanguages: ["arabic", "english"],
-    characterPolicy: "letters-and-spaces",
+    allowedLanguages: product.personalization_languages?.flatMap(language =>
+      language === "ar" ? ["arabic" as const] : language === "en" ? ["english" as const] : []) ?? [],
     additionalFee:
       product.personalization_fee === null
         ? null

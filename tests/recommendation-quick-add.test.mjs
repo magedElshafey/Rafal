@@ -33,12 +33,12 @@ function harness(selection) {
       if (name === "next-intl") return { useTranslations: () => Object.assign((key) => key, { raw: (key) => key }) };
       if (name === "@phosphor-icons/react") return { TrashIcon: stub };
       if (name === "@tanstack/react-query") return {
-        useQueryClient: () => ({ invalidateQueries: () => events.push("invalidate"), isMutating: () => 0 }),
+        useQueryClient: () => ({ invalidateQueries: () => events.push("invalidate"), fetchQuery: async () => cart, isMutating: () => 0, getQueryState: () => ({ data: { lines: [] }, status: "success", fetchStatus: "idle" }) }),
         useIsMutating: () => 0,
         useMutation: (options) => { mutations.push(options); return { mutate: (input) => events.push(["submit", input]), reset: () => {} }; },
         useQuery: ({ kind, select }) => select ? { data: 4 } : ({ data: kind === "selection" && selection ? { kind: "selection", data: selection } : { lines: [] } }),
       };
-      if (name === "@/features/cart/api/cart-query") return { currentCartQueryOptions: () => ({}), setCurrentCartQueryData: (_client, _locale, value) => events.push(["cart", value]) };
+      if (name === "@/features/cart/api/cart-query") return { currentCartQueryKey: () => ["cart", "current"], currentCartQueryOptions: () => ({}), setCurrentCartQueryData: (_client, _locale, value) => events.push(["cart", value]) };
       if (name === "@/features/cart/actions/add-cart-line") return {};
       if (name === "@/features/cart/hooks/use-current-cart") return { useCurrentCart: () => ({ data: undefined }) };
       if (name === "@/features/cart/actions/update-cart-line" || name === "@/features/cart/actions/remove-cart-line") return {};
@@ -81,12 +81,14 @@ test("direct Add writes Cart once, replaces toast only with custom handler, and 
   }
 });
 
-test("failed direct Add never confirms and personalized activation still navigates to PDP", () => {
+test("failed direct Add never confirms and personalized activation opens the modal", () => {
   const h = harness(); const notified = [];
   const control = h.load(`${base}product-card/product-quick-add-control`).ProductQuickAddControl;
   const tree = h.render(control, { ...props, quickAdd: { kind: "customize" }, onAdded: (...args) => notified.push(args) });
   children(tree)[0].props.onClick();
-  assert.deepEqual(h.events, [["navigate", "/products/product"]]);
+  assert.deepEqual(h.events, []);
+  const opened = h.render(control, { ...props, quickAdd: { kind: "customize" } });
+  assert.ok(children(opened).some(child => child?.props?.slug === "product" && child?.props?.cityId === 1));
   h.mutations[0].onSuccess({ ok: false, error: { code: "out-of-stock" } });
   h.mutations[0].onError();
   assert.deepEqual(notified, []);
@@ -103,7 +105,7 @@ test("direct and selector Adds hold the transition until Cart and success handli
     assert.deepEqual(mutation.scope, { id: "cart" });
     const transition = await mutation.onMutate();
     assert.deepEqual(h.events, ["transition-start"]);
-    mutation.onSuccess(ok ? { ok: true, cart } : { ok: false, error: { code: "service-unavailable" } });
+    await mutation.onSuccess(ok ? { ok: true, cart } : { ok: false, error: { code: "service-unavailable" } });
     assert.equal(h.events.includes("transition-finish"), false);
     mutation.onSettled(undefined, null, undefined, transition);
     assert.equal(h.events.at(-1), "transition-finish");
@@ -129,11 +131,11 @@ test("selector success closes before notification, waits for focus release, and 
   }
 });
 
-test("failed selector and ordinary dismissal do not queue confirmation", () => {
+test("failed selector and ordinary dismissal do not queue confirmation", async () => {
   const h = harness(); let notified = false;
   const tree = h.render(h.load(`${base}product-card/product-quick-add-sheet`).ProductQuickAddSheet,
     { ...props, cityId: 1, returnFocusRef: { current: null }, onOpenChange: () => {}, onAdded: () => { notified = true; } });
-  h.mutations[0].onSuccess({ ok: false, error: { code: "service-unavailable" } });
+  await h.mutations[0].onSuccess({ ok: false, error: { code: "service-unavailable" } });
   tree.props.onAfterClose();
   assert.equal(notified, false);
   assert.equal(h.events.includes("recommendations-invalidated"), false);

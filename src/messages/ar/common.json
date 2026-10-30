@@ -557,9 +557,10 @@
       }
     },
     "personalization": {
+      "configurationUnavailable": "خيارات التخصيص غير متاحة حاليًا. يرجى المحاولة لاحقًا.",
       "title": "التخصيص بالاسم",
       "description": "أضف اسمًا أو عبارة قصيرة لنقشها على هذا المنتج.",
-      "additionalFee": "+ {amount}",
+      "additionalFee": "+ {amount} لكل قطعة",
       "languageLabel": "لغة النقش",
       "languages": {
         "arabic": "العربية",

@@ -133,11 +133,7 @@ function getInitialPersonalizationInput(
   if (!product.personalization.enabled) return null;
 
   const [language] = product.personalization.allowedLanguages;
-  if (!language) {
-    throw new Error(
-      `Product "${product.id}" enables personalization without an allowed language.`,
-    );
-  }
+  if (!language) return null;
 
   return { language, text: "" };
 }
@@ -357,6 +353,7 @@ export function ProductPurchaseExperience({
   );
   const canAddToCart =
     !cityTransitionLocked &&
+    !isRecovering && !canonical.isError && !cartQuery.isError &&
     productIsAvailable &&
     selectedVariant !== null &&
     purchaseQuantity >= 1 &&
@@ -388,7 +385,8 @@ export function ProductPurchaseExperience({
     submittedConfigurationFingerprint === configurationFingerprint
       ? getAddToCartErrorMessage(mutationFailure, copy.purchase.errors)
       : null;
-  const purchaseErrorMessage = editFailure ? getAddToCartErrorMessage(editFailure, copy.purchase.errors) : addToCartErrorMessage;
+  const purchaseErrorMessage = editFailure ? getAddToCartErrorMessage(editFailure, copy.purchase.errors) : addToCartErrorMessage ??
+    (canonical.isError || cartQuery.isError ? copy.purchase.errors.serviceUnavailable : null);
   const successfulCart =
     addToCartResult?.ok === true ? addToCartResult.cart : undefined;
 
@@ -549,6 +547,10 @@ export function ProductPurchaseExperience({
   };
   const ceiling = cartLine ? getPdpCartLineCeiling(currentCart && { ...currentCart, maxCartItemQuantity: canonical.data }, cartQuery.projectedCart, cartLine.id, cartQuery.fulfillmentCityId) : null;
   const cartBlocked = isEditingSelection || isAddingToCart || isRecovering || cityTransitionLocked || canonical.isError || cartQuery.isError;
+  const recoveryControl = (canonical.isError || cartQuery.isError || canonical.data == null) ? <button type="button" className="type-caption underline focus-visible:ring-2 focus-visible:ring-ring" disabled={isRecovering || isEditingSelection || isAddingToCart || cityTransitionLocked} onClick={() => {
+    setIsRecovering(true);
+    void reconcileCart().then(() => edit.reset()).catch(() => {}).finally(() => setIsRecovering(false));
+  }}>{tCart("sheet.retry")}</button> : null;
   const cartControls = cartLine ? (
     <div data-pdp-cart-controls className="flex flex-wrap items-center gap-3" aria-busy={isEditingSelection || isRecovering || undefined}>
       <div className="flex h-11 items-center rounded-full bg-gold-500 text-gray-0 shadow-[var(--shadow-product-card-quick-add)]">
@@ -557,10 +559,7 @@ export function ProductPurchaseExperience({
         <IconButton size="md" className="size-11 text-inherit disabled:text-gray-0/50" variant="ghost" aria-label={tCart("increase", { name: product.name })} disabled={cartBlocked || ceiling === null || cartLine.quantity >= ceiling} onClick={(event) => editLine(1, event.currentTarget)}>+</IconButton>
       </div>
       <IconButton size="md" className="size-11 bg-gray-0 text-gray-700 shadow-[var(--shadow-product-card-quick-add)]" variant="ghost" aria-label={tCart("remove", { name: product.name })} disabled={cartBlocked} onClick={(event) => editLine(null, event.currentTarget)}><TrashIcon aria-hidden="true" size={20} /></IconButton>
-      {(canonical.isError || cartQuery.isError || canonical.data == null) && <button type="button" className="type-caption underline focus-visible:ring-2 focus-visible:ring-ring" disabled={isRecovering || isEditingSelection || isAddingToCart || cityTransitionLocked} onClick={() => {
-        setIsRecovering(true);
-        void reconcileCart().then(() => edit.reset()).catch(() => {}).finally(() => setIsRecovering(false));
-      }}>{tCart("sheet.retry")}</button>}
+      {recoveryControl}
     </div>
   ) : undefined;
 
@@ -613,6 +612,7 @@ export function ProductPurchaseExperience({
             shareActions={shareActions}
             variant={presentationVariant}
           />
+          {!cartLine && recoveryControl}
         </div>
       </div>
 

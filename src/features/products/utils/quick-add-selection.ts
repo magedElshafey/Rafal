@@ -96,7 +96,7 @@ export function getRevalidatedQuickAddJourney(
 }
 
 export function projectQuickAddSelectionData(
-  product: Pick<ProductDetails, "id" | "name" | "options" | "slug" | "variants">,
+  product: Pick<ProductDetails, "id" | "name" | "options" | "slug" | "variants" | "personalization">,
   city: { id: number; name: string },
   availabilityByVariantId: VariantAvailabilityById,
 ): QuickAddSelectionData {
@@ -107,6 +107,7 @@ export function projectQuickAddSelectionData(
       name: product.name,
       options: product.options,
       slug: product.slug,
+      personalization: product.personalization,
       variants: product.variants.map((variant) => ({
         attributes: variant.attributes,
         availability: availabilityByVariantId[variant.id] ?? {

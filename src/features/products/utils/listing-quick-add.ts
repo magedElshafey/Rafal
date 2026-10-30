@@ -26,6 +26,7 @@ export function getQuickAddActivation(
   committedCityId: number | null,
 ): "direct" | "selector" | "pdp" {
   if (quickAdd.kind === "direct") return "direct";
+  if (quickAdd.kind === "customize") return "selector";
   if (quickAdd.kind === "select-options" && committedCityId !== null) {
     return "selector";
   }

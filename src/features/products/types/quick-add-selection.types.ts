@@ -2,6 +2,7 @@ import type { ResolvedVariantAvailability } from "@/features/products/types/prod
 import type {
   ProductOption,
   ProductVariantPricing,
+  ProductPersonalizationConfig,
 } from "@/features/products/types/product-details.types";
 import type { VariantAttributes } from "@/lib/variant-attributes";
 
@@ -22,6 +23,7 @@ export type QuickAddSelectionData = {
     name: string;
     options: readonly ProductOption[];
     slug: string;
+    personalization: ProductPersonalizationConfig;
     variants: readonly QuickAddSelectionVariant[];
   };
 };
