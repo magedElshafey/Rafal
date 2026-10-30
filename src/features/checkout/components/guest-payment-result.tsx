@@ -50,7 +50,8 @@ export function GuestPaymentResult({ locale, paymentReturn, copy }: {
 
   return (
     <PaymentResultView copy={copy} state={state} paymentReturn={paymentReturn}>
-      <Button variant="outline" className="w-full" onClick={() => { void check(); }}
+      <Button variant={state === "failed" ? "primary" : state === "confirmed" ? "ghost" : "outline"}
+        size={state === "failed" ? "lg" : "md"} className="h-auto min-h-11 w-full whitespace-normal py-3" onClick={() => { void check(); }}
         loading={state === "checking"} loadingLabel={copy.states.checking.title}>
         {copy.recheck}
       </Button>

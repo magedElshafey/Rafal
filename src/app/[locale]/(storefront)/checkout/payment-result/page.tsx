@@ -45,10 +45,11 @@ export default async function PaymentResultPage({ searchParams }: {
         <form method="get" action={`/${locale}/checkout/payment-result`}>
           <input type="hidden" name="status" value={paymentReturn.status} />
           <input type="hidden" name="order_number" value={paymentReturn.orderNumber} />
-          <Button type="submit" variant="outline" className="w-full">{copy.recheck}</Button>
+          <Button type="submit" variant={result.state === "failed" ? "primary" : result.state === "confirmed" ? "ghost" : "outline"}
+            size={result.state === "failed" ? "lg" : "md"} className="h-auto min-h-11 w-full whitespace-normal py-3">{copy.recheck}</Button>
         </form>
       </PaymentResultView>
     );
   }
-  return <Container className="main-content-spacing bg-gray-50 py-12 sm:py-16">{content}</Container>;
+  return <Container className="main-content-spacing py-8 sm:py-12">{content}</Container>;
 }

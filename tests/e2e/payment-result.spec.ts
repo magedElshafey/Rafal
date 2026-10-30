@@ -36,6 +36,28 @@ test.afterEach(async ({ request }) => {
 
 for (const locale of ["ar", "en"]) {
   for (const authenticated of [false, true]) {
+    test(`${locale} ${authenticated ? "authenticated" : "guest"}: failure prioritizes status recovery without tracking`, async ({ page }, info) => {
+      await setup(page, { authenticated, order: authenticated ? undefined : "RF-FAILED" });
+      await page.goto(url(locale, "RF-FAILED", "failed"));
+      await expect(result(page)).toHaveAttribute("data-payment-result", "failed");
+      await expect(result(page).locator('a[href*="track-order"], a[href*="account/orders"]')).toHaveCount(0);
+      const recovery = result(page).getByRole("button", { name: locale === "ar" ? "التحقق من حالة الدفع مجددًا" : "Check payment status again" });
+      await expect(recovery).toBeVisible();
+      await expect(recovery).toHaveClass(/bg-gray-1000/);
+      await recovery.focus(); await expect(recovery).toBeFocused();
+      await page.keyboard.press("Tab"); await expect(result(page).getByRole("link").first()).toBeFocused();
+      for (const width of [1280, 768, 390, 320]) {
+        await page.setViewportSize({ width, height: 900 });
+        expect(await result(page).evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        expect(await recovery.evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+        await page.screenshot({ path: info.outputPath(`${locale}-failed-${width}.png`), fullPage: true });
+      }
+      await recovery.click();
+      await expect(result(page)).toHaveAttribute("data-payment-result", "failed");
+      await expect(result(page).locator('a[href*="track-order"], a[href*="account/orders"]')).toHaveCount(0);
+    });
+
     test(`${locale} ${authenticated ? "authenticated" : "guest"}: confirmed payment, refresh, privacy, responsive and keyboard`, async ({ page }, info) => {
       await setup(page, { authenticated, order: authenticated ? undefined : "RF-10103" });
       let guestReads = 0;
@@ -45,7 +67,7 @@ for (const locale of ["ar", "en"]) {
       expect(response?.headers()["cache-control"]).toContain("no-store");
       await expect(result(page)).toHaveAttribute("data-payment-result", "confirmed");
       expect(guestReads).toBe(authenticated ? 0 : 1);
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(locale === "ar" ? "تم تأكيد الدفع" : "Payment confirmed");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(locale === "ar" ? "تم تأكيد طلبك بنجاح" : "Your order is confirmed");
       await expect(page.locator("html")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
       await expect(result(page)).toContainText("RF-10103");
       const body = await page.locator("body").innerText();
@@ -58,8 +80,8 @@ for (const locale of ["ar", "en"]) {
       const button = result(page).getByRole("button");
       await button.focus(); await expect(button).toBeFocused();
       expect(await button.evaluate(el => getComputedStyle(el).boxShadow)).not.toBe("none");
-      await page.keyboard.press("Tab"); await expect(result(page).getByRole("link").first()).toBeFocused();
-      for (const width of [1440, 390, 320]) {
+      await page.keyboard.press("Tab"); await expect(result(page).getByRole("link", { name: locale === "ar" ? "تواصل معنا" : "Contact us" })).toBeFocused();
+      for (const width of [1440, 768, 390, 320]) {
         await page.setViewportSize({ width, height: 900 });
         expect(await result(page).evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -85,7 +107,10 @@ for (const [order, status, state] of [
     await page.goto(url("en", order, status));
     await expect(result(page)).toHaveAttribute("data-payment-result", state);
     await expect(result(page)).not.toContainText("PRIVATE-PROVIDER-ERROR");
-    await expect(result(page).getByRole("link").first()).toHaveAttribute("href", "/en/track-order");
+    if (state === "failed") {
+      await expect(result(page).locator('a[href*="track-order"], a[href*="account/orders"]')).toHaveCount(0);
+      await expect(result(page).getByRole("button", { name: "Check payment status again" })).toBeVisible();
+    } else await expect(result(page).getByRole("link").first()).toHaveAttribute("href", "/en/track-order");
     if (status === "failed" && state === "pending") await expect(result(page)).toContainText("does not confirm that your order was cancelled");
   });
 }

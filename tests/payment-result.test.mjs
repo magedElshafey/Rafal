@@ -6,6 +6,8 @@ import test from "node:test";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const require = createRequire(import.meta.url);
@@ -29,6 +31,9 @@ function load(relative) {
     fetch: async (...args) => { calls.push(args); if (failure) throw failure; return Response.json(reply); },
     require: name => {
       if (name === "server-only") return {};
+      if (name.startsWith("@phosphor-icons/")) return { CircleNotchIcon: () => null };
+      if (name === "@/i18n/navigation") return { Link: ({ prefetch: _prefetch, ...props }) => { void _prefetch; return React.createElement("a", props); } };
+      if (name === "@/components/ui/icons") return Object.fromEntries(["CheckIcon", "ClockIcon", "InfoIcon", "XIcon"].map(name => [name, props => React.createElement("svg", props)]));
       if (name === "@/features/auth/server/auth-session") return { getAccessToken: async () => token };
       if (name === "@/lib/api/server-api") return { serverApi: { request: async config => {
         calls.push(config); if (failure) throw failure; return reply;
@@ -132,4 +137,26 @@ test("guest browser lookup sends identity only in private POST body; cancellatio
   failure = new Error("Network failure");
   assert.equal((await lookupGuestOrderFromBrowser("ar", input)).ok, false);
   assert.equal(calls.length, 2);
+});
+
+test("localized result presentation hides all order links only on failure and prioritizes confirmed tracking", () => {
+  const { PaymentResultView } = load("src/features/checkout/components/payment-result-view");
+  for (const locale of ["ar", "en"]) {
+    const messages = JSON.parse(readFileSync(path.join(root, `src/messages/${locale}/common.json`), "utf8")).paymentResult;
+    const copy = { ...messages, states: messages };
+    for (const state of ["confirmed", "failed", "pending", "unavailable", "invalid", "checking"]) for (const detailsHref of [undefined, "/account/orders/RF-10103"]) {
+      const html = renderToStaticMarkup(React.createElement(PaymentResultView, {
+        copy, state, detailsHref, paymentReturn: state === "invalid" ? null : { status: "failed", orderNumber: "RF-10103" },
+      }, React.createElement("button", null, copy.recheck)));
+      assert.ok(html.includes(messages[state].title.replaceAll("'", "&#x27;")));
+      assert.match(html, /role="status"/);
+      assert.match(html, /aria-labelledby="payment-result-title"/);
+      assert.equal(html.includes("RF-10103</bdi>"), state !== "invalid");
+      assert.equal(html.includes(`href="${detailsHref ?? "/track-order"}"`), state !== "failed");
+      assert.match(html, /href="\/"/); assert.match(html, /href="\/contact"/);
+      assert.ok(html.includes(copy.recheck));
+      if (state === "confirmed") assert.ok(html.indexOf(detailsHref ? copy.details : copy.lookup) < html.indexOf(copy.recheck));
+    }
+  }
+  assert.equal(calls.length, 0);
 });

@@ -840,8 +840,8 @@
     }
   },
   "paymentResult": {
-    "confirmed": { "title": "Payment confirmed", "description": "Your payment has been received. Thank you for shopping with Rafal." },
-    "failed": { "title": "Payment was not completed", "description": "We couldn't confirm a completed payment. Review your order or contact us before making another payment." },
+    "confirmed": { "title": "Your order is confirmed", "description": "Your payment is complete and your order is confirmed. Thank you for choosing Rafal." },
+    "failed": { "title": "Payment was not completed", "description": "Your payment could not be confirmed. Check its status again or contact us before making another payment." },
     "pending": { "title": "Payment confirmation is pending", "description": "Your order has not yet returned a final payment result. Check again shortly or review your order before making another payment." },
     "unavailable": { "title": "We couldn't verify your payment", "description": "Use order tracking with your contact details, or contact us for help. Please check your order before making another payment." },
     "invalid": { "title": "This payment return link is invalid", "description": "The link is missing or contains invalid order information. You can still track your order or contact us for help." },
