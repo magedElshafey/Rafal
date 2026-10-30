@@ -29,15 +29,19 @@ function harness(selection) {
     } }).outputText;
     const localRequire = (name) => {
       if (name === "react") return { ...React, useState: (value) => { const index = slot(value); return [slots[index], (next) => { slots[index] = next; }]; },
-        useRef: (value) => slots[slot({ current: value })], useId: () => "test", useTransition: () => [false, (fn) => fn()] };
+        useRef: (value) => slots[slot({ current: value })], useEffect: () => {}, useId: () => "test", useTransition: () => [false, (fn) => fn()] };
       if (name === "next-intl") return { useTranslations: () => Object.assign((key) => key, { raw: (key) => key }) };
+      if (name === "@phosphor-icons/react") return { TrashIcon: stub };
       if (name === "@tanstack/react-query") return {
-        useQueryClient: () => ({ invalidateQueries: () => events.push("invalidate") }),
+        useQueryClient: () => ({ invalidateQueries: () => events.push("invalidate"), isMutating: () => 0 }),
+        useIsMutating: () => 0,
         useMutation: (options) => { mutations.push(options); return { mutate: (input) => events.push(["submit", input]), reset: () => {} }; },
-        useQuery: ({ kind }) => ({ data: kind === "selection" && selection ? { kind: "selection", data: selection } : { lines: [] } }),
+        useQuery: ({ kind, select }) => select ? { data: 4 } : ({ data: kind === "selection" && selection ? { kind: "selection", data: selection } : { lines: [] } }),
       };
       if (name === "@/features/cart/api/cart-query") return { currentCartQueryOptions: () => ({}), setCurrentCartQueryData: (_client, _locale, value) => events.push(["cart", value]) };
       if (name === "@/features/cart/actions/add-cart-line") return {};
+      if (name === "@/features/cart/hooks/use-current-cart") return { useCurrentCart: () => ({ data: undefined }) };
+      if (name === "@/features/cart/actions/update-cart-line" || name === "@/features/cart/actions/remove-cart-line") return {};
       if (name === "@/features/cart/api/cart-recommendation-lifecycle") return { beginRecommendationTransition: () => {
         events.push("transition-start");
         return { ready: Promise.resolve(), finish: () => events.push("transition-finish") };
@@ -95,6 +99,8 @@ test("direct and selector Adds hold the transition until Cart and success handli
     const component = h.load(`${base}product-card/${file}`)[file.endsWith("control") ? "ProductQuickAddControl" : "ProductQuickAddSheet"];
     h.render(component, { ...props, cityId: 1, returnFocusRef: { current: null }, onOpenChange: () => {} });
     const mutation = h.mutations[0];
+    assert.deepEqual(mutation.mutationKey, ["cart", "mutation"]);
+    assert.deepEqual(mutation.scope, { id: "cart" });
     const transition = await mutation.onMutate();
     assert.deepEqual(h.events, ["transition-start"]);
     mutation.onSuccess(ok ? { ok: true, cart } : { ok: false, error: { code: "service-unavailable" } });

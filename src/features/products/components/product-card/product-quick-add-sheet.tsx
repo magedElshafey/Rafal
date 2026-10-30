@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { cartMutationKey, cartMutationScope } from "@/features/cart/api/cart-mutation";
 import type { Locale } from "next-intl";
 import { useTranslations } from "next-intl";
 import { useId, useRef, useState, type RefObject } from "react";
@@ -15,6 +16,7 @@ import { beginRecommendationTransition } from "@/features/cart/api/cart-recommen
 import {
   currentCartQueryOptions,
   currentCartQueryKey,
+  currentCartQueryKeyRoot,
   setCurrentCartQueryData,
 } from "@/features/cart/api/cart-query";
 import type {
@@ -157,7 +159,12 @@ export function ProductQuickAddSheet({
     committedCity?.id ?? null,
   );
   const mutation = useMutation({
-    mutationFn: (input: AddCartLineInput) => addCartLine(input, locale),
+    mutationKey: cartMutationKey,
+    scope: cartMutationScope,
+    mutationFn: async (input: AddCartLineInput) => {
+      await queryClient.cancelQueries({ queryKey: currentCartQueryKeyRoot });
+      return addCartLine(input, locale);
+    },
     onMutate: async () => {
       const transition = beginRecommendationTransition(queryClient);
       await transition.ready;

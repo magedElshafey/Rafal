@@ -131,8 +131,13 @@ export function setCurrentCartQueryData(
   void queryClient.cancelQueries(projections);
   callbacks?.canonicalChanged();
   // Mutation responses do not establish a fresh destination-city projection.
+  const maxCartItemQuantity = cart.maxCartItemQuantity === undefined
+    ? queryClient.getQueryData<CartSnapshot>(currentCartQueryKey(locale, null))?.maxCartItemQuantity
+    : cart.maxCartItemQuantity;
   const canonical = {
     ...cart,
+    // Mutation DTOs contain no storefront settings; retain the last Cart-read limit.
+    ...(maxCartItemQuantity === undefined ? {} : { maxCartItemQuantity }),
     lines: cart.lines.map((line) => {
       const next = { ...line };
       delete next.availability;

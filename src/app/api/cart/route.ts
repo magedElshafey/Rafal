@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/features/auth/server/auth-boundary";
 import { getCurrentCart } from "@/features/cart/server/cart-boundary";
 import { resolveCartTransportIdentity } from "@/features/cart/server/cart-auth-context";
 import { routing } from "@/i18n/routing";
+import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 
 const PRIVATE_NO_STORE_HEADERS = {
   "Cache-Control": "private, no-store",
@@ -39,7 +40,11 @@ export async function GET(request: Request) {
     if (reconcile && (guest ? identity?.kind !== "guest" || !identity.token : !user)) {
       return Response.json({ code: "account-unconfirmed" }, { status: 401, headers: PRIVATE_NO_STORE_HEADERS });
     }
-    return Response.json(await getCurrentCart(locale, cityId), {
+    const [cart, settings] = await Promise.all([
+      getCurrentCart(locale, cityId),
+      cityId === undefined ? getPublicSettings(locale).catch(() => null) : Promise.resolve(null),
+    ]);
+    return Response.json({ ...cart, ...(cityId === undefined ? { maxCartItemQuantity: settings?.maxCartItemQuantity ?? null } : {}) }, {
       headers: { ...PRIVATE_NO_STORE_HEADERS, ...(user ? { "X-Rafal-Account-Id": user.id } : {}),
         ...(reconcile ? { "X-Rafal-Cart-Mode": guest ? "guest" : "authenticated" } : {}) },
     });

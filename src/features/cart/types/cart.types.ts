@@ -113,6 +113,8 @@ export type CartSummary = {
 };
 
 export type CartSnapshot = {
+  /** Storefront settings supplied by the existing Cart read, not Laravel Cart DTOs. */
+  maxCartItemQuantity?: number | null;
   city: { id: number; name: string } | null;
   lines: readonly CartLine[];
   summary: CartSummary;

@@ -591,6 +591,9 @@
     "emptyDescription": "No products match the current filters.",
     "unavailable": "Unavailable",
     "quickAdd": {
+      "decrease": "Decrease quantity of {name}",
+      "increase": "Increase quantity of {name}",
+      "remove": "Remove {name} from cart",
       "add": "Add {name} to cart",
       "customize": "Customize {name}",
       "chooseOptions": "Choose options for {name}",

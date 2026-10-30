@@ -604,6 +604,9 @@
     "emptyDescription": "لم نعثر على منتجات تطابق خيارات التصفية الحالية.",
     "unavailable": "غير متوفر",
     "quickAdd": {
+      "decrease": "تقليل كمية {name}",
+      "increase": "زيادة كمية {name}",
+      "remove": "حذف {name} من السلة",
       "add": "إضافة {name} إلى السلة",
       "customize": "تخصيص {name}",
       "chooseOptions": "اختيار خيارات {name}",

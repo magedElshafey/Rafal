@@ -1,4 +1,4 @@
-import type { AddCartLineInput } from "@/features/cart/types/cart.types";
+import type { AddCartLineInput, CartSnapshot } from "@/features/cart/types/cart.types";
 import type { ProductDto } from "@/features/products/api/product-dto";
 import type { ListingQuickAdd } from "@/features/products/types/product-listing.types";
 
@@ -54,4 +54,20 @@ export function getQuickAddTriggerAccessibility(
     ariaDisabled: blocked,
     disabled: blocked && !selectorOpen,
   };
+}
+export function getProductCardCartLine(cart: CartSnapshot | undefined, productId: string) {
+  const matches = cart?.lines.filter((line) => line.product.id === productId) ?? [];
+  return matches.length === 1 && matches[0].personalization === null ? matches[0] : null;
+}
+
+export function canIncrementProductCardLine(
+  cart: CartSnapshot | undefined, productId: string, cityId: number | null,
+  projectionReady: boolean,
+) {
+  const line = getProductCardCartLine(cart, productId);
+  return !!line && projectionReady && cityId !== null &&
+    line.availability?.cityId === cityId && line.availability.inStock &&
+    line.quantity < line.availability.available &&
+    typeof cart?.maxCartItemQuantity === "number" &&
+    line.quantity < cart.maxCartItemQuantity;
 }

@@ -48,6 +48,11 @@ function harness() {
       if (name === "@/features/cart/server/cart-auth-context") return { resolveCartTransportIdentity: async () => state.user
         ? { kind: "authenticated", bearerToken: "test-auth" } : { kind: "guest", token: state.guestToken } };
       if (name === "@/features/cart/server/cart-boundary") return { getCurrentCart: async () => snapshot };
+      if (name === "@/features/settings/server/public-settings-boundary") return { getPublicSettings: async () => {
+        state.settingsReads = (state.settingsReads ?? 0) + 1;
+        if (state.settingsFail) throw new Error("settings unavailable");
+        return { maxCartItemQuantity: 7 };
+      } };
       if (name === "@/features/cart/server/cart-recommendations-boundary") return { getCartRecommendations: async () => payload };
       if (name.startsWith("@/")) return load(`src/${name.slice(2)}`);
       if (name.startsWith(".")) return load(path.relative(root, path.resolve(path.dirname(filename), name)));
@@ -270,6 +275,24 @@ test("private route metadata is server validated; ordinary guest Cart reads rema
     assert.equal((await cartRoute(request())).status, 200);
     assert.equal((await cartRoute(request(true))).status, 401);
     assert.equal((await recommendationsRoute(request())).status, 401);
+  } finally { h.close(); }
+});
+
+test("Cart read supplies the configured quantity limit and isolates settings failure", async () => {
+  const h = harness();
+  try {
+    const get = h.load("src/app/api/cart/route").GET;
+    const request = () => new Request("https://store.test/api/cart?locale=en");
+    assert.equal((await (await get(request())).json()).maxCartItemQuantity, 7);
+    h.state.settingsFail = true;
+    const response = await get(request());
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    assert.equal(data.maxCartItemQuantity, null);
+    assert.deepEqual(data.lines, snapshot.lines);
+    const reads = h.state.settingsReads;
+    assert.equal((await get(new Request("https://store.test/api/cart?locale=en&cityId=1"))).status, 200);
+    assert.equal(h.state.settingsReads, reads);
   } finally { h.close(); }
 });
 
