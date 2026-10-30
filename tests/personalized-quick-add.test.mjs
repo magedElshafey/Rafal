@@ -52,6 +52,7 @@ function harness(personalization = config, variants = [option("17")], locale = n
       if (name === "@/lib/rafal-toast") return { useRafalToast: () => ({ success() {} }) };
       if (name === "@/i18n/navigation") return { Link: "a" };
       if (locale && name === "@/components/ui/field") return load("src/components/ui/field");
+      if (locale && name === "@/components/ui/icons") return { CheckIcon: props => React.createElement("svg", props) };
       if (name.startsWith("@/components/ui/")) return new Proxy({}, { get: () => "button" });
       if (name.startsWith("@/")) return load(`src/${name.slice(2)}`);
       return require(name);
@@ -69,7 +70,7 @@ function harness(personalization = config, variants = [option("17")], locale = n
 function find(node, predicate) {
   if (!React.isValidElement(node)) return null;
   if (predicate(node)) return node;
-  return React.Children.toArray(node.props.children).map(child => find(child, predicate)).find(Boolean);
+  return React.Children.toArray([node.props.children, node.props.footer]).map(child => find(child, predicate)).find(Boolean);
 }
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 
@@ -177,10 +178,10 @@ test("real parser, mapper and modal projection preserve API language codes witho
 });
 
 test("shared PDP/modal fields render localized required inputs with distinct IDs and language direction", () => {
-  for (const locale of ["ar", "en"]) {
+  for (const locale of ["ar", "en"]) for (const compact of [false, true]) {
     const h = harness(config, undefined, locale);
     const Fields = h.load("src/features/products/components/product-personalization-fields").ProductPersonalizationFields;
-    const props = { locale, product: { personalization: { ...config, allowedLanguages: ["arabic", "english"] } },
+    const props = { locale, compact, product: { personalization: { ...config, allowedLanguages: ["arabic", "english"] } },
       personalizationInput: { language: locale === "ar" ? "arabic" : "english", text: "123!" },
       personalizationValidation: { valid: true }, onChangeText() {}, onSelectLanguage() {} };
     const html = renderToStaticMarkup(React.createElement("div", { dir: locale === "ar" ? "rtl" : "ltr" }, React.createElement(Fields, props), React.createElement(Fields, props)));
@@ -191,8 +192,29 @@ test("shared PDP/modal fields render localized required inputs with distinct IDs
     assert.match(html, new RegExp(`dir="${locale === "ar" ? "rtl" : "ltr"}"`));
     assert.match(html, locale === "ar" ? /لكل قطعة/ : /per unit/);
     assert.doesNotMatch(html, /Letters and spaces only/);
+    assert.equal((html.match(/type="radio"/g) ?? []).length, 4);
+    assert.equal((html.match(/type="button"/g) ?? []).length, 0);
+    for (const [, references] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
+      for (const reference of references.split(" ")) assert.ok(ids.includes(reference));
+    }
+    if (compact) assert.match(html, /role="status"/);
     const unavailable = renderToStaticMarkup(React.createElement(Fields, { ...props, product: { personalization: { ...config, allowedLanguages: [] } }, personalizationInput: null, personalizationValidation: null }));
     assert.match(unavailable, /role="status"/);
     assert.doesNotMatch(unavailable, /<input/);
   }
+});
+
+test("Quick Add anchors one purchase action while configuration and quantity remain scrollable", () => {
+  const h = harness();
+  const view = h.render();
+  assert.equal(view.tree.props.scrollableBody, true);
+  assert.equal(view.fields.props.compact, true);
+  assert.deepEqual(find(view.tree.props.footer, e => e.props["data-quick-add-action"] === "add").props, view.add.props);
+  assert.equal(find(view.tree.props.children, e => e.props["data-quick-add-action"] === "add"), undefined);
+  assert.ok(find(view.tree.props.children, e => e.props["aria-label"] === "sheet.increase"));
+  const guidance = find(view.tree.props.footer, e => e.props.id === view.add.props["aria-describedby"]);
+  assert.equal(guidance.props.children, "sheet.completePersonalization");
+  view.fields.props.onChangeText("Gift");
+  const valid = h.render();
+  assert.equal(find(valid.tree.props.footer, e => e.props.id === valid.add.props["aria-describedby"]).props.children, null);
 });

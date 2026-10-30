@@ -544,6 +544,7 @@
       }
     },
     "personalization": {
+      "requiredLabel": "Required",
       "configurationUnavailable": "Personalization options are unavailable. Please try again later.",
       "title": "Personalize with a name",
       "description": "Add a name or short phrase to be engraved on this product.",
@@ -617,6 +618,7 @@
           "size": "Size"
         },
         "completeSelection": "Choose all required options to see price and availability.",
+        "completePersonalization": "Complete the required personalization to add this item.",
         "available": "Available at your selected location",
         "cartLoading": "Checking your current cart quantity…",
         "cartError": "Your current cart could not be checked. Try again before adding.",

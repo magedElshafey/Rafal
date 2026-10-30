@@ -150,7 +150,7 @@ test("selector Add retains synchronous duplicate-submission protection", () => {
   function find(node) {
     if (!React.isValidElement(node)) return null;
     if (node.props["data-quick-add-action"] === "add") return node;
-    return React.Children.toArray(node.props.children).map(find).find(Boolean);
+    return React.Children.toArray([node.props.children, node.props.footer]).map(find).find(Boolean);
   }
   const button = find(tree);
   assert.equal(button.props.disabled, false);

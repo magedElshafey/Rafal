@@ -47,7 +47,7 @@ function loadSource(relativePath) {
       if (specifier === "@/features/cart/actions/add-cart-line") return {};
       if (specifier === "@/features/cart/api/cart-recommendation-lifecycle") return {};
       if (specifier === "@/features/location/components/browsing-city-provider") return { useBrowsingCity: () => ({ committedCity: { id: 27 }, isChanging: false }) };
-      if (specifier === "@/components/ui/rafal-modal") return { RafalModal: ({ children }) => React.createElement("div", null, children) };
+      if (specifier === "@/components/ui/rafal-modal") return { RafalModal: ({ children, footer }) => React.createElement("div", null, children, footer) };
       if (specifier === "@/components/ui/button") return { Button: (props) => React.createElement("button", {
         disabled: props.disabled, onClick: props.onClick,
         "data-quick-add-action": props["data-quick-add-action"],
@@ -90,7 +90,7 @@ function render() {
   function findAdd(node) {
     if (!node || typeof node !== "object") return null;
     if (node.props?.["data-quick-add-action"] === "add") return node;
-    return React.Children.toArray(node.props?.children).map(findAdd).find(Boolean);
+    return React.Children.toArray([node.props?.children, node.props?.footer]).map(findAdd).find(Boolean);
   }
   return { html, labels, add: findAdd(tree) };
 }

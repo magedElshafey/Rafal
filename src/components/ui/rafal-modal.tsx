@@ -20,6 +20,7 @@ type RafalModalProps = {
   showClose?: boolean;
   className?: string;
   bodyClassName?: string;
+  scrollableBody?: boolean;
   returnFocusRef?: RefObject<HTMLElement | null>;
   onAfterClose?: () => void;
   variant?: "modal" | "bottom-sheet" | "image-viewer";
@@ -29,6 +30,7 @@ export function RafalModal({
   children,
   className,
   bodyClassName,
+  scrollableBody = false,
   closeLabel = "Close",
   description,
   dismissible = true,
@@ -47,6 +49,14 @@ export function RafalModal({
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen || dismissible) onOpenChange(nextOpen);
   };
+  const heading = <>
+    <DialogPrimitive.Title className={isImageViewer ? "sr-only" : cn("text-h4 font-bold text-gray-1000", scrollableBody && "break-words")}>
+      {title}
+    </DialogPrimitive.Title>
+    {description ? <DialogPrimitive.Description className={scrollableBody ? "mt-1 type-caption text-gray-600" : "type-body text-gray-600"}>
+      {description}
+    </DialogPrimitive.Description> : null}
+  </>;
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
@@ -117,6 +127,7 @@ export function RafalModal({
                     : "sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-[calc(100%-2rem)] sm:max-w-[var(--modal-max-width)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-6",
                 ),
             className,
+            scrollableBody && "flex max-h-[calc(100dvh-1rem-env(safe-area-inset-top))] flex-col overflow-hidden p-0 sm:p-0",
           )}
         >
           {showClose && dismissible ? (
@@ -127,6 +138,7 @@ export function RafalModal({
                 isImageViewer
                   ? cn(iconButtonVariants({ size: "md", variant: "media" }), "absolute top-[max(1rem,env(safe-area-inset-top))] end-[max(1rem,env(safe-area-inset-right))] z-10 rtl:end-[max(1rem,env(safe-area-inset-left))]")
                   : "top-4 end-4 size-8 rounded-md text-gray-600 hover:bg-gray-100",
+                scrollableBody && "top-3 end-3 z-10 size-11",
               )}
             >
               <XIcon
@@ -139,23 +151,15 @@ export function RafalModal({
           ) : null}
           <div
             className={
-              cn(isImageViewer ? "h-full min-h-0" : cn("space-y-3", showClose && "pe-8"), bodyClassName)
+              cn(isImageViewer ? "h-full min-h-0" : cn("space-y-3", showClose && "pe-8"),
+                scrollableBody && "min-h-0 flex-1 space-y-0 pe-0 flex flex-col", !scrollableBody && bodyClassName)
             }
           >
-            <DialogPrimitive.Title
-              className={isImageViewer ? "sr-only" : "text-h4 font-bold text-gray-1000"}
-            >
-              {title}
-            </DialogPrimitive.Title>
-            {description ? (
-              <DialogPrimitive.Description className="type-body text-gray-600">
-                {description}
-              </DialogPrimitive.Description>
-            ) : null}
-            {children}
+            {scrollableBody ? <div className="shrink-0 border-b border-gray-200 px-5 py-4 pe-16 sm:ps-6">{heading}</div> : heading}
+            {scrollableBody ? <div data-modal-scroll-body className={cn("min-h-0 scroll-py-4 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6", bodyClassName)}>{children}</div> : children}
           </div>
           {footer ? (
-            <div className="mt-4 flex flex-wrap gap-2">{footer}</div>
+            <div data-modal-footer className={scrollableBody ? "shrink-0 border-t border-gray-200 bg-gray-0 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6" : "mt-4 flex flex-wrap gap-2"}>{footer}</div>
           ) : null}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

@@ -300,7 +300,7 @@ export function ProductQuickAddSheet({
   const detailLink = (
     <Link
       href={productHref}
-      className="type-body-sm font-medium text-gold-700 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="inline-flex min-h-11 items-center justify-center type-caption font-medium text-gold-700 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       onClick={() => onOpenChange(false)}
     >
       {t("sheet.viewDetails")}
@@ -314,7 +314,37 @@ export function ProductQuickAddSheet({
         pendingSuccessRef.current = null;
         notify?.();
       } : undefined}
-      className="sm:max-w-lg"
+      className="sm:max-w-2xl"
+      scrollableBody
+      description={selection ? t("sheet.city", { city: selection.city.name }) : undefined}
+      footer={cityId !== null && !selectionQuery.isPending && !selectionQuery.isError && selection ? (
+          <div className="space-y-2" data-quick-add-region="purchase">
+            <p id={`${optionInputPrefix}-guidance`} className="type-caption text-gray-600" role="status">
+              {!mutation.isPending && (!variant ? t("sheet.completeSelection") : !personalizationValid ? t("sheet.completePersonalization") : !contextMatches ? t("sheet.cityChanged") : null)}
+            </p>
+            <Button
+              className="w-full"
+              data-quick-add-action="add"
+              aria-describedby={`${optionInputPrefix}-guidance`}
+              disabled={!canAdd}
+              loading={mutation.isPending}
+              loadingLabel={t("sheet.adding")}
+              onClick={handleAdd}
+              size="lg"
+            >
+              {t("sheet.addToCart")}
+            </Button>
+            {mutationError ? (
+              <p
+                className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 type-body-sm text-destructive"
+                role="status"
+              >
+                {t(getAddErrorKey(mutationError))}
+              </p>
+            ) : null}
+            <div className="text-center">{detailLink}</div>
+          </div>
+      ) : undefined}
       closeLabel={t("sheet.close")}
       onOpenChange={onOpenChange}
       open
@@ -323,17 +353,17 @@ export function ProductQuickAddSheet({
       title={selection?.product.name ?? productName}
     >
       {cityId === null ? (
-        <p className="min-h-40 type-body text-destructive" role="status">{t("errors.locationRequired")}</p>
+        <p className="min-h-24 type-body text-destructive" role="status">{t("errors.locationRequired")}</p>
       ) : selectionQuery.isPending ? (
         <div
           aria-busy="true"
-          className="min-h-80 rounded-md bg-gray-50 p-5 type-body text-gray-600 sm:min-h-96"
+          className="min-h-48 flex items-center justify-center rounded-md bg-gray-50 p-5 type-body text-gray-600"
           role="status"
         >
           {t("sheet.loading")}
         </div>
       ) : selectionQuery.isError ? (
-        <div className="min-h-80 space-y-4 sm:min-h-96">
+        <div className="min-h-32 space-y-4">
           <p className="type-body text-destructive" role="status">
             {t(getReadErrorKey(selectionQuery.error))}
           </p>
@@ -345,7 +375,7 @@ export function ProductQuickAddSheet({
           </div>
         </div>
       ) : selectionQuery.data?.kind === "journey-changed" ? (
-        <div className="min-h-80 space-y-4 sm:min-h-96">
+        <div className="min-h-32 space-y-4">
           <p className="type-body text-gray-700" role="status">
             {t(
               selectionQuery.data.journey === "customize"
@@ -356,88 +386,9 @@ export function ProductQuickAddSheet({
           {detailLink}
         </div>
       ) : selection ? (
-        <div className="min-h-80 space-y-5 sm:min-h-96">
-          <p className="type-body-sm text-gray-500">
-            {t("sheet.city", { city: selection.city.name })}
-          </p>
-
-          <div className="space-y-4">
-            {selection.product.options.map((option, optionIndex) => {
-              const optionLabel = getVariantAttributeLabel(option.key, {
-                color: t("sheet.options.color"),
-                size: t("sheet.options.size"),
-              });
-              return (
-                <fieldset key={option.id}>
-                  <legend className="type-body font-medium text-gray-900">
-                    {optionLabel}
-                  </legend>
-                  <div className="mt-2 flex flex-wrap justify-center gap-2">
-                    {option.values.map((value, valueIndex) => {
-                      const selectable = isProductOptionValueAvailable(
-                        selection.product.variants,
-                        selectedOptions,
-                        option.id,
-                        value.id,
-                      );
-                      const selected = selectedOptions[option.id] === value.id;
-                      const inputId = `${optionInputPrefix}-${optionIndex}-${valueIndex}`;
-                      return (
-                        <label
-                          key={value.id}
-                          className={cn(
-                            "relative cursor-pointer",
-                            !selectable && "cursor-not-allowed opacity-50",
-                          )}
-                          htmlFor={inputId}
-                        >
-                          <input
-                            checked={selected}
-                            className="peer sr-only"
-                            disabled={!selectable}
-                            id={inputId}
-                            name={`${optionInputPrefix}-${option.id}`}
-                            onChange={() => {
-                              mutation.reset();
-                              setQuantity(1);
-                              const nextOptions = {
-                                ...selectedOptionsRef.current,
-                                [option.id]: value.id,
-                              };
-                              selectedOptionsRef.current = nextOptions;
-                              setSelectedOptions(nextOptions);
-                            }}
-                            type="radio"
-                            value={value.id}
-                          />
-                          <span className="flex min-h-11 items-center gap-2 rounded-md border border-gray-300 bg-gray-0 py-2 pe-10 ps-4 type-body-sm peer-checked:border-gold-600 peer-checked:bg-gold-50 peer-checked:ring-1 peer-checked:ring-gold-600 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
-                            {option.key === "color" ? (
-                              <VariantColorSwatch value={value.id} />
-                            ) : null}
-                            {value.label}
-                          </span>
-                          <CheckIcon
-                            aria-hidden="true"
-                            className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-gold-700 opacity-0 peer-checked:opacity-100"
-                          />
-                        </label>
-                      );
-                    })}
-                  </div>
-                </fieldset>
-              );
-            })}
-          </div>
-
-          {personalization?.enabled && <ProductPersonalizationFields
-            locale={locale} product={selection.product} personalizationInput={personalizationInput}
-            personalizationValidation={personalizationValidation}
-            onChangeText={text => { if (personalizationInput) setPersonalizationDraft({ ...personalizationInput, text }); }}
-            onSelectLanguage={language => setPersonalizationDraft({ language, text: personalizationInput?.text ?? "" })}
-          />}
-
+        <div className="space-y-4">
           <div
-            className="min-h-24 space-y-2 border-t border-gray-200 pt-4"
+            className="min-h-16 space-y-1"
             data-quick-add-region="summary"
           >
             {variant ? (
@@ -483,10 +434,85 @@ export function ProductQuickAddSheet({
             )}
           </div>
 
-          <div className="space-y-3 border-t border-gray-200 pt-4">
-            <div className="flex items-center justify-between gap-4">
-              <span className="type-body font-medium">{t("sheet.quantity")}</span>
-              <div className="flex h-11 items-center rounded-md border border-gray-200">
+          <div className="space-y-4">
+            {selection.product.options.map((option, optionIndex) => {
+              const optionLabel = getVariantAttributeLabel(option.key, {
+                color: t("sheet.options.color"),
+                size: t("sheet.options.size"),
+              });
+              return (
+                <fieldset key={option.id} className="min-w-0">
+                  <legend className="type-label text-gray-900">
+                    {optionLabel}
+                  </legend>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {option.values.map((value, valueIndex) => {
+                      const selectable = isProductOptionValueAvailable(
+                        selection.product.variants,
+                        selectedOptions,
+                        option.id,
+                        value.id,
+                      );
+                      const selected = selectedOptions[option.id] === value.id;
+                      const inputId = `${optionInputPrefix}-${optionIndex}-${valueIndex}`;
+                      return (
+                        <label
+                          key={value.id}
+                          className={cn(
+                            "relative min-w-0 max-w-full cursor-pointer",
+                            !selectable && "cursor-not-allowed opacity-50",
+                          )}
+                          htmlFor={inputId}
+                        >
+                          <input
+                            checked={selected}
+                            className="peer sr-only"
+                            disabled={!selectable}
+                            id={inputId}
+                            name={`${optionInputPrefix}-${option.id}`}
+                            onChange={() => {
+                              mutation.reset();
+                              setQuantity(1);
+                              const nextOptions = {
+                                ...selectedOptionsRef.current,
+                                [option.id]: value.id,
+                              };
+                              selectedOptionsRef.current = nextOptions;
+                              setSelectedOptions(nextOptions);
+                            }}
+                            type="radio"
+                            value={value.id}
+                          />
+                          <span className="flex min-h-11 min-w-11 items-center gap-2 break-words rounded-md border border-gray-200 bg-gray-0 py-2 pe-8 ps-3 type-body-sm peer-checked:border-gold-600 peer-checked:bg-gold-50 peer-checked:ring-1 peer-checked:ring-gold-600 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
+                            {option.key === "color" ? (
+                              <VariantColorSwatch value={value.id} />
+                            ) : null}
+                            <span className="min-w-0 break-words">{value.label}</span>
+                          </span>
+                          <CheckIcon
+                            aria-hidden="true"
+                            className="pointer-events-none absolute end-2 top-1/2 size-4 -translate-y-1/2 text-gold-700 opacity-0 peer-checked:opacity-100"
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              );
+            })}
+          </div>
+
+          {personalization?.enabled && <ProductPersonalizationFields compact
+            locale={locale} product={selection.product} personalizationInput={personalizationInput}
+            personalizationValidation={personalizationValidation}
+            onChangeText={text => { if (personalizationInput) setPersonalizationDraft({ ...personalizationInput, text }); }}
+            onSelectLanguage={language => setPersonalizationDraft({ language, text: personalizationInput?.text ?? "" })}
+          />}
+
+          <div className="space-y-2 border-t border-gray-200 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="type-label text-gray-700">{t("sheet.quantity")}</span>
+              <div className="flex h-11 items-center rounded-md border border-gray-300 bg-gray-0">
                 <button
                   aria-label={t("sheet.decrease")}
                   className="size-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:text-gray-300"
@@ -520,7 +546,7 @@ export function ProductQuickAddSheet({
               </div>
             </div>
             <div
-              className="min-h-5 type-caption text-gray-500"
+              className="min-h-5 type-caption text-gray-600"
               data-quick-add-region="quantity-helper"
             >
               {cartQuery.isPending ? (
@@ -546,27 +572,8 @@ export function ProductQuickAddSheet({
                 <span aria-hidden="true">&nbsp;</span>
               )}
             </div>
-            <Button
-              className="w-full"
-              data-quick-add-action="add"
-              disabled={!canAdd}
-              loading={mutation.isPending}
-              loadingLabel={t("sheet.adding")}
-              onClick={handleAdd}
-              size="lg"
-            >
-              {t("sheet.addToCart")}
-            </Button>
-            {mutationError ? (
-              <p
-                className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 type-body-sm text-destructive"
-                role="status"
-              >
-                {t(getAddErrorKey(mutationError))}
-              </p>
-            ) : null}
-            <div>{detailLink}</div>
           </div>
+
         </div>
       ) : null}
     </RafalModal>
