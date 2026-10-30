@@ -324,7 +324,7 @@ export function ProductQuickAddSheet({
                   <legend className="type-body font-medium text-gray-900">
                     {optionLabel}
                   </legend>
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
                     {option.values.map((value, valueIndex) => {
                       const selectable = isProductOptionValueAvailable(
                         selection.product.variants,

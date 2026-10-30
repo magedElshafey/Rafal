@@ -78,11 +78,15 @@ export function mapCheckoutPlaceResult(
     },
   };
   const verificationRequired = decision.action === "verify-otp";
+  const paymentMethod = data.payment?.method;
 
   return verificationRequired
     ? {
         kind: "verification-required",
         ...order,
+        ...(request?.buyer.kind !== "authenticated" &&
+          (paymentMethod === "card" || paymentMethod === "apple_pay" || paymentMethod === "tap")
+          ? { paymentMethod } : {}),
         verificationExpiresAt:
           data.verification_expires_at ??
           response.meta?.verification_expires_at ??

@@ -52,6 +52,7 @@ export type CheckoutVerifyRequest = Readonly<{
   orderNumber: string;
   phone: string;
   otp: string;
+  expectedPaymentMethod?: CheckoutPlaceRequest["paymentMethod"];
 }>;
 
 export type CheckoutShippingOption = Readonly<{
@@ -175,6 +176,7 @@ export type CheckoutPlaceResult =
   | (CheckoutPlacedOrder &
       Readonly<{
         kind: "verification-required";
+        paymentMethod?: CheckoutPlaceRequest["paymentMethod"];
         verificationExpiresAt: string | null;
       }>);
 

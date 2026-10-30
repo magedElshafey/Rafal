@@ -117,6 +117,7 @@ function CheckoutOrderVerificationForm({
       orderNumber: context.orderNumber,
       phone: context.phone,
       otp,
+      ...(context.paymentMethod === undefined ? {} : { expectedPaymentMethod: context.paymentMethod }),
     });
   };
 

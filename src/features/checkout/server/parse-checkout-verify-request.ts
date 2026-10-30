@@ -15,14 +15,19 @@ export function parseCheckoutVerifyRequest(
     typeof orderNumber !== "string" ||
     !orderNumber.trim() ||
     !isRecord(value) ||
-    Object.keys(value).some((key) => key !== "phone" && key !== "otp") ||
+    Object.keys(value).some((key) => key !== "phone" && key !== "otp" && key !== "expectedPaymentMethod") ||
     typeof value.phone !== "string" ||
     typeof value.otp !== "string"
   ) {
     return null;
   }
+  const expectedPaymentMethod = value.expectedPaymentMethod;
+  if (expectedPaymentMethod !== undefined && expectedPaymentMethod !== "card" &&
+    expectedPaymentMethod !== "apple_pay" && expectedPaymentMethod !== "tap") return null;
 
   return isValidSaudiMobile(value.phone) && OTP_PATTERN.test(value.otp)
-    ? { orderNumber: orderNumber.trim(), phone: value.phone, otp: value.otp }
+    ? { orderNumber: orderNumber.trim(), phone: value.phone, otp: value.otp,
+        ...(expectedPaymentMethod === undefined ? {} : { expectedPaymentMethod }),
+      }
     : null;
 }

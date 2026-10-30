@@ -21,7 +21,9 @@ export async function verifyCheckoutOrderFromBrowser(
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ phone: request.phone, otp: request.otp }),
+      body: JSON.stringify({ phone: request.phone, otp: request.otp,
+        ...(request.expectedPaymentMethod === undefined ? {} : { expectedPaymentMethod: request.expectedPaymentMethod }),
+      }),
     },
   );
 

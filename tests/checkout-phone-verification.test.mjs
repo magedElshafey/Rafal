@@ -85,7 +85,8 @@ function harness(locale = "ar", method = "card") {
   const placePayload = method === "card" ? fixture("otp-card") : JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
   placePayload.data.payment.method = method;
   const parsed = load("src/features/checkout/api/parse-checkout-place-dto").parseCheckoutPlaceResponse(placePayload);
-  const otpResult = load("src/features/checkout/api/checkout-place-mapper").mapCheckoutPlaceResult(parsed);
+  const mapped = load("src/features/checkout/api/checkout-place-mapper").mapCheckoutPlaceResult(parsed);
+  const otpResult = load("src/features/checkout/api/parse-checkout-place-result").parseCheckoutPlaceResult(JSON.parse(JSON.stringify(mapped)));
   state.payload.data.order_number = otpResult.orderNumber;
   const input = { orderNumber: otpResult.orderNumber, phone, otp: "123456" };
   const copy = JSON.parse(readFileSync(path.join(root, `src/messages/${locale}/common.json`), "utf8")).checkoutVerification;
@@ -110,6 +111,76 @@ const hostedFixture = (method = "card") => {
   payload.data.payment.method = method;
   return payload;
 };
+
+for (const [expected, returned] of [["card", "card"], ["apple_pay", "apple_pay"], ["tap", "tap"], ["apple_pay", "card"], ["tap", "apple_pay"]]) {
+  test(`Place ${expected} to Verify ${returned}: method consistency through actual OTP form and private API`, async () => {
+    const h = harness("en", expected);
+    h.state.payload = hostedFixture(expected);
+    h.state.payload.data.payment.method = returned;
+    h.handoff.storeCheckoutVerificationHandoff(h.otpResult, phone);
+    h.page();
+    let form = h.form();
+    h.find(form, el => el.type === h.OtpInput).props.onValueChange(h.input.otp);
+    form = h.form();
+    const submit = h.find(form, el => el.type === "form").props.onSubmit;
+    submit({ preventDefault() {} }); submit({ preventDefault() {} });
+    await tick();
+    assert.equal(h.state.browser.length, 1);
+    assert.equal(h.state.upstream.length, 1);
+    assert.equal(JSON.parse(h.state.browser[0].init.body).expectedPaymentMethod, expected);
+    assert.equal(h.state.hostedNavigation.length, expected === returned ? 1 : 0);
+    assert.equal(h.state.navigation.length, 0);
+    assert.equal(h.handoff.readCheckoutConfirmationHandoff(h.input.orderNumber), null);
+    assert.equal(h.handoff.readCheckoutVerificationHandoff(h.input.orderNumber).paymentMethod, expected);
+    assert.deepEqual([...h.state.upstream[0].body.entries()], [["phone", phone], ["otp", h.input.otp]]);
+    if (expected !== returned) {
+      assert.equal(h.handoff.readCheckoutPaymentHandoff(h.input.orderNumber), null);
+      assert.equal(h.find(h.page(), el => el.type?.name === "CheckoutOrderVerificationForm").props.error, h.copy.verificationFailed);
+      h.remount(); h.page();
+      await tick();
+      assert.equal(h.state.upstream.length, 1);
+      assert.equal(h.state.hostedNavigation.length, 0);
+    }
+  });
+}
+
+test("legacy Card handoff without a method still verifies through the unchanged upstream contract", async () => {
+  const h = harness("en");
+  h.state.payload = hostedFixture();
+  const legacy = { ...h.otpResult };
+  delete legacy.paymentMethod;
+  h.handoff.storeCheckoutVerificationHandoff(legacy, phone);
+  assert.equal(h.handoff.readCheckoutVerificationHandoff(h.input.orderNumber).paymentMethod, undefined);
+  h.page();
+  let form = h.form();
+  h.find(form, el => el.type === h.OtpInput).props.onValueChange(h.input.otp);
+  form = h.form();
+  h.find(form, el => el.type === "form").props.onSubmit({ preventDefault() {} });
+  await tick();
+  assert.deepEqual(JSON.parse(h.state.browser[0].init.body), { phone, otp: h.input.otp });
+  assert.deepEqual([...h.state.upstream[0].body.entries()], [["phone", phone], ["otp", h.input.otp]]);
+  assert.equal(h.state.upstream.length, 1);
+  assert.equal(h.state.hostedNavigation.length, 1);
+  assert.equal(h.state.navigation.length, 0);
+});
+
+test("a matching expected method cannot authorize invalid Laravel payment state or an unsafe handoff", async () => {
+  for (const change of [
+    p => { p.meta.payment.payment_url = "https://unsafe.example.invalid/pay"; },
+    p => { p.meta.payment.expires_at = "2000-01-01T00:00:00Z"; },
+    p => { p.data.payment.status = "paid"; },
+    p => { p.data.order_number = "RF-OTHER"; },
+    p => { p.success = false; },
+  ]) {
+    const h = harness("en", "apple_pay");
+    h.state.payload = hostedFixture("apple_pay"); change(h.state.payload);
+    await assert.rejects(h.load("src/features/checkout/api/checkout-verify-mutation").verifyCheckoutOrderFromBrowser("en", { ...h.input, expectedPaymentMethod: "apple_pay" }));
+    assert.equal(h.state.upstream.length, 1);
+    assert.equal(h.state.upstream[0].body.has("expectedPaymentMethod"), false);
+    assert.equal(h.state.hostedNavigation.length, 0);
+    assert.equal(h.handoff.readCheckoutConfirmationHandoff(h.input.orderNumber), null);
+  }
+});
 
 for (const locale of ["ar", "en"]) {
   for (const method of ["card", "apple_pay", "tap"]) {
@@ -259,7 +330,7 @@ for (const locale of ["ar", "en"]) {
     const browser = h.state.browser[0];
     assert.equal(browser.url, `/api/checkout/orders/${h.input.orderNumber}/verify?locale=${locale}`);
     assert.equal(browser.init.method, "POST");
-    assert.deepEqual(JSON.parse(browser.init.body), { phone, otp: h.input.otp });
+    assert.deepEqual(JSON.parse(browser.init.body), { phone, otp: h.input.otp, expectedPaymentMethod: "card" });
     assert.equal(browser.init.headers["Content-Type"], "application/json");
     assert.equal(h.state.upstream.length, 1);
     const upstream = h.state.upstream[0];
@@ -293,6 +364,7 @@ test("private Verify rejects absent/invalid phone, email fallback and invalid OT
   const h = harness();
   const route = h.load("src/app/api/checkout/orders/[orderNumber]/verify/route");
   for (const body of [{ otp: "123456" }, { email: "test@example.invalid", otp: "123456" },
+    ...[null, "bank_transfer", "unknown", 123].map(expectedPaymentMethod => ({ phone, otp: "123456", expectedPaymentMethod })),
     { phone, email: "test@example.invalid", otp: "123456" },
     ...[null, 123, "", "invalid", "12345", "+12025550123"].map(phone => ({ phone, otp: "123456" })),
     { phone, otp: "123" }, { phone, otp: "abcdef" }]) {

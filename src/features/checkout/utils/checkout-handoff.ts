@@ -3,6 +3,7 @@ import type {
   CheckoutPlacedMoney,
   CheckoutPlacedShippingAddress,
   CheckoutHostedPaymentResult,
+  CheckoutPlaceRequest,
 } from "@/features/checkout/types/checkout.types";
 import { isValidSaudiMobile } from "@/lib/phone/saudi-mobile";
 import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-verify-result";
@@ -30,6 +31,7 @@ export type CheckoutVerificationHandoff = {
   displayNumber: string;
   phone: string;
   verificationExpiresAt: string | null;
+  paymentMethod?: CheckoutPlaceRequest["paymentMethod"];
 };
 
 export type CheckoutConfirmationHandoff = {
@@ -71,6 +73,7 @@ export function storeCheckoutVerificationHandoff(
     displayNumber: result.displayNumber,
     phone,
     verificationExpiresAt: result.verificationExpiresAt,
+    ...(result.paymentMethod === undefined ? {} : { paymentMethod: result.paymentMethod }),
   } satisfies CheckoutVerificationHandoff);
 }
 
@@ -83,6 +86,8 @@ export function readCheckoutVerificationHandoff(
   }
   const context = value as Record<string, unknown>;
   return context.orderNumber === orderNumber &&
+    (context.paymentMethod === undefined || context.paymentMethod === "card" ||
+      context.paymentMethod === "apple_pay" || context.paymentMethod === "tap") &&
     typeof context.displayNumber === "string" &&
     typeof context.phone === "string" && isValidSaudiMobile(context.phone) &&
     (context.verificationExpiresAt === null ||

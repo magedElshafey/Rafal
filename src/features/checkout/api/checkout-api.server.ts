@@ -173,6 +173,11 @@ export async function verifyCheckoutOrder(
     if (response.data.order_number !== input.orderNumber) {
       throw new CheckoutContractError("response.data.order_number", "the requested order identity");
     }
+    // A client-side consistency hint can only reject a result. It is never sent
+    // upstream or used as payment authorization; all Laravel state checks follow.
+    if (input.expectedPaymentMethod !== undefined && response.data.payment?.method !== input.expectedPaymentMethod) {
+      throw new CheckoutContractError("response.data.payment.method", "the Place-confirmed payment method");
+    }
     // Verify can clear the OTP flag while retaining pending_verification status.
     // Keep the earlier flag-retaining variant, but reject conflicting metadata.
     // This continuation is specific to Verify, not a paid or Place outcome.
