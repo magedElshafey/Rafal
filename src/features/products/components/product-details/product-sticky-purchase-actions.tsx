@@ -1,12 +1,13 @@
 "use client";
 
-import type { MouseEventHandler } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
 
 type ProductStickyPurchaseActionsProps = {
+  cartControls?: ReactNode;
   addToCartLabel: string;
   addingLabel: string;
   canAddToCart: boolean;
@@ -21,6 +22,7 @@ type ProductStickyPurchaseActionsProps = {
 };
 
 export function ProductStickyPurchaseActions({
+  cartControls,
   addToCartLabel,
   addingLabel,
   canAddToCart,
@@ -40,6 +42,8 @@ export function ProductStickyPurchaseActions({
   return (
     <>
       <aside
+        data-pdp-purchase-surface="mobile"
+        tabIndex={-1}
         aria-label={mobileLabel}
         aria-hidden={!isVisible}
         inert={!isVisible}
@@ -65,7 +69,8 @@ export function ProductStickyPurchaseActions({
           ) : (
             <span className="min-w-0 flex-1" />
           )}
-          <Button
+          {cartControls ?? <Button
+            data-pdp-add
             className="min-w-36 flex-1"
             disabled={!canAddToCart || isPending}
             loading={isPending}
@@ -76,11 +81,13 @@ export function ProductStickyPurchaseActions({
             onClick={onAddToCart}
           >
             {addToCartLabel}
-          </Button>
+          </Button>}
         </div>
       </aside>
 
       <aside
+        data-pdp-purchase-surface="desktop"
+        tabIndex={-1}
         aria-label={desktopLabel}
         aria-hidden={!isVisible}
         inert={!isVisible}
@@ -110,7 +117,8 @@ export function ProductStickyPurchaseActions({
               <bdi>{formattedPrice}</bdi>
             </strong>
           ) : null}
-          <Button
+          {cartControls ?? <Button
+            data-pdp-add
             className="min-w-40"
             disabled={!canAddToCart || isPending}
             loading={isPending}
@@ -121,7 +129,7 @@ export function ProductStickyPurchaseActions({
             onClick={onAddToCart}
           >
             {addToCartLabel}
-          </Button>
+          </Button>}
         </Container>
       </aside>
     </>

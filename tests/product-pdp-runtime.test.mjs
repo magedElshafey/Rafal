@@ -49,16 +49,23 @@ function loadSource(relativePath) {
           state[slot] = typeof value === "function" ? value(state[slot]) : value;
         }];
       },
-      useRef: (value) => hooks ? { current: value } : React.useRef(value),
+      useRef: (value) => {
+        if (!hooks) return React.useRef(value);
+        const slot = hooks.index++;
+        if (!(slot in hooks.state)) hooks.state[slot] = { current: value };
+        return hooks.state[slot];
+      },
       useEffect: (...args) => hooks ? undefined : React.useEffect(...args),
     };
     /* eslint-enable react-hooks/rules-of-hooks, react-hooks/exhaustive-deps */
     if (specifier === "next-intl/server") return { getLocale: async () => "en", getTranslations: async () => translate };
     if (specifier === "next-intl") return { useTranslations: () => translate };
+    if (specifier === "@phosphor-icons/react") return visualStub;
     if (specifier === "next/navigation") return { notFound: () => { throw new Error("NEXT_NOT_FOUND"); } };
     if (specifier === "@tanstack/react-query") return {
-      useQueryClient: () => ({}),
-      useMutation: () => ({ mutate: (input) => { addedLine = input; }, reset: () => {} }),
+      useQueryClient: () => ({ isMutating: () => 0, getQueryState: () => ({ data: { lines: [] }, status: "success", fetchStatus: "idle" }) }),
+      useQuery: () => ({ data: 10, isSuccess: true }),
+      useMutation: (options) => ({ mutate: (input) => { addedLine = input; options.onSettled?.(); }, reset: () => {} }),
     };
     if (specifier === "@/features/products/api/product-api.server") return {
       getProductBySlugDto: async () => {
@@ -67,6 +74,7 @@ function loadSource(relativePath) {
       },
     };
     if (specifier === "@/features/cart/hooks/use-current-cart") return { useCurrentCart: () => ({ data: { lines: [] } }) };
+    if (specifier === "@/features/cart/api/cart-query") return { currentCartQueryOptions: () => ({}), currentCartQueryKey: () => ["cart"] };
     if (specifier.startsWith("@/features/cart/")) return {};
     if (specifier === "@/features/location/components/browsing-city-provider") return { useBrowsingCity: () => ({ isChanging: false }) };
     if (specifier === "@/features/location/server/resolve-current-location") return { resolveCurrentLocation: async () => ({ id: 1, name: "City" }) };
@@ -129,7 +137,7 @@ function purchaseRenderer(props) {
 
 function attemptAdd(panel) {
   addedLine = null;
-  panel.onAddToCart({ currentTarget: {} });
+  panel.onAddToCart({ currentTarget: { closest: () => null } });
   return addedLine;
 }
 

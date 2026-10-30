@@ -106,6 +106,7 @@ export type ProductPurchasePanelCopy = {
 };
 
 type ProductPurchasePanelProps = {
+  cartControls?: ReactNode;
   addToCartErrorMessage: string | null;
   addingToCartLabel: string;
   availability: ResolvedVariantAvailability;
@@ -480,6 +481,7 @@ function ProductSocialProofSummary({
 }
 
 export function ProductPurchasePanel({
+  cartControls,
   addToCartErrorMessage,
   addingToCartLabel,
   availability,
@@ -585,9 +587,14 @@ export function ProductPurchasePanel({
       />
 
       <div
+        data-pdp-purchase-surface="main"
+        tabIndex={-1}
         ref={purchaseActionRef}
         className="space-y-4 border-t border-gray-200 pt-6"
       >
+        <div className="grid items-center">
+        {cartControls && <div className="col-start-1 row-start-1 flex justify-end">{cartControls}</div>}
+        <div aria-hidden={!!cartControls} inert={!!cartControls} className={cn("col-start-1 row-start-1 space-y-4", cartControls && "invisible pointer-events-none")}>
         <div className="flex items-center justify-between gap-4">
           <span className="type-body font-medium text-gray-900">
             {copy.quantity.title}
@@ -631,6 +638,7 @@ export function ProductPurchasePanel({
         ) : null}
         <div>
           <Button
+            data-pdp-add
             disabled={!canAddToCart || isAddingToCart}
             loading={isAddingToCart}
             loadingLabel={addingToCartLabel}
@@ -645,6 +653,8 @@ export function ProductPurchasePanel({
           >
             {copy.addToCart}
           </Button>
+        </div>
+        </div>
         </div>
         {addToCartErrorMessage ? (
           <p
