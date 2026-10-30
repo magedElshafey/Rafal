@@ -565,8 +565,8 @@ export function ProductPurchaseExperience({
 
   return (
     <>
-      <div className="mt-7 flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12 rtl:lg:flex-row-reverse">
-        <div className="min-w-0 lg:w-[44%]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-8 xl:gap-12">
+        <div className="min-w-0 lg:order-2">
           <ProductGallery
             copy={copy.gallery}
             direction={locale === "ar" ? "rtl" : "ltr"}
@@ -577,7 +577,7 @@ export function ProductPurchaseExperience({
             selectedImageId={validImageId}
           />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 lg:order-1">
           <ProductPurchasePanel
             cartControls={cartControls}
             addToCartErrorMessage={purchaseErrorMessage}

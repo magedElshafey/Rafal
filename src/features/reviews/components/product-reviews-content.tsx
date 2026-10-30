@@ -47,6 +47,14 @@ export function ProductReviewsContent({
             })
           : copy.title}
       </h2>
+      {readResult.ok && readResult.page.summary.count > 0 ? (
+        <p className="mt-2 type-body-sm text-gray-600">
+          {formatProductMessage(copy.aggregateTemplate, {
+            average: numbers.format(readResult.page.summary.average),
+            count: numbers.format(readResult.page.summary.count),
+          })}
+        </p>
+      ) : null}
 
       {!readResult.ok ? (
         <p className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 type-body text-gray-600">

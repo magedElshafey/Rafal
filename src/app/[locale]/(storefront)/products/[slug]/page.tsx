@@ -254,7 +254,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         product={purchaseProduct}
         renderedAt={renderedAt}
         shareActions={
-          <div className="space-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-3">
             <WishlistHeart
               accountId={user?.id ?? null}
               productId={product.id}
@@ -372,14 +372,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         }}
       />
 
-      <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
+      <div className="mt-8 lg:mt-12">
         <ProductDescription
           description={product.description}
           title={t("descriptionTitle")}
         />
       </div>
 
-      <div className="mt-10 border-t border-gray-200 pt-8 lg:mt-12 lg:pt-10">
+      <div className="mt-8 border-t border-gray-200 pt-8 lg:mt-10 lg:pt-10">
         <Suspense
           fallback={
             <ProductReviewsSkeleton
@@ -392,7 +392,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </Suspense>
       </div>
       <Suspense key={product.id} fallback={
-        <RecommendationRowSkeleton title={t("discovery.relatedTitle")} loadingLabel={t("discovery.loading")} />
+        <RecommendationRowSkeleton presentation="pdp" title={t("discovery.relatedTitle")} loadingLabel={t("discovery.loading")} />
       }>
         <ProductRecommendationsSection slug={product.slug} productId={product.id} locale={locale} cityId={cityId}
           accountId={user?.id ?? null} title={t("discovery.relatedTitle")} />

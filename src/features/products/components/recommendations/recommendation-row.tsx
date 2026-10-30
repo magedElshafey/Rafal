@@ -18,7 +18,7 @@ export async function RecommendationRow({ products, locale, accountId, title }: 
     getTranslations({ locale, namespace: "Common.productListing" }),
     getTranslations({ locale, namespace: "Common.productDetails.discovery" }),
   ]);
-  return <RecommendationRowView products={products} locale={locale} accountId={accountId} title={title}
+  return <RecommendationRowView presentation="pdp" products={products} locale={locale} accountId={accountId} title={title}
     copy={{ previous: navigation("previous"), next: navigation("next"),
       badges: { discount: t("badges.discount"), new: t("badges.new"), personalization: t("badges.personalization") },
       rating: (value) => t("rating", { value }), reviews: (count) => t("reviews", { count }), unavailable: t("unavailable") }}

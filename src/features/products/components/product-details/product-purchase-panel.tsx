@@ -143,7 +143,7 @@ function ProductVariants({
   if (product.options.length === 0) return null;
 
   return (
-    <div className="space-y-5 border-t border-gray-200 pt-6">
+    <div className="space-y-4">
       {product.options.map((option) => {
         const optionLabel = getVariantAttributeLabel(option.key, copy.labels);
         const label = optionLabel.charAt(0).toUpperCase() + optionLabel.slice(1);
@@ -152,7 +152,7 @@ function ProductVariants({
             <legend className="type-body font-medium text-gray-900">
               {label}
             </legend>
-            <div className="mt-3 flex flex-wrap gap-3">
+            <div className="mt-2 flex flex-wrap gap-2">
               {option.values.map((value, index) => {
                 const selectable = product.variants.some(
                   (candidate) => candidate.attributes[option.id] === value.id &&
@@ -172,7 +172,7 @@ function ProductVariants({
                     disabled={!selectable}
                     onClick={() => onSelectOption(option.id, value.id)}
                     className={cn(
-                      "flex min-h-11 min-w-0 max-w-full items-center justify-center gap-2 rounded-md border bg-gray-0 px-4 py-2 type-body-sm font-medium text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
+                      "flex min-h-11 min-w-0 max-w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-gray-0 px-4 py-2 type-body-sm font-medium text-gray-700 transition-colors enabled:hover:border-gold-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
                       selected && "border-gold-500 bg-gold-50 text-gold-900 ring-1 ring-gold-500",
                       !selectable && "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400 opacity-60",
                     )}
@@ -243,10 +243,10 @@ function AvailabilityMessage({
       id="product-availability"
       role="status"
       aria-live="polite"
-      className={`flex items-start gap-3 border-s-2 py-2 ps-3 type-body-sm font-medium ${
+      className={`flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2.5 type-body-sm font-medium ${
         available
-          ? "border-success text-success"
-          : "border-destructive text-destructive"
+          ? "text-success"
+          : "text-destructive"
       }`}
     >
       <MapPinIcon aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
@@ -278,10 +278,10 @@ function ProductSocialProofSummary({
   ] as const;
 
   return (
-    <dl className="flex flex-col md:flex-row items-center gap-x-6 gap-y-3 border-y border-gray-200 py-3">
+    <dl className="flex flex-wrap items-center gap-x-5 gap-y-2">
       {items.map(({ icon: Icon, label, value }) => (
         <div key={label} className="flex min-w-0 items-center gap-2.5">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-50 text-gold-700">
+          <span className="flex size-6 shrink-0 items-center justify-center text-gold-700">
             <Icon aria-hidden="true" className="size-4" />
           </span>
           <dt className="sr-only">{label}</dt>
@@ -334,11 +334,11 @@ export function ProductPurchasePanel({
     available && remainingAddable !== null && quantity < remainingAddable;
 
   return (
-    <section className="min-w-0 space-y-6" aria-labelledby="product-title">
+    <section className="min-w-0 space-y-5 [&_input]:scroll-my-24" aria-labelledby="product-title">
       <div>
         <h1
           id="product-title"
-          className="max-w-prose text-h2 break-words font-bold text-gray-900 sm:text-h1"
+          className="text-h3 break-words font-bold text-gray-900 sm:text-h2"
         >
           {product.name}
         </h1>
@@ -351,7 +351,7 @@ export function ProductPurchasePanel({
           />
         ) : null}
         {variant ? (
-          <p className="mt-2 break-words type-body text-muted-foreground">
+          <p className="mt-1 break-words type-caption text-gray-500">
             {formatProductMessage(copy.skuTemplate, { sku: `\u2068${variant.sku}\u2069` })}
           </p>
         ) : null}
@@ -372,12 +372,6 @@ export function ProductPurchasePanel({
         </div>
       ) : null}
 
-      <ProductSocialProofSummary
-        copy={copy.socialProof}
-        locale={locale}
-        socialProof={product.socialProof}
-      />
-
       <AvailabilityMessage
         availability={availability}
         copy={copy.availability}
@@ -385,6 +379,13 @@ export function ProductPurchasePanel({
         locationName={locationName}
       />
 
+      <ProductSocialProofSummary
+        copy={copy.socialProof}
+        locale={locale}
+        socialProof={product.socialProof}
+      />
+
+      <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-0 p-4 sm:p-5">
       <ProductVariants
         availabilityByVariantId={availabilityByVariantId}
         copy={copy.options}
@@ -393,6 +394,7 @@ export function ProductPurchasePanel({
         selectedOptions={selectedOptions}
       />
       <ProductPersonalizationFields
+        compact
         key={personalizationResetKey}
         locale={locale}
         onChangeText={onChangePersonalizationText}
@@ -406,16 +408,16 @@ export function ProductPurchasePanel({
         data-pdp-purchase-surface="main"
         tabIndex={-1}
         ref={purchaseActionRef}
-        className="space-y-4 border-t border-gray-200 pt-6"
+        className="space-y-3"
       >
         <div className="grid items-center">
-        {cartControls && <div className="col-start-1 row-start-1 flex justify-end">{cartControls}</div>}
+        {cartControls && <div className="col-start-1 row-start-1 flex justify-center py-3">{cartControls}</div>}
         <div aria-hidden={!!cartControls} inert={!!cartControls} className={cn("col-start-1 row-start-1 space-y-4", cartControls && "invisible pointer-events-none")}>
         <div className="flex items-center justify-between gap-4">
           <span className="type-body font-medium text-gray-900">
             {copy.quantity.title}
           </span>
-          <div className="flex h-13 shrink-0 items-center justify-between rounded-md border border-gray-200 bg-gray-0">
+          <div className="flex h-11 shrink-0 items-center justify-between rounded-md border border-gray-200 bg-gray-0">
             <button
               type="button"
               aria-label={copy.quantity.decrease}
@@ -482,10 +484,11 @@ export function ProductPurchasePanel({
           </p>
         ) : null}
       </div>
+      </div>
 
-      <div className="border-t border-gray-200 pt-5">{bnplInformation}</div>
+      {bnplInformation}
 
-      <div className="border-t border-gray-200 pt-5">{shareActions}</div>
+      <div className="pt-1">{shareActions}</div>
     </section>
   );
 }

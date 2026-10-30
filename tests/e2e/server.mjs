@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import nextEnv from "@next/env";
 import { readFileSync } from "node:fs";
+import { pdpFixtureResponse } from "./pdp-fixtures.mjs";
 
 // Explicit opt-in only. Normal CI always uses a synthetic token and mocked provider.
 if (process.env.MAP_E2E_LIVE === "1") nextEnv.loadEnvConfig(process.cwd(), false, { info() {}, error() {} });
@@ -40,6 +41,10 @@ const backend = createServer(async (req, res) => {
     ? Object.fromEntries(await new Response(raw, { headers: { "Content-Type": req.headers["content-type"] } }).formData())
     : undefined;
   requests.push({ path: url.pathname, method: req.method, body: raw, fields, locale: req.headers["x-locale"], authenticated: Boolean(req.headers.authorization) });
+  if (process.env.PDP_PRESENTATION_E2E === "1") {
+    const fixture = pdpFixtureResponse(req, url, cart);
+    if (fixture) return send(fixture);
+  }
   // Explicit local-only opt-in. These responses exercise existing frontend branches;
   // they do not establish any new Laravel method or authenticated Place contract.
   if (paymentFlows && req.method === "POST") {

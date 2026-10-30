@@ -48,7 +48,7 @@ export function ProductStickyPurchaseActions({
         aria-hidden={!isVisible}
         inert={!isVisible}
         className={cn(
-          "fixed inset-x-0 z-30 border-t border-gray-200 bg-gray-0 px-4 py-3 shadow-[var(--shadow-modal)] transition-[transform,opacity] motion-reduce:transition-none md:hidden",
+          "fixed inset-x-0 z-30 border-t border-gray-200 bg-gray-0 px-4 py-3 transition-[transform,opacity] motion-reduce:transition-none md:hidden",
           "bottom-[calc(var(--mobile-bottom-navigation-height)+env(safe-area-inset-bottom))]",
           visibilityClassName,
         )}
@@ -92,7 +92,7 @@ export function ProductStickyPurchaseActions({
         aria-hidden={!isVisible}
         inert={!isVisible}
         className={cn(
-          "fixed inset-x-0 top-0 z-30 hidden border-b border-gray-200 bg-gray-0 py-3 shadow-[var(--shadow-modal)] transition-[transform,opacity] motion-reduce:transition-none md:block",
+          "fixed inset-x-0 top-0 z-30 hidden border-b border-gray-200 bg-gray-0 py-3 transition-[transform,opacity] motion-reduce:transition-none md:block",
           isVisible
             ? "translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-full opacity-0",
@@ -106,7 +106,7 @@ export function ProductStickyPurchaseActions({
             {errorMessage ? (
               <p
                 id="desktop-sticky-cart-error"
-                className="mt-0.5 truncate type-caption text-destructive"
+                className="mt-0.5 type-caption text-destructive"
               >
                 {errorMessage}
               </p>

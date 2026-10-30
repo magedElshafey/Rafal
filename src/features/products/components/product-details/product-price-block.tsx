@@ -39,7 +39,7 @@ export function ProductPriceBlock({
     <div
       className={
         pricing.promotion
-          ? "flex flex-wrap items-center justify-between gap-4 rounded-md border border-gold-200 bg-gold-50/50 px-4 py-4"
+          ? "flex flex-wrap items-center justify-between gap-3"
           : "flex flex-wrap items-baseline gap-3"
       }
     >
@@ -48,7 +48,7 @@ export function ProductPriceBlock({
           <bdi>{currency.format(pricing.current.amount)}</bdi>
         </strong>
         {hasDiscount && pricing.compareAt ? (
-          <del className="type-body text-gray-400">
+          <del className="type-body text-gray-500">
             <bdi>{currency.format(pricing.compareAt.amount)}</bdi>
           </del>
         ) : null}

@@ -38,9 +38,9 @@ type ProductGalleryProps = {
 };
 
 // PDP Container: 2rem mobile / 3rem tablet padding, 7.5rem desktop
-// padding, 1440px cap; the gallery occupies 44% of its content width.
+// padding, 1440px cap; equal desktop columns with a 2rem / 3rem gap.
 const PRIMARY_SIZES =
-  "(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 512px, (max-width: 1279px) calc(44vw - 3.3rem), 512px";
+  "(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 672px, (max-width: 1279px) calc(50vw - 4.75rem), (max-width: 1439px) calc(50vw - 5.25rem), 636px";
 
 export function ProductGallery({
   copy,
@@ -177,7 +177,7 @@ export function ProductGallery({
       ref={galleryRef}
       dir={direction}
       tabIndex={-1}
-      className="mx-auto w-full min-w-0 max-w-lg rounded-lg border border-border bg-gray-50 p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4 lg:ms-0"
+      className="mx-auto w-full min-w-0 max-w-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:max-w-none"
       aria-label={productName}
       onKeyDown={handleKeyDown}
     >
@@ -200,7 +200,7 @@ export function ProductGallery({
               fit="contain"
               sizes={PRIMARY_SIZES}
               preload={selectedImage.src === initialImageSrc}
-              frameClassName="rounded-md bg-gray-0"
+              frameClassName="rounded-lg bg-gray-50"
             />
             <span className="absolute end-3 bottom-3 inline-flex size-10 items-center justify-center rounded-full border border-border bg-gray-0 text-gray-700 transition-colors duration-[var(--motion-duration-fast)] group-hover:border-gold-500 motion-reduce:transition-none">
               <EyeIcon aria-hidden="true" className="size-4" />
