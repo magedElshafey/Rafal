@@ -20,18 +20,22 @@ export function pdpFixtureResponse(req, url, cart) {
       category: { id: 5, name: ar ? "هدايا" : "Gifts", slug: "gifts" },
     });
     product.variants = [structuredClone(original.variants[0])];
+    if (slug.includes("refinement")) product.description = `<p>${(ar ? "تفاصيل هدية أنيقة مع خيارات متعددة ولمسة شخصية تناسب مختلف المناسبات. " : "A thoughtful gift with considered details, versatile choices and a personal touch for different occasions. ").repeat(12)}</p><ul><li>${ar ? "تفاصيل المنتج" : "Product details"}</li><li><strong>${ar ? "العناية بالمنتج" : "Product care"}</strong></li></ul>`;
     product.variants[0].attributes = { size: "30" };
     if (!slug.includes("single")) product.variants.push({ ...structuredClone(product.variants[0]), id: 55, sku: "SYNTHETIC-50", attributes: { size: "50" }, effective_price: "120.00", effective_price_incl_vat: "138.00" });
     if (slug.includes("unavailable")) for (const variant of product.variants) variant.warehouse_stocks = [{ warehouse_id: 7, quantity: 0 }];
     return product;
   };
   if (match) {
-    if (match[2]) return { ...ok(Array.from({ length: 8 }, (_, i) => makeProduct(`pdp-related-${i}`, i + 100))), meta: meta(8) };
+    if (match[2]) {
+      const count = match[1].endsWith("empty") ? 0 : match[1].endsWith("two") ? 2 : match[1].endsWith("three") ? 3 : 8;
+      return { ...ok(Array.from({ length: count }, (_, i) => makeProduct(`pdp-related-${i}`, i + 100))), meta: meta(count) };
+    }
     return ok(makeProduct(match[1]));
   }
   if (url.pathname === "/products/33/reviews") return { ...ok({
     summary: { average: 4.5, count: 3, breakdown: { "1": 0, "2": 0, "3": 0, "4": 1, "5": 2 } },
-    reviews: Array.from({ length: 3 }, (_, i) => ({ id: i + 1, rating: i === 0 ? 4 : 5, reviewer_display_name: ar ? "عميل رافال" : "Rafal customer", comment: ar ? "تفاصيل جميلة وتجربة اختيار واضحة. هدية أنيقة ومميزة." : "Beautiful details and a clear selection experience. A thoughtful gift.", admin_response: null, helpful_count: 0, photos: [], created_at: "2026-09-23T17:53:47+00:00" })),
+    reviews: Array.from({ length: 3 }, (_, i) => ({ id: i + 1, rating: i === 0 ? 4 : 5, reviewer_display_name: ar ? "عميل رافال مع اسم طويل لاختبار التفاف النص" : "Rafal customer with a long reviewer display name", comment: (ar ? "تفاصيل جميلة وتجربة اختيار واضحة. هدية أنيقة ومميزة. " : "Beautiful details and a clear selection experience. A thoughtful gift. ").repeat(i + 1), admin_response: i === 0 ? (ar ? "شكراً لمشاركتنا تجربتك." : "Thank you for sharing your experience.") : null, helpful_count: 0, photos: [], created_at: "2026-09-23T17:53:47+00:00" })),
   }), meta: meta(3) };
   if (url.pathname === "/cart" && req.headers["x-cart-token"] === "synthetic-pdp-cart") {
     const result = structuredClone(cart);

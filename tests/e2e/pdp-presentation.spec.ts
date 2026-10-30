@@ -13,6 +13,63 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 for (const locale of ["ar", "en"]) {
+  for (const [width, height] of [[320, 700], [390, 844], [768, 1024], [1280, 800], [1440, 900]]) {
+    test(`${locale} final refinement ${width}x${height}`, async ({ page }, info) => {
+      await setup(page, true);
+      await page.setViewportSize({ width, height });
+      for (const state of ["single-two", "personalized-three"]) {
+        await page.goto(`/${locale}/products/pdp-refinement-${state}`);
+        const main = page.locator('[data-pdp-purchase-surface="main"]');
+        const controls = main.locator('[data-pdp-cart-controls]');
+        if (state === "single-two") {
+          await expect(controls).toBeVisible();
+          const row = (await main.boundingBox())!, group = (await controls.boundingBox())!;
+          const stepper = (await controls.locator(':scope > div').boundingBox())!;
+          const output = (await controls.locator('output').boundingBox())!;
+          expect(Math.abs(row.width - group.width)).toBeLessThan(2);
+          expect(Math.abs(stepper.width + 44 + 12 - group.width)).toBeLessThan(2);
+          expect(Math.abs(output.x + output.width / 2 - stepper.x - stepper.width / 2)).toBeLessThan(2);
+          await expect(main.locator('[data-pdp-add]')).toBeHidden();
+        } else {
+          await expect(main.locator('[data-pdp-add]')).toBeDisabled();
+          await page.locator('[data-product-page] input[required]').fill("Gift 123");
+          await expect(main.locator('[data-pdp-add]')).toBeEnabled();
+        }
+        await main.scrollIntoViewIfNeeded();
+        await page.screenshot({ path: info.outputPath(`${state}-purchase.png`) });
+        const logos = page.locator('[role="img"]:has(img[src*="tabby.svg"])');
+        await logos.scrollIntoViewIfNeeded();
+        for (const [index, expectedHeight] of [[0, 20], [1, 24]]) {
+          expect((await logos.locator('img').nth(index).boundingBox())!.height).toBe(expectedHeight);
+        }
+        await logos.screenshot({ path: info.outputPath(`${state}-logos.png`) });
+        const description = page.locator('section[aria-labelledby="product-description-title"]');
+        const heading = (await description.locator('h2').boundingBox())!;
+        const content = (await description.locator(':scope > div').boundingBox())!;
+        expect(content.y).toBeGreaterThanOrEqual(heading.y + heading.height);
+        expect(Math.abs(content.x - heading.x)).toBeLessThan(2);
+        expect(Math.abs(content.width - heading.width)).toBeLessThan(2);
+        await expect(description.locator('ul li')).toHaveCount(2);
+        await description.screenshot({ path: info.outputPath(`${state}-description.png`) });
+        await noOverflow(page);
+        const related = page.locator('[aria-roledescription="carousel"]').last();
+        await related.scrollIntoViewIfNeeded();
+        await expect(related.locator('[aria-roledescription="slide"]')).toHaveCount(state === "single-two" ? 2 : 3);
+        await page.screenshot({ path: info.outputPath(`${state}-related.png`) });
+        if (state === "single-two") {
+          const sticky = page.locator(`[data-pdp-purchase-surface="${width < 768 ? "mobile" : "desktop"}"]`);
+          await expect(sticky).toHaveAttribute("aria-hidden", "false");
+          expect((await sticky.locator('[data-pdp-cart-controls] > div').boundingBox())!.width).toBe(120);
+        }
+      }
+    });
+  }
+  test(`${locale} empty recommendations leave no empty section`, async ({ page }) => {
+    await setup(page);
+    await page.goto(`/${locale}/products/pdp-refinement-empty`);
+    await expect(page.locator('#product-title')).toBeVisible();
+    await expect(page.getByRole('heading', { name: locale === "ar" ? "قد يعجبك أيضاً" : "You may also like" })).toHaveCount(0);
+  });
   for (const [width, height] of widths) {
     test(`${locale} personalized layout ${width}x${height}`, async ({ page }, info) => {
       await setup(page);

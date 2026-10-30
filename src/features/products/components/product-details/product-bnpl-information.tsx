@@ -21,13 +21,13 @@ export function ProductBnplInformation({
       <span>{message}</span>
       </span>
       <span
-        className="flex items-center gap-4"
+        className="flex items-center gap-3"
         dir="ltr"
         aria-label={`${informationLabel}: ${tabbyLabel}, ${tamaraLabel}`}
         role="img"
       >
-        <Image src="/images/payment/tabby.svg" alt="" width={448} height={122} className="h-7 w-auto" />
-        <Image src="/images/payment/tamara.png" alt="" width={1135} height={368} sizes="99px" className="h-8 w-auto" />
+        <Image src="/images/payment/tabby.svg" alt="" width={448} height={122} className="h-5 w-auto" />
+        <Image src="/images/payment/tamara.png" alt="" width={1135} height={368} sizes="74px" className="h-6 w-auto" />
       </span>
     </div>
   );

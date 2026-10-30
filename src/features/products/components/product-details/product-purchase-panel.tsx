@@ -411,7 +411,7 @@ export function ProductPurchasePanel({
         className="space-y-3"
       >
         <div className="grid items-center">
-        {cartControls && <div className="col-start-1 row-start-1 flex justify-center py-3">{cartControls}</div>}
+        {cartControls && <div className="col-start-1 row-start-1 py-3 [&>[data-pdp-cart-controls]]:w-full [&>[data-pdp-cart-controls]>div]:flex-1 [&_output]:flex-1">{cartControls}</div>}
         <div aria-hidden={!!cartControls} inert={!!cartControls} className={cn("col-start-1 row-start-1 space-y-4", cartControls && "invisible pointer-events-none")}>
         <div className="flex items-center justify-between gap-4">
           <span className="type-body font-medium text-gray-900">
