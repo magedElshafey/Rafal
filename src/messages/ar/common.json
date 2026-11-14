@@ -735,6 +735,7 @@
     "notifications": "الإشعارات",
     "wishlist": "المفضلة",
     "cart": "سلة التسوق",
+    "cartCount": "سلة التسوق، عدد المنتجات: {count}",
     "profile": "الملف الشخصي",
     "mobile_cart": "السلة",
     "mobile_navigation": "التنقل عبر المتجر",

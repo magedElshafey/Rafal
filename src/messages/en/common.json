@@ -725,6 +725,7 @@
     "notifications": "Notifications",
     "wishlist": "Wishlist",
     "cart": "Shopping cart",
+    "cartCount": "Shopping cart, item count: {count}",
     "profile": "Profile",
     "mobile_cart": "Cart",
     "mobile_navigation": "Store navigation",

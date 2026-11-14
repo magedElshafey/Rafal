@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "message": "Quote generated successfully",
+  "data": {
+    "totals": {
+      "subtotal": "1820.00",
+      "taxable_amount": "1820.00",
+      "total": "2093.00",
+      "vat": {
+        "rate": "15.00",
+        "amount": "273.00"
+      },
+      "loyalty": {
+        "available": 100,
+        "usable": 100,
+        "points_used": 0,
+        "amount_applied": "0.00",
+        "amount_due": "2093.00",
+        "value_per_point": "0.0500",
+        "disabled_reason": null
+      },
+      "amount_due": "2093.00",
+      "currency": "SAR"
+    }
+  },
+  "_fixture_note": "SELECTED real quote response fields, NOT a complete quote response"
+}

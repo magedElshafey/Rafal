@@ -7,6 +7,7 @@ import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon, XIcon } from "@/
 import type { CategoryNavigationCopy, CategoryNavigationItem } from "@/features/categories/utils/category-navigation";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { CartNavigationLink } from "@/features/cart/components/cart-navigation-link";
 
 export interface MobileNavigationCopy {
   about_us: string;
@@ -114,7 +115,9 @@ function MobileNavigation({ copy, categories, pathname }: Props & { pathname: st
           const content = <><Icon aria-hidden="true" className="size-[var(--mobile-bottom-navigation-icon-size)] shrink-0" /><span className="max-w-full truncate px-0.5">{copy[item.key]}</span></>;
           return (
             <li key={item.href} className="min-w-0">
-              {item.key === "categories" && categories.length > 0 ? (
+              {item.key === "cart" ? (
+                <CartNavigationLink mobile className={cn(bottomItemClass, active && "bg-gold-50 font-medium text-gold-500")} />
+              ) : item.key === "categories" && categories.length > 0 ? (
                 <button id="mobile-categories-trigger" ref={categoryTriggerRef} type="button" aria-haspopup="dialog" aria-controls="mobile-navigation-sheet" aria-expanded={surface === "categories"} className={cn(bottomItemClass, active && "bg-gold-50 font-medium text-gold-500")} onClick={() => open("categories")}>
                   {content}
                 </button>

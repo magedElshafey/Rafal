@@ -318,17 +318,43 @@
   "loyalty": {
     "title": "Loyalty points",
     "balance": {
-      "points": "{points} points",
-      "description": "Your available Loyalty points balance"
+      "points": "<value>{points}</value> points",
+      "description": "Your available Loyalty points balance",
+      "value": "Equivalent to <value>{amount}</value>",
+      "pending": "Pending points: <value>{points}</value>",
+      "availableOn": "Available after",
+      "expiring": "<value>{points}</value> points expire on"
+    },
+    "paused": "The Loyalty programme is temporarily paused. Your balance is preserved.",
+    "negative": "Your balance is negative following an order return. You do not owe any money. Redemption will resume when your balance becomes positive.",
+    "loading": "Loading your Loyalty points",
+    "error": {
+      "title": "Your Loyalty points could not be loaded",
+      "description": "Please try again to see your balance and programme details.",
+      "retry": "Try again"
     },
     "howItWorks": {
       "title": "How do loyalty points work?",
-      "earning": "Eligible purchases can earn Loyalty points.",
-      "redemption": "Eligible points can be redeemed for discounts.",
-      "programRules": "Earning and redemption details follow the current Loyalty program terms.",
-      "details": "Approved details and conditions will be shown when available in the program."
+      "earning": "Earn one point for every {amount} of eligible purchases.",
+      "redemption": "Every {points} points are worth {amount} and can be used as payment at checkout.",
+      "maximum": "Points can pay up to {percent}% of the amount due.",
+      "minimum": "At least {points} points are required to redeem.",
+      "availability": "Points are pending when your order is confirmed and become available after the {days}-day return window following delivery, once all eligibility conditions are met.",
+      "validity": "Points are valid for {months} months from when they become available.",
+      "noExpiry": "Points do not expire."
     },
     "history": {
+      "filterLabel": "Filter points history",
+      "filters": { "all": "All", "earn": "Earned", "redeem": "Redeemed", "other": "Other" },
+      "pending": "Pending",
+      "expires": "Expires on",
+      "pointsUnit": "points",
+      "showMore": "Show more",
+      "loading": "Loading points history",
+      "error": "We couldn't load points history. Please try again.",
+      "retry": "Try again",
+      "outOfRange": "This page is no longer available. Refresh the history to see the latest activity.",
+      "restart": "Refresh history",
       "title": "Points history",
       "empty": "There is no points activity yet.",
       "order": "Order",

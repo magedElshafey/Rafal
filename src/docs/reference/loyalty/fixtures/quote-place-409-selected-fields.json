@@ -1,0 +1,24 @@
+{
+  "success": false,
+  "message": "تم تحديث قيمة النقاط، يرجى مراجعة الطلب",
+  "errors": {
+    "totals": {
+      "total": "2093.00",
+      "vat": {
+        "rate": "15.00",
+        "amount": "273.00"
+      },
+      "loyalty": {
+        "available": 100,
+        "usable": 100,
+        "points_used": 100,
+        "amount_applied": "5.00",
+        "amount_due": "2088.00",
+        "value_per_point": "0.0500",
+        "disabled_reason": null
+      },
+      "amount_due": "2088.00"
+    }
+  },
+  "_fixture_note": "SELECTED real error response fields, not complete response"
+}

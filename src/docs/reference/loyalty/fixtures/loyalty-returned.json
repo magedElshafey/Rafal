@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "message": "Loyalty points retrieved successfully",
+  "data": {
+    "available": 100,
+    "value_sar": "5.00",
+    "pending": 0,
+    "pending_available_on": null,
+    "expiring_soon": null,
+    "is_negative": false,
+    "is_paused": false,
+    "how_it_works": {
+      "amount_per_point": "1.00",
+      "redeem_points": 100,
+      "redeem_amount": "5.00",
+      "max_redeem_percent": 50,
+      "min_redeem_points": 100,
+      "return_window_days": 15,
+      "validity_months": 3
+    }
+  }
+}

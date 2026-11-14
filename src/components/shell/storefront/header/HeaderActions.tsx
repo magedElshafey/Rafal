@@ -1,5 +1,6 @@
 import { headerActionItems } from "@/components/shell/storefront/navigation-config";
 import { getCurrentUser } from "@/features/auth/server/auth-boundary";
+import { CartNavigationLink } from "@/features/cart/components/cart-navigation-link";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
@@ -14,23 +15,12 @@ const HeaderActions = async () => {
   ]);
 
   if (!currentUser) {
-    const cartItem = headerActionItems.find((item) => item.key === "cart");
-    const CartIcon = cartItem?.icon;
-
     return (
       <nav aria-label={t("user_navigation")}>
         <ul className="flex items-center gap-1 sm:gap-2">
-          {cartItem && CartIcon ? (
-            <li className="hidden md:list-item">
-              <Link
-                href={cartItem.href}
-                aria-label={t("cart")}
-                className={actionLinkClassName}
-              >
-                <CartIcon aria-hidden="true" />
-              </Link>
-            </li>
-          ) : null}
+          <li className="hidden md:list-item">
+            <CartNavigationLink className={actionLinkClassName} />
+          </li>
           <li>
             <Link href="/login" className="font-medium text-primary">
               {t("login")}
@@ -54,13 +44,17 @@ const HeaderActions = async () => {
               key={item.href}
               className={cn(movesToMobileNavigation && "hidden md:list-item")}
             >
-              <Link
-                href={item.href}
-                aria-label={t(item.key)}
-                className={actionLinkClassName}
-              >
-                <Icon aria-hidden="true" />
-              </Link>
+              {item.key === "cart" ? (
+                <CartNavigationLink className={actionLinkClassName} />
+              ) : (
+                <Link
+                  href={item.href}
+                  aria-label={t(item.key)}
+                  className={actionLinkClassName}
+                >
+                  <Icon aria-hidden="true" />
+                </Link>
+              )}
             </li>
           );
         })}

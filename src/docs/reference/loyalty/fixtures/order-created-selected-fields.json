@@ -1,0 +1,55 @@
+{
+  "success": true,
+  "data": {
+    "id": 147,
+    "order_number": "RF-10147",
+    "status": "new",
+    "customer_status": "processing",
+    "payment": {
+      "method": "tap",
+      "status": "pending",
+      "paid_at": null
+    },
+    "money": {
+      "total": "2093.00",
+      "currency": "SAR"
+    },
+    "timeline": [
+      {
+        "step": "Confirmed",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Processing",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Shipped",
+        "reached": false,
+        "reached_at": null
+      },
+      {
+        "step": "Delivered",
+        "reached": false,
+        "reached_at": null
+      }
+    ],
+    "can_cancel": false,
+    "can_reorder": false,
+    "can_request_return": false,
+    "loyalty": {
+      "points_earned": 2088,
+      "earned_status": null,
+      "available_on": null,
+      "return_window_days": 15,
+      "points_redeemed": 100,
+      "amount_applied": "5.00",
+      "amount_due": "2088.00",
+      "value_per_point": "0.0500",
+      "points_returned": 0
+    }
+  },
+  "_fixture_note": "SELECTED real response fields, NOT a complete order response"
+}
