@@ -1,4 +1,12 @@
 {
+  "notificationInbox": {
+    "title": "Notifications",
+    "empty": "You have no notifications yet.",
+    "unavailable": "Notifications cannot be displayed right now. Please check back later.",
+    "loading": "Loading notifications",
+    "error": "We could not load your notifications.",
+    "retry": "Try again"
+  },
   "addressMap": {
     "open": "Choose location on map",
     "close": "Close map",
