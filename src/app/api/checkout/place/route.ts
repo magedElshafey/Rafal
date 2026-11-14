@@ -1,4 +1,5 @@
 import { hasLocale } from "next-intl";
+import { parseCheckoutConflictTotals, type CheckoutConflictTotals } from "@/features/checkout/api/parse-checkout-conflict-totals";
 
 import { parseCheckoutUnavailableLines } from "@/features/checkout/api/parse-checkout-dto";
 import {
@@ -19,9 +20,10 @@ function errorResponse(
   code: string,
   status: number,
   unavailableLines?: readonly CheckoutUnavailableLine[],
+  totals?: CheckoutConflictTotals | null,
 ) {
   return Response.json(
-    { code, ...(unavailableLines ? { unavailableLines } : {}) },
+    { code, ...(unavailableLines ? { unavailableLines } : {}), ...(totals ? { totals } : {}) },
     { status, headers: PRIVATE_NO_STORE_HEADERS },
   );
 }
@@ -94,11 +96,15 @@ export async function POST(request: Request) {
       }
       const lines = unavailableLines(error.details);
       if (lines.length > 0) {
-        return errorResponse("unavailable-lines", 409, lines);
+        return errorResponse("unavailable-lines", error.status === 409 ? 409 : 422, lines);
       }
-      if (error.status === 409 || error.status === 422) {
-        return errorResponse("checkout-changed", 409);
+      if (error.status === 409) {
+        const details = error.details;
+        const totals = details && typeof details === "object" && "totals" in details
+          ? parseCheckoutConflictTotals(details.totals) : null;
+        return errorResponse("checkout-changed", 409, undefined, totals);
       }
+      if (error.status === 422) return errorResponse("checkout-rejected", 422);
     }
     return errorResponse("service-unavailable", 503);
   }

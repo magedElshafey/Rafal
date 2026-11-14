@@ -11,6 +11,7 @@ export function serializeCheckoutPlaceRequest(
     throw new CheckoutContractError("request.paymentMethod", "an implemented payment method");
   }
   const destination = serializeCheckoutQuoteRequest({
+    usePoints: input.usePoints ?? 0,
     destination: input.destination,
     shippingMethodId: input.shippingMethodId,
   });

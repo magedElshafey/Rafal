@@ -50,6 +50,11 @@ function harness(env = "development", scenario = "paid", changePayload = () => {
         if (scenario === "network") throw new TypeError(secret);
         if (scenario === "json") return new Response(secret, { status: 200, headers: { "Content-Type": "application/json" } });
         if (scenario === "http") return Response.json({ message: secret, errors: { secret } }, { status: 502 });
+        if (scenario === "conflict" || scenario === "validation") {
+          const conflict = JSON.parse(readFileSync(path.join(root, "src/docs/reference/loyalty/fixtures/quote-place-409-selected-fields.json"), "utf8"));
+          conflict.errors.secret = secret;
+          return Response.json(conflict, { status: scenario === "conflict" ? 409 : 422 });
+        }
         return Response.json(payload);
       },
       require: name => {
@@ -92,6 +97,19 @@ function harness(env = "development", scenario = "paid", changePayload = () => {
   }
   return { load, logs, state, run, runVerify };
 }
+
+test("real HTTP 409 preserves safe totals; 422 never receives the no-order recovery code", async () => {
+  const conflict = harness("test", "conflict");
+  const result = await conflict.run();
+  assert.equal(result.status, 409);
+  assert.equal(result.body.code, "checkout-changed");
+  assert.equal(result.body.totals.amount_due, "2088.00");
+  assert.ok(!JSON.stringify(result.body).includes(secret));
+  assert.equal(conflict.state.calls, 1);
+  const rejected = await harness("test", "validation").run();
+  assert.equal(rejected.status, 422);
+  assert.equal(rejected.body.code, "checkout-rejected");
+});
 
 for (const [scenario, stage, status, upstream, errorName] of [
   ["network", "upstream-request", 502, undefined, "TypeError"],
@@ -198,7 +216,7 @@ for (const [scenario, stage, status, parsed, upstream] of [
   ["network", "upstream-request", 503, false, undefined],
   ["http", "upstream-response", 503, false, 502],
   ["json", "upstream-response", 503, false, 200],
-  ["rejected", "upstream-response", 409, false, 200],
+  ["rejected", "upstream-response", 422, false, 200],
   ["identity-field", "response-parsing", 503, false, 200],
   ["parsing", "response-parsing", 503, true, 200],
   ["normalization", "payment-normalization", 503, true, 200],
@@ -214,6 +232,7 @@ for (const [scenario, stage, status, parsed, upstream] of [
     assert.equal(result.status, status);
     if (status === 503) assert.deepEqual(result.body, { code: "service-unavailable" });
     if (status === 409) assert.deepEqual(result.body, { code: "checkout-changed" });
+    if (status === 422) assert.deepEqual(result.body, { code: "checkout-rejected" });
     assert.equal(result.cache, "private, no-store");
     assert.equal(prod.logs.length, 0);
     assert.equal(dev.state.calls, scenario === "identity" ? 0 : 1);

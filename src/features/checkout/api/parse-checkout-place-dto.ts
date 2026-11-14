@@ -8,6 +8,7 @@ import type {
 } from "@/features/checkout/api/checkout-place-dto";
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
+import { parseCheckoutOrderLoyalty } from "@/features/checkout/api/parse-checkout-order-loyalty";
 
 const { parseBoolean, parseRecord, parseString, parseNonEmptyString } = createRuntimeValidators(
   (path, expected) => new CheckoutContractError(path, expected),
@@ -151,6 +152,7 @@ function parseData(value: unknown, path: string, onOrderParsed?: () => void): Ch
   return {
     id,
     order_number: orderNumber,
+    loyalty: parseCheckoutOrderLoyalty(source.loyalty),
     display_number: parseNonEmptyString(
       source.display_number,
       `${path}.display_number`,

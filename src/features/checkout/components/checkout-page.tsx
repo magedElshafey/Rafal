@@ -3,7 +3,9 @@
 import { beginRecommendationTransition } from "@/features/cart/api/cart-recommendation-lifecycle";
 
 import { useQueryClient } from "@tanstack/react-query";
-import type { Locale } from "next-intl";
+import { useTranslations, type Locale } from "next-intl";
+import { CheckoutLoyalty } from "@/features/checkout/components/checkout-loyalty";
+import { parseCheckoutConflictTotals } from "@/features/checkout/api/parse-checkout-conflict-totals";
 import { Suspense, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -45,6 +47,7 @@ import type {
   CheckoutGiftWrapConfig,
   CheckoutPlaceRequest,
   CheckoutQuoteRequest,
+  CheckoutQuote,
   CheckoutUnavailableLine,
 } from "@/features/checkout/types/checkout.types";
 import {
@@ -98,6 +101,7 @@ type CheckoutPageProps = {
   isAuthenticated: boolean;
   locale: Locale;
   summaryItems: readonly CheckoutSummaryItem[];
+  maxRedeemPercent?: number | null;
 };
 
 export function CheckoutPage({
@@ -112,12 +116,15 @@ export function CheckoutPage({
   isAuthenticated,
   locale,
   summaryItems,
+  maxRedeemPercent = null,
 }: CheckoutPageProps) {
+  const loyaltyT = useTranslations("Common.checkoutPage.loyalty");
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isChanging: cityTransitionLocked } = useBrowsingCity();
   const placeMutation = useCheckoutPlace(locale);
   const placeInFlightRef = useRef(false);
+  const quoteInputsVersionRef = useRef(0);
   // Mount-local duplicate protection only; never a substitute for backend idempotency.
   const placeAttemptLockedRef = useRef(false);
   const recipientGiftPendingRef = useRef(false);
@@ -142,20 +149,26 @@ export function CheckoutPage({
   const [selectedPaymentCode, setSelectedPaymentCode] = useState<CheckoutPaymentCode>(legacyCheckoutPaymentMethod);
   const [selectedPaymentDiscovery, setSelectedPaymentDiscovery] = useState<Promise<CheckoutPaymentDiscovery> | null>(null);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
+  const [usePoints, setUsePoints] = useState<0 | 1>(0);
+  const [reviewQuote, setReviewQuote] = useState(false);
+  const [preparingPlace, setPreparingPlace] = useState(false);
   const request: CheckoutQuoteRequest | null = destination
     ? {
         destination,
+        usePoints: isAuthenticated ? usePoints : 0,
         ...(shippingMethodId === null ? {} : { shippingMethodId }),
       }
     : null;
   const quoteQuery = useCheckoutQuote(locale, request);
 
   const setRecipientGiftMutationPending = (pending: boolean) => {
+    if (pending) quoteInputsVersionRef.current++;
     recipientGiftPendingRef.current = pending;
     setRecipientGiftPending(pending);
   };
 
   const setGiftAddOnMutationPending = (pending: boolean) => {
+    if (pending) quoteInputsVersionRef.current++;
     giftAddOnPendingRef.current = pending;
     setGiftAddOnPending(pending);
   };
@@ -169,8 +182,9 @@ export function CheckoutPage({
   };
 
   const commitDestination = (nextDestination: CheckoutDestination | null) => {
+    quoteInputsVersionRef.current++;
     // Editing a delivery draft must not leave the old address eligible for Place.
-    if (nextDestination) invalidateTarget({ destination: nextDestination });
+    if (nextDestination) invalidateTarget({ destination: nextDestination, usePoints });
     setShippingMethodId(null);
     setDestination(nextDestination);
     setPlaceUnavailableLines([]);
@@ -179,9 +193,11 @@ export function CheckoutPage({
 
   const selectShipping = (nextShippingMethodId: number) => {
     if (!destination) return;
+    quoteInputsVersionRef.current++;
     invalidateTarget({
       destination,
       shippingMethodId: nextShippingMethodId,
+      usePoints,
     });
     setShippingMethodId(nextShippingMethodId);
     setPlaceUnavailableLines([]);
@@ -214,7 +230,9 @@ export function CheckoutPage({
     placeMutation.reset();
     if (!refreshQuote || !destination) return;
 
+    const inputsVersion = quoteInputsVersionRef.current;
     const refreshed = await quoteQuery.refetch();
+    if (inputsVersion !== quoteInputsVersionRef.current) return;
     if (
       refreshed.isSuccess &&
       shippingMethodId !== null &&
@@ -222,7 +240,7 @@ export function CheckoutPage({
         (option) => option.id === shippingMethodId,
       )
     ) {
-      invalidateTarget({ destination });
+      invalidateTarget({ destination, usePoints });
       setShippingMethodId(null);
     }
   };
@@ -271,7 +289,7 @@ export function CheckoutPage({
     : guestBuyer;
   const placeRequest: CheckoutPlaceRequest | null =
     destination && shippingMethodId !== null && buyer
-      ? { destination, shippingMethodId, buyer, ...(selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
+      ? { destination, shippingMethodId, buyer, usePoints: isAuthenticated ? usePoints : 0, ...(selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
       : null;
   const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, selectedPaymentDiscovery === paymentDiscovery);
   // Mutation error state can arrive before placeOrder records the outcome.
@@ -279,6 +297,11 @@ export function CheckoutPage({
     placeMutation.isError &&
     !isDefinitivePrePlaceRejection(placeMutation.error);
   const placeReady = Boolean(
+    !preparingPlace &&
+    (!isAuthenticated || (quote?.totals.loyalty && Number(quote.totals.amountDue) > 0 &&
+      (usePoints === 1
+        ? quote.totals.loyalty.disabledReason === null && quote.totals.loyalty.usable > 0 && quote.totals.loyalty.pointsUsed > 0
+        : quote.totals.loyalty.pointsUsed === 0 && Number(quote.totals.loyalty.amountApplied) === 0))) &&
     !cityTransitionLocked &&
       paymentReady &&
       placeRequest &&
@@ -307,12 +330,24 @@ export function CheckoutPage({
       giftAddOnPendingRef.current
     ) return;
     placeInFlightRef.current = true;
+    setPreparingPlace(true);
+    setReviewQuote(false);
+    const submittedInputsVersion = quoteInputsVersionRef.current;
     const recommendationTransition = beginRecommendationTransition(queryClient);
     placeMutation.reset();
     let requestStarted = false;
     let createdOrderNumber: string | null = null;
     try {
       await recommendationTransition.ready;
+      if (usePoints === 1 || reviewQuote) {
+        const fresh = await quoteQuery.refetch();
+        if (!fresh.isSuccess || submittedInputsVersion !== quoteInputsVersionRef.current) return;
+        if (JSON.stringify(fresh.data) !== JSON.stringify(quote)) {
+          setReviewQuote(true);
+          return;
+        }
+      }
+      if (submittedInputsVersion !== quoteInputsVersionRef.current || recipientGiftPendingRef.current || giftAddOnPendingRef.current) return;
       requestStarted = true;
       placeAttemptLockedRef.current = true;
       const result = await placeMutation.mutateAsync(placeRequest);
@@ -371,13 +406,30 @@ export function CheckoutPage({
         setPlaceUnavailableLines(lines);
       } else if (
         error instanceof ApiError &&
-        error.code === "checkout-changed"
+        error.status === 409 && error.code === "checkout-changed"
       ) {
-        void quoteQuery.refetch();
+        const totals = parseCheckoutConflictTotals(error.details);
+        if (totals && request) {
+          queryClient.setQueryData<CheckoutQuote>(checkoutQuoteQueryKey(locale, request), previous => {
+            if (!previous?.totals.loyalty) return previous;
+            return { ...previous, totals: {
+              ...previous.totals,
+              total: totals.total,
+              vat: { ...previous.totals.vat, amount: totals.vat.amount },
+              amountDue: totals.amount_due,
+              loyalty: { ...previous.totals.loyalty, pointsUsed: totals.loyalty.points_used,
+                amountApplied: totals.loyalty.amount_applied, amountDue: totals.amount_due },
+            } };
+          });
+        }
+        setReviewQuote(true);
+        // Refresh eligibility through the existing query; never resubmit Place.
+        await quoteQuery.refetch();
       }
     } finally {
       recommendationTransition.finish();
       placeInFlightRef.current = false;
+      setPreparingPlace(false);
     }
   };
 
@@ -418,6 +470,7 @@ export function CheckoutPage({
               copy={copy.buyer}
               committedBuyer={guestBuyer}
               onCommit={(nextBuyer) => {
+                quoteInputsVersionRef.current++;
                 setGuestBuyer(nextBuyer);
                 setPlaceUnavailableLines([]);
                 placeMutation.reset();
@@ -432,6 +485,7 @@ export function CheckoutPage({
               selectedCode={paymentReady ? selectedPaymentCode : null}
               onSelect={(code) => {
                 if (canSelectCheckoutPayment(code, true)) {
+                  quoteInputsVersionRef.current++;
                   setSelectedPaymentCode(code);
                   setSelectedPaymentDiscovery(paymentDiscovery);
                 }
@@ -444,13 +498,33 @@ export function CheckoutPage({
             disabled={recipientGiftPending || cityTransitionLocked}
             gift={gift}
             locale={locale}
-            onMessageDirtyChange={setGiftMessageDirty}
+            onMessageDirtyChange={dirty => { quoteInputsVersionRef.current++; setGiftMessageDirty(dirty); }}
             onPendingChange={setGiftAddOnMutationPending}
             onPersisted={persistGiftAddOn}
           />
         </div>
         <div dir={locale === "ar" ? "rtl" : "ltr"}>
           <CheckoutSummary
+            loyaltyLabels={isAuthenticated ? { applied: loyaltyT("tender"), due: loyaltyT("due") } : undefined}
+            loyaltyCard={isAuthenticated ? <CheckoutLoyalty
+              locale={locale}
+              loyalty={quote?.totals.loyalty}
+              checked={usePoints === 1}
+              loading={quoteLoading}
+              locked={cityTransitionLocked || recipientGiftPending || giftAddOnPending || preparingPlace || placeMutation.isPending || placeOutcome !== null}
+              hasDestination={hasDestination}
+              error={quoteError}
+              maxRedeemPercent={maxRedeemPercent}
+              onRetry={() => void quoteQuery.refetch()}
+              onChange={checked => {
+                if (placeInFlightRef.current || placeAttemptLockedRef.current) return;
+                quoteInputsVersionRef.current++;
+                const next = checked ? 1 : 0;
+                if (request) invalidateTarget({ ...request, usePoints: next });
+                setUsePoints(next);
+                placeMutation.reset();
+              }}
+            /> : null}
             copy={copy.summary}
             hasDestination={hasDestination}
             isLoading={quoteLoading}
@@ -458,6 +532,8 @@ export function CheckoutPage({
             locale={locale}
             placeAction={
               <div>
+                {isAuthenticated && quote?.totals.amountDue != null && Number(quote.totals.amountDue) === 0 ? <p id="checkout-loyalty-place-blocked" role="status" className="mb-3 type-body-sm text-gray-700">{loyaltyT("zeroDue")}</p> : null}
+                {reviewQuote ? <p role="status" className="mb-3 type-body-sm text-gray-700">{loyaltyT("reviewQuote")}</p> : null}
                 {placeOutcome !== null ? (
                   <p role="status" className="mb-3 type-body-sm text-gray-700">
                     {placeOutcome.kind === "unknown" ? copy.place.outcomeUnknown : (
@@ -489,7 +565,7 @@ export function CheckoutPage({
                       {copy.place.backToCart}
                     </Link>
                   </div>
-                ) : placeMutation.isError ? (
+                ) : placeMutation.isError && !reviewQuote ? (
                   <p role="alert" className="mb-3 type-body-sm text-destructive">
                     {uncertainPlaceError ? copy.place.outcomeUnknown : copy.place.error}
                   </p>
@@ -504,10 +580,10 @@ export function CheckoutPage({
                 ) : null}
                 <Button
                   size="lg"
-                  aria-describedby="checkout-submitted-payment"
+                  aria-describedby={quote?.totals.amountDue != null && Number(quote.totals.amountDue) === 0 && isAuthenticated ? "checkout-submitted-payment checkout-loyalty-place-blocked" : "checkout-submitted-payment"}
                   className="w-full"
                   disabled={!placeReady}
-                  loading={placeMutation.isPending}
+                  loading={preparingPlace || placeMutation.isPending}
                   loadingLabel={copy.place.submitting}
                   onClick={() => void placeOrder()}
                 >

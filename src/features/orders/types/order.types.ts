@@ -93,6 +93,16 @@ export type OrdersPage = Readonly<{
 }>;
 
 export type OrderDetails = Readonly<{
+  loyalty?: Readonly<{
+    pointsEarned: number | null;
+    earnedStatus: string | null;
+    availableOn: string | null;
+    returnWindowDays: number | null;
+    pointsRedeemed: number | null;
+    amountApplied: string | null;
+    amountDue: string | null;
+    pointsReturned: number | null;
+  }> | null;
   id: number;
   orderNumber: string;
   displayNumber: string;

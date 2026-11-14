@@ -61,6 +61,8 @@ No new library, global state, authentication model, generic normalizer or backen
 
 ## 4–5. Checkout redemption, conflict review and payment
 
+**Phase 5A confirmed contract update:** The backend team confirmed that an HTTP 409 from `POST /checkout/place` guarantees no order was created. This supersedes the earlier 409 uncertainty below. The frontend may update its existing quote cache with validated `errors.totals`, refresh eligibility, and require a new explicit confirmation. It must never automatically resubmit Place. HTTP 422, transport failure, malformed success, and a `success:false` body without HTTP 409 do not carry this guarantee. Zero-due placement remains blocked pending its payment contract.
+
 **Existing files to extend:**
 
 - `src/features/checkout/types/checkout.types.ts`; `api/{checkout-dto.ts,checkout-place-dto.ts,parse-checkout-dto.ts,parse-checkout-place-dto.ts,checkout-mapper.ts,checkout-place-mapper.ts,checkout-serializer.ts,checkout-place-serializer.ts}`.

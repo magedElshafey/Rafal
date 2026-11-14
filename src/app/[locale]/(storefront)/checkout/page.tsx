@@ -18,6 +18,7 @@ import type {
   CheckoutGiftWrapConfig,
 } from "@/features/checkout/types/checkout.types";
 import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
+import { getLoyaltySummary } from "@/features/loyalty/api/loyalty-api.server";
 import { readCurrentCheckoutPaymentMethods } from "@/features/checkout/server/checkout-boundary";
 import {
   getVariantAttributeEntries,
@@ -79,10 +80,14 @@ export default async function CheckoutRoute() {
     readGiftWrapConfig(locale),
   ]);
   const giftRecipient = cart.gift.isGift ? cart.gift.recipient : null;
-  const addressState =
+  const [addressState, maxRedeemPercent] = await Promise.all([
     user && !giftRecipient
-      ? await readAddresses(locale)
-      : { addresses: [], unavailable: false };
+      ? readAddresses(locale)
+      : Promise.resolve({ addresses: [], unavailable: false }),
+    user && cart.lines.length > 0
+      ? getLoyaltySummary(locale).then(summary => summary.howItWorks.maxRedeemPercent).catch(() => null)
+      : Promise.resolve(null),
+  ]);
 
   let initialDestination: CheckoutDestination | null = null;
   if (giftRecipient) {
@@ -290,6 +295,7 @@ export default async function CheckoutRoute() {
   return (
     <Container className="main-content-spacing pb-12 lg:px-[3.75rem]">
       <CheckoutPage
+        maxRedeemPercent={maxRedeemPercent}
         addresses={addressState.addresses}
         addressesUnavailable={addressState.unavailable}
         cartEmpty={cart.lines.length === 0}

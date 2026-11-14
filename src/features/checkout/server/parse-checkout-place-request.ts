@@ -23,7 +23,7 @@ export function parseCheckoutPlaceRequest(
 ): CheckoutPlaceRequest | null {
   if (
     !isRecord(value) ||
-    !hasOnlyKeys(value, ["destination", "shippingMethodId", "buyer", "paymentMethod"])
+    !hasOnlyKeys(value, ["destination", "shippingMethodId", "buyer", "paymentMethod", "usePoints"])
   ) {
     return null;
   }
@@ -32,6 +32,8 @@ export function parseCheckoutPlaceRequest(
   const shippingMethodId = positiveInteger(value.shippingMethodId);
   if (!destination || !shippingMethodId || !isRecord(value.buyer)) return null;
   const method = value.paymentMethod;
+  if (value.usePoints !== undefined && value.usePoints !== 0 && value.usePoints !== 1) return null;
+  const points: Pick<CheckoutPlaceRequest, "usePoints"> = value.usePoints === undefined ? {} : { usePoints: value.usePoints };
   if (method !== undefined && method !== "card" && method !== "apple_pay" && method !== "tap") return null;
 
   if (
@@ -40,6 +42,7 @@ export function parseCheckoutPlaceRequest(
   ) {
     return {
       destination,
+      ...points,
       shippingMethodId,
       buyer: { kind: "authenticated" },
       ...(method === undefined ? {} : { paymentMethod: method }),
@@ -47,7 +50,7 @@ export function parseCheckoutPlaceRequest(
   }
 
   if (
-    value.buyer.kind !== "guest" ||
+    value.buyer.kind !== "guest" || value.usePoints === 1 ||
     !hasOnlyKeys(value.buyer, ["kind", "name", "email", "phone"]) ||
     typeof value.buyer.name !== "string" ||
     typeof value.buyer.email !== "string" ||
@@ -61,5 +64,5 @@ export function parseCheckoutPlaceRequest(
     email: value.buyer.email,
     phone: value.buyer.phone,
   });
-  return buyer ? { destination, shippingMethodId, buyer, ...(method === undefined ? {} : { paymentMethod: method }) } : null;
+  return buyer ? { destination, shippingMethodId, buyer, ...points, ...(method === undefined ? {} : { paymentMethod: method }) } : null;
 }

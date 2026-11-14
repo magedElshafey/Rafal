@@ -27,10 +27,13 @@ export function serializeCheckoutQuoteRequest(
   input: CheckoutQuoteRequest,
 ): CheckoutQuoteRequestDto {
   const { destination, shippingMethodId } = input;
+  // Both quote and Place use the same multipart intent field.
+  const points = input.usePoints === undefined ? {} : { use_points: String(input.usePoints) as "0" | "1" };
 
   if (destination.kind === "saved-address") {
     return {
       city_id: String(destination.cityId),
+      ...points,
       address_id: String(destination.addressId),
       ...(shippingMethodId === undefined
         ? {}
@@ -38,10 +41,10 @@ export function serializeCheckoutQuoteRequest(
     };
   }
 
-  return serializeRawAddress(
+  return { ...serializeRawAddress(
     destination.kind === "gift-recipient"
       ? destination.recipient
       : destination.address,
     shippingMethodId,
-  );
+  ), ...points };
 }

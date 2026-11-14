@@ -109,15 +109,15 @@ test("network loss and backend failures are never evidence of no order creation,
   await assert.rejects(placeCheckoutFromBrowser("en", request), (error) => !definitive(error));
   assert.equal(calls.length, before + 1);
   failure = null;
-  for (const [status, code] of [[401, "unauthorized"], [409, "checkout-changed"], [422, "validation"], [503, "service-unavailable"]]) {
+  for (const [status, code] of [[401, "unauthorized"], [422, "checkout-rejected"], [422, "validation"], [503, "service-unavailable"]]) {
     reply = Response.json({ code }, { status }); before = calls.length;
     await assert.rejects(placeCheckoutFromBrowser("en", request), (error) => !definitive(error));
     assert.equal(calls.length, before + 1);
   }
 });
 
-test("only exact private preflight codes/statuses allow another explicit attempt", () => {
-  for (const [status, code] of [[400, "invalid-input"], [400, "invalid-locale"], [409, "cart-session-unavailable"], [409, "identity-mismatch"]]) {
+test("private preflight failures and confirmed upstream 409 permit explicit recovery", () => {
+  for (const [status, code] of [[400, "invalid-input"], [400, "invalid-locale"], [409, "cart-session-unavailable"], [409, "identity-mismatch"], [409, "checkout-changed"], [409, "unavailable-lines"]]) {
     assert.equal(definitive(new ApiError({ status, code, message: "Synthetic" })), true);
     assert.equal(definitive(new ApiError({ status: 503, code, message: "Synthetic" })), false);
   }

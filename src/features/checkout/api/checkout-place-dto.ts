@@ -1,4 +1,5 @@
 import type { CheckoutQuoteRequestDto } from "@/features/checkout/api/checkout-dto";
+import type { CheckoutOrderLoyalty } from "@/features/checkout/types/checkout.types";
 
 type CheckoutPlaceFieldsDto = {
   shipping_method_id: string;
@@ -52,6 +53,7 @@ export type CheckoutPlaceShippingAddressDto = {
 };
 
 export type CheckoutPlaceDataDto = {
+  loyalty?: CheckoutOrderLoyalty | null;
   id: number;
   order_number: string;
   display_number: string;

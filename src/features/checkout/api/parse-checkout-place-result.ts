@@ -2,6 +2,7 @@ import type { CheckoutPlaceResult } from "@/features/checkout/types/checkout.typ
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
 import { parseCheckoutHostedPaymentResult } from "@/features/checkout/api/parse-checkout-hosted-payment";
+import { parseCheckoutOrderLoyalty } from "@/features/checkout/api/parse-checkout-order-loyalty";
 
 const { parseRecord, parseString, parseNonEmptyString } = createRuntimeValidators(
   (path, expected) => new CheckoutContractError(path, expected),
@@ -36,6 +37,7 @@ export function parseCheckoutPlaceResult(value: unknown): CheckoutPlaceResult {
   const totals = parseRecord(source.money, "result.money");
   const tax = parseTax(totals);
   const order = {
+    ...(source.loyalty == null ? {} : { loyalty: parseCheckoutOrderLoyalty(source.loyalty) }),
     id: id(source.id, "result.id"),
     orderNumber: parseNonEmptyString(source.orderNumber, "result.orderNumber"),
     displayNumber: parseNonEmptyString(source.displayNumber, "result.displayNumber"),

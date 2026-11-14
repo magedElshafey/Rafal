@@ -186,6 +186,18 @@
       "shippingPhone": "Phone",
       "shippingMethod": "Shipping method",
       "paymentTitle": "Payment summary",
+      "loyalty": {
+        "redeemed": "Points redeemed",
+        "applied": "Paid using points",
+        "due": "Remaining amount due",
+        "expected": "Expected points: <value>{points}</value> — not yet credited.",
+        "pending": "Earned points: <value>{points}</value> — pending.",
+        "cancelled": "Earned points: <value>{points}</value> — cancelled.",
+        "unknown": "Order points: <value>{points}</value> — availability is not confirmed.",
+        "availableOn": "Available on",
+        "window": "Points become eligible after the {days}-day return window following delivery.",
+        "returned": "<value>{points}</value> points returned to your balance."
+      },
       "paymentMethod": "Payment method",
       "paymentStatus": "Payment status",
       "paidAt": "Paid on",

@@ -1,6 +1,7 @@
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 import type { CheckoutHostedPaymentResult } from "@/features/checkout/types/checkout.types";
 import { createRuntimeValidators } from "@/lib/api/runtime-validation";
+import { parseCheckoutOrderLoyalty } from "@/features/checkout/api/parse-checkout-order-loyalty";
 const { parseRecord, parseNonEmptyString } = createRuntimeValidators(
   (path, expected) => new CheckoutContractError(path, expected),
 );
@@ -26,6 +27,7 @@ export function parseCheckoutHostedPaymentResult(value: unknown, now?: number): 
   }
   return {
     kind: "hosted-payment-required",
+    ...(source.loyalty == null ? {} : { loyalty: parseCheckoutOrderLoyalty(source.loyalty) }),
     orderNumber: parseNonEmptyString(source.orderNumber, "result.orderNumber"),
     displayNumber: parseNonEmptyString(source.displayNumber, "result.displayNumber"),
     handoff: { paymentUrl, expiresAt, chargeId: parseNonEmptyString(handoff.chargeId, "result.handoff.chargeId") },

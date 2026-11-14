@@ -87,6 +87,15 @@ function mapCheckoutQuoteTotals(
       remaining: totals.free_shipping.remaining,
     },
     total: totals.total,
+    amountDue: totals.amount_due ?? null,
+    loyalty: totals.loyalty ? {
+      available: totals.loyalty.available,
+      usable: totals.loyalty.usable,
+      pointsUsed: totals.loyalty.points_used,
+      amountApplied: totals.loyalty.amount_applied,
+      amountDue: totals.loyalty.amount_due,
+      disabledReason: totals.loyalty.disabled_reason,
+    } : null,
     vat: {
       rate: totals.vat.rate,
       amount: totals.vat.amount,

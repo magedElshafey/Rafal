@@ -1,5 +1,16 @@
 import type { VariantAttributes } from "@/lib/variant-attributes";
 
+export type OrderLoyaltyDto = {
+  points_earned: number | null;
+  earned_status: string | null;
+  available_on: string | null;
+  return_window_days: number | null;
+  points_redeemed: number | null;
+  amount_applied: string | null;
+  amount_due: string | null;
+  points_returned: number | null;
+};
+
 export type OrderListItemDto = {
   order_number: string;
   display_number: string;
@@ -31,6 +42,7 @@ export type OrderDetailsDto<
 > = {
   id: number;
   order_number: string;
+  loyalty?: OrderLoyaltyDto | null;
   display_number: string;
   status: string;
   customer_status: string;

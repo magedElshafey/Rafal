@@ -31,9 +31,18 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
   const CheckoutShippingSection = () => null;
   const CheckoutPaymentRead = () => null;
   const CheckoutBuyerSection = () => null;
-  const quote = { fulfillable, location: { inCoverage: true }, shippingOptions: [{ id: 1 }] };
-  const queryClient = { cancelQueries: async () => {}, invalidateQueries: async () => {} };
+  const CheckoutGiftWrap = () => null;
+  const CheckoutDestinationSection = () => null;
+  const quote = { fulfillable, location: { inCoverage: true }, shippingOptions: [{ id: 1 }], totals: { amountDue: "2093.00", loyalty: { pointsUsed: 0, amountApplied: "0.00", usable: 100, disabledReason: null } } };
+  const quoteState = { isSuccess: true, isFetching: false, isPending: false };
+  const quoteRequests = [];
+  let refreshQuote = async () => ({ data: quote, isSuccess: true });
+  const queryClient = { cancelQueries: async () => {}, invalidateQueries: async () => {},
+    setQueryData: (_key, updater) => { Object.assign(quote, updater(quote)); },
+  };
   const stubs = {
+    "next-intl": { useTranslations: () => key => JSON.parse(read(`src/messages/${locale}/common.json`)).checkoutPage.loyalty[key] },
+    "@/features/checkout/components/checkout-loyalty": { CheckoutLoyalty: marker },
     react: { ...React, useRef: (current) => {
       const index = refCursor++;
       return refs[index] ?? (refs[index] = { current });
@@ -50,12 +59,12 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
     "@/features/checkout/api/checkout-query": { checkoutQuoteQueryKey: () => ["quote"] },
     "@/features/location/components/browsing-city-provider": { useBrowsingCity: () => ({ isChanging: false }) },
     "@/features/checkout/components/checkout-buyer-section": { CheckoutBuyerSection },
-    "@/features/checkout/components/checkout-destination-section": { CheckoutDestinationSection: marker },
-    "@/features/checkout/components/checkout-gift-wrap": { CheckoutGiftWrap: marker },
+    "@/features/checkout/components/checkout-destination-section": { CheckoutDestinationSection },
+    "@/features/checkout/components/checkout-gift-wrap": { CheckoutGiftWrap },
     "@/features/checkout/components/checkout-shipping-section": { CheckoutShippingSection },
     "@/features/checkout/components/checkout-summary": { CheckoutSummary },
     "@/features/checkout/components/checkout-payment-section": { CheckoutPaymentRead, CheckoutPaymentLoading: marker },
-    "@/features/checkout/hooks/use-checkout-quote": { useCheckoutQuote: () => ({ data: quote, isSuccess: true, isFetching: false, isPending: false, refetch: async () => ({ data: quote }) }) },
+    "@/features/checkout/hooks/use-checkout-quote": { useCheckoutQuote: (_locale, request) => { quoteRequests.push(request); return { data: quote, ...quoteState, refetch: () => refreshQuote() }; } },
     "@/features/checkout/hooks/use-checkout-place": { useCheckoutPlace: () => ({
       ...mutation, isPending: false, reset() { mutation.isError = false; mutation.error = null; }, mutateAsync: async (request) => {
         calls.push(request);
@@ -134,11 +143,13 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
   tree = render();
   const actions = find(tree, CheckoutSummary).props.placeAction;
   return {
-    calls, effects, verificationContexts, button: find(actions, Button), actions, copy,
+    calls, effects, verificationContexts, quote, quoteState, quoteRequests, button: find(actions, Button), actions, copy,
+    setRefresh: callback => { refreshQuote = callback; },
+    setFailure: next => { failure = next; },
     snapshot: () => {
       const tree = render();
       const actions = find(tree, CheckoutSummary).props.placeAction;
-      return { button: find(actions, Button), actions, shipping: find(tree, CheckoutShippingSection) };
+      return { button: find(actions, Button), actions, shipping: find(tree, CheckoutShippingSection), summary: find(tree, CheckoutSummary), gift: find(tree, CheckoutGiftWrap), destination: find(tree, CheckoutDestinationSection) };
     },
     payment: find(tree, CheckoutPaymentRead), render, find, CheckoutPaymentRead,
     refreshDiscovery: (discovery) => { props.paymentDiscovery = discovery; },
@@ -147,6 +158,129 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
 }
 
 const ready = (codes) => Promise.resolve({ kind: "ready", methods: codes.map((code) => ({ code, label: code, icon: "card" })) });
+
+test("Loyalty ON with no applied points and mismatched OFF quote stay blocked", async () => {
+  const h = harness({ discovery: ready(["card"]) });
+  h.snapshot().summary.props.loyaltyCard.props.onChange(true);
+  let view = h.snapshot();
+  assert.equal(h.quoteRequests.at(-1).usePoints, 1);
+  assert.equal(view.button.props.disabled, true);
+  view.button.props.onClick(); await tick();
+  assert.equal(h.calls.length, 0);
+  view.shipping.props.onSelect(1);
+  h.snapshot();
+  assert.equal(h.quoteRequests.at(-1).usePoints, 1);
+  h.snapshot().summary.props.loyaltyCard.props.onChange(false);
+  h.quoteState.isFetching = true;
+  view = h.snapshot();
+  assert.equal(h.quoteRequests.at(-1).usePoints, 0);
+  assert.equal(view.button.props.disabled, true);
+  h.quoteState.isFetching = false;
+  h.quoteState.isSuccess = false;
+  assert.equal(h.snapshot().button.props.disabled, true);
+  h.quoteState.isSuccess = true;
+  h.quote.totals.loyalty.pointsUsed = 100;
+  assert.equal(h.snapshot().button.props.disabled, true);
+  h.quote.totals.loyalty.pointsUsed = 0;
+  view = h.snapshot();
+  assert.equal(view.button.props.disabled, false);
+  view.button.props.onClick(); await tick();
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.calls[0].usePoints, 0);
+  assert.equal(h.serialize(h.calls[0]).use_points, "0");
+});
+
+function enablePoints(h) {
+  h.snapshot().summary.props.loyaltyCard.props.onChange(true);
+  h.quote.totals.amountDue = "2088.00";
+  h.quote.totals.loyalty.pointsUsed = 100;
+  h.quote.totals.loyalty.amountApplied = "5.00";
+}
+
+test("funded ON rechecks Quote and submits matching intent once through hosted Tap", async () => {
+  const backendFixture = JSON.parse(read("tests/fixtures/checkout-place-hosted.json"));
+  backendFixture.data.payment.method = "tap";
+  backendFixture.data.loyalty = JSON.parse(read("src/docs/reference/loyalty/fixtures/order-created-selected-fields.json")).data.loyalty;
+  const h = harness({ discovery: ready(["tap"]), backendFixture });
+  h.payment.props.onSelect("tap");
+  enablePoints(h);
+  let reads = 0;
+  h.setRefresh(async () => { reads++; return { isSuccess: true, data: h.quote }; });
+  const button = h.snapshot().button;
+  assert.equal(button.props.disabled, false);
+  button.props.onClick(); button.props.onClick(); await tick();
+  assert.equal(reads, 1);
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.calls[0].usePoints, 1);
+  assert.equal(h.serialize(h.calls[0]).use_points, "1");
+  assert.deepEqual(h.effects.navigation, ["hosted"]);
+});
+
+test("zero due, failed refresh and changed financial quote never submit", async () => {
+  for (const mode of ["zero", "failure", "changed"]) {
+    const h = harness({ discovery: ready(["card"]) });
+    enablePoints(h);
+    if (mode === "zero") h.quote.totals.amountDue = "0.00";
+    h.setRefresh(async () => mode === "failure" ? { isSuccess: false } : {
+      isSuccess: true, data: { ...h.quote, totals: { ...h.quote.totals, amountDue: "2087.00" } },
+    });
+    h.snapshot().button.props.onClick(); await tick();
+    assert.equal(h.calls.length, 0);
+  }
+});
+
+test("input edits during points preflight abort Place without an ambiguous attempt lock", async () => {
+  for (const change of [
+    h => h.snapshot().destination.props.onCommit({ kind: "saved-address", addressId: 2, cityId: 2 }),
+    h => h.snapshot().shipping.props.onSelect(2),
+    h => h.snapshot().gift.props.onPendingChange(true),
+    h => h.snapshot().gift.props.onMessageDirtyChange(true),
+    h => h.payment.props.onSelect("tap"),
+  ]) {
+    const h = harness({ discovery: ready(["card", "tap"]) });
+    enablePoints(h);
+    let resolve;
+    h.setRefresh(() => new Promise(done => { resolve = done; }));
+    h.snapshot().button.props.onClick(); await tick();
+    change(h);
+    resolve({ isSuccess: true, data: h.quote }); await tick();
+    assert.equal(h.calls.length, 0);
+  }
+});
+
+test("confirmed 409 updates cached totals and only an explicit fresh-quote confirmation places again", async () => {
+  const totals = JSON.parse(read("src/docs/reference/loyalty/fixtures/quote-place-409-selected-fields.json")).errors.totals;
+  const h = harness({ discovery: ready(["card"]), failure: { status: 409, code: "checkout-changed", details: totals } });
+  enablePoints(h);
+  h.snapshot().button.props.onClick(); await tick();
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.quote.totals.total, "2093.00");
+  assert.equal(h.quote.totals.amountDue, "2088.00");
+  assert.equal(h.snapshot().button.props.disabled, false);
+  h.setFailure(null);
+  h.snapshot().button.props.onClick(); await tick();
+  assert.equal(h.calls.length, 2);
+});
+
+test("late gift refresh cannot reset shipping for a newly committed address", async () => {
+  const h = harness({ discovery: ready(["card"]) });
+  let resolve;
+  h.setRefresh(() => new Promise(done => { resolve = done; }));
+  const refresh = h.snapshot().gift.props.onPersisted({ isGift: false, giftWrap: true }, true);
+  h.snapshot().destination.props.onCommit({ kind: "saved-address", addressId: 2, cityId: 2 });
+  h.snapshot().shipping.props.onSelect(2);
+  resolve({ isSuccess: true, data: { shippingOptions: [] } });
+  await refresh;
+  h.snapshot();
+  assert.equal(h.quoteRequests.at(-1).shippingMethodId, 2);
+  assert.equal(h.quoteRequests.at(-1).destination.addressId, 2);
+});
+
+test("Guest Checkout has no Loyalty card and always quotes with points OFF", () => {
+  const h = harness({ discovery: ready(["card"]), guest: true });
+  assert.equal(h.snapshot().summary.props.loyaltyCard, null);
+  assert.equal(h.quoteRequests.at(-1).usePoints, 0);
+});
 
 for (const locale of ["ar", "en"]) {
   for (const method of ["card", "apple_pay", "tap"]) {
@@ -315,7 +449,7 @@ test("payment compatibility does not bypass the existing fulfillment guard", asy
   assert.equal(h.calls.length, 0);
 });
 
-for (const failure of [true, { status: 503, code: "service-unavailable" }, { status: 409, code: "unavailable-lines" }, { status: 401, code: "unauthorized" }]) {
+for (const failure of [true, { status: 503, code: "service-unavailable" }, { status: 422, code: "unavailable-lines" }, { status: 401, code: "unauthorized" }]) {
   test(`uncertain outcome locks the actual Place handler across rerenders and edits: ${JSON.stringify(failure)}`, async () => {
     const h = harness({ discovery: ready(["card"]), failure });
     h.button.props.onClick();
@@ -383,7 +517,7 @@ test("an unexpected pending browser branch cannot clean up, persist a handoff or
 });
 
 for (const locale of ["ar", "en"]) {
-  for (const failure of [true, "malformed", { status: 409, code: "checkout-changed" }, { status: 409, code: "unavailable-lines" }]) {
+  for (const failure of [true, "malformed", { status: 422, code: "checkout-rejected" }, { status: 422, code: "unavailable-lines" }]) {
     test(`${locale}: uncertain ${JSON.stringify(failure)} never renders retry guidance, including before the handler catch`, async () => {
       let intermediate;
       const h = harness({ locale, discovery: ready(["card"]), failure, beforeReject() {

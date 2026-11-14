@@ -152,8 +152,23 @@ function parseTotals(value: unknown, path: string): CheckoutQuoteTotalsDto {
     `${path}.free_shipping`,
   );
   const vat = parseRecord(source.vat, `${path}.vat`);
+  const rawLoyalty = source.loyalty == null ? null : parseRecord(source.loyalty, `${path}.loyalty`);
+  const loyalty = rawLoyalty === null ? null : {
+    available: nonNegativeInteger(rawLoyalty.available, `${path}.loyalty.available`),
+    usable: nonNegativeInteger(rawLoyalty.usable, `${path}.loyalty.usable`),
+    points_used: nonNegativeInteger(rawLoyalty.points_used, `${path}.loyalty.points_used`),
+    amount_applied: decimalString(rawLoyalty.amount_applied, `${path}.loyalty.amount_applied`),
+    amount_due: decimalString(rawLoyalty.amount_due, `${path}.loyalty.amount_due`),
+    disabled_reason: rawLoyalty.disabled_reason === null ? null : parseString(rawLoyalty.disabled_reason, `${path}.loyalty.disabled_reason`),
+  };
+  const amountDue = source.amount_due == null && !loyalty ? null : decimalString(source.amount_due, `${path}.amount_due`);
+  if (loyalty && Number(amountDue) !== Number(loyalty.amount_due)) {
+    throw new CheckoutContractError(`${path}.amount_due`, "matching Loyalty amount_due");
+  }
 
   return {
+    loyalty,
+    amount_due: amountDue,
     lines: parseArray(source.lines, `${path}.lines`).map((line, index) =>
       parseTotalsLine(line, `${path}.lines[${index}]`),
     ),

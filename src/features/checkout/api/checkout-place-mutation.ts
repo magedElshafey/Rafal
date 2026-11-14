@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import { parseCheckoutConflictTotals } from "@/features/checkout/api/parse-checkout-conflict-totals";
 
 import type {
   CheckoutPlaceRequest,
@@ -11,6 +12,7 @@ import { parseCheckoutPlaceResult } from "@/features/checkout/api/parse-checkout
 type PlaceErrorBody = {
   code?: unknown;
   unavailableLines?: unknown;
+  totals?: unknown;
 };
 
 function isUnavailableLine(value: unknown): value is CheckoutUnavailableLine {
@@ -63,7 +65,7 @@ export async function placeCheckoutFromBrowser(
     throw new ApiError({
       status: response.status,
       code: typeof body.code === "string" ? body.code : undefined,
-      details: unavailableLines,
+      details: body.code === "checkout-changed" ? parseCheckoutConflictTotals(body.totals) : unavailableLines,
       message: "Checkout Place request failed.",
     });
   }

@@ -12,6 +12,9 @@ export function mapCheckoutPlaceResult(
   request?: CheckoutPlaceRequest,
 ): CheckoutPlaceResult {
   const { data } = response;
+  if (request?.usePoints === 1 && !data.loyalty) {
+    throw new CheckoutContractError("response.data.loyalty", "the points-enabled order snapshot");
+  }
   diagnostics?.stage("payment-normalization");
   const outcome = normalizeCheckoutPayment(response);
   diagnostics?.stage("result-mapping");
@@ -44,9 +47,11 @@ export function mapCheckoutPlaceResult(
     return parseCheckoutHostedPaymentResult({
       kind: "hosted-payment-required", orderNumber: data.order_number,
       displayNumber: data.display_number, handoff: outcome.handoff,
+      loyalty: data.loyalty,
     }, Date.now());
   }
   const order = {
+    loyalty: data.loyalty,
     id: data.id,
     orderNumber: data.order_number,
     displayNumber: data.display_number,

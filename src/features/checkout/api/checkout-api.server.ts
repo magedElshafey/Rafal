@@ -65,7 +65,10 @@ export async function quoteCheckout(
   input: CheckoutQuoteRequest,
   signal?: AbortSignal,
 ): Promise<CheckoutQuote> {
-  const serialized = serializeCheckoutQuoteRequest(input);
+  if (identity.kind === "guest" && input.usePoints === 1) {
+    throw new CheckoutContractError("request.usePoints", "an authenticated customer");
+  }
+  const serialized = serializeCheckoutQuoteRequest({ ...input, usePoints: input.usePoints ?? 0 });
   const body = new FormData();
 
   for (const [field, value] of Object.entries(serialized)) {
@@ -83,6 +86,9 @@ export async function quoteCheckout(
     signal,
   });
   const response = parseCheckoutQuoteResponse(payload);
+  if (identity.kind === "authenticated" && !response.data.totals.loyalty) {
+    throw new CheckoutContractError("response.data.totals.loyalty", "a Loyalty quote");
+  }
 
   if (!response.success) {
     throw new Error("The Checkout API returned an unsuccessful response.");
@@ -125,7 +131,8 @@ export async function placeCheckout(
   ) {
     const data = (payload as Record<string, unknown>).data;
     throw new ApiError({
-      status: 409,
+      // A success:false body is not the confirmed HTTP 409 no-order guarantee.
+      status: 422,
       code: "checkout-rejected",
       details:
         typeof data === "object" && data !== null && !Array.isArray(data)

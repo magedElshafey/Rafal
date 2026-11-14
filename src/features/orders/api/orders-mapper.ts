@@ -38,6 +38,16 @@ export function mapOrderDetails(
   const order = response.data;
   return {
     id: order.id,
+    loyalty: order.loyalty ? {
+      pointsEarned: order.loyalty.points_earned,
+      earnedStatus: order.loyalty.earned_status,
+      availableOn: order.loyalty.available_on,
+      returnWindowDays: order.loyalty.return_window_days,
+      pointsRedeemed: order.loyalty.points_redeemed,
+      amountApplied: order.loyalty.amount_applied,
+      amountDue: order.loyalty.amount_due,
+      pointsReturned: order.loyalty.points_returned,
+    } : null,
     orderNumber: order.order_number,
     displayNumber: order.display_number,
     status: order.status,

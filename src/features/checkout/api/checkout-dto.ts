@@ -5,6 +5,7 @@ export type CheckoutApiResponse<TData> = {
 };
 
 type CheckoutQuoteRequestBaseDto = {
+  use_points?: "0" | "1";
   city_id: string;
   shipping_method_id?: string;
 };
@@ -39,6 +40,15 @@ export type CheckoutQuoteTotalsLineDto = {
 };
 
 export type CheckoutQuoteTotalsDto = {
+  loyalty?: {
+    available: number;
+    usable: number;
+    points_used: number;
+    amount_applied: string;
+    amount_due: string;
+    disabled_reason: string | null;
+  } | null;
+  amount_due?: string | null;
   lines: readonly CheckoutQuoteTotalsLineDto[];
   items_count: number;
   lines_count: number;

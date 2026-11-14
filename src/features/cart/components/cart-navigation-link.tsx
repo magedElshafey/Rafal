@@ -40,7 +40,7 @@ export function CartNavigationLink({
         {count !== undefined && count > 0 ? (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -end-2 bottom-full flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 type-badge font-medium text-gray-1000 ring-2 ring-gray-0"
+            className="pointer-events-none absolute -end-2 bottom-full -mb-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 type-badge font-medium text-gray-0"
           >
             <bdi dir="ltr">{count > 9 ? `${formatter.format(9)}+` : formatter.format(count)}</bdi>
           </span>

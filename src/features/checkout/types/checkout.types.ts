@@ -22,6 +22,7 @@ export type CheckoutDestination =
     }>;
 
 export type CheckoutQuoteRequest = Readonly<{
+  usePoints?: 0 | 1;
   destination: CheckoutDestination;
   shippingMethodId?: number;
 }>;
@@ -42,6 +43,7 @@ export type CheckoutBuyer =
     }>;
 
 export type CheckoutPlaceRequest = Readonly<{
+  usePoints?: 0 | 1;
   destination: CheckoutDestination;
   shippingMethodId: number;
   buyer: CheckoutBuyer;
@@ -90,6 +92,15 @@ export type CheckoutQuoteTotalsLine = Readonly<{
 }>;
 
 export type CheckoutQuoteTotals = Readonly<{
+  loyalty?: Readonly<{
+    available: number;
+    usable: number;
+    pointsUsed: number;
+    amountApplied: string;
+    amountDue: string;
+    disabledReason: string | null;
+  }> | null;
+  amountDue?: string | null;
   lines: readonly CheckoutQuoteTotalsLine[];
   itemsCount: number;
   linesCount: number;
@@ -162,6 +173,7 @@ export type CheckoutPlacedShippingAddress = Readonly<{
 }>;
 
 type CheckoutPlacedOrder = Readonly<{
+  loyalty?: CheckoutOrderLoyalty | null;
   id: number;
   orderNumber: string;
   displayNumber: string;
@@ -181,6 +193,7 @@ export type CheckoutPlaceResult =
       }>);
 
 export type CheckoutHostedPaymentResult = Readonly<{
+  loyalty?: CheckoutOrderLoyalty | null;
   kind: "hosted-payment-required";
   orderNumber: string;
   displayNumber: string;
@@ -193,6 +206,18 @@ export type CheckoutVerifyResult = CheckoutHostedPaymentResult | Extract<
 >;
 
 export type CheckoutPaymentMethod = Readonly<{ code: string; label: string; icon: string }>;
+
+// Backend snapshot, passed through unchanged; no derived financial values.
+export type CheckoutOrderLoyalty = Readonly<{
+  points_earned: number;
+  earned_status: string | null;
+  available_on: string | null;
+  return_window_days: number;
+  points_redeemed: number;
+  amount_applied: string;
+  amount_due: string;
+  points_returned: number;
+}>;
 
 export type CheckoutPaymentDiscovery =
   | Readonly<{ kind: "ready"; methods: readonly CheckoutPaymentMethod[] }>

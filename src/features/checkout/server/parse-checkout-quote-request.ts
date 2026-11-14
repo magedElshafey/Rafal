@@ -108,16 +108,18 @@ export function parseCheckoutQuoteRequest(
 ): CheckoutQuoteRequest | null {
   if (
     !isRecord(value) ||
-    !hasOnlyKeys(value, ["destination", "shippingMethodId"])
+    !hasOnlyKeys(value, ["destination", "shippingMethodId", "usePoints"])
   ) {
     return null;
   }
 
   const destination = parseCheckoutDestination(value.destination);
   if (!destination) return null;
+  if (value.usePoints !== undefined && value.usePoints !== 0 && value.usePoints !== 1) return null;
+  const points: Pick<CheckoutQuoteRequest, "usePoints"> = value.usePoints === undefined ? {} : { usePoints: value.usePoints };
 
-  if (value.shippingMethodId === undefined) return { destination };
+  if (value.shippingMethodId === undefined) return { destination, ...points };
 
   const shippingMethodId = positiveInteger(value.shippingMethodId);
-  return shippingMethodId ? { destination, shippingMethodId } : null;
+  return shippingMethodId ? { destination, shippingMethodId, ...points } : null;
 }

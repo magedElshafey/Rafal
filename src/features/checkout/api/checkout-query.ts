@@ -65,7 +65,8 @@ export function checkoutQuoteQueryOptions(
       return fetchCheckoutQuote(locale, committedRequest, signal);
     },
     enabled: committedRequest !== null,
-    staleTime: 30_000,
+    // Returning from Cart/coupon edits or revisiting an intent requires a new quote.
+    staleTime: 0,
     retry: false,
   });
 }

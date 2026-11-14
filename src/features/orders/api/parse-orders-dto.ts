@@ -1,5 +1,6 @@
 import type {
   OrderDetailsDto,
+  OrderLoyaltyDto,
   OrderDetailsResponseDto,
   OrderListItemDto,
   OrdersPageResponseDto,
@@ -120,6 +121,23 @@ function historicalVariantAttributes(value: unknown, path: string) {
   }
 }
 
+function parseOrderLoyalty(value: unknown, path: string): OrderLoyaltyDto | null {
+  if (value === null || value === undefined) return null;
+  const source = parseRecord(value, path);
+  const points = (key: string) => source[key] == null
+    ? null : nonNegativeInteger(source[key], `${path}.${key}`);
+  return {
+    points_earned: points("points_earned"),
+    earned_status: optionalString(source.earned_status, `${path}.earned_status`),
+    available_on: nullableTimestamp(source.available_on, `${path}.available_on`),
+    return_window_days: points("return_window_days"),
+    points_redeemed: points("points_redeemed"),
+    amount_applied: optionalMoneyString(source.amount_applied, `${path}.amount_applied`),
+    amount_due: optionalMoneyString(source.amount_due, `${path}.amount_due`),
+    points_returned: points("points_returned"),
+  };
+}
+
 function parseDetails(
   value: unknown,
   path: string,
@@ -161,6 +179,7 @@ function parseDetails(
 
   return {
     id: positiveInteger(source.id, `${path}.id`),
+    loyalty: parseOrderLoyalty(source.loyalty, `${path}.loyalty`),
     order_number: parseNonEmptyString(
       source.order_number,
       `${path}.order_number`,

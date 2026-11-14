@@ -158,6 +158,7 @@ export function OrderDetailsContent({
           locale={locale}
           payment={order.payment}
           money={order.money}
+          loyalty={order.loyalty}
           methodLabel={copy.payment.method}
           statusLabel={copy.payment.status}
           paidAtLabel={copy.payment.paidAt}

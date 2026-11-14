@@ -91,7 +91,7 @@ export async function placeCurrentCheckout(
   }
 
   if (!identity.token) throw new CheckoutCartSessionError();
-  if (request.buyer.kind !== "guest") {
+  if (request.buyer.kind !== "guest" || request.usePoints === 1) {
     throw new CheckoutIdentityMismatchError();
   }
   return placeCheckout(

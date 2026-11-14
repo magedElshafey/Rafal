@@ -186,6 +186,18 @@
       "shippingPhone": "رقم الجوال",
       "shippingMethod": "طريقة الشحن",
       "paymentTitle": "ملخص الدفع",
+      "loyalty": {
+        "redeemed": "النقاط المستبدلة",
+        "applied": "مدفوع بالنقاط",
+        "due": "المبلغ المتبقي المستحق",
+        "expected": "النقاط المتوقعة: <value>{points}</value> — لم تُضف إلى الرصيد بعد.",
+        "pending": "النقاط المكتسبة: <value>{points}</value> — معلقة.",
+        "cancelled": "النقاط المكتسبة: <value>{points}</value> — ملغاة.",
+        "unknown": "نقاط الطلب: <value>{points}</value> — لم يتم تأكيد إتاحتها.",
+        "availableOn": "متاحة في",
+        "window": "تصبح النقاط مؤهلة بعد انتهاء فترة الإرجاع البالغة {days} يومًا من التسليم.",
+        "returned": "تمت إعادة <value>{points}</value> نقطة إلى رصيدك."
+      },
       "paymentMethod": "طريقة الدفع",
       "paymentStatus": "حالة الدفع",
       "paidAt": "تم الدفع في",

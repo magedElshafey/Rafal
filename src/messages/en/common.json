@@ -84,6 +84,22 @@
     "retrying": "Retrying"
   },
   "checkoutPage": {
+    "loyalty": {
+      "title": "Use Loyalty points",
+      "balance": "Available: <value>{available}</value> points · Usable: <value>{usable}</value>",
+      "applied": "Using <value>{points}</value> points (<value>{amount}</value>)",
+      "maximum": "Points can cover up to {percent}% of the order value.",
+      "minimum": "The minimum points required for redemption has not been reached.",
+      "held": "Your points are reserved for an order awaiting payment.",
+      "unavailable": "Points redemption is currently unavailable.",
+      "waiting": "Choose a delivery address to check points eligibility.",
+      "error": "We couldn't check points eligibility. Please try again.",
+      "retry": "Try again",
+      "tender": "Paid using points",
+      "due": "Amount due",
+      "zeroDue": "Orders fully covered by points are not supported yet. Turn off points to continue.",
+      "reviewQuote": "The points value or order amounts changed. Review the updated summary, then confirm again. No order has been placed."
+    },
     "title": "Checkout",
     "payment": {
       "title": "Payment method",

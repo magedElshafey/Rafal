@@ -45,6 +45,8 @@ type CheckoutSummaryProps = {
   items: readonly CheckoutSummaryItem[];
   locale: Locale;
   placeAction?: ReactNode;
+  loyaltyCard?: ReactNode;
+  loyaltyLabels?: { applied: string; due: string };
   quote: CheckoutQuote | null;
 };
 
@@ -70,8 +72,8 @@ function SummaryRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <dt>{label}</dt>
-      <dd className={discount ? "text-destructive" : "text-gray-1000"}>
+      <dt className="min-w-0">{label}</dt>
+      <dd className={`min-w-0 break-words text-end ${discount ? "text-destructive" : "text-gray-1000"}`}>
         <bdi>{value}</bdi>
       </dd>
     </div>
@@ -85,6 +87,8 @@ export function CheckoutSummary({
   items,
   locale,
   placeAction,
+  loyaltyCard,
+  loyaltyLabels,
   quote,
 }: CheckoutSummaryProps) {
   return (
@@ -172,6 +176,7 @@ export function CheckoutSummary({
           </ul>
         </div>
       </details>
+      {loyaltyCard}
 
       {isLoading ? (
         <div className="mt-5 space-y-4 border-t border-gray-200 pt-5">
@@ -186,6 +191,7 @@ export function CheckoutSummary({
             <Skeleton className="h-6 w-20" />
             <Skeleton className="h-6 w-24" />
           </div>
+          {loyaltyLabels ? <Skeleton className="h-16 w-full" /> : null}
         </div>
       ) : !quote ? (
         <p className="mt-5 border-t border-gray-200 pt-5 type-body-sm text-gray-500">
@@ -240,6 +246,7 @@ export function CheckoutSummary({
               label={copy.vat.replace("{rate}", quote.totals.vat.rate)}
               value={formatMoney(locale, quote.totals.vat.amount, quote.totals.currency)}
             />
+            {loyaltyLabels && quote.totals.loyalty ? <SummaryRow label={loyaltyLabels.applied} value={formatMoney(locale, quote.totals.loyalty.amountApplied, quote.totals.currency)} /> : null}
           </dl>
           <div className="mt-6 flex items-center justify-between gap-4 border-t border-gray-200 pt-5">
             <span className="type-body-lg font-medium text-gray-700">
@@ -251,6 +258,11 @@ export function CheckoutSummary({
               </bdi>
             </strong>
           </div>
+          {loyaltyLabels && quote.totals.amountDue != null ? (
+            <dl className="mt-4 type-body-lg font-bold">
+              <SummaryRow label={loyaltyLabels.due} value={formatMoney(locale, quote.totals.amountDue, quote.totals.currency)} />
+            </dl>
+          ) : null}
         </>
       )}
       {placeAction ? <div className="mt-6">{placeAction}</div> : null}

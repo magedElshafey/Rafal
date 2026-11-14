@@ -51,6 +51,12 @@ test("both shell variants expose the full localized quantity and cap only the vi
       assert.ok(html.includes(`: ${number.format(count)}"`));
       assert.equal(html.includes('<bdi dir="ltr">'), count > 0);
       if (count > 0) assert.ok(html.includes(`<bdi dir="ltr">${number.format(Math.min(count, 9))}${count > 9 ? "+" : ""}</bdi>`));
+      if (count > 0) {
+        const badge = html.match(/class="([^"]*bg-gold-500[^"]*)"/)?.[1];
+        assert.ok(badge?.includes("bottom-full -mb-0.5"));
+        assert.ok(badge?.includes("-end-2") && badge.includes("text-gray-0"));
+        assert.ok(!badge.includes("ring-") && !badge.includes("border"));
+      }
       if (mobile) assert.ok(html.includes(locale === "ar" ? "السلة</span>" : "Cart</span>"));
     }
     cache.clear();
