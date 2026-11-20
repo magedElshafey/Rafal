@@ -765,6 +765,10 @@
     "close_more": "Close More menu"
   },
   "headerUtility": {
+    "announcement": {
+      "message": "Free shipping on orders over SAR 200",
+      "dismiss": "Dismiss announcement"
+    },
     "deliveryLabel": "Deliver to:",
     "selectCity": "Select city",
     "changeLocation": "Change delivery location",

@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import { localizeProductBadge } from "@/features/products/utils/localize-product-badge";
 
 import { WishlistHeart } from "@/features/wishlist/components/wishlist-heart";
 import { ProductCard } from "@/features/products/components/product-card/product-card";
@@ -33,7 +34,7 @@ export function HomeProductCard({
   const badge = product.badges?.[0]
     ? {
         variant: "primary" as const,
-        label: product.badges[0],
+        label: localizeProductBadge(product.badges[0], labels),
       }
     : undefined;
 

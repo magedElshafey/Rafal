@@ -775,6 +775,10 @@
     "close_more": "إغلاق قائمة المزيد"
   },
   "headerUtility": {
+    "announcement": {
+      "message": "شحن مجاني للطلبات فوق ٢٠٠ ر.س",
+      "dismiss": "إغلاق شريط الإعلان"
+    },
     "deliveryLabel": "التوصيل إلى:",
     "selectCity": "اختر المدينة",
     "changeLocation": "تغيير موقع التوصيل",

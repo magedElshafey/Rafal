@@ -81,7 +81,8 @@ export default async function StoreFontLayout({
         }}
       />
       <AnnouncmentBanner
-        message="شحن مجاني للطلبات فوق ٢٠٠ ر.س"
+        message={t("announcement.message")}
+        dismissLabel={t("announcement.dismiss")}
         dismissible={true}
       />
       {/* Keep page-owned fixed purchase controls above positioned footer links. */}

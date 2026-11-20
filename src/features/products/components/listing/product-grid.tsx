@@ -1,4 +1,5 @@
 import type { Locale } from "next-intl";
+import { localizeProductBadge } from "@/features/products/utils/localize-product-badge";
 import type { ReactNode } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,7 +48,7 @@ export function ListingProductCard({
   const name = product.name;
   const cardProps = {
     badge: product.badges?.[0]
-      ? { variant: "primary" as const, label: product.badges[0] }
+      ? { variant: "primary" as const, label: localizeProductBadge(product.badges[0], badgeLabels) }
       : product.badge
         ? { variant: product.badge, label: badgeLabels[product.badge] }
         : undefined,

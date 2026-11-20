@@ -8,11 +8,13 @@ import { cn } from "@/lib/utils";
 
 type AnnouncementBannerProps = ComponentProps<"aside"> & {
   message: string;
+  dismissLabel: string;
   dismissible?: boolean;
 };
 
 const AnnouncementBanner = ({
   message,
+  dismissLabel,
   dismissible = false,
   className,
   ...props
@@ -38,7 +40,7 @@ const AnnouncementBanner = ({
           type="button"
           variant="ghost"
           size="md"
-          aria-label="إغلاق شريط الإعلان"
+          aria-label={dismissLabel}
           onClick={() => setIsVisible(false)}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground cursor-pointer duration-300 hover:scale-105"
         >
