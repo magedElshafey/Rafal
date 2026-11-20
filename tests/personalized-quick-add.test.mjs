@@ -102,6 +102,36 @@ test("backend rejection preserves text, language and selected options without cl
   assert.equal(h.state.calls[0].variantId, "18"); assert.equal(h.state.closed, false); assert.equal(h.state.calls.length, 1);
 });
 
+test("language-mismatch rejection shows personalization guidance, preserves input/cache, and permits explicit corrected submission", async () => {
+  for (const [language, text, corrected] of [["arabic", "Water", "ماء"], ["english", "ماء", "Water"]]) {
+    const h = harness({ ...config, allowedLanguages: ["arabic", "english"] });
+    let view = h.render();
+    view.fields.props.onSelectLanguage(language); h.render().fields.props.onChangeText(text);
+    const cartBefore = h.client.getQueryData(cartKey);
+    h.state.failure = { ok: false, error: { code: "invalid-personalization" } };
+    h.render().add.props.onClick(); await tick(); view = h.render();
+    assert.ok(find(view.tree, e => e.props.role === "status" && e.props.children === "errors.invalidPersonalization"));
+    assert.deepEqual(view.fields.props.personalizationInput, { language, text });
+    assert.strictEqual(h.client.getQueryData(cartKey), cartBefore);
+    assert.equal(h.state.reads, 0); assert.equal(h.state.calls.length, 1); assert.equal(h.state.closed, false);
+    h.state.failure = null; view.fields.props.onChangeText(corrected);
+    h.render().add.props.onClick(); await tick();
+    assert.equal(h.state.calls.length, 2);
+    assert.deepEqual(h.state.calls[1].personalization, { language, text: corrected });
+    assert.equal(h.state.closed, true);
+  }
+});
+
+test("AR/EN Quick-Add and PDP share localized validation guidance distinct from outages", () => {
+  for (const locale of ["ar", "en"]) {
+    const messages = JSON.parse(readFileSync(`src/messages/${locale}/common.json`, "utf8"));
+    const quick = messages.productListing.quickAdd.errors;
+    assert.equal(quick.invalidPersonalization, messages.productDetails.purchase.errors.invalidPersonalization);
+    assert.notEqual(quick.invalidPersonalization, quick.serviceUnavailable);
+    assert.ok(quick.invalidPersonalization.includes(locale === "ar" ? "اللغة المختارة" : "selected language"));
+  }
+});
+
 test("ambiguous variants and changed city cannot submit", () => {
   for (const ambiguous of [true, false]) {
     const h = harness(config, ambiguous ? [option("17"), option("18")] : [option("17")]);

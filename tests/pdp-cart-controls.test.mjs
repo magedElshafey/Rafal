@@ -76,10 +76,11 @@ function harness(initial = snapshot(), personalizable = false) {
     return loaded.exports;
   }
   const Component = load("src/features/products/components/product-details/product-purchase-experience").ProductPurchaseExperience;
-  const render = () => {
+  const render = (locale = "en") => {
     cursor = 0; effects = [];
-    const tree = Component({ ...props, product: { ...props.product, personalization: personalizable
-      ? { enabled: true, allowedLanguages: ["english"], maxLength: 20, characterPolicy: "letters-and-spaces" } : { enabled: false } } });
+    const errors = JSON.parse(readFileSync(`src/messages/${locale}/common.json`, "utf8")).productDetails.purchase.errors;
+    const tree = Component({ ...props, copy: { ...props.copy, purchase: { ...props.copy.purchase, errors: { ...props.copy.purchase.errors, invalidPersonalization: errors.invalidPersonalization } } }, product: { ...props.product, personalization: personalizable
+      ? { enabled: true, allowedLanguages: ["english", "arabic"], maxLength: 20, characterPolicy: "letters-and-spaces" } : { enabled: false } } });
     effects.forEach(fn => fn());
     return { tree, panel: find(tree, e => e.type === Panel).props, sticky: find(tree, e => e.type === Sticky).props, success: find(tree, e => e.type === Success).props };
   };
@@ -93,6 +94,27 @@ function find(tree, predicate) {
 }
 const button = (controls, label) => find(controls, e => e.props["aria-label"] === label);
 const event = { currentTarget: { closest: () => null } };
+
+test("PDP personalization rejection preserves draft and cart without reconciliation; corrected input submits explicitly", async () => {
+  for (const [locale, language, text, corrected] of [["ar", "arabic", "Water", "ماء"], ["en", "english", "ماء", "Water"]]) {
+    const h = harness(snapshot([]), true);
+    let view = h.render(locale);
+    view.panel.onSelectPersonalizationLanguage(language); view.panel.onChangePersonalizationText(text);
+    h.state.response = { ok: false, error: { code: "invalid-personalization" } };
+    const cartBefore = h.client.getQueryData(key());
+    h.render(locale).panel.onAddToCart(event); await tick(); view = h.render(locale);
+    const expected = JSON.parse(readFileSync(`src/messages/${locale}/common.json`, "utf8")).productDetails.purchase.errors.invalidPersonalization;
+    assert.equal(view.panel.addToCartErrorMessage, expected);
+    assert.deepEqual(view.panel.personalizationInput, { language, text });
+    assert.strictEqual(h.client.getQueryData(key()), cartBefore);
+    assert.equal(h.state.reads.length, 0); assert.equal(h.state.calls.length, 1);
+    h.state.response = null; view.panel.onChangePersonalizationText(corrected);
+    h.render(locale).panel.onAddToCart(event); await tick();
+    assert.equal(h.state.calls.length, 2);
+    assert.deepEqual(h.state.calls[1].personalization, { language, text: corrected });
+    assert.equal(h.client.getQueryData(key()).lines.length, 1);
+  }
+});
 
 test("PDP matches exact product and selected variant, excluding ambiguity and personalizable products", () => {
   for (const [lines, personalizable, editable] of [[[line()], false, true], [[], false, false], [[line("m")], false, false],

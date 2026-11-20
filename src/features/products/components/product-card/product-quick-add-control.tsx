@@ -60,8 +60,9 @@ function errorKey(error: AddCartLineError) {
       return "errors.variantInvalid";
     case "cart-session-failure":
       return "errors.cartSessionFailure";
-    case "invalid-input":
     case "invalid-personalization":
+      return "errors.invalidPersonalization";
+    case "invalid-input":
     case "validation-rejected":
     case "line-not-found":
     case "service-unavailable":

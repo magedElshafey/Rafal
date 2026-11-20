@@ -92,6 +92,24 @@ test("real action maps backend validation and uncertain transport errors without
   }
 });
 
+test("Arabic/English mismatch rejections keep the validation category; corrected customization reaches Laravel unchanged", async () => {
+  for (const [language, transportLanguage, text, corrected] of [["arabic", "ar", "Water", "ماء"], ["english", "en", "ماء", "Water"]]) {
+    const h = harness(); const { ApiError } = h.load("src/lib/api/api-error");
+    // Synthetic backend validation: no provider-specific reason code is assumed.
+    h.state.error = new ApiError({ status: 422, message: "Validation failed", details: { personalization_text: ["Synthetic language rejection"] } });
+    const input = { productId: "3", variantId: "5", quantity: 1, personalization: { language, text } };
+    const result = await h.add(input, "ar");
+    assert.deepEqual(result, { ok: false, error: { code: "invalid-personalization" } });
+    assert.equal(h.requests.length, 1);
+    assert.equal(h.requests[0].body.personalization_text, text);
+    assert.equal(h.requests[0].body.personalization_language, transportLanguage);
+    h.state.error = null;
+    const accepted = await h.add({ ...input, personalization: { language, text: corrected } }, "ar");
+    assert.equal(accepted.ok, true); assert.equal(h.requests.length, 2);
+    assert.equal(h.requests[1].body.personalization_text, corrected);
+  }
+});
+
 test("frontend length is consistently UTF-16 without normalizing combining marks or emoji", () => {
   const h = harness(); const validate = h.load("src/features/products/utils/validate-product-personalization").validateProductPersonalization;
   const config = { enabled: true, maxLength: 2, allowedLanguages: ["english"] };

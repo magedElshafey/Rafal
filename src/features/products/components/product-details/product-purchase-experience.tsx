@@ -251,6 +251,7 @@ export function ProductPurchaseExperience({
     onError: async () => { await reconcileCart().catch(() => {}); },
     onSuccess: async (result) => {
       if (!result.ok) {
+        if (result.error.code === "invalid-personalization") return;
         await reconcileCart().catch(() => {});
         return;
       }
