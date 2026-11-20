@@ -20,7 +20,7 @@ const cart = {
   coupon: null, gift: { isGift: false },
   summary: { totalQuantity: 1, total: money, subtotal: money, productDiscountTotal: zero,
     personalizationTotal: zero, giftWrapFee: zero, couponDiscount: zero, vat: { includedAmount: zero },
-    freeShipping: { enabled: true, qualifies: true } },
+    freeShipping: { enabled: true, qualifies: true, threshold: { ...money, amount: "700.00" }, remaining: zero } },
 };
 const copy = { title: "Cart", checkout: "Checkout", total: "Total", summary: "Summary", clear: "Clear",
   freeShippingQualified: "Free shipping", stock: { ok: "Available" }, errors: {}, coupon: {},
@@ -85,6 +85,35 @@ function nodes(tree) {
   return [tree, ...React.Children.toArray(tree.props.children).flatMap(nodes)];
 }
 const checkout = (tree) => nodes(tree).filter((node) => node.type === "button" && node.props.children === copy.checkout);
+
+test("free shipping uses backend remaining and eligibility, independent of inclusive subtotal", () => {
+  for (const locale of ["ar", "en"]) {
+    for (const qualifies of [false, true]) {
+      const snapshot = structuredClone(cart);
+      snapshot.summary.subtotal = { ...money, amount: "200.00" };
+      snapshot.summary.vat.rate = "15";
+      snapshot.summary.freeShipping = { enabled: true, qualifies, threshold: { ...money, amount: "700.00" }, remaining: { ...money, amount: qualifies ? "0.00" : "500.00" } };
+      const before = JSON.stringify(snapshot);
+      const shippingCopy = JSON.parse(readFileSync(new URL(`../src/messages/${locale}/common.json`, import.meta.url), "utf8")).cartPage.summary;
+      const h = harness({ cart: snapshot });
+      const tree = nodes(h.render({ locale, copy: { ...copy, ...shippingCopy, summary: copy.summary } }));
+      const message = qualifies ? shippingCopy.freeShippingQualified : `${shippingCopy.freeShippingRemaining}: ${new Intl.NumberFormat(locale, { style: "currency", currency: "SAR" }).format(500)}`;
+      assert.ok(tree.some(node => node.props["aria-label"] === message));
+      assert.ok(tree.some(node => node.props.style?.width === `${qualifies ? 100 : (200 / 700) * 100}%`));
+      assert.equal(JSON.stringify(snapshot), before);
+    }
+  }
+});
+
+test("disabled or incomplete free shipping hides progress without an eligibility claim", () => {
+  const valid = cart.summary.freeShipping;
+  for (const status of [undefined, null, { ...valid, enabled: false }, { ...valid, threshold: null }, { ...valid, remaining: null },
+    { ...valid, threshold: { ...money, amount: "invalid" } }, { ...valid, remaining: { ...money, amount: "-1" } }]) {
+    const snapshot = structuredClone(cart);
+    snapshot.summary.freeShipping = status;
+    assert.equal(nodes(harness({ cart: snapshot }).render()).some(node => node.props["aria-label"] === copy.freeShippingQualified), false);
+  }
+});
 
 test("Cart displays inclusive unit, line, subtotal and shipping while preserving authoritative money", () => {
   const m = amount => ({ amount, currency: "SAR" });

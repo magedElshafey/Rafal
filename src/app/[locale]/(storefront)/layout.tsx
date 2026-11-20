@@ -10,6 +10,7 @@ import { StorefrontSyncVeil } from "@/features/location/components/storefront-sy
 import { getCategoriesPage } from "@/features/categories/api/get-categories";
 import { mapCategoryNavigation } from "@/features/categories/utils/category-navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+import { getPublicSettings } from "@/features/settings/server/public-settings-boundary";
 import { Suspense, type ReactNode } from "react";
 
 type StoreFontLayoutProps = {
@@ -38,7 +39,14 @@ export default async function StoreFontLayout({
     () => [],
   );
 
-  const initialCity = await resolveCurrentLocation(locale);
+  const [initialCity, settings] = await Promise.all([
+    resolveCurrentLocation(locale),
+    getPublicSettings(locale).catch(() => null),
+  ]);
+  const shippingThreshold = settings?.freeShippingEnabled &&
+    settings.freeShippingThreshold !== null && settings.freeShippingThreshold > 0
+    ? new Intl.NumberFormat(locale, { style: "currency", currency: settings.currency }).format(settings.freeShippingThreshold)
+    : null;
   return (
     <BrowsingCityProvider
       serverCity={initialCity}
@@ -80,11 +88,11 @@ export default async function StoreFontLayout({
           suggestions: t("search.suggestions"),
         }}
       />
-      <AnnouncmentBanner
-        message={t("announcement.message")}
+      {shippingThreshold && <AnnouncmentBanner
+        message={t("announcement.message", { threshold: shippingThreshold })}
         dismissLabel={t("announcement.dismiss")}
         dismissible={true}
-      />
+      />}
       {/* Keep page-owned fixed purchase controls above positioned footer links. */}
       <main className="relative isolate mt-5 flex-1 max-md:has-[[data-cart-page]]:z-10 has-[[data-product-page]]:z-10">
         {children}

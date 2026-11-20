@@ -766,7 +766,7 @@
   },
   "headerUtility": {
     "announcement": {
-      "message": "Free shipping on orders over SAR 200",
+      "message": "Free shipping on orders over {threshold}",
       "dismiss": "Dismiss announcement"
     },
     "deliveryLabel": "Deliver to:",

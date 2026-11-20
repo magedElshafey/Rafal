@@ -776,7 +776,7 @@
   },
   "headerUtility": {
     "announcement": {
-      "message": "شحن مجاني للطلبات فوق ٢٠٠ ر.س",
+      "message": "شحن مجاني للطلبات فوق {threshold}",
       "dismiss": "إغلاق شريط الإعلان"
     },
     "deliveryLabel": "التوصيل إلى:",

@@ -6,14 +6,16 @@ import test from "node:test";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
+import { createTranslator } from "next-intl";
 
 const require = createRequire(import.meta.url);
-function load(file) {
+function load(file, mocks = {}) {
   const source = ts.transpileModule(readFileSync(file, "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
   }).outputText;
   const loaded = { exports: {} };
   vm.runInThisContext(`(function(require,module,exports){${source}\n})`, { filename: file })(name => {
+    if (name in mocks) return mocks[name];
     if (name === "@/features/products/utils/localize-product-badge") return load("src/features/products/utils/localize-product-badge.ts");
     if (name === "@/lib/utils") return { cn: (...values) => values.filter(Boolean).join(" ") };
     if (name === "@/components/ui/icon-button") return { IconButton: ({ children, variant: _variant, size: _size, ...props }) => {
@@ -44,16 +46,48 @@ test("Home and listing/Cart recommendation cards localize only known badges acro
   }
 });
 
+test("storefront announcement uses public settings and hides when disabled or unavailable", async () => {
+  for (const locale of ["en", "ar"]) {
+    for (const settings of [null, new Error("unavailable"), { freeShippingEnabled: false, freeShippingThreshold: 875, currency: "SAR" },
+      { freeShippingEnabled: true, freeShippingThreshold: null, currency: "SAR" },
+      { freeShippingEnabled: true, freeShippingThreshold: 875, currency: "SAR" }]) {
+      const t = createTranslator({ locale, messages: common(locale), namespace: "headerUtility" });
+      t.raw = key => t(key);
+      const layout = load("src/app/[locale]/(storefront)/layout.tsx", {
+        "next-intl/server": { getLocale: async () => locale, getTranslations: async () => t },
+        "@/features/categories/api/get-categories": { getCategoriesPage: async () => ({ items: [] }) },
+        "@/features/settings/server/public-settings-boundary": { getPublicSettings: async requested => {
+          assert.equal(requested, locale);
+          if (settings instanceof Error) throw settings;
+          return settings;
+        } },
+      }).default;
+      const tree = await layout({ children: null });
+      const messages = [];
+      function visit(node) {
+        if (!React.isValidElement(node)) return;
+        if (node.props.message) messages.push(node.props.message);
+        React.Children.forEach(node.props.children, visit);
+      }
+      visit(tree);
+      const visible = settings?.freeShippingEnabled && settings.freeShippingThreshold > 0;
+      assert.deepEqual(messages, visible ? [t("announcement.message", { threshold: new Intl.NumberFormat(locale, { style: "currency", currency: "SAR" }).format(875) })] : []);
+    }
+  }
+});
+
 test("announcement message and dismiss accessible label render in both locales", () => {
   const Banner = load("src/components/shell/storefront/announcment-banner/AnnouncmentBanner.tsx").default;
   for (const locale of ["en", "ar"]) {
     const copy = common(locale).headerUtility.announcement;
-    const html = renderToStaticMarkup(React.createElement(Banner, { message: copy.message, dismissLabel: copy.dismiss, dismissible: true }));
-    assert.ok(html.includes(copy.message));
+    const t = createTranslator({ locale, messages: common(locale), namespace: "headerUtility.announcement" });
+    const message = t("message", { threshold: new Intl.NumberFormat(locale, { style: "currency", currency: "SAR" }).format(875) });
+    const html = renderToStaticMarkup(React.createElement(Banner, { message, dismissLabel: copy.dismiss, dismissible: true }));
+    assert.ok(html.includes(message));
     assert.ok(html.includes(`aria-label="${copy.dismiss}"`));
     if (locale === "en") assert.doesNotMatch(html, /[\u0600-\u06ff]/u);
   }
   const layout = readFileSync("src/app/[locale]/(storefront)/layout.tsx", "utf8");
-  assert.match(layout, /message=\{t\("announcement.message"\)\}/);
+  assert.match(layout, /message=\{t\("announcement.message", \{ threshold: shippingThreshold \}\)\}/);
   assert.match(layout, /dismissLabel=\{t\("announcement.dismiss"\)\}/);
 });

@@ -226,7 +226,10 @@ function FreeShippingStatus({
   locale: Locale;
 }) {
   const status = cart.summary.freeShipping;
-  if (!status.enabled) return null;
+  if (!status?.enabled || !status.threshold || !status.remaining) return null;
+  const threshold = Number(status.threshold.amount);
+  const remaining = Number(status.remaining.amount);
+  if (!Number.isFinite(threshold) || threshold <= 0 || !Number.isFinite(remaining) || remaining < 0) return null;
 
   const message = status.qualifies
     ? copy.freeShippingQualified
@@ -235,13 +238,9 @@ function FreeShippingStatus({
       : null;
   if (!message) return null;
 
-  const threshold = status.threshold ? Number(status.threshold.amount) : null;
-  const remaining = status.remaining ? Number(status.remaining.amount) : null;
   const progress = status.qualifies
     ? 100
-    : threshold !== null && threshold > 0 && remaining !== null
-      ? Math.min(100, Math.max(0, ((threshold - remaining) / threshold) * 100))
-      : 0;
+    : Math.min(100, Math.max(0, ((threshold - remaining) / threshold) * 100));
 
   return (
     <section
