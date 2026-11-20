@@ -63,10 +63,6 @@ function nullableTimestamp(value: unknown, path: string): string | null {
   return value === null || value === undefined ? null : timestamp(value, path);
 }
 
-function requiredNullableTimestamp(value: unknown, path: string): string | null {
-  return value === null ? null : timestamp(value, path);
-}
-
 function optionalString(value: unknown, path: string): string | null {
   return value === null || value === undefined
     ? null
@@ -380,7 +376,8 @@ function parseDetails(
             timelineSource.reached,
             `${timelinePath}.reached`,
           ),
-          reached_at: requiredNullableTimestamp(
+          // Order reads may omit historical timeline timestamps.
+          reached_at: nullableTimestamp(
             timelineSource.reached_at,
             `${timelinePath}.reached_at`,
           ),

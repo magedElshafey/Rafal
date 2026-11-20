@@ -92,6 +92,22 @@ test("authenticated read uses existing owned-order endpoint and returns only saf
   assert.deepEqual(Object.keys(result).sort(), ["authorized", "state"]);
 });
 
+test("authenticated result accepts omitted timeline timestamps documented by GET /orders/{number}", async () => {
+  for (const method of ["card", "apple_pay", "tap", "tabby"]) {
+    for (const [status, paymentStatus, expected] of [
+      ["confirmed", "paid", "confirmed"], ["new", "pending", "pending"], ["payment_failed", "failed", "failed"],
+    ]) {
+      reply = fixture();
+      reply.data.status = status;
+      reply.data.payment = { method, status: paymentStatus, paid_at: null };
+      reply.data.timeline = [{ step: "Confirmed", reached: paymentStatus === "paid" }];
+      assert.equal((await readAuthenticatedPaymentResult("ar", reply.data.order_number)).state, expected);
+    }
+  }
+  reply.data.timeline[0].reached_at = "invalid-timestamp";
+  assert.equal((await readAuthenticatedPaymentResult("ar", reply.data.order_number)).state, "unavailable");
+});
+
 test("missing auth, forbidden, missing, mismatch, malformed and network failures never expose order details", async () => {
   token = null;
   assert.equal((await readAuthenticatedPaymentResult("en", "RF-10103")).authorized, false);
