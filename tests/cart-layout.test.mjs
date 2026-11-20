@@ -7,6 +7,10 @@ import React from "react";
 import ts from "typescript";
 
 const require = createRequire(import.meta.url);
+const vatModule = { exports: {} };
+vm.runInThisContext(`(function(module,exports){${ts.transpileModule(readFileSync(new URL("../src/lib/vat-presentation.ts", import.meta.url), "utf8"), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+}).outputText}\n})`)(vatModule, vatModule.exports);
 const money = { amount: "115", currency: "SAR" };
 const zero = { ...money, amount: "0" };
 const cart = {
@@ -32,6 +36,7 @@ function harness(overrides = {}) {
     canNavigate: () => true, ...overrides.mutations };
   const slot = (value) => { const index = cursor++; if (!(index in slots)) slots[index] = value; return index; };
   const stubs = {
+    "@/lib/vat-presentation": vatModule.exports,
     react: { ...React, useCallback: (fn) => fn, useEffect: () => {}, useLayoutEffect: () => {},
       useRef: (value) => slots[slot({ current: value })],
       useState: (value) => { const index = slot(value); return [slots[index], (next) => { slots[index] = next; }]; },
@@ -80,6 +85,40 @@ function nodes(tree) {
   return [tree, ...React.Children.toArray(tree.props.children).flatMap(nodes)];
 }
 const checkout = (tree) => nodes(tree).filter((node) => node.type === "button" && node.props.children === copy.checkout);
+
+test("Cart displays inclusive unit, line, subtotal and shipping while preserving authoritative money", () => {
+  const m = amount => ({ amount, currency: "SAR" });
+  for (const quantity of [1, 6]) {
+    const snapshot = structuredClone(cart);
+    Object.assign(snapshot.lines[0], { quantity, unitPrice: m("200"), lineTotal: m(String(200 * quantity)) });
+    Object.assign(snapshot.summary, { subtotal: m(String(200 * quantity)), shippingFee: m(quantity === 1 ? "149" : "0"),
+      vat: { rate: "15", includedAmount: m(quantity === 1 ? "52.35" : "180") }, total: m(quantity === 1 ? "401.35" : "1380") });
+    const before = JSON.stringify(snapshot);
+    for (const locale of ["ar", "en"]) {
+      const h = harness({ cart: snapshot });
+      const values = nodes(h.render({ locale })).filter(node => node.type === "bdi").map(node => node.props.children);
+      for (const amount of [230, 230 * quantity, quantity === 1 ? 171.35 : 0, quantity === 1 ? 52.35 : 180, quantity === 1 ? 401.35 : 1380]) {
+        assert.ok(values.includes(new Intl.NumberFormat(locale, { style: "currency", currency: "SAR" }).format(amount)), `${locale}: ${amount}`);
+      }
+    }
+    assert.equal(JSON.stringify(snapshot), before);
+  }
+});
+
+test("Cart keeps inclusive discounts and additional fees on the same tax basis", () => {
+  const m = amount => ({ amount, currency: "SAR" });
+  const snapshot = structuredClone(cart);
+  Object.assign(snapshot.lines[0], { discountActive: true, unitRegularPrice: m("400"), unitPrice: m("360"), lineTotal: m("370") });
+  Object.assign(snapshot.summary, { subtotal: m("400"), productDiscountTotal: m("40"), couponDiscount: m("20"),
+    personalizationTotal: m("10"), giftWrapFee: m("5"), shippingFee: m("15"),
+    vat: { rate: "15", includedAmount: m("55.50") }, total: m("425.50") });
+  const before = JSON.stringify(snapshot);
+  const values = nodes(harness({ cart: snapshot }).render()).filter(node => node.type === "bdi").map(node => node.props.children).join(" ");
+  for (const amount of [460, 414, 425.5, 46, 23, 11.5, 5.75, 17.25, 55.5]) {
+    assert.ok(values.includes(new Intl.NumberFormat("en", { style: "currency", currency: "SAR" }).format(amount)));
+  }
+  assert.equal(JSON.stringify(snapshot), before);
+});
 
 test("stacking is scoped to mobile Cart and PDP and preserves main isolation", () => {
   // Structural guard only; real-browser hit-testing verifies painting and pointer targets.

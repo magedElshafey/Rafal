@@ -40,6 +40,7 @@ import type {
 import type { Coupon } from "@/features/offers/types/offers.types";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { vatDisplayRounding, vatInclusiveAmount } from "@/lib/vat-presentation";
 import {
   getVariantAttributeEntries,
   getVariantAttributeLabel,
@@ -71,6 +72,7 @@ export type CartPageCopy = {
   shipping: string;
   couponDiscount: string;
   vatIncluded: string;
+  rounding: string;
   total: string;
   checkout: string;
   availability: {
@@ -137,11 +139,11 @@ function isCartFulfillable(
   );
 }
 
-function formatMoney(locale: Locale, value: CartMoney): string {
+function formatMoney(locale: Locale, value: CartMoney, vatRate?: string): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: value.currency,
-  }).format(Number(value.amount));
+  }).format(Number(vatRate === undefined ? value.amount : vatInclusiveAmount(value.amount, vatRate)));
 }
 
 function isNonZero(value: CartMoney): boolean {
@@ -394,6 +396,9 @@ export function CartPage({
   if (isPending || !cart) return <CartPageSkeleton label={copy.title} />;
 
   const cartTitle = `${copy.title} (${new Intl.NumberFormat(locale).format(cart.summary.totalQuantity)})`;
+  const rounding = vatDisplayRounding(cart.summary.total.amount, cart.summary.vat.rate, cart.summary.total.currency,
+    [cart.summary.subtotal.amount, cart.summary.personalizationTotal.amount, cart.summary.giftWrapFee.amount, cart.summary.shippingFee?.amount ?? "0"],
+    [cart.summary.productDiscountTotal.amount, cart.summary.couponDiscount.amount]);
 
   if (cart.lines.length === 0) {
     return (
@@ -553,16 +558,16 @@ export function CartPage({
                     <div className="text-start sm:text-end">
                       <strong className="block type-body-lg text-gray-1000">
                         <span className="sr-only">{copy.lineTotal}: </span>
-                        <bdi>{formatMoney(locale, line.lineTotal)}</bdi>
+                        <bdi>{formatMoney(locale, line.lineTotal, cart.summary.vat.rate)}</bdi>
                       </strong>
                       <span className="mt-1 block type-caption text-gray-400">
                         {copy.unitPrice}: {" "}
                         {line.discountActive ? (
                           <del className="me-1">
-                            <bdi>{formatMoney(locale, line.unitRegularPrice)}</bdi>
+                            <bdi>{formatMoney(locale, line.unitRegularPrice, cart.summary.vat.rate)}</bdi>
                           </del>
                         ) : null}
-                        <bdi>{formatMoney(locale, line.unitPrice)}</bdi>
+                        <bdi>{formatMoney(locale, line.unitPrice, cart.summary.vat.rate)}</bdi>
                       </span>
                     </div>
                     <button
@@ -677,37 +682,37 @@ export function CartPage({
       <dl className="mt-6 space-y-4 type-body text-gray-600">
         <SummaryRow
           label={copy.subtotal}
-          value={formatMoney(locale, cart.summary.subtotal)}
+          value={formatMoney(locale, cart.summary.subtotal, cart.summary.vat.rate)}
         />
         {isNonZero(cart.summary.productDiscountTotal) ? (
           <SummaryRow
             label={copy.productDiscount}
-            value={`\u2212${formatMoney(locale, cart.summary.productDiscountTotal)}`}
+            value={`\u2212${formatMoney(locale, cart.summary.productDiscountTotal, cart.summary.vat.rate)}`}
             discount
           />
         ) : null}
         {isNonZero(cart.summary.personalizationTotal) ? (
           <SummaryRow
             label={copy.personalizationTotal}
-            value={formatMoney(locale, cart.summary.personalizationTotal)}
+            value={formatMoney(locale, cart.summary.personalizationTotal, cart.summary.vat.rate)}
           />
         ) : null}
         {isNonZero(cart.summary.giftWrapFee) ? (
           <SummaryRow
             label={copy.giftWrap}
-            value={formatMoney(locale, cart.summary.giftWrapFee)}
+            value={formatMoney(locale, cart.summary.giftWrapFee, cart.summary.vat.rate)}
           />
         ) : null}
         {cart.summary.shippingFee ? (
           <SummaryRow
             label={copy.shipping}
-            value={formatMoney(locale, cart.summary.shippingFee)}
+            value={formatMoney(locale, cart.summary.shippingFee, cart.summary.vat.rate)}
           />
         ) : null}
         {isNonZero(cart.summary.couponDiscount) ? (
           <SummaryRow
             label={copy.couponDiscount}
-            value={`\u2212${formatMoney(locale, cart.summary.couponDiscount)}`}
+            value={`\u2212${formatMoney(locale, cart.summary.couponDiscount, cart.summary.vat.rate)}`}
             discount
           />
         ) : null}
@@ -715,6 +720,7 @@ export function CartPage({
           label={copy.vatIncluded}
           value={formatMoney(locale, cart.summary.vat.includedAmount)}
         />
+        {rounding ? <SummaryRow label={copy.rounding} value={formatMoney(locale, { amount: rounding, currency: cart.summary.total.currency })} /> : null}
       </dl>
 
       <div className="mt-6 flex items-center justify-between gap-4 border-t border-gray-200 pt-5">

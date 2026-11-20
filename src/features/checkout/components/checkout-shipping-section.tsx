@@ -12,6 +12,7 @@ import type {
 } from "@/features/checkout/types/checkout.types";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { vatInclusiveAmount } from "@/lib/vat-presentation";
 
 export type CheckoutShippingCopy = {
   title: string;
@@ -199,7 +200,7 @@ export function CheckoutShippingSection({
                   <bdi>
                     {option.isFree
                       ? copy.free
-                      : formatMoney(locale, option.fee, quote.totals.currency)}
+                      : formatMoney(locale, vatInclusiveAmount(option.fee, quote.totals.vat.rate), quote.totals.currency)}
                   </bdi>
                 </strong>
               </label>

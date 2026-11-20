@@ -1,3 +1,4 @@
+import { vatInclusiveAmount } from "@/lib/vat-presentation";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
@@ -276,6 +277,7 @@ export default async function CheckoutRoute() {
       shippingPending: t("summary.shippingPending"),
       couponDiscount: t("summary.couponDiscount"),
       vat: t.raw("summary.vat"),
+      rounding: t("summary.rounding"),
       total: t("summary.total"),
       quantity: t("summary.quantity"),
       personalizedWith: t("summary.personalizedWith"),
@@ -311,7 +313,7 @@ export default async function CheckoutRoute() {
         summaryItems={cart.lines.map((line) => ({
           id: line.id,
           imageSrc: line.product.image?.src ?? null,
-          lineTotal: line.lineTotal,
+          lineTotal: { ...line.lineTotal, amount: vatInclusiveAmount(line.lineTotal.amount, cart.summary.vat.rate) },
           name: line.product.name,
           personalizationText: line.personalization?.text ?? null,
           productSlug: line.product.slug,

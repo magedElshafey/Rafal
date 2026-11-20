@@ -8,6 +8,7 @@ import { VariantAttributeValue } from "@/components/ui/variant-attribute-value";
 import type { CartMoney } from "@/features/cart/types/cart.types";
 import type { CheckoutQuote } from "@/features/checkout/types/checkout.types";
 import { Link } from "@/i18n/navigation";
+import { vatDisplayRounding, vatInclusiveAmount } from "@/lib/vat-presentation";
 
 export type CheckoutSummaryItem = {
   id: string;
@@ -32,6 +33,7 @@ export type CheckoutSummaryCopy = {
   shippingPending: string;
   couponDiscount: string;
   vat: string;
+  rounding: string;
   total: string;
   quantity: string;
   personalizedWith: string;
@@ -50,11 +52,11 @@ type CheckoutSummaryProps = {
   quote: CheckoutQuote | null;
 };
 
-function formatMoney(locale: Locale, amount: string, currency: string) {
+function formatMoney(locale: Locale, amount: string, currency: string, vatRate?: string) {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
-  }).format(Number(amount));
+  }).format(Number(vatRate === undefined ? amount : vatInclusiveAmount(amount, vatRate)));
 }
 
 function isNonZero(value: string) {
@@ -91,6 +93,9 @@ export function CheckoutSummary({
   loyaltyLabels,
   quote,
 }: CheckoutSummaryProps) {
+  const rounding = quote ? vatDisplayRounding(quote.totals.total, quote.totals.vat.rate, quote.totals.currency,
+    [quote.totals.subtotal, quote.totals.personalizationTotal, quote.totals.giftWrapFee, quote.totals.shippingFee ?? "0"],
+    [quote.totals.productDiscountTotal, quote.totals.couponDiscount]) : null;
   return (
     <aside
       aria-labelledby="checkout-summary-title"
@@ -202,25 +207,25 @@ export function CheckoutSummary({
           <dl className="mt-5 space-y-4 border-t border-gray-200 pt-5 type-body text-gray-600">
             <SummaryRow
               label={copy.subtotal}
-              value={formatMoney(locale, quote.totals.subtotal, quote.totals.currency)}
+              value={formatMoney(locale, quote.totals.subtotal, quote.totals.currency, quote.totals.vat.rate)}
             />
             {isNonZero(quote.totals.productDiscountTotal) ? (
               <SummaryRow
                 label={copy.productDiscount}
-                value={`−${formatMoney(locale, quote.totals.productDiscountTotal, quote.totals.currency)}`}
+                value={`−${formatMoney(locale, quote.totals.productDiscountTotal, quote.totals.currency, quote.totals.vat.rate)}`}
                 discount
               />
             ) : null}
             {isNonZero(quote.totals.personalizationTotal) ? (
               <SummaryRow
                 label={copy.personalization}
-                value={formatMoney(locale, quote.totals.personalizationTotal, quote.totals.currency)}
+                value={formatMoney(locale, quote.totals.personalizationTotal, quote.totals.currency, quote.totals.vat.rate)}
               />
             ) : null}
             {isNonZero(quote.totals.giftWrapFee) ? (
               <SummaryRow
                 label={copy.giftWrap}
-                value={formatMoney(locale, quote.totals.giftWrapFee, quote.totals.currency)}
+                value={formatMoney(locale, quote.totals.giftWrapFee, quote.totals.currency, quote.totals.vat.rate)}
               />
             ) : null}
             <SummaryRow
@@ -232,13 +237,14 @@ export function CheckoutSummary({
                       locale,
                       quote.totals.shippingFee,
                       quote.totals.currency,
+                      quote.totals.vat.rate,
                     )
               }
             />
             {isNonZero(quote.totals.couponDiscount) ? (
               <SummaryRow
                 label={copy.couponDiscount}
-                value={`−${formatMoney(locale, quote.totals.couponDiscount, quote.totals.currency)}`}
+                value={`−${formatMoney(locale, quote.totals.couponDiscount, quote.totals.currency, quote.totals.vat.rate)}`}
                 discount
               />
             ) : null}
@@ -246,6 +252,7 @@ export function CheckoutSummary({
               label={copy.vat.replace("{rate}", quote.totals.vat.rate)}
               value={formatMoney(locale, quote.totals.vat.amount, quote.totals.currency)}
             />
+            {rounding ? <SummaryRow label={copy.rounding} value={formatMoney(locale, rounding, quote.totals.currency)} /> : null}
             {loyaltyLabels && quote.totals.loyalty ? <SummaryRow label={loyaltyLabels.applied} value={formatMoney(locale, quote.totals.loyalty.amountApplied, quote.totals.currency)} /> : null}
           </dl>
           <div className="mt-6 flex items-center justify-between gap-4 border-t border-gray-200 pt-5">

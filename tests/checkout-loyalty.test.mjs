@@ -68,6 +68,64 @@ function fixture(name) {
 }
 const map = data => mapCheckoutQuote(parseCheckoutQuoteResponse(data).data);
 
+test("VAT display uses exact decimals and reconciles formatting without changing backend money", () => {
+  const { vatInclusiveAmount, vatDisplayRounding } = load("src/lib/vat-presentation");
+  assert.equal(vatInclusiveAmount("200.00", "15.00"), "230");
+  assert.equal(vatInclusiveAmount("149.00", "15.00"), "171.35");
+  assert.equal(vatInclusiveAmount("0.03", "15.00"), "0.0345");
+  assert.equal(vatInclusiveAmount("200.00", "5.00"), "210");
+  assert.equal(vatInclusiveAmount("200.00", "0.00"), "200");
+  assert.equal(vatDisplayRounding("401.35", "15", "SAR", ["200", "149"], []), null);
+  assert.equal(vatDisplayRounding("0.07", "15", "SAR", ["0.03", "0.03"], []), "0.01");
+  assert.equal(vatDisplayRounding("0.11", "15", "SAR", ["0.05", "0.05"], []), "-0.01");
+  assert.equal(vatDisplayRounding("100", "15", "SAR", ["100"], []), null);
+});
+
+test("AR/EN checkout renders inclusive subtotal, fees and discounts with unchanged VAT, total and amount due", () => {
+  const { vatInclusiveAmount } = load("src/lib/vat-presentation");
+  const cases = [
+    { subtotal: "200", shippingFee: "149", total: "401.35", vatAmount: "52.35", expected: [230, 171.35] },
+    { subtotal: "260", shippingFee: "15", total: "316.25", vatAmount: "41.25", expected: [299, 17.25] },
+    { subtotal: "1200", shippingFee: "0", total: "1380", vatAmount: "180", expected: [1380, 0] },
+    { subtotal: "460", shippingFee: "15", total: "546.25", vatAmount: "71.25", expected: [529, 17.25] },
+    { subtotal: "400", shippingFee: "15", productDiscountTotal: "40", couponDiscount: "20", personalizationTotal: "10", giftWrapFee: "5", total: "425.50", vatAmount: "55.50", expected: [460, 17.25, 46, 23, 11.5, 5.75] },
+    { subtotal: "0.03", shippingFee: "0.03", total: "0.07", vatAmount: "0.01", expected: [0.03, 0.01] },
+  ];
+  for (const currentLocale of ["ar", "en"]) for (const scenario of cases) {
+    locale = currentLocale;
+    const quote = map(fixture("funded_points_off"));
+    Object.assign(quote.totals, { productDiscountTotal: "0", couponDiscount: "0", personalizationTotal: "0", giftWrapFee: "0", ...scenario,
+      vat: { rate: "15", amount: scenario.vatAmount }, amountDue: scenario.total, loyalty: null });
+    const before = JSON.stringify(quote);
+    const html = renderToStaticMarkup(React.createElement(CheckoutSummary, {
+      copy: messages().checkoutPage.summary, hasDestination: true, isLoading: false, locale, quote,
+      items: [{ id: "1", productSlug: "test", name: "Test", quantity: 1, variantAttributes: [], lineTotal: { amount: vatInclusiveAmount("200", "15"), currency: "SAR" } }],
+      loyaltyLabels: { applied: "Applied", due: "Amount due" },
+    }));
+    const format = value => new Intl.NumberFormat(locale, { style: "currency", currency: "SAR" }).format(Number(value));
+    for (const value of [...scenario.expected, scenario.total, scenario.vatAmount, 230]) assert.ok(html.includes(format(value)), `${locale}: ${value}`);
+    assert.ok(html.includes(messages().checkoutPage.summary.vat.replace("{rate}", "15")));
+    assert.equal(html.includes(messages().checkoutPage.summary.rounding), scenario.total === "0.07");
+    assert.equal(JSON.stringify(quote), before);
+  }
+});
+
+test("shipping display taxes effective fee, respects free shipping and leaves option IDs/fees intact", () => {
+  const { CheckoutShippingSection } = load("src/features/checkout/components/checkout-shipping-section");
+  locale = "en";
+  const quote = map(fixture("funded_points_off"));
+  quote.shippingOptions = [
+    { id: 2, name: "FedEx", price: "999", fee: "149", isFree: false },
+    { id: 3, name: "Free", price: "149", fee: "0", isFree: true },
+    { id: 4, name: "Fast", price: "99", fee: "15", isFree: false },
+  ];
+  const before = JSON.stringify(quote);
+  const html = renderToStaticMarkup(React.createElement(CheckoutShippingSection, { copy: { title: "Shipping", free: "Free shipping" }, hasDestination: true, isError: false, isLoading: false, locale, quote, selectedShippingMethodId: 2, onSelect() {} }));
+  for (const value of [171.35, 17.25]) assert.ok(html.includes(new Intl.NumberFormat("en", { style: "currency", currency: "SAR" }).format(value)));
+  assert.ok(html.includes("Free shipping"));
+  assert.equal(JSON.stringify(quote), before);
+});
+
 test("Place 0/1 reaches multipart for every address and preserves verified Loyalty through hosted browser parsing", async () => {
   for (const destination of destinations) for (const usePoints of [0, 1]) {
     backend = JSON.parse(read("tests/fixtures/checkout-place-hosted.json"));
