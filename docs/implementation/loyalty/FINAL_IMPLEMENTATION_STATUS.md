@@ -1,6 +1,6 @@
 # Storefront Loyalty completion status
 
-Reviewed 2026-11-14. Baseline: `4aa7fe2`. Status: **PARTIALLY BLOCKED for release; ready for final user review of implemented scope.**
+Reviewed 2026-11-14. Latest verification baseline: `1ac6811`. Status: **PARTIALLY BLOCKED for release; production build now verified.**
 
 ## Completed scope
 
@@ -12,7 +12,7 @@ Reviewed 2026-11-14. Baseline: `4aa7fe2`. Status: **PARTIALLY BLOCKED for releas
 | 4 Quote | Backend-owned eligibility, amounts and VAT; authenticated points intent and guest exclusion. Retained. |
 | 5A/5B Place/payment | Automated review passed: ON/OFF serialization, fresh quote, changed-input guards, explicit 409 reconfirmation, duplicate/ambiguous attempt protection, hosted handoff and authoritative order reconciliation. No Checkout rewrite needed. |
 | 6 Notifications | Partial: existing header/mobile `/notifications` link now reaches an authenticated server-rendered read-only page. Verified empty state, loading and localized error/retry. Unknown populated or out-of-range responses show unavailable, never a fabricated empty inbox. |
-| 7 Quality | Focused automated checks complete; build and live visual/payment QA remain unverified. |
+| 7 Quality | Focused automated checks and production build pass; live visual/authenticated/payment QA remain unverified. |
 
 ## Changes in this completion pass
 
@@ -38,12 +38,12 @@ Reviewed 2026-11-14. Baseline: `4aa7fe2`. Status: **PARTIALLY BLOCKED for releas
 - Notifications tests rerun after removing an unsupported request option: **3 passed**.
 - TypeScript: **PASS** after that correction. Scoped ESLint and diff checks: **PASS**.
 - No dependencies added. Server session credentials remain server-side. Notifications have no persistent client cache or cross-user cache key.
-- **BUILD NOT VERIFIED:** normal `node --version` still reports no active NVM version. Tests and static checks use the existing installed Node executable. No machine configuration troubleshooting performed.
-- **Browser/live backend smoke: NOT TESTED.** No local app listener on ports 3000/3001. No live orders or payments created.
+- **BUILD PASS (final verification):** `npm.cmd run build` completed compilation, TypeScript, all 77 generated pages and optimization successfully. The process PATH was prefixed with the existing `C:\Users\dell\AppData\Local\Author Software\nvm\installs\v24.21.0` directory: Node v24.21.0, npm 11.19.0. The default NVM shim has no active version; no registry or permanent environment changes were made. Child processes work with this process-local PATH.
+- **Browser smoke: NOT TESTED.** Computer-use inventory reports both the native pipe and browser access host unavailable. HTTP checks below are not browser/visual verification. No live orders or payments created.
 
 ## Release blockers and deferred scope
 
-1. Production build in a correctly configured environment and live integration/browser QA are release gates.
+1. Live authenticated integration/browser QA remains a release gate. Production build passed locally with the process-local PATH workaround; normal shell NVM activation remains an environment follow-up.
 2. Zero-due/points-only Place remains blocked with localized feedback. Backend must specify the accepted payment method/absence, complete Place response and terminal/confirmation flow before enabling it.
 3. Full notifications release requires a populated DTO, identifier and timestamp semantics, pagination request contract, unread-count/read-state contract, mark-read/mark-all endpoints and allowed deep-link destinations. Current partial page must not be described as a completed notification centre.
 4. Requested white Cart badge text on `gold-500` (`#b8834a`) has approximately **3.29:1 contrast**, below 4.5:1 for small normal text. Requested palette/position retained. Design approval for a compliant palette is required before claiming WCAG AA text contrast compliance.
@@ -59,3 +59,28 @@ Non-blocking for the verified partial implementation: unused legacy mock cleanup
 - Notifications: logged-out redirect/return, authenticated empty fixture, backend failure/retry, unsupported populated response; confirm no fabricated badge or mark-read action.
 - Cart badge: upper outer icon edge, no ring or obstruction, RTL/LTR, 0/1/9/10+, keyboard and requested contrast decision.
 - Confirm production build and deployed authenticated-session isolation before release.
+
+## Final verification-only pass (2026-11-14)
+
+Git began clean at `1ac6811`. No implementation changes or confirmed build regressions. Only this report changed; no new commit because this task authorizes commits only for confirmed fixes.
+
+| Scenario | Automated/HTTP result this pass | Browser result |
+| --- | --- | --- |
+| Account Loyalty summary/history | PASS: existing fixture tests; unauthenticated HTTP access redirects to login | NOT TESTED: authenticated session/browser unavailable |
+| Order Details Loyalty | PASS: existing fixture tests | NOT TESTED |
+| Authenticated Checkout points ON/OFF and serialization | PASS: existing fixture tests | NOT TESTED |
+| Guest Checkout without points | PASS: existing tests; AR/EN Checkout HTTP 200 | NOT TESTED: no interactive cart/delivery flow |
+| Delivery-input quote updates/freshness | PASS: existing targeted interaction tests | NOT TESTED |
+| 409 review/explicit reconfirmation/no automatic Place retry | PASS: safe fixture tests | NOT TESTED against live backend |
+| Duplicate clicks/ambiguous outcomes/payment reconciliation | PASS: existing tests | NOT TESTED with hosted payment |
+| Notifications empty/error/retry | PASS: existing fixture tests; unauthenticated HTTP emits login redirect | NOT TESTED with authenticated backend data |
+| Arabic RTL/English LTR responsive layout | PASS: existing localized rendering assertions only | NOT TESTED: viewport/overflow/focus not visually verified |
+| Cart badge positioning | PASS: existing markup/count assertions | NOT TESTED visually; palette contrast issue remains |
+| Production build | PASS: `npm.cmd run build`, exit 0 | Not applicable |
+| Local startup | PASS: production server on loopback port 3100 | Browser host unavailable |
+
+**125 focused tests passed** in this verification-only run (summary/history/order/checkout/payment/notifications/cart); prior broader 178-test results above are historical. Final diff check passed.
+
+The attempted dev start detected an already-running instance on port 3000; it was not terminated or altered. A separate built production server started on `127.0.0.1:3100`. Initial backend reads were sandbox-blocked (`fetch failed`, `EACCES`); restarting that server with approved network access resolved the failure. Subsequent AR/EN Checkout reads returned 200, Account Loyalty redirected to login, and Notifications returned a streamed login redirect. These HTTP results do not prove hydrated UI, populated data or authenticated behavior. The temporary production server was stopped after verification; the existing dev instance was preserved.
+
+Outstanding release conditions are authenticated browser QA, the documented small-text badge contrast decision, and backend contracts for enabling zero-due redemption or the full notification centre. Those unsupported features remain safely blocked/omitted. No payment or order mutation was performed.
