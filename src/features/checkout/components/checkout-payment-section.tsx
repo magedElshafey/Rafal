@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useId } from "react";
-import { ApplePayIcon, BankIcon, MadaIcon, VisaIcon } from "@/components/ui/icons";
+import { TabbyIcon, ApplePayIcon, BankIcon, MadaIcon, VisaIcon } from "@/components/ui/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckoutStepSection } from "@/features/checkout/components/checkout-step-section";
 import type { CheckoutPaymentDiscovery } from "@/features/checkout/types/checkout.types";
@@ -17,6 +17,7 @@ export type CheckoutPaymentCopy = {
   unavailable: string;
   empty: string;
   disabled: string;
+  bnplUnavailable: string;
   methods: Record<CheckoutPaymentCode, { label: string; description: string }>;
 };
 
@@ -24,10 +25,10 @@ type Props = {
   copy: CheckoutPaymentCopy;
   step: string;
   selectedCode: CheckoutPaymentCode | null;
-  onSelect: (code: CheckoutPaymentCode) => void;
+  onSelect: (code: CheckoutPaymentCode, bnplAvailable?: boolean, label?: string) => void;
 };
 
-const icons = { card: MadaIcon, apple_pay: ApplePayIcon, bank_transfer: BankIcon, tap: VisaIcon };
+const icons = { card: MadaIcon, apple_pay: ApplePayIcon, bank_transfer: BankIcon, tap: VisaIcon, tabby: TabbyIcon };
 
 export function CheckoutPaymentLoading({ copy, step }: Pick<Props, "copy" | "step">) {
   return (
@@ -60,7 +61,7 @@ export function CheckoutPaymentSection({ copy, step, discovery, selectedCode, on
             {methods.map((method) => {
               if (!isCheckoutPaymentCode(method.code)) return null;
               const code = method.code;
-              const enabled = canSelectCheckoutPayment(code, true);
+              const enabled = canSelectCheckoutPayment(code, true, method.bnpl?.available === true);
               const selected = enabled && selectedCode === code;
               const Icon = icons[code];
               const descriptionId = `${id}-${code}-description`;
@@ -75,12 +76,13 @@ export function CheckoutPaymentSection({ copy, step, discovery, selectedCode, on
                     checked={selected} disabled={!enabled}
                     aria-describedby={descriptionId}
                     className="size-4 shrink-0 accent-gray-900"
-                    onChange={() => { if (enabled) onSelect(code); }}
+                    onChange={() => { if (enabled) onSelect(code, method.bnpl?.available === true, method.label); }}
                   />
                   <span className="min-w-0 flex-1">
-                    <span className="block type-body font-medium text-gray-1000">{copy.methods[code].label}</span>
+                    <span className="block type-body font-medium text-gray-1000">{code === "tabby" ? method.label : copy.methods[code].label}</span>
                     <span id={descriptionId} className="mt-1 block type-caption text-gray-600">
-                      {copy.methods[code].description}{!enabled ? ` — ${copy.disabled}` : ""}
+                      {code === "tabby" && !enabled ? copy.bnplUnavailable : copy.methods[code].description}
+                      {code !== "tabby" && !enabled ? ` — ${copy.disabled}` : ""}
                     </span>
                   </span>
                   <Icon aria-hidden="true" className="h-6 w-10 shrink-0" />

@@ -34,7 +34,7 @@ export function parseCheckoutPlaceRequest(
   const method = value.paymentMethod;
   if (value.usePoints !== undefined && value.usePoints !== 0 && value.usePoints !== 1) return null;
   const points: Pick<CheckoutPlaceRequest, "usePoints"> = value.usePoints === undefined ? {} : { usePoints: value.usePoints };
-  if (method !== undefined && method !== "card" && method !== "apple_pay" && method !== "tap") return null;
+  if (method !== undefined && method !== "card" && method !== "apple_pay" && method !== "tap" && method !== "tabby") return null;
 
   if (
     value.buyer.kind === "authenticated" &&

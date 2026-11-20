@@ -15,7 +15,7 @@ export function parseCheckoutHostedPaymentResult(value: unknown, now?: number): 
   try {
     const url = new URL(paymentUrl);
     if (paymentUrl !== paymentUrl.trim() || /[\s\\]/.test(paymentUrl) ||
-      url.protocol !== "https:" || url.hostname !== "checkout.tap.company" ||
+      url.protocol !== "https:" || !["checkout.tap.company", "checkout.tabby.sa"].includes(url.hostname) ||
       url.port !== "" || url.username || url.password) throw new Error();
   } catch {
     throw new CheckoutContractError("result.handoff.paymentUrl", "an approved hosted payment URL");

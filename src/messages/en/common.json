@@ -118,7 +118,9 @@
       "unavailable": "Payment options could not be loaded. Card / Mada remains available.",
       "empty": "No additional payment options are available. Card / Mada remains available.",
       "disabled": "Not available for checkout yet",
+      "bnplUnavailable": "Tabby is unavailable for this checkout. Choose another payment method.",
       "methods": {
+        "tabby": {"label": "Tabby", "description": "Continue to Tabby to review your payment plan."},
         "card": { "label": "Card / Mada", "description": "Current checkout option" },
         "apple_pay": { "label": "Apple Pay", "description": "Apple Pay payment option" },
         "bank_transfer": { "label": "Bank transfer", "description": "Pay by bank transfer" },
@@ -254,6 +256,7 @@
       "products": "Products"
     },
     "place": {
+      "emailRequired": "Add an email address to your profile to pay with Tabby or Tamara.",
       "submit": "Place order",
       "submitting": "Placing order",
       "outcomeUnknown": "We could not confirm whether your order was created. Do not submit again or refresh to retry. Check your order status or contact support before making another attempt.",

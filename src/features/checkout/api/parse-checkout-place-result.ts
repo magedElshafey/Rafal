@@ -29,7 +29,7 @@ export function parseCheckoutPlaceResult(value: unknown): CheckoutPlaceResult {
   }
   const paymentMethod = source.paymentMethod;
   if (source.kind === "verification-required" && paymentMethod !== undefined &&
-    paymentMethod !== "card" && paymentMethod !== "apple_pay" && paymentMethod !== "tap") {
+    paymentMethod !== "card" && paymentMethod !== "apple_pay" && paymentMethod !== "tap" && paymentMethod !== "tabby") {
     throw new CheckoutContractError("result.paymentMethod", "a supported payment method");
   }
   const address = parseRecord(source.shippingAddress, "result.shippingAddress");
@@ -62,7 +62,7 @@ export function parseCheckoutPlaceResult(value: unknown): CheckoutPlaceResult {
   };
   return source.kind === "confirmed" ? { ...order, kind: "confirmed" } : {
     ...order, kind: "verification-required",
-    ...(paymentMethod === "card" || paymentMethod === "apple_pay" || paymentMethod === "tap" ? { paymentMethod } : {}),
+    ...(paymentMethod === "card" || paymentMethod === "apple_pay" || paymentMethod === "tap" || paymentMethod === "tabby" ? { paymentMethod } : {}),
     verificationExpiresAt: source.verificationExpiresAt === null ? null : parseString(source.verificationExpiresAt, "result.verificationExpiresAt"),
   };
 }

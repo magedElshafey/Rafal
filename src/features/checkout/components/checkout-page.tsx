@@ -83,6 +83,7 @@ export type CheckoutPageCopy = {
     outcomeUnknown: string;
     orderCreated: string;
     checkoutChanged: string;
+    emailRequired: string;
     unavailableTitle: string;
     unavailableDescription: string;
     backToCart: string;
@@ -147,7 +148,7 @@ export function CheckoutPage({
   >(null);
   // Only additional methods depend on the discovery snapshot that offered them.
   const [selectedPaymentCode, setSelectedPaymentCode] = useState<CheckoutPaymentCode>(legacyCheckoutPaymentMethod);
-  const [selectedPaymentDiscovery, setSelectedPaymentDiscovery] = useState<Promise<CheckoutPaymentDiscovery> | null>(null);
+  const [selectedPaymentDiscovery, setSelectedPaymentDiscovery] = useState<{ discovery: Promise<CheckoutPaymentDiscovery>; bnplAvailable: boolean; label?: string } | null>(null);
   const [shippingMethodId, setShippingMethodId] = useState<number | null>(null);
   const [usePoints, setUsePoints] = useState<0 | 1>(0);
   const [reviewQuote, setReviewQuote] = useState(false);
@@ -291,7 +292,7 @@ export function CheckoutPage({
     destination && shippingMethodId !== null && buyer
       ? { destination, shippingMethodId, buyer, usePoints: isAuthenticated ? usePoints : 0, ...(selectedPaymentCode !== "bank_transfer" ? { paymentMethod: selectedPaymentCode } : {}) }
       : null;
-  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, selectedPaymentDiscovery === paymentDiscovery);
+  const paymentReady = canSubmitCheckoutPayment(selectedPaymentCode, selectedPaymentDiscovery?.discovery === paymentDiscovery, selectedPaymentDiscovery?.bnplAvailable === true);
   // Mutation error state can arrive before placeOrder records the outcome.
   const uncertainPlaceError =
     placeMutation.isError &&
@@ -483,11 +484,11 @@ export function CheckoutPage({
               copy={copy.payment}
               step={isAuthenticated ? "3" : "4"}
               selectedCode={paymentReady ? selectedPaymentCode : null}
-              onSelect={(code) => {
-                if (canSelectCheckoutPayment(code, true)) {
+              onSelect={(code, bnplAvailable = false, label) => {
+                if (canSelectCheckoutPayment(code, true, bnplAvailable)) {
                   quoteInputsVersionRef.current++;
                   setSelectedPaymentCode(code);
-                  setSelectedPaymentDiscovery(paymentDiscovery);
+                  setSelectedPaymentDiscovery({ discovery: paymentDiscovery, bnplAvailable, label });
                 }
               }}
             />
@@ -534,6 +535,9 @@ export function CheckoutPage({
               <div>
                 {isAuthenticated && quote?.totals.amountDue != null && Number(quote.totals.amountDue) === 0 ? <p id="checkout-loyalty-place-blocked" role="status" className="mb-3 type-body-sm text-gray-700">{loyaltyT("zeroDue")}</p> : null}
                 {reviewQuote ? <p role="status" className="mb-3 type-body-sm text-gray-700">{loyaltyT("reviewQuote")}</p> : null}
+                {placeMutation.error instanceof ApiError && placeMutation.error.code === "checkout-email-required" ? (
+                  <p role="alert" className="mb-3 type-body-sm text-destructive">{copy.place.emailRequired}</p>
+                ) : null}
                 {placeOutcome !== null ? (
                   <p role="status" className="mb-3 type-body-sm text-gray-700">
                     {placeOutcome.kind === "unknown" ? copy.place.outcomeUnknown : (
@@ -571,7 +575,7 @@ export function CheckoutPage({
                   </p>
                 ) : null}
                 <p id="checkout-submitted-payment" className="mb-3 type-body-sm text-gray-600">
-                  {copy.payment.submissionNotice.replace("{method}", copy.payment.methods[selectedPaymentCode]?.label ?? copy.payment.selectionUnavailable)}
+                  {copy.payment.submissionNotice.replace("{method}", (selectedPaymentCode === "tabby" ? selectedPaymentDiscovery?.label : undefined) ?? copy.payment.methods[selectedPaymentCode]?.label ?? copy.payment.selectionUnavailable)}
                 </p>
                 {!paymentReady ? (
                   <div className="mb-3">

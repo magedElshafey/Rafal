@@ -39,7 +39,7 @@ function getIdentityHeaders(
 }
 
 // Checkout supplies the server-resolved Cart identity. Discovery provides displayed
-// options, not Place eligibility or implemented lifecycle support for a method.
+// options and BNPL availability; Laravel still validates eligibility at Place.
 export async function getCheckoutPaymentMethods(
   identity: CheckoutTransportIdentity,
   locale: Locale,
@@ -133,7 +133,8 @@ export async function placeCheckout(
     throw new ApiError({
       // A success:false body is not the confirmed HTTP 409 no-order guarantee.
       status: 422,
-      code: "checkout-rejected",
+      code: (payload as Record<string, unknown>).message === "أضف بريدك الإلكتروني في ملفك الشخصي للدفع عبر تابي أو تمارا."
+         ? "checkout-email-required" : "checkout-rejected",
       details:
         typeof data === "object" && data !== null && !Array.isArray(data)
           ? data
@@ -193,7 +194,7 @@ export async function verifyCheckoutOrder(
     if (response.data.status === "pending_verification" && verificationRequired !== null &&
       (metadataRequired == null || metadataRequired === verificationRequired) &&
       (response.data.payment?.method === "card" ||
-        (verificationRequired === false && ["apple_pay", "tap"].includes(response.data.payment?.method ?? ""))) &&
+        (verificationRequired === false && ["apple_pay", "tap", "tabby"].includes(response.data.payment?.method ?? ""))) &&
       response.data.payment?.status === "pending" && response.data.payment.paid_at === null && response.meta?.payment) {
       const handoff = response.meta.payment;
       return parseCheckoutHostedPaymentResult({

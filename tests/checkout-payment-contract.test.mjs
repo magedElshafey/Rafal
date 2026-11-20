@@ -35,7 +35,7 @@ function harness() {
       } : name === "@/features/cart/server/guest-cart-session" ? {
         deleteGuestCartToken: async () => { state.deleted += 1; },
       } : name === "@/lib/api/server-api" ? {
-        serverApi: { request: async (request) => { calls.push(request); return state.payload; } },
+        serverApi: { request: async (request) => { calls.push(request); if (state.error) throw state.error; return state.payload; } },
       } : name.startsWith("@/") ? load(`src/${name.slice(2)}`) : require(name),
     }, { filename });
     modules.set(filename, loadedModule.exports);
@@ -52,7 +52,58 @@ const outcome = (payload) => normalize(parse(payload));
 
 const hostedFixture = () => JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-place-hosted.json"), "utf8"));
 
-for (const method of ["apple_pay", "tap"]) {
+test("supplied Tabby order structure uses existing hosted mapping, preserving money and pending state", () => {
+  // Runtime structure with synthetic identity/URL/reference and future expiry.
+  const payload = JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-place-tabby.json"), "utf8"));
+  const parsed = parse(payload);
+  assert.equal(parsed.data.money.total, "746.35");
+  const result = legacy(parsed, undefined, { buyer: { kind: "authenticated" }, paymentMethod: "tabby" });
+  assert.equal(result.kind, "hosted-payment-required");
+  assert.equal(result.handoff.paymentUrl, payload.meta.payment.payment_url);
+  assert.equal(result.handoff.chargeId, "synthetic-opaque-reference");
+  assert.equal(result.loyalty.amount_due, "746.35");
+  assert.equal(normalize(parsed).kind, "hosted-payment-pending");
+  for (const url of ["http://checkout.tabby.sa/pay", "https://checkout.tabby.sa.evil.example/pay", "https://sub.checkout.tabby.sa/pay", "https://checkout.tabby.ai/pay", "https://user:pass@checkout.tabby.sa/pay", "https://checkout.tabby.sa:444/pay", "https://checkout.tabby.sa/has space", "https://checkout.tabby.sa/\\evil"]) {
+    const changed = structuredClone(payload); changed.meta.payment.payment_url = url;
+    assert.throws(() => legacy(parse(changed), undefined, { buyer: { kind: "authenticated" }, paymentMethod: "tabby" }));
+  }
+});
+
+test("BNPL metadata survives discovery; invalid metadata disables only Tabby", () => {
+  const bnpl = { available: true, reason: null, min_amount: "1.00", max_amount: "5000.00", instalments: 4, instalment_amount: null };
+  const payload = { success: true, message: "Test", data: { card: { label: "Card", icon: "card" }, tabby: { label: "Tabby", icon: "tabby", bnpl } } };
+  assert.equal(JSON.stringify(methods(payload).data.tabby.bnpl), JSON.stringify(bnpl));
+  for (const invalid of [undefined, null, {}, { ...bnpl, available: "true" }, { ...bnpl, instalment_amount: 5 }, { ...bnpl, instalments: 0 }]) {
+    const parsed = methods({ ...payload, data: { ...payload.data, tabby: { ...payload.data.tabby, bnpl: invalid } } });
+    assert.equal(parsed.data.tabby.bnpl, null);
+    assert.equal(parsed.data.card.label, "Card");
+  }
+});
+
+test("known missing-email rejection survives the private boundary without leaking raw errors or cleaning the cart", async () => {
+  const server = harness();
+  server.state.identity = { kind: "authenticated", bearerToken: "synthetic-account" };
+  server.state.payload = { success: false, message: "أضف بريدك الإلكتروني في ملفك الشخصي للدفع عبر تابي أو تمارا." };
+  const response = await server.load("src/app/api/checkout/place/route").POST(hostedRequest("tabby"));
+  assert.equal((await response.json()).code, "checkout-email-required");
+  assert.equal(server.calls.length, 1);
+  assert.equal(server.state.deleted, 0);
+  server.state.payload.message = "SQL confidential internal error";
+  const unknown = await server.load("src/app/api/checkout/place/route").POST(hostedRequest("tabby"));
+  assert.equal((await unknown.json()).code, "checkout-rejected");
+  const { ApiError } = server.load("src/lib/api/api-error");
+  const { isDefinitivePrePlaceRejection } = server.load("src/features/checkout/utils/checkout-place-attempt");
+  for (const upstreamStatus of [400, 409, 422, 500]) {
+    server.state.error = new ApiError({ status: upstreamStatus, message: "أضف بريدك الإلكتروني في ملفك الشخصي للدفع عبر تابي أو تمارا." });
+    const result = await server.load("src/app/api/checkout/place/route").POST(hostedRequest("tabby"));
+    const errorBody = await result.json();
+    assert.equal(errorBody.code, "checkout-email-required");
+    assert.equal(isDefinitivePrePlaceRejection(new ApiError({ status: result.status, code: errorBody.code, message: "safe" })), false);
+    assert.equal(server.state.deleted, 0);
+  }
+});
+
+for (const method of ["apple_pay", "tap", "tabby"]) {
   test(`${method}: new Guest OTP evidence does not expand authenticated OTP or Guest direct hosted Place`, () => {
     const otp = JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
     otp.data.payment.method = method;
@@ -71,7 +122,7 @@ test("Guest supported methods retain identity through private input and serializ
   const parseInput = h.load("src/features/checkout/server/parse-checkout-place-request").parseCheckoutPlaceRequest;
   const serialize = h.load("src/features/checkout/api/checkout-place-serializer").serializeCheckoutPlaceRequest;
   assert.equal(serialize(parseInput(input)).payment_method, "card");
-  for (const paymentMethod of ["card", "apple_pay", "tap"]) {
+  for (const paymentMethod of ["card", "apple_pay", "tap", "tabby"]) {
     const parsed = parseInput({ ...input, paymentMethod });
     assert.equal(parsed.paymentMethod, paymentMethod);
     assert.equal(serialize(parsed).payment_method, paymentMethod);
@@ -83,7 +134,7 @@ test("Guest supported methods retain identity through private input and serializ
   }
 });
 
-for (const method of ["card", "apple_pay", "tap"]) {
+for (const method of ["card", "apple_pay", "tap", "tabby"]) {
   test(`Guest ${method} Place: full parser and private route return OTP with original identity`, async () => {
     const server = harness();
     server.state.payload = JSON.parse(readFileSync(path.join(root, "tests/fixtures/checkout-guest-otp.json"), "utf8"));
@@ -109,7 +160,7 @@ for (const method of ["card", "apple_pay", "tap"]) {
 }
 
 test("new methods cannot use the legacy missing-payment confirmation exception", () => {
-  for (const paymentMethod of ["apple_pay", "tap"]) {
+  for (const paymentMethod of ["apple_pay", "tap", "tabby"]) {
     const response = hostedFixture();
     response.data.status = "confirmed";
     delete response.data.payment; response.meta = null;
@@ -117,7 +168,7 @@ test("new methods cannot use the legacy missing-payment confirmation exception",
   }
 });
 
-for (const method of ["card", "apple_pay", "tap"]) {
+for (const method of ["card", "apple_pay", "tap", "tabby"]) {
   test(`observed authenticated ${method}: real route, upstream parser, mapper and private parser preserve hosted identity`, async () => {
     const server = harness();
     server.state.identity = { kind: "authenticated", bearerToken: "synthetic-account" };

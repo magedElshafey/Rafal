@@ -90,7 +90,7 @@ export function mapCheckoutPlaceResult(
         kind: "verification-required",
         ...order,
         ...(request?.buyer.kind !== "authenticated" &&
-          (paymentMethod === "card" || paymentMethod === "apple_pay" || paymentMethod === "tap")
+          (paymentMethod === "card" || paymentMethod === "apple_pay" || paymentMethod === "tap" || paymentMethod === "tabby")
           ? { paymentMethod } : {}),
         verificationExpiresAt:
           data.verification_expires_at ??

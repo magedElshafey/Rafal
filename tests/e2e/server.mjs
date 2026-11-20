@@ -48,11 +48,12 @@ const backend = createServer(async (req, res) => {
   // Explicit local-only opt-in. These responses exercise existing frontend branches;
   // they do not establish any new Laravel method or authenticated Place contract.
   if (paymentFlows && req.method === "POST") {
-    if (url.pathname === "/checkout/place" && ["card", "apple_pay", "tap"].includes(fields?.payment_method)) {
+    if (url.pathname === "/checkout/place" && ["card", "apple_pay", "tap", "tabby"].includes(fields?.payment_method)) {
       if (req.headers.authorization?.startsWith("Bearer synthetic-auth-hosted")) {
         const data = paymentFixture("checkout-place-hosted");
         data.data.order_number = "RF-E2E-HOSTED";
         data.data.payment.method = fields.payment_method;
+        if (fields.payment_method === "tabby" && data.meta?.payment) data.meta.payment.payment_url = "https://checkout.tabby.sa/?test=synthetic";
         const variant = req.headers.authorization;
         if (variant.endsWith("unsafe")) data.meta.payment.payment_url = "https://unsafe.example.invalid/pay";
         if (variant.endsWith("expired")) data.meta.payment.expires_at = "2000-01-01T00:00:00Z";
@@ -73,11 +74,12 @@ const backend = createServer(async (req, res) => {
       data.data.order_number = authenticated ? "RF-E2E-CONFIRMED" : `RF-E2E-${req.headers["x-cart-token"].endsWith("true") ? "TRUE" : "FALSE"}`;
       return send(data);
     }
-    const verify = url.pathname.match(/^\/checkout\/orders\/(RF-E2E-(?:TRUE|FALSE|UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED|GUEST-(?:CARD|APPLEPAY|TAP)(?:-(?:UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED))?))\/verify$/);
+    const verify = url.pathname.match(/^\/checkout\/orders\/(RF-E2E-(?:TRUE|FALSE|UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED|GUEST-(?:CARD|APPLEPAY|TAP|TABBY)(?:-(?:UNSAFE|EXPIRED|MISSING|MISMATCH|MALFORMED))?))\/verify$/);
     if (verify && fields?.phone === "+966501234567" && fields?.otp === "123456") {
       const data = paymentFixture(verify[1].includes("GUEST-") ? "checkout-guest-verify-hosted" : "checkout-verify-hosted");
-      data.data.payment.method = verify[1].includes("APPLEPAY") ? "apple_pay" : verify[1].includes("GUEST-TAP") ? "tap" : "card";
+      data.data.payment.method = verify[1].includes("APPLEPAY") ? "apple_pay" : verify[1].includes("GUEST-TABBY") ? "tabby" : verify[1].includes("GUEST-TAP") ? "tap" : "card";
       data.data.order_number = verify[1];
+      if (data.data.payment.method === "tabby") data.meta.payment.payment_url = "https://checkout.tabby.sa/?test=synthetic";
       data.data.requires_verification = verify[1].endsWith("TRUE");
       if (verify[1].endsWith("UNSAFE")) data.meta.payment.payment_url = "https://unsafe.example.invalid/pay";
       if (verify[1].endsWith("EXPIRED")) data.meta.payment.expires_at = "2000-01-01T00:00:00Z";
@@ -87,7 +89,7 @@ const backend = createServer(async (req, res) => {
       return send(data);
     }
     if (url.pathname === "/checkout/quote") return ok({
-      totals: { ...cart.totals, shipping_fee: "0.00", vat: { rate: "15", amount: "13.04" } },
+      totals: { ...cart.totals, shipping_fee: "0.00", vat: { rate: "15", amount: "13.04" }, ...(req.headers.authorization ? { amount_due: "100.00", loyalty: { available: 100, usable: 100, points_used: 0, amount_applied: "0.00", amount_due: "100.00", disabled_reason: null } } : {}) },
       shipping_options: [{ id: 1, code: "standard", name: "Standard", eta_label: "Test delivery", price: "0.00", fee: "0.00", is_free: true, is_pickup: false }],
       fulfillable: true, warehouse: { id: 1, name: "Test warehouse" }, unavailable_lines: [], coupon: null,
       location: { in_coverage: true, city },
@@ -136,7 +138,7 @@ const backend = createServer(async (req, res) => {
     const methods = { apple_pay: { label: "Apple Pay", icon: "apple" }, bank_transfer: { label: "Bank Transfer", icon: "bank" } };
     if (paymentFlows && token === "synthetic-payment-missing") return ok(methods);
     return ok({ card: { label: "Credit Card / Mada", icon: "card" }, ...methods,
-      ...(auth.startsWith("Bearer synthetic-auth-hosted") || token === "synthetic-payment-unified" ? { tap: { label: "Tap", icon: "card" } } : {}) });
+      ...(auth.startsWith("Bearer synthetic-auth-hosted") || token === "synthetic-payment-unified" ? { tap: { label: "Tap", icon: "card" }, tabby: { label: "Tabby", icon: "tabby", bnpl: { available: true, reason: null, min_amount: "1.00", max_amount: "5000.00", instalments: 4, instalment_amount: null } } } : {}) });
   }
   // Outside the explicit payment-flow opt-in, mutations remain disabled.
   if (url.pathname === "/checkout/quote") return send({ success: false, message: "Fixture quote unavailable" }, 422);

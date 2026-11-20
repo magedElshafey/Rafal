@@ -87,7 +87,7 @@ export function readCheckoutVerificationHandoff(
   const context = value as Record<string, unknown>;
   return context.orderNumber === orderNumber &&
     (context.paymentMethod === undefined || context.paymentMethod === "card" ||
-      context.paymentMethod === "apple_pay" || context.paymentMethod === "tap") &&
+      context.paymentMethod === "apple_pay" || context.paymentMethod === "tap" || context.paymentMethod === "tabby") &&
     typeof context.displayNumber === "string" &&
     typeof context.phone === "string" && isValidSaudiMobile(context.phone) &&
     (context.verificationExpiresAt === null ||

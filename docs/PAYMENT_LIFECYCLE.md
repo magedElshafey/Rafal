@@ -1,5 +1,42 @@
 # Payment lifecycle contract boundary
 
+## Tabby extension (2026-11-20)
+
+This update supersedes the historical Card-only and inactive hosted-Place notes below.
+Card, advertised Apple Pay/Tap, and advertised available Tabby use the existing
+checkout. Bank transfer remains hidden. BNPL metadata is preserved; no amount,
+currency, customer eligibility or installment calculation is performed locally.
+Malformed Tabby metadata disables that option without removing other methods.
+
+The supplied full authenticated Tabby response confirms `new` / `pending`, no
+OTP, and the existing `payment_url`, opaque `charge_id`, `expires_at` envelope.
+The exact hosted allowlist is `checkout.tap.company` and `checkout.tabby.sa`;
+all existing HTTPS, credential, port, expiry and method-consistency checks remain.
+The fixture `checkout-place-tabby.json` preserves the supplied order structure
+and monetary snapshot, with synthetic order reference/phone/provider URL and expiry.
+
+Guest Tabby selection is enabled by the same backend advertisement/availability
+rules. The existing strict OTP -> hosted continuation accepts Tabby and retains
+its selected method. Guest direct hosted Place remains unsupported by the existing
+mapper; no new bypass or cleanup semantics are inferred. Guest fixtures test the
+generic path, not a captured live Tabby Guest response.
+
+The exact supplied missing-email rejection maps to localized feedback, including
+when returned through an HTTP error. No arbitrary backend message is exposed.
+Its upstream status/code and no-order guarantee are unknown: the private 422
+classification does not unlock Place or trigger retries. Checkout state remains.
+Existing backend-authoritative result handling is unchanged. Live Guest OTP,
+Tabby success/failure/cancel returns, delayed confirmation and interrupted-browser
+reconciliation remain manual QA requirements.
+
+The user subsequently reached the Tabby-hosted test checkout, which displayed
+the Arabic test-data validation message `تم إدخال بيانات تجريبية`. This confirms
+external navigation only, not authorization, payment completion, returns or
+webhook reconciliation. The integration owner must check sandbox/merchant
+configuration, the submitted customer identity, session creation results and
+provider validation details privately. Do not log full session URLs, customer
+emails, tokens or credentials, or alter provider session parameters in the UI.
+
 Reviewed 2026-10-27. This records the available evidence, not a declaration that
 all backend payment methods or authenticated payment paths are complete.
 

@@ -123,11 +123,13 @@ export default async function CheckoutRoute() {
       unavailable: t("payment.unavailable"),
       empty: t("payment.empty"),
       disabled: t("payment.disabled"),
+      bnplUnavailable: t("payment.bnplUnavailable"),
       methods: {
         card: { label: t("payment.methods.card.label"), description: t("payment.methods.card.description") },
         apple_pay: { label: t("payment.methods.apple_pay.label"), description: t("payment.methods.apple_pay.description") },
         bank_transfer: { label: t("payment.methods.bank_transfer.label"), description: t("payment.methods.bank_transfer.description") },
         tap: { label: t("payment.methods.tap.label"), description: t("payment.methods.tap.description") },
+        tabby: { label: t("payment.methods.tabby.label"), description: t("payment.methods.tabby.description") },
       },
     },
     emptyCart: {
@@ -286,6 +288,7 @@ export default async function CheckoutRoute() {
       outcomeUnknown: t("place.outcomeUnknown"),
       orderCreated: t("place.orderCreated"),
       checkoutChanged: t("place.checkoutChanged"),
+      emailRequired: t("place.emailRequired"),
       unavailableTitle: t("place.unavailableTitle"),
       unavailableDescription: t("place.unavailableDescription"),
       backToCart: t("place.backToCart"),

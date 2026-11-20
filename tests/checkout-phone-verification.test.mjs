@@ -183,7 +183,7 @@ test("a matching expected method cannot authorize invalid Laravel payment state 
 });
 
 for (const locale of ["ar", "en"]) {
-  for (const method of ["card", "apple_pay", "tap"]) {
+  for (const method of ["card", "apple_pay", "tap", "tabby"]) {
   for (const failure of [null, "storageFails", "navigationFails"]) {
     test(`${locale}: hosted ${method} handoff, ${failure ?? "success"}, preserves pending identity without repeating Verify`, async () => {
       const h = harness(locale, method);
@@ -235,7 +235,7 @@ test("expired stored handoff retains pending recovery and never re-verifies or r
 });
 
 test("Verify hosted result validates server and browser contracts, rejecting unsafe or contradictory handoffs", async () => {
-  for (const method of ["card", "apple_pay", "tap"]) {
+  for (const method of ["card", "apple_pay", "tap", "tabby"]) {
   for (const change of [
     p => { p.meta.payment.payment_url = "https://checkout.tap.company.evil.example/pay"; },
     p => { p.meta.payment.payment_url = "http://checkout.tap.company/pay"; },

@@ -1,3 +1,5 @@
+import type { CheckoutBnpl } from "@/features/checkout/api/checkout-payment-methods-dto";
+
 export type CheckoutAddress = Readonly<{
   recipientName: string;
   recipientPhone: string;
@@ -47,7 +49,7 @@ export type CheckoutPlaceRequest = Readonly<{
   destination: CheckoutDestination;
   shippingMethodId: number;
   buyer: CheckoutBuyer;
-  paymentMethod?: "card" | "apple_pay" | "tap";
+  paymentMethod?: "card" | "apple_pay" | "tap" | "tabby";
 }>;
 
 export type CheckoutVerifyRequest = Readonly<{
@@ -205,7 +207,7 @@ export type CheckoutVerifyResult = CheckoutHostedPaymentResult | Extract<
   { kind: "confirmed" }
 >;
 
-export type CheckoutPaymentMethod = Readonly<{ code: string; label: string; icon: string }>;
+export type CheckoutPaymentMethod = Readonly<{ code: string; label: string; icon: string; bnpl?: CheckoutBnpl | null }>;
 
 // Backend snapshot, passed through unchanged; no derived financial values.
 export type CheckoutOrderLoyalty = Readonly<{

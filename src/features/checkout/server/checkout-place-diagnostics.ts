@@ -38,7 +38,7 @@ function booleanState(value: unknown): boolean | "unrecognized" {
 function safePaymentDecision(facts: CheckoutPaymentDecisionFacts) {
   return {
     orderStatus: allowed(facts.orderStatus, ["new", "confirmed", "pending_verification", "cancelled"]),
-    paymentMethod: allowed(facts.paymentMethod, ["card", "tap", "apple_pay", "bank_transfer"]),
+    paymentMethod: allowed(facts.paymentMethod, ["card", "tap", "apple_pay", "bank_transfer", "tabby"]),
     paymentStatus: allowed(facts.paymentStatus, ["paid", "pending"]),
     paidAtPresent: booleanState(facts.paidAtPresent),
     requiresVerification: facts.requiresVerification === null || facts.requiresVerification === undefined

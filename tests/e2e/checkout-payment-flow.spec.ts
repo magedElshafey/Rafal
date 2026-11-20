@@ -8,7 +8,7 @@ const records = async (request: APIRequestContext): Promise<RecordedRequest[]> =
 const mutations = (rows: RecordedRequest[]) => rows.filter(row => row.method === "POST" && /\/place$|\/verify$|\/charge/.test(row.path));
 
 for (const locale of ["ar", "en"]) {
-  for (const method of ["card", "apple_pay", "tap"]) {
+  for (const method of ["card", "apple_pay", "tap", "tabby"]) {
     test(`${locale} Guest ${method}: selected method through Place, OTP and hosted handoff exactly once`, async ({ page, request }) => {
       const offset = (await records(request)).length;
       await setup(page, "unified");
@@ -75,7 +75,7 @@ for (const method of ["APPLEPAY", "TAP"]) {
 }
 
 for (const locale of ["ar", "en"]) {
-  for (const method of ["card", "apple_pay", "tap"]) {
+  for (const method of ["card", "apple_pay", "tap", "tabby"]) {
     test(`${locale} authenticated ${method}: observed hosted Place, identity and no replay`, async ({ page, request }) => {
       const offset = (await records(request)).length;
       await setup(page, "hosted", true);
@@ -144,7 +144,7 @@ async function setup(page: Page, variant = "false", authenticated = false) {
     const host = new URL(route.request().url()).hostname;
     if (host === "127.0.0.1") return route.continue();
     // Intercept navigation before any provider request leaves the browser.
-    if (host === "checkout.tap.company") return route.fulfill({ contentType: "text/html", body: "<h1>Synthetic hosted checkout</h1>" });
+    if (["checkout.tap.company", "checkout.tabby.sa"].includes(host)) return route.fulfill({ contentType: "text/html", body: "<h1>Synthetic hosted checkout</h1>" });
     return route.abort();
   });
   await page.context().addCookies([

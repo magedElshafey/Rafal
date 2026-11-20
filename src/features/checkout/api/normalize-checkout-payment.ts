@@ -35,10 +35,11 @@ export function normalizeCheckoutPayment(response: CheckoutPlaceResponseDto): Ch
     (payment && payment.status !== "paid" && payment.paid_at !== null) ||
     (payment?.status === "paid" && (!payment.paid_at || handoff))
   ) return unresolved("contradictory");
-  // Keep legacy Card variants; additional Guest methods use the observed OTP flags.
+  // Keep legacy Card variants; additional methods require the existing strict OTP flags.
+  // Tabby reuses this generic path; its live Guest response remains a QA requirement.
   const otpPaymentSupported = !payment ||
     (payment.status === "pending" && payment.paid_at === null &&
-      (payment.method === "card" || (["apple_pay", "tap"].includes(payment.method) &&
+      (payment.method === "card" || (["apple_pay", "tap", "tabby"].includes(payment.method) &&
         data.status === "pending_verification" && required === true && metadataRequired === true)));
   if (otp && otpPaymentSupported && !handoff && (data.status === "pending_verification" || data.status === "new")) {
     return { ...context, kind: "verification-required", nextAction: "verify-otp" };
@@ -47,7 +48,7 @@ export function normalizeCheckoutPayment(response: CheckoutPlaceResponseDto): Ch
   if (!otp && data.status === "confirmed" && payment.status === "paid") {
     return { ...context, kind: "paid", nextAction: "confirm" };
   }
-  if (!otp && data.status === "new" && ["card", "apple_pay", "tap"].includes(payment.method) && payment.status === "pending" && required === false) {
+  if (!otp && data.status === "new" && ["card", "apple_pay", "tap", "tabby"].includes(payment.method) && payment.status === "pending" && required === false) {
     if (!handoff) return unresolved("missing-handoff");
     return {
       ...context, kind: "hosted-payment-pending", nextAction: "hosted-payment",

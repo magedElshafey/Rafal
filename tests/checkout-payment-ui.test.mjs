@@ -53,6 +53,18 @@ const { canSelectCheckoutPayment, isCheckoutPaymentCode } = h.load("src/features
 const props = (locale = "en") => ({ copy: copy(locale), step: "4", selectedCode: "card", onSelect: () => {} });
 const render = (discovery, locale = "en", selectedCode = "card") => renderToStaticMarkup(React.createElement(CheckoutPaymentSection, { ...props(locale), selectedCode, discovery }));
 
+test("Tabby follows backend availability, renders its plain-text label, and never invents installment money", () => {
+  for (const available of [true, false, undefined]) {
+    const html = render({ kind: "ready", methods: [{ code: "tabby", label: "Backend Tabby", icon: "tabby", bnpl: available === undefined ? null : { available, reason: null, instalment_amount: null } }] }, "en", "tabby");
+    assert.ok(html.includes("Backend Tabby"));
+    const radio = html.match(/<input[^>]+>/)[0];
+    assert.equal(radio.includes("disabled="), available !== true);
+    assert.equal(radio.includes("checked="), available === true);
+    assert.ok(!html.includes("SAR"));
+  }
+  assert.ok(!render({ kind: "ready", methods: [] }).includes('value="tabby"'));
+});
+
 test("known discovered methods retain backend order; untrusted labels/icons and unknown codes are not rendered", () => {
   const html = render({ kind: "ready", methods });
   assert.ok(html.indexOf('value="tap"') < html.indexOf('value="card"'));
@@ -169,9 +181,9 @@ test("real React Suspense streams unrelated checkout content and loading before 
 test("submission checks selection consistency and accepts only implemented methods", () => {
   const page = source("src/features/checkout/components/checkout-page.tsx");
   const place = page.slice(page.indexOf("const placeRequest:"), page.indexOf("  return (", page.indexOf("const placeRequest:")));
-  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode, selectedPaymentDiscovery === paymentDiscovery\)/);
+  assert.match(place, /const paymentReady = canSubmitCheckoutPayment\(selectedPaymentCode, selectedPaymentDiscovery\?\.discovery === paymentDiscovery, selectedPaymentDiscovery\?\.bnplAvailable === true\)/);
   assert.match(place, /!cityTransitionLocked &&\s*paymentReady &&/);
-  assert.match(page, /if \(canSelectCheckoutPayment\(code, true\)\)/);
+  assert.match(page, /if \(canSelectCheckoutPayment\(code, true, bnplAvailable\)\)/);
   const { serializeCheckoutPlaceRequest } = h.load("src/features/checkout/api/checkout-place-serializer");
   const { parseCheckoutPlaceRequest } = h.load("src/features/checkout/server/parse-checkout-place-request");
   const request = { destination: { kind: "saved-address", addressId: 1, cityId: 1 }, shippingMethodId: 1, buyer: { kind: "authenticated" } };

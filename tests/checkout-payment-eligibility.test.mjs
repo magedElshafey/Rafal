@@ -159,6 +159,48 @@ function harness({ discovery, selected = "card", locale = "en", fulfillable = tr
 
 const ready = (codes) => Promise.resolve({ kind: "ready", methods: codes.map((code) => ({ code, label: code, icon: "card" })) });
 
+for (const guest of [false, true]) {
+  test(`Tabby selection and exact submission follow availability for ${guest ? "Guest" : "User"}`, async () => {
+    const payload = JSON.parse(read(guest ? "tests/fixtures/checkout-guest-otp.json" : "tests/fixtures/checkout-place-tabby.json"));
+    payload.data.payment.method = "tabby";
+    const h = harness({ discovery: ready(["tabby"]), guest, backendFixture: payload });
+    h.payment.props.onSelect("tabby", false);
+    assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "card");
+    h.payment.props.onSelect("tabby", true, "Backend Tabby plan");
+    assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "tabby");
+    assert.ok(renderToStaticMarkup(h.snapshot().actions).includes("Backend Tabby plan"));
+    const button = h.snapshot().button;
+    await Promise.all([button.props.onClick(), button.props.onClick()]);
+    await tick();
+    assert.equal(h.calls.length, 1);
+    assert.equal(h.serialize(h.calls[0]).payment_method, "tabby");
+    assert.deepEqual(h.effects.handoffs, [guest ? "otp" : "hosted"]);
+    if (guest) assert.equal(h.verificationContexts[0].result.paymentMethod, "tabby");
+  });
+}
+
+test("replacement discovery invalidates selected Tabby without calculating eligibility from totals", () => {
+  const h = harness({ discovery: ready(["tabby"]) });
+  h.payment.props.onSelect("tabby", true);
+  h.refreshDiscovery(ready([]));
+  assert.equal(h.snapshot().button.props.disabled, true);
+  assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, null);
+});
+
+test("missing-email feedback preserves Tabby selection and checkout state without unlocking Place", async () => {
+  const h = harness({ discovery: ready(["tabby"]), failure: { status: 422, code: "checkout-email-required" } });
+  h.payment.props.onSelect("tabby", true);
+  await h.snapshot().button.props.onClick();
+  await tick();
+  const view = h.snapshot();
+  assert.ok(renderToStaticMarkup(view.actions).includes(h.copy.place.emailRequired));
+  assert.equal(h.find(h.render(), h.CheckoutPaymentRead).props.selectedCode, "tabby");
+  assert.equal(h.effects.cleanup, 0);
+  assert.equal(view.button.props.disabled, true);
+  await view.button.props.onClick();
+  assert.equal(h.calls.length, 1);
+});
+
 test("Loyalty ON with no applied points and mismatched OFF quote stay blocked", async () => {
   const h = harness({ discovery: ready(["card"]) });
   h.snapshot().summary.props.loyaltyCard.props.onChange(true);

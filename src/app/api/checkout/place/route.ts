@@ -91,6 +91,11 @@ export async function POST(request: Request) {
       return errorResponse("identity-mismatch", 409);
     }
     if (error instanceof ApiError) {
+      // Recognize only the supplied safe validation message, never relay arbitrary backend errors.
+      // This private error does not establish that no order exists or unlock retries.
+      if (error.code === "checkout-email-required" || error.message === "أضف بريدك الإلكتروني في ملفك الشخصي للدفع عبر تابي أو تمارا.") {
+        return errorResponse("checkout-email-required", 422);
+      }
       if (error.status === 401 || error.status === 403) {
         return errorResponse("unauthorized", 401);
       }

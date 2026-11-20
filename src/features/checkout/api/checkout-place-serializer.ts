@@ -1,13 +1,15 @@
 import type { CheckoutPlaceRequestDto } from "@/features/checkout/api/checkout-place-dto";
 import { serializeCheckoutQuoteRequest } from "@/features/checkout/api/checkout-serializer";
 import type { CheckoutPlaceRequest } from "@/features/checkout/types/checkout.types";
-import { canSelectCheckoutPayment } from "@/features/checkout/utils/checkout-payment-presentation";
+import { isCheckoutPaymentCode } from "@/features/checkout/utils/checkout-payment-presentation";
 import { CheckoutContractError } from "@/features/checkout/api/parse-checkout-dto";
 
 export function serializeCheckoutPlaceRequest(
   input: CheckoutPlaceRequest,
 ): CheckoutPlaceRequestDto {
-  if (!canSelectCheckoutPayment(input.paymentMethod ?? "card", true)) {
+  // Validate implemented transport codes here; Laravel owns final eligibility.
+  const method: string = input.paymentMethod ?? "card";
+  if (!isCheckoutPaymentCode(method) || method === "bank_transfer") {
     throw new CheckoutContractError("request.paymentMethod", "an implemented payment method");
   }
   const destination = serializeCheckoutQuoteRequest({

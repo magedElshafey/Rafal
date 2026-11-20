@@ -23,7 +23,7 @@ export function parseCheckoutVerifyRequest(
   }
   const expectedPaymentMethod = value.expectedPaymentMethod;
   if (expectedPaymentMethod !== undefined && expectedPaymentMethod !== "card" &&
-    expectedPaymentMethod !== "apple_pay" && expectedPaymentMethod !== "tap") return null;
+    expectedPaymentMethod !== "apple_pay" && expectedPaymentMethod !== "tap" && expectedPaymentMethod !== "tabby") return null;
 
   return isValidSaudiMobile(value.phone) && OTP_PATTERN.test(value.otp)
     ? { orderNumber: orderNumber.trim(), phone: value.phone, otp: value.otp,
